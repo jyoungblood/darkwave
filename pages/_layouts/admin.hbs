@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>{{title}}</title>
+
+	<meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+	<link rel="stylesheet" href="/css/lib/tachyons.min.css" />
+	<link rel="stylesheet" href="/css/lib/flatpickr.darkwave.css" />
+	<link rel="stylesheet" href="/css/lib/smoke.darkwave.css" />
+	<link rel="stylesheet" href="/css/lib/quill.darkwave.css" />
+	<link rel="stylesheet" href="/css/lib/dropzone.darkwave.css" />
+	<link rel="stylesheet" href="/css/lib/font-awesome.min.css" />
+
+	<link rel="stylesheet" href="/css/lib/darkwave.css" />
+	<link rel="stylesheet" href="/css/admin.css" />
+
+	<script src="/js/lib/jquery.min.js"></script>
+  <script src="/js/lib/js.cookie.min.js"></script>
+  <script src="/js/lib/dropzone.min.js"></script>
+  <script src="/js/lib/quill.min.js"></script>
+	<script src="/js/lib/smoke.min.js"></script>
+	<script src="/js/lib/flatpickr.min.js"></script>
+
+	<script src="/js/lib/darkwave.js"></script>
+	<script src="/js/admin.js"></script>
+
+</head>
+<body>
+
+
+
+
+{{#if auth}}
+
+
+	<!-- admin shell -->
+	{{#if is_admin}}
+
+	<header class="flex justify-between bg-black-90 w-100 ph3 pv3 pv4-ns ph4-m ph5-l">
+
+	  <nav class="f5 fw6 ttu tracked flex-grow">
+	    <a class="link {{#if current_users}}white{{else}}white-70{{/if}} hover-white dib mr4" href="/admin/users" title="Users">Users</a>
+	    <a class="link {{#if current_settings}}white{{else}}white-70{{/if}} hover-white dib mr4" href="/admin/settings" title="Settings">Settings</a>
+	  </nav>
+
+		<div class="f6 fw6 ttu flex tr">
+	    <a class="link white-30 hover-white dib ml3" href="/logout" title="Log Out">Log Out</a>
+		</div>
+
+	</header>
+
+
+
+
+	[[outlet]]
+
+
+
+	{{else}}
+
+	<div class="dt h-100 center pv5">
+	  <div class="dtc v-mid f4">
+	¯\_(ツ)_/¯
+	  </div>
+	</div>
+
+	{{/if}}
+
+
+
+
+
+
+
+
+
+
+
+
+{{else}}
+
+
+	<!-- login form -->
+
+	<div class="dt h-100 w-100 w-60-m w-50-l center pv5 ph4">
+	  <div class="dtc v-mid f4 lh-copy login-container">
+
+			<img src="/images/dw-triangles-black.png" class="db center mb5 w-50 o-90" />
+
+		  <form class="login" onsubmit="return false;">
+
+		    <div class="mb4 validate-email login-field">
+		      <label class="db mb2">Email Address / Screen Name</label>
+		      <input class="db w-100 ba bw1 pa3 b" type="text" name="email" />
+		      <span class="db f6 pt2"></span>
+		    </div>
+
+		    <div class="mb5 validate-password login-field">
+		      <label class="db mb2">Password</label>
+		      <input class="db w-100 ba bw1 pa3 b" type="password" name="password" />
+		      <span class="db f6 pt2"></span>
+		    </div>
+
+		    <div class="dn">
+		      <input type="text" name="website" />
+		    </div>
+
+				<input type="hidden" name="ip" value="{{ip}}" />
+				<input type="hidden" name="redirect" value="/crue" />
+
+		    <button class="db pv4 w-100 bg-near-black white bn b mb4" rel="login">Login</button>
+				<div class="tc">
+			    <a class="silver f5 u" href="/forgot">forgot password?</a>
+				</div>
+		  </form>
+
+		</div>
+	</div>
+
+
+
+{{/if}}
+
+
+
+
+	<!-- global working state -->
+
+	<div class="loader-container">
+		<div class="loader three-quarters-loader"></div>
+	</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>{{title}}</title>
+
+	<meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+	<link rel="stylesheet" href="/css/lib/tachyons.min.css" />
+	<link rel="stylesheet" href="/css/lib/darkwave.css" />
+	{{> base/css}}
+	<link rel="stylesheet" href="/css/app.css" />
+	<link rel="stylesheet" href="/css/breakpoints.css" />
+
+</head>
+<body>
+
+
+
+	[[outlet]]
+
+
+
+	<!-- global working state -->
+
+	<div class="loader-container">
+		<div class="loader three-quarters-loader"></div>
+	</div>
+
+	{{> base/html}}
+
+  <script src="/js/lib/jquery.min.js"></script>
+	<script src="/js/lib/js.cookie.min.js"></script>
+	<script src="/js/lib/darkwave.js"></script>
+	{{> base/js}}
+	<script src="/js/app.js"></script>
+
+</body>
+</html>

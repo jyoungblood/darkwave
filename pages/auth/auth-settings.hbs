@@ -1,0 +1,57 @@
+
+
+{{#if auth}}
+
+<div class="dt h-100 w-100 w-60-m w-50-l center pv5 ph4">
+  <div class="dtc v-mid f4 lh-copy">
+	
+	  <form method="post" action="/account/settings/process">
+
+			{{#if saved}}
+			<div class="flex mb5 items-center justify-center pa4 bg-lightest-blue navy">
+			  <span class="lh-title">Settings Saved</span>
+			</div>
+			{{/if}}
+
+	    <div class="mb4 validate-email validate required">
+	      <label class="db mb2">Email Address <small class="silver ml3 dib">* required</small></label>
+	      <input class="db w-100 ba bw1 pa3 b" type="text" name="email" value="{{data.email}}" data-type="email" />
+	      <span class="db f6 pt2"></span>
+	    </div>
+	
+	    <div class="mb4">
+	      <label class="db mb2">Password <small class="silver ml3 dib">(no change if blank)</small></label>
+	      <input class="db w-100 ba bw1 pa3 b" type="password" name="password" />
+	      <span class="db f6 pt2"></span>
+	    </div>
+
+	    <div class="mb4 validate-screenname validate required">
+	      <label class="db mb2">Screen Name <small class="silver ml3 dib">* required</small></label>
+	      <input class="db w-100 ba bw1 pa3 b" type="text" name="screenname" value="{{data.screenname}}" data-type="screenname" />
+	      <span class="db f6 pt2"></span>
+	    </div>
+
+	    <div class="mb4">
+	      <label class="db mb2">First Name</label>
+	      <input class="db w-100 ba bw1 pa3 b" type="text" name="first_name" value="{{data.first_name}}" />
+	      <span class="db f6 pt2"></span>
+	    </div>
+
+	    <div class="mb5">
+	      <label class="db mb2">Last Name</label>
+	      <input class="db w-100 ba bw1 pa3 b" type="text" name="last_name" value="{{data.last_name}}" />
+	      <span class="db f6 pt2"></span>
+	    </div>
+
+			<button class="db pv4 w-100 bg-near-black white bn b mb4">Save Settings</button>
+
+	  </form>
+
+	</div>
+</div>
+
+
+
+
+
+{{/if}}

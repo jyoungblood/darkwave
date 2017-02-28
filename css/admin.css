@@ -1,0 +1,20 @@
+
+
+body, body * {
+	font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+}
+
+
+input:focus, textarea:focus{
+	border-color: #8D4F92;
+	color: #8D4F92;
+}
+
+button:focus{
+	background-color: #8D4F92;
+	color: #fff;
+}
+
+button[rel~="save"], a[rel~="delete"]{
+	cursor: pointer;
+}

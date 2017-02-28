@@ -1,0 +1,80 @@
+
+
+
+<div class="dt h-100 w-100 w-60-m w-50-l center pv5 ph4">
+  <div class="dtc v-mid f4 lh-copy">
+	
+
+
+    {{#if register_process}}
+
+    <h3>Your registration is almost complete.</h3>
+    <p>Check the email for the address you just registered and click the activation link we sent you.</p>
+
+    {{/if}}
+
+
+
+
+    {{#if forgot_process}}
+
+    <h3>Check your email.</h3>
+    <p>We just sent you a link to reset your password.</p>
+
+    {{/if}}
+
+
+
+
+    {{#if forgot_reset}}
+
+
+		  <form method="post" action="/forgot/reset/process">
+		
+	      <div class="mb4">What would you like your new password to be?</div>
+		
+		    <div class="mb5">
+		      <label class="db mb2">New Password</label>
+		      <input class="db w-100 ba bw1 pa3 b" type="password" name="password" />
+		    </div>
+		
+		    <div class="dn">
+		      <input type="text" name="website" />
+		    </div>
+
+        <input type="hidden" name="hash" value="{{hash}}" />
+
+		    <button class="db pv4 w-100 bg-near-black white bn b mb4">Reset Password</button>   
+
+		  </form>
+
+
+    {{/if}}
+
+
+
+    {{#if forgot_reset_process}}
+
+    <h3>Your password has been reset.</h3>
+    <p>You should be able to <a href="/login/?redirect=home">log in</a> to your account now.</p>
+    <p>Please let us know if you run into any problems.</p>
+
+    {{/if}}
+
+
+
+    {{#if registration_complete}}
+
+    <h3>Your account has been activated.</h3>
+    <p><a href="/login/?redirect=home">Log in to your account here</a> and please let us know if you run into any problems.</p>
+
+    {{/if}}
+
+
+
+
+
+	</div>
+</div>
+
+

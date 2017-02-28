@@ -1,0 +1,38 @@
+
+
+
+
+<div class="flex justify-between bg-black-70 w-100 ph3 pv2 pv3-ns ph4-m ph5-l">
+  <div class="f6 flex-grow">
+    <a class="link white-90 hover-white dib mr4" href="/crue/users" title="All Users">All Users</a>
+    <a class="link white-50 hover-white dib mr4" href="/crue/users/edit/new" title="New User">+ New User</a>
+  </div>
+</div>
+
+
+
+
+<div class="ph3 pv3 ph4-m ph5-l">
+	<div class="overflow-auto">
+	  <table class="f6 w-100 center" cellspacing="0">
+	    <thead>
+	      <tr class="stripe-dark">
+	        <th class="fw6 tl pa3 bg-white">Screen Name</th>
+	        <th class="fw6 tl pa3 bg-white">Email</th>
+	        <th class="fw6 tl pa3 bg-white">Name</th>
+	        <th class="fw6 tl pa3 bg-white">Date Created</th>
+	      </tr>
+	    </thead>
+	    <tbody class="lh-copy">
+				{{#each users}}
+	      <tr class="stripe-dark">
+	        <td class="pa3"><a class="green" href="/crue/users/edit/{{_id}}">{{screenname}}</a></td>
+	        <td class="pa3">{{email}}</td>
+	        <td class="pa3">{{first_name}} {{last_name}}</td>
+	        <td class="pa3">{{date date_created "m/d/Y"}}</td>
+	      </tr>
+				{{/each}}
+	    </tbody>
+	  </table>
+	</div>
+</div>

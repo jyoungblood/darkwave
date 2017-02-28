@@ -1,0 +1,124 @@
+
+html{
+	height: 100%;
+}
+
+
+input, button, textarea{
+	outline: none;
+}
+
+
+
+
+
+
+
+
+.error {
+	color: #FF4136;
+}
+.error input, .error textarea{
+	color: #FF4136;
+	border-color: #FF4136;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* global "working" indicator */
+
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  background: rgba(0,0,0, 0.3);
+}
+
+@-moz-keyframes three-quarters-loader {
+  0% {
+    -moz-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+  100% {
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+}
+
+@-webkit-keyframes three-quarters-loader {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+}
+
+@keyframes three-quarters-loader {
+  0% {
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+  100% {
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+}
+}
+
+/* :not(:required) hides this rule from IE9 and below */
+.three-quarters-loader:not(:required) {
+  -moz-animation: three-quarters-loader 1250ms infinite linear;
+  -webkit-animation: three-quarters-loader 1250ms infinite linear;
+  animation: three-quarters-loader 1250ms infinite linear;
+  border: 15px solid rgba(255, 255, 255, 0.7);
+  border-right-color: transparent;
+  border-radius: 82px;
+  box-sizing: border-box;
+  display: inline-block;
+  overflow: hidden;
+  text-indent: -9999px;
+  width: 164px;
+  height: 164px;
+}
+
+.loader {
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -80px;
+  margin-top: -80px;
+}
+
+body.working .loader-container {
+  display: block;
+}
+
+
+
+
+
+
+/* reset margins for quill-generated html like the editor does */
+
+.quill-output p, .quill-output ol, .quill-output ul, .quill-output pre, .quill-output blockquote, .quill-output h1, .quill-output h2, .quill-output h3, .quill-output h4, .quill-output h5, .quill-output h6 {
+	margin: 0;
+	padding: 0;
+}
