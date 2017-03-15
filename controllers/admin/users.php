@@ -5,7 +5,7 @@
 
 $app->get('/admin/users/?', function(){
 
-	$_users = db_find("users", "id IS NOT NULL");
+	$_users = db_find("users", "id IS NOT NULL ORDER BY email ASC");
 
 	$GLOBALS['app']->render_template(array(
 		'layout' => 'admin',

@@ -9,10 +9,10 @@
 
 			<img src="/images/dw-triangles-black.png" class="db center mb5 w-50 o-90" />
 
-			<h3 class="tc mb5">Darkwave v0.1.0</h3>
-		
+			<h3 class="tc mb5">Darkwave v0.2.1</h3>
+
 		  <form action="/install" method="post">
-		
+
 				<h4 class="mid-gray bg-light-gray tc pa3 f6">Site Information</h4>
 		    <div class="mb4">
 		      <label class="db mb2">Site Title</label>
@@ -35,7 +35,7 @@
 				<h4 class="mid-gray bg-light-gray tc pa3 f6">Database</h4>
 		    <div class="mb4">
 		      <label class="db mb2">Host</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="db_host" value="localhost" />
+		      <input class="w-100 ba bw1 pa3 b" type="text" name="db_host" />
 		    </div>
 
 		    <div class="mb4">
@@ -74,7 +74,7 @@
 
 
 
-		    
+
 		    <button class="db pv4 w-100 bg-near-black white bn b mb4">Install</button>
 
 		  </form>
@@ -100,7 +100,7 @@
   <div class="dtc v-mid">
 
 		{{#if error}}
-		Installation failed: 
+		Installation failed:
 		<div class="red">
 			{{error}}
 		</div>
@@ -119,4 +119,3 @@
 </div>
 
 {{/unless}}
-

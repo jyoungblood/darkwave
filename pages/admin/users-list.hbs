@@ -4,8 +4,8 @@
 
 <div class="flex justify-between bg-black-70 w-100 ph3 pv2 pv3-ns ph4-m ph5-l">
   <div class="f6 flex-grow">
-    <a class="link white-90 hover-white dib mr4" href="/crue/users" title="All Users">All Users</a>
-    <a class="link white-50 hover-white dib mr4" href="/crue/users/edit/new" title="New User">+ New User</a>
+    <a class="link white-90 hover-white dib mr4" href="/admin/users" title="All Users">All Users</a>
+    <a class="link white-50 hover-white dib mr4" href="/admin/users/edit/new" title="New User">+ New User</a>
   </div>
 </div>
 
@@ -26,7 +26,7 @@
 	    <tbody class="lh-copy">
 				{{#each users}}
 	      <tr class="stripe-dark">
-	        <td class="pa3"><a class="green" href="/crue/users/edit/{{_id}}">{{screenname}}</a></td>
+	        <td class="pa3"><a class="green" href="/admin/users/edit/{{_id}}">{{screenname}}</a></td>
 	        <td class="pa3">{{email}}</td>
 	        <td class="pa3">{{first_name}} {{last_name}}</td>
 	        <td class="pa3">{{date date_created "m/d/Y"}}</td>

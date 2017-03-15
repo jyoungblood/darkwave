@@ -1,9 +1,9 @@
 ```
- __              __                                      ___ 
+ __              __                                      ___
 |  \     /\     |__)    |__/    |  |     /\     \  /    |__  
-|__/    /~~\    |  \    |  \    |/\|    /~~\     \/     |___ 
+|__/    /~~\    |  \    |  \    |/\|    /~~\     \/     |___
 
-CMS v0.2.0
+CMS v0.2.1
 
 ```
 
@@ -13,5 +13,4 @@ CMS v0.2.0
 
 
 
-### Read the full documentation: [http://darkwave.hexgirlfriend.com](http://darkwave.hexgirlfriend.com)
-
+### Read the full documentation: [http://darkwave.ltd](http://darkwave.ltd)
