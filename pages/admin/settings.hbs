@@ -1,0 +1,136 @@
+{{#if is_admin}}
+
+
+
+
+<div class="ph3 pv3 ph4-m ph5-l">
+  <form method="post" action="/crue/settings/save">
+
+		<h4 class="mid-gray bg-light-gray tc pa3 f6">Site Information</h4>
+
+		<div class="cf">
+
+	    <div class="fl w-100 w-50-ns pr3-ns mb4">
+	      <label class="db mb2">Site Title</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="site_title" value="{{site_title}}" />
+	    </div>
+
+	    <div class="fl w-100 w-50-ns pl3-ns mb4">
+	      <label class="db mb2">Site Code</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="site_code" value="{{site_code}}" />
+	    </div>
+
+		</div>
+
+		<div class="cf mb1">
+
+	    <div class="fl w-100 w-50-ns pr3-ns mb4">
+	      <label class="db mb2">Site URL</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="site_url" value="{{site_url}}" />
+	    </div>
+	    <div class="fl w-100 w-50-ns pl3-ns">
+	      <label class="db mb2">Api Root</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="api_root" value="{{settings.api_root}}" />
+	    </div>
+
+		</div>
+
+
+
+
+		<h4 class="mid-gray bg-light-gray tc pa3 f6">Database</h4>
+
+		<div class="cf">
+
+	    <div class="fl w-100 w-50-ns pr3-ns mb4">
+	      <label class="db mb2">Host</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="db_host" value="{{settings.database.host}}" />
+	    </div>
+
+	    <div class="fl w-100 w-50-ns pl3-ns mb4">
+	      <label class="db mb2">DB Name</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="db_name" value="{{settings.database.name}}" />
+	    </div>
+
+		</div>
+
+
+
+
+		<div class="cf mb1">
+
+	    <div class="fl w-100 w-50-ns pr3-ns mb4">
+	      <label class="db mb2">DB User</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="db_user" value="{{settings.database.user}}" />
+	    </div>
+
+	    <div class="fl w-100 w-50-ns pl3-ns mb4">
+	      <label class="db mb2">DB Password</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="db_password" value="{{settings.database.password}}" />
+	    </div>
+
+		</div>
+
+
+
+
+		<h4 class="mid-gray bg-light-gray tc pa3 f6">Mailgun</h4>
+
+		<div class="cf mb1">
+
+	    <div class="fl w-100 w-50-ns pr3-ns mb4">
+	      <label class="db mb2">API Key</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="mailgun_api_key" value="{{settings.mailgun.api_key}}" />
+	    </div>
+
+	    <div class="fl w-100 w-50-ns pl3-ns mb4">
+	      <label class="db mb2">Domain</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="mailgun_domain" value="{{settings.mailgun.domain}}" />
+	    </div>
+
+		</div>
+
+
+
+
+
+		<h4 class="mid-gray bg-light-gray tc pa3 f6">Amazon S3</h4>
+
+		<div class="cf mb1">
+
+	    <div class="fl w-100 w-50-ns pr3-ns mb4">
+	      <label class="db mb2">Key</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="s3_key" value="{{settings.s3.key}}" />
+	    </div>
+
+	    <div class="fl w-100 w-50-ns pl3-ns mb4">
+	      <label class="db mb2">Secret</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="s3_secret" value="{{settings.s3.secret}}" />
+	    </div>
+
+		</div>
+
+		<div class="cf mb1">
+
+	    <div class="fl w-100 w-50-ns pr3-ns mb4">
+	      <label class="db mb2">Bucket</label>
+	      <input class="w-100 ba bw1 pa3 b" type="text" name="s3_bucket" value="{{settings.s3.bucket}}" />
+	    </div>
+
+	    <div class="fl w-100 w-50-ns pl3-ns">
+	    </div>
+
+		</div>
+
+
+
+
+		<button class="db pa4 bg-near-black white bn b mb4">Save Settings</button>
+
+  </form>
+</div>
+
+
+
+
+{{/if}}

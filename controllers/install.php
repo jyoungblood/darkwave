@@ -23,6 +23,11 @@ $GLOBALS[\'settings\'][\'database\'][\'user\'] = \''.$_POST['db_user'].'\';
 $GLOBALS[\'settings\'][\'database\'][\'password\'] = \''.$_POST['db_password'].'\';';
 	}
 
+	if ($_POST['api_root']){
+		$settings_file .= '
+$GLOBALS[\'settings\'][\'api_root\'] = \''.$GLOBALS['app']->url_validate($_POST['api_root']).'\';';
+	}
+
 	file_put_contents("./settings.php", $settings_file);
 
 
@@ -76,18 +81,20 @@ $GLOBALS[\'settings\'][\'database\'][\'password\'] = \''.$_POST['db_password'].'
 
 
 		// 3. insert the admin user
-
-		if (!$error){
-			db_insert("users", array(
-				'_id' => uniqid(uniqid()),
-				'email' => strtolower($_POST['user_email']),
-				'password' => password_hash($_POST['user_password'], PASSWORD_BCRYPT),
-				'group_id' => '1',
-				'date_created' => time(),
-				'url_slug' => $GLOBALS['app']->url_slug($_POST['user_screenname']),
-				'screenname' => $_POST['user_screenname'],
-			));
+		if ($_POST['user_email']){
+			if (!$error){
+				db_insert("users", array(
+					'_id' => uniqid(uniqid()),
+					'email' => strtolower($_POST['user_email']),
+					'password' => password_hash($_POST['user_password'], PASSWORD_BCRYPT),
+					'group_id' => '1',
+					'date_created' => time(),
+					'url_slug' => $GLOBALS['app']->url_slug($_POST['user_screenname']),
+					'screenname' => $_POST['user_screenname'],
+				));
+			}
 		}
+
 
 	}
 
