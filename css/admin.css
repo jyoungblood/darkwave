@@ -1,21 +1,235 @@
+
+
+
 body{
 	height: 100%;
+	background-color: rgb(240, 244, 241);
 }
 body, body * {
-	font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+	/* font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif; */
+	font-family: Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+
+	/* font-family:'Roboto Mono' ; */
+	webkit-font-smoothing:antialiased;
+	font-weight: 300;
+
+	color: rgba(85, 85, 85, 1);
+}
+
+input, textarea, .textarea, select.multi-select{
+	background: rgb(227, 234, 229);
+	border: 1px solid rgb(227, 234, 229);
+	/* border: 1px solid rgba(200,200,200,0.35); */
+	/* border-top: 1px solid rgba(200,200,200,1); */
+	/* border-left: 1px solid rgba(200,200,200,1); */
 }
 
 
-input:focus, textarea:focus{
-	border-color: #8D4F92;
-	color: #8D4F92;
+
+
+
+textarea, .textarea{
+	resize: none;
+	padding: 0.2rem 0.5rem !important;
+}
+input:focus, textarea:focus, .textarea:focus{
+	/* border-color: rgba(29, 29, 27, 1); */
+	color:  rgba(29, 29, 27, 1);
+	background: rgba(255,255,255,1);
 }
 
 button:focus{
-	background-color: #8D4F92;
+	background-color:  rgb(58, 148, 111);
 	color: #fff;
 }
 
 button[rel~="save"], a[rel~="delete"]{
 	cursor: pointer;
+}
+
+
+
+.roboto{
+	font-family: 'Roboto', sans-serif;
+}
+
+
+
+::selection {
+  background: rgb(227, 234, 229);
+}
+::-moz-selection {
+  background: rgb(227, 234, 229);
+}
+
+
+
+.dwa-red{
+	color: #e94e13;
+}
+
+
+label small{
+	font-size: 75%;
+}
+
+
+
+
+.button-submit{
+	background-color: rgba(19, 19, 17, 1);
+	padding: 1.1rem 1.3rem;
+	color: rgba(255,255,255,0.9);
+	font-family:'Roboto Mono';
+}
+
+
+
+.button-login{
+	background-color: rgba(19, 19, 17, 0.17);
+	padding: 1.1rem 1.3rem;
+	color: rgba(255,255,255,0.9);
+	font-family:'Roboto Mono';
+	cursor: pointer;
+}
+
+.button-login:hover{
+	background-color: rgba(19, 19, 17, 0.27);
+}
+
+.stripe-dark:nth-child(odd), .bg-alt{
+	background-color: rgb(227, 234, 229);
+}
+
+.bg-default{
+	background-color: rgb(240, 244, 241);
+}
+
+.bg-nav{
+	background-color: rgb(29, 29, 27);
+}
+
+.bg-subnav{
+	background-color: lightgray;
+}
+.bg-subnav a{
+	/* font-family: 'Roboto Mono'; */
+	font-family: 'Roboto', sans-serif;
+	font-weight: 400;
+	font-size: 0.9rem;
+}
+
+.green{
+	color: rgb(52, 131, 98);
+}
+
+
+
+header a{
+	font-family: 'Roboto Mono';
+	font-weight: 400;
+}
+
+.nav-right{
+	font-size: 85%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+::-webkit-scrollbar {
+background: transparent;
+	overflow: visible;
+	width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.3);
+	/* border: solid #fff; */
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(0, 0, 0, 0.6);
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+	/* border-width: 4px 6px; */
+	min-width: 40px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+	/* border-width: 6px 4px; */
+	min-height: 40px;
+}
+
+::-webkit-scrollbar-track-piece {
+	/* background-color: #fff; */
+	background: transparent;
+}
+
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	/* background-color: #ADADAD; */
+	/* -webkit-box-shadow: inset 1px 1px 0 rgba(0,0,0,0.10),inset 0 -1px 0 rgba(0,0,0,0.07); */
+}
+
+::-webkit-scrollbar-thumb:hover {
+	/* background-color: #999; */
+}
+
+
+
+
+
+
+select.multi-select option:checked{
+	background-color: #000;
+	color: white;	
+}
+
+select.multi-select:focus{
+	background: white;
+	outline: none;
+}
+
+
+
+
+.upload-container{
+	background-color: white;
+	box-shadow: 2px 2px 8px 0px rgba( 0, 0, 0, 0.15 );
+	border: 0.3rem solid #fff;
+}
+
+.preview-image > img{
+	display: block;
+}
+
+
+
+
+
+
+
+.fs80{
+	font-size: 80%;
 }

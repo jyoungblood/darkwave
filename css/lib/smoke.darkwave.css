@@ -68,7 +68,7 @@
 
 .smoke-base {
   background: rgba(0,0,0,.3);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#90000000,endColorstr=#900000000);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#90000000,endColorstr=#90000000);
 }
 
 
@@ -78,7 +78,7 @@
 }
 
 .smoke {
-  background-color: rgba(255,255,255,1);
+  background-color: rgb(240, 244, 241);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffffff,endColorstr=#ffffff);
 	box-shadow: 0 2px 8px #666;
 }
@@ -89,6 +89,7 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#222222,endColorstr=#222222);
   border-radius: 0;
   color: #fff;
+
 }
 
 button.cancel {
@@ -122,6 +123,7 @@ button.cancel {
 	color: #333;
 	font-size: 150%;
 	line-height: 130%;
+	font-family: 'Roboto', sans-serif;
 }
 
 .smoke .dialog-prompt input[type="text"]{
@@ -130,7 +132,7 @@ button.cancel {
 }
 
 .smoke button{
-	text-transform: none;
+	/* text-transform: none;
 	margin: 0 10px;
 	display: inline-block;
 	padding: 15px 17px;
@@ -140,7 +142,20 @@ button.cancel {
 	cursor: pointer;
 	position: relative;
 	outline: none;
-	border: 0;
+	border: 0; */
+
+	background-color: rgba(19, 19, 17, 1);
+	padding: 1.1rem 1.3rem;
+	color: rgba(255,255,255,0.9);
+  font-family:'Roboto Mono';
+  
+  font-size: .875rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 700;
+  border-radius: .25rem;
+  margin: .7rem;
+
 }
 
 .smoke button.cancel{
