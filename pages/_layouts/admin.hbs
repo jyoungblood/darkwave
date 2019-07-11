@@ -88,41 +88,46 @@
 
 	<!-- login form -->
 
-	<div class="dt h-100 w-100 w-60-m w-50-l center pv5 ph4">
+	<div class="dt h-100 w-100 w-60-m w-50-l center pa5">
 	  <div class="dtc v-mid f4 lh-copy login-container">
 
-			<img src="/images/dw-triangles-black.png" class="db center mb5 w-50 o-90" />
+			<img src="/images/dw-triangles-black.png" class="db center mb5 pb4 w-60 o-10" />
 
 		  <form class="login" onsubmit="return false;">
 
-		    <div class="mb4 validate-email login-field">
-		      <label class="db mb2">Email Address / Screen Name</label>
-		      <input class="db w-100 ba bw1 pa3 b" type="text" name="email" />
-		      <span class="db f6 pt2"></span>
-		    </div>
 
-		    <div class="mb5 validate-password login-field">
-		      <label class="db mb2">Password</label>
-		      <input class="db w-100 ba bw1 pa3 b" type="password" name="password" />
-		      <span class="db f6 pt2"></span>
-		    </div>
+
+
+					<div class="validate-email login-field mb4">
+						<label class="db mb2 roboto ttu b f6">Email Address / Screen Name</label>
+						<input class="db w-100 pa2 f4" type="text" name="email" />
+						<span class="db f6 pt2"></span>
+					</div>
+					
+					<div class="validate-password login-field mb5">
+						<label class="db mb2 roboto ttu b f6">Password</label>
+						<input class="db w-100 pa2 f4" type="password" name="password" />
+						<span class="db f6 pt2"></span>
+					</div>
+
+
 
 		    <div class="dn">
 		      <input type="text" name="website" />
 		    </div>
 
 				<input type="hidden" name="ip" value="{{ip}}" />
-				<input type="hidden" name="redirect" value="/admin" />
+				<input type="hidden" name="redirect" value="/" />
 
-		    <button class="db pv4 w-100 bg-near-black white bn b mb4" rel="login">Login</button>
+		    <button class="db w-100 br-pill button-login bn roboto ttu tracked b f6 mb2" rel="login">Login</button>
+
 				<div class="tc">
-			    <a class="silver f5 u" href="/forgot">forgot password?</a>
+			    <a class="no-underline black o-30 f6 u" href="/forgot">forgot password?</a>
 				</div>
 		  </form>
 
 		</div>
 	</div>
-
 
 
 {{/if}}
