@@ -1,5 +1,11 @@
 
 RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteCond $0 !=images/favicons/favicon.ico
+RewriteRule ^([^/]+/)*favicon\.ico$ /images/favicons/favicon.ico [L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]

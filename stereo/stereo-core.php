@@ -1,7 +1,7 @@
 <?php
 
-require 'stereo/AltoRouter.php';
-require 'stereo/Handlebars/Autoloader.php';
+require 'stereo/lib/AltoRouter.php';
+require 'stereo/lib/Handlebars/Autoloader.php';
 
 Handlebars\Autoloader::register();
 use Handlebars\Handlebars;
@@ -18,7 +18,7 @@ $engine = new Handlebars(array(
 		))
 ));
 
-require 'stereo/handlebars-helpers.php';
+require 'stereo/lib/handlebars-helpers.php';
 
 
 
@@ -69,7 +69,7 @@ class StereoSystem {
 
 
 
-
+	
 // -------------------------------------------------------
 //   COOKIE HANDLERS
 // -------------------------------------------------------
@@ -83,7 +83,7 @@ class StereoSystem {
 		setcookie($k, $v, $expires, "/");
 		return true;
 	}
-
+	
 	// retrieve a cookie
 	public function cookie_get($k){
 		$o = false;
@@ -92,7 +92,7 @@ class StereoSystem {
 		}
 		return $o;
 	}
-
+	
 	// delete a cookie
 	public function cookie_delete($k){
 		if (isset($_COOKIE[$k])) {
@@ -103,69 +103,69 @@ class StereoSystem {
 	}
 
 
-
+	
 // -------------------------------------------------------
 //   HTTP REQUESTS
 // -------------------------------------------------------
 
-// make an http request to a given url, send data, and return php array (expects response in json format)
-public function json_request($url, $data = array(), $options = array()){
-  $_o = $GLOBALS['app']->http_request($url, $data, $options);
-  return json_decode($_o, true);
-}
-
-// make a json request w/ debugging output
-public function json_request_debug($url, $data = array(), $options = array()){
-  $_o = $GLOBALS['app']->http_request($url, $data, $options);
-  return $_o;
-}
-
-// make a json request to a given url, send hard-coded data (for STEREO app patterns)
-public function api_request($url, $data = array(), $options = array()){
-  if ($GLOBALS['app']->cookie_get('user_id')){
-    $data['user_id'] = $GLOBALS['app']->cookie_get('user_id');
-    $data['auth_token'] = $GLOBALS['app']->cookie_get('auth_token');
-    $data['admin_token'] = $GLOBALS['app']->cookie_get('admin_token');
-    $data['moderator_token'] = $GLOBALS['app']->cookie_get('moderator_token');
-  }
-  return $GLOBALS['app']->json_request($GLOBALS['settings']['api_root'] . $url, $data, $options);
-}
-
-// make an api request w/ debugging output
-public function api_request_debug($url, $data = array(), $options = array()){
-  if ($GLOBALS['app']->cookie_get('user_id')){
-    $data['user_id'] = $GLOBALS['app']->cookie_get('user_id');
-    $data['auth_token'] = $GLOBALS['app']->cookie_get('auth_token');
-    $data['admin_token'] = $GLOBALS['app']->cookie_get('admin_token');
-    $data['moderator_token'] = $GLOBALS['app']->cookie_get('moderator_token');
-  }
-  return $GLOBALS['app']->json_request_debug($GLOBALS['settings']['api_root'] . $url, $data, $options);
-}
-
-// make an http request to a given url, send data, return the raw result
-public function http_request($url, $data = array(), $options = array()){
-  $data_string = '';
-  foreach($data as $key=>$value) { $data_string .= $key . '=' . $value . '&'; }
-  rtrim($data_string, '&');
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-  if ($options['type'] == 'GET'){
-    curl_setopt($ch,CURLOPT_URL, $url . '?' .$data_string);
-  }else{
-    curl_setopt($ch,CURLOPT_URL, $url);
-    curl_setopt($ch,CURLOPT_POST, count($data));
-    curl_setopt($ch,CURLOPT_POSTFIELDS, $data_string);
+	// make an http request to a given url, send data, and return php array (expects response in json format)
+  public function json_request($url, $data = array(), $options = array()){
+		$_o = $GLOBALS['app']->http_request($url, $data, $options);
+	  return json_decode($_o, true);
   }
 
-  $result = curl_exec($ch);
-  curl_close($ch);
-  return $result;
-}
+	// make a json request w/ debugging output
+  public function json_request_debug($url, $data = array(), $options = array()){
+		$_o = $GLOBALS['app']->http_request($url, $data, $options);
+	  return $_o;
+  }
+
+	// make a json request to a given url, send hard-coded data (for STEREO app patterns)
+  public function api_request($url, $data = array(), $options = array()){
+	  if ($GLOBALS['app']->cookie_get('user_id')){
+		  $data['user_id'] = $GLOBALS['app']->cookie_get('user_id');
+		  $data['auth_token'] = $GLOBALS['app']->cookie_get('auth_token');
+		  $data['admin_token'] = $GLOBALS['app']->cookie_get('admin_token');
+		  $data['moderator_token'] = $GLOBALS['app']->cookie_get('moderator_token');
+	  }
+	  return $GLOBALS['app']->json_request($GLOBALS['settings']['api_root'] . $url, $data, $options);
+  }
+
+	// make an api request w/ debugging output
+  public function api_request_debug($url, $data = array(), $options = array()){
+	  if ($GLOBALS['app']->cookie_get('user_id')){
+		  $data['user_id'] = $GLOBALS['app']->cookie_get('user_id');
+		  $data['auth_token'] = $GLOBALS['app']->cookie_get('auth_token');
+		  $data['admin_token'] = $GLOBALS['app']->cookie_get('admin_token');
+		  $data['moderator_token'] = $GLOBALS['app']->cookie_get('moderator_token');
+	  }
+	  return $GLOBALS['app']->json_request_debug($GLOBALS['settings']['api_root'] . $url, $data, $options);
+  }
+
+	// make an http request to a given url, send data, return the raw result
+	public function http_request($url, $data = array(), $options = array()){
+		$data_string = '';
+		foreach($data as $key=>$value) { $data_string .= $key . '=' . $value . '&'; }
+		rtrim($data_string, '&');
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		if ($options['type'] == 'GET'){
+			curl_setopt($ch,CURLOPT_URL, $url . '?' .$data_string);
+		}else{
+			curl_setopt($ch,CURLOPT_URL, $url);
+			curl_setopt($ch,CURLOPT_POST, count($data));
+			curl_setopt($ch,CURLOPT_POSTFIELDS, $data_string);			
+		}
+
+		$result = curl_exec($ch);
+		curl_close($ch);
+		return $result;
+	}
 
 
 
-
+	
 // -------------------------------------------------------
 //   RENDER CONTENT
 // -------------------------------------------------------
@@ -232,13 +232,13 @@ public function http_request($url, $data = array(), $options = array()){
 		    'title' => '404 not found',
 		    'layout' => false,
 				'data' => array()
-			));
+			));			
 		}
 	}
 
 
 
-
+	
 // -------------------------------------------------------
 //   MISC UTILITY
 // -------------------------------------------------------
@@ -261,7 +261,7 @@ public function http_request($url, $data = array(), $options = array()){
 		  $GLOBALS['user_id'] = $GLOBALS['app']->cookie_get('user_id');
 
 			if ($GLOBALS['app']->cookie_get('url_slug')){
-			  $GLOBALS['profile_url'] = $GLOBALS['app']->cookie_get('url_slug');
+			  $GLOBALS['profile_url'] = $GLOBALS['app']->cookie_get('url_slug');		
 			}
 			if (password_verify($GLOBALS['site_code'].'-'.$GLOBALS['app']->cookie_get('user_id'), $GLOBALS['app']->cookie_get('auth_token'))){
 				$GLOBALS['auth'] = true;
@@ -300,7 +300,7 @@ public function http_request($url, $data = array(), $options = array()){
 		$o = array(
 			'where' => preg_replace('/\'([^\"]*?)\'/', '?', $where),
 			'data' => $data,
-		);
+		);	
 		return $o;
 	}
 
@@ -324,9 +324,9 @@ public function http_request($url, $data = array(), $options = array()){
 				}
 			}
 			if ($input['html']){
-				$message_html = $input['message'];
-			}
-			$message_text = strip_tags($GLOBALS['app']->br2nl($message_html));
+				$message_html = $input['message'];					
+			}	
+			$message_text = strip_tags($GLOBALS['app']->br2nl($message_html));	
 		}
 
 
@@ -339,10 +339,10 @@ public function http_request($url, $data = array(), $options = array()){
 			);
 			if ($input['cc']){
 				$message['cc'] = $input['cc'];
-			}
+			}	
 			if ($input['bcc']){
 				$message['bcc'] = $input['bcc'];
-			}
+			}	
 			if ($message_html){
 				$message['html'] = $message_html;
 				$message['text'] = $message_text;
@@ -357,7 +357,7 @@ public function http_request($url, $data = array(), $options = array()){
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POST, true); 
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
 			$result = curl_exec($ch);
 			curl_close($ch);
@@ -378,16 +378,16 @@ public function http_request($url, $data = array(), $options = array()){
 				$message = $input['message'];
 			}
 			if ($input['from']){
-				$headers 	.= "From: " . $input['from'] . "\r\n";
-			}
+				$headers 	.= "From: " . $input['from'] . "\r\n";	
+			}		
 			if ($input['cc']){
-				$headers 	.= "Cc: " . $input['cc'] . "\r\n";
-			}
+				$headers 	.= "Cc: " . $input['cc'] . "\r\n";	
+			}		
 			if ($input['bcc']){
-				$headers 	.= "Bcc: " . $input['bcc'] . "\r\n";
-			}
+				$headers 	.= "Bcc: " . $input['bcc'] . "\r\n";	
+			}		
 			if ($input['reply_to']){
-				$headers 	.= "Reply-To: " . $input['reply_to'] . "\r\n";
+				$headers 	.= "Reply-To: " . $input['reply_to'] . "\r\n";	
 			}
 
 			if ($input['preview']){
@@ -419,7 +419,7 @@ public function http_request($url, $data = array(), $options = array()){
 	// return string as url-safe slug
 	public function url_slug($string){
 		// unicode-compatible chars only (i think)
-		return strtolower(preg_replace('#[^\pL\pN./-]+#', "-", $string));
+		return strtolower(preg_replace('#[^\pL\pN./-]+#', "-", $string)); 
 	}
 
 
@@ -427,7 +427,7 @@ public function http_request($url, $data = array(), $options = array()){
 	public function url_strip($input){
 		if (!preg_match('#^http(s)?://#', $input)) {
 	    $input = 'http://' . $input;
-		}
+		}	
 		$url_parts = parse_url($input);
 		$domain = preg_replace('/^www\./', '', $url_parts['host']);
 		return $domain;
@@ -475,7 +475,7 @@ public function http_request($url, $data = array(), $options = array()){
 	// replace "<br />" with "\n" (the opposite of nl2br)
 	public function br2nl($string) {
 	  return preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
-	}
+	} 
 
 
 
@@ -487,13 +487,13 @@ public function http_request($url, $data = array(), $options = array()){
 			$o .= "|" . $ar;
 		}
 		return $o;
-	}
+	}	
 
 
 	// decode an encoded string and return an array
 	function array_decode($string){
 		return explode("|", $string);
-	}
+	}	
 
 
 
@@ -520,7 +520,7 @@ public function http_request($url, $data = array(), $options = array()){
 	public function pagination_links($url_path, $current_page, $total_results, $limit){
 		$total_pages = ceil(($total_results / $limit));
 		$paginate = false;
-
+	
 		if ($total_pages >= $current_page && $total_pages > 1){
 			$prev = $current_page - 1;
 			$next = $current_page + 1;
@@ -564,7 +564,7 @@ public function http_request($url, $data = array(), $options = array()){
 
 
 
-
+	
 // -------------------------------------------------------
 //   MYSQL CRUD functionality
 // -------------------------------------------------------
@@ -606,7 +606,7 @@ function db_find($table, $where, $options = false){
 		}
 		if ($i > 0){
 			$qr['total'] = $i;
-		}
+		}		
 	}
 	return $qr;
 }
@@ -614,8 +614,8 @@ function db_find($table, $where, $options = false){
 
 // sanitize parameters and insert array of data into mysql, returning the id of the record created
 function db_insert($table, $input){
-	$columns = '';
-	$placeholders = '';
+	$columns = '';	
+	$placeholders = '';	
 	$total = count($input);
 	$i = 1;
 	foreach ($input as $key => $val){
@@ -660,7 +660,7 @@ function db_update($table, $input, $where){
 			$query .= ", ";
 		}
 		$i++;
-	}
+	}	
 	$wd = $GLOBALS['app']->db_where_placeholders($where);
 	foreach ($wd['data'] as $dw){
 		$data[] = $dw;
@@ -737,3 +737,7 @@ function db_get_c($a, $b, $c = false){
 	}
 	return $o;
 }
+
+
+
+

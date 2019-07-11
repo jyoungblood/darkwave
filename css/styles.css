@@ -1,0 +1,14 @@
+html, body{
+	height: 100%;
+}
+
+
+input:focus{
+	border-color: #8D4F92;
+	color: #8D4F92;
+}
+
+button:focus{
+	background-color: #8D4F92;
+	color: #fff;
+}

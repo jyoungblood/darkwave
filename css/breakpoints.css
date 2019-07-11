@@ -1,69 +1,35 @@
 
 
+/* ------------------------------------------------------- */
+/* 		MEDIUM		*/
+/* ------------------------------------------------------- */
+
+@media screen and (min-width: 48em) and (max-width: 64em){
+
+}
+
+
 
 /* ------------------------------------------------------- */
-/* 		SMART PHONES (portrait/landscape)			*/
+/* 		NOT SMALL		*/
 /* ------------------------------------------------------- */
 
-@media only screen and (min-device-width: 320px) and (max-device-width : 480px) {
+@media screen and (min-width: 48em){
+
+}
 
 
 
+/* ------------------------------------------------------- */
+/* 		LARGE		*/
+/* ------------------------------------------------------- */
+
+@media screen and (min-width: 64em){
 
 }
 
 
 
 
-
-
-
-/* ------------------------------------------------------- */
-/* 		TABLETS (portrait/landscape)			*/
-/* ------------------------------------------------------- */
-
-@media only screen and (min-device-width: 768px) and (max-device-width : 1024px) {
-
-
-
-
-}
-
-
-
-
-
-
-/* ------------------------------------------------------- */
-/* 		DESKTOPS / LAPTOPS			*/
-/* ------------------------------------------------------- */
-
-@media only screen  and (min-width: 1224px) {
-
-
-
-
-}
-
-
-
-
-
-
-/* ------------------------------------------------------- */
-/* 		LARGE SCREENS			*/
-/* ------------------------------------------------------- */
-@media only screen  and (min-width: 1824px) {
-
-
-
-
-}
-
-
-
-
-
-
-
+/* breakpoints match Tachyons media queries: https://github.com/tachyons-css/tachyons-queries */
 /* need to be more specific? check this out: https://responsivedesign.is/develop/browser-feature-support/media-queries-for-common-device-breakpoints */
