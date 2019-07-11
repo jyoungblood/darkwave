@@ -1,91 +1,102 @@
-
 <!-- IT'S OK TO DELETE THIS ONCE YOU START WORKING ON YOUR SITE -->
 
 {{#unless site_title}}
 
+<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
 
-	<div class="dt h-100 center pv5">
-	  <div class="install-container dtc v-mid f5 lh-copy">
-
-			<img src="/images/dw-triangles-black.png" class="db center mb5 w-50 o-90" />
-
-			<h3 class="tc mb5">Darkwave v0.2.2</h3>
-
-		  <form action="/install" method="post">
-
-				<h4 class="mid-gray bg-light-gray tc pa3 f6">Site Information</h4>
-		    <div class="mb4">
-		      <label class="db mb2">Site Title</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="site_title" />
-		    </div>
-
-		    <div class="mb4">
-		      <label class="db mb2">Site Code</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="site_code" />
-		    </div>
-
-		    <div class="mb5">
-		      <label class="db mb2">Site URL</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="site_url" value="{{site_url}}" />
-		    </div>
+<style>
+	body,
+	body * {
+		font-family: Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+		webkit-font-smoothing: antialiased;
+		font-weight: 300;
+		color: rgba(85, 85, 85, 1);
+	}
+</style>
 
 
-				<h4 class="mid-gray bg-light-gray tc pa3 f6">External API</h4>
-		    <div class="mb5">
-		      <label class="db mb2">Api Host</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="api_root" />
-		    </div>
+<div class="dt h-100 center pv5">
+	<div class="install-container dtc v-mid f5 lh-copy">
+
+		<img src="/images/dw-triangles-black.png" class="db center mb5 w-50 o-90" />
+
+		<h3 class="tc mb5">Darkwave v0.3.1</h3>
+
+		<form action="/install" method="post">
+
+			<h4 class="mid-gray bg-light-gray tc pa3 f6">Site Information</h4>
+			<div class="mb4">
+				<label class="db mb2">Site Title</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="site_title" />
+			</div>
+
+			<div class="mb4">
+				<label class="db mb2">Site Code</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="site_code" />
+			</div>
+
+			<div class="mb5">
+				<label class="db mb2">Site URL</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="site_url" value="{{site_url}}" />
+			</div>
 
 
-				<h4 class="mid-gray bg-light-gray tc pa3 f6">Database</h4>
-		    <div class="mb4">
-		      <label class="db mb2">Host</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="db_host" />
-		    </div>
-
-		    <div class="mb4">
-		      <label class="db mb2">DB Name</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="db_name" />
-		    </div>
-
-		    <div class="mb4">
-		      <label class="db mb2">DB User</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="db_user" />
-		    </div>
-
-		    <div class="mb5">
-		      <label class="db mb2">DB Password</label>
-		      <input class="w-100 ba bw1 pa3 b" type="password" name="db_password" />
-		    </div>
+			<h4 class="mid-gray bg-light-gray tc pa3 f6">External API</h4>
+			<div class="mb5">
+				<label class="db mb2">Api Host</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="api_root" />
+			</div>
 
 
+			<h4 class="mid-gray bg-light-gray tc pa3 f6">Database</h4>
+			<div class="mb4">
+				<label class="db mb2">Host</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="db_host" />
+			</div>
 
+			<div class="mb4">
+				<label class="db mb2">DB Name</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="db_name" />
+			</div>
 
-				<h4 class="mid-gray bg-light-gray tc pa3 f6">Admin User</h4>
-		    <div class="mb4">
-		      <label class="db mb2">Email Address</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="user_email" />
-		    </div>
+			<div class="mb4">
+				<label class="db mb2">DB User</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="db_user" />
+			</div>
 
-		    <div class="mb4">
-		      <label class="db mb2">Screen Name</label>
-		      <input class="w-100 ba bw1 pa3 b" type="text" name="user_screenname" value="admin" />
-		    </div>
-
-		    <div class="mb5">
-		      <label class="db mb2">Password</label>
-		      <input class="w-100 ba bw1 pa3 b" type="password" name="user_password" />
-		    </div>
+			<div class="mb5">
+				<label class="db mb2">DB Password</label>
+				<input class="w-100 ba bw1 pa3 b" type="password" name="db_password" />
+			</div>
 
 
 
 
-		    <button class="db pv4 w-100 bg-near-black white bn b mb4">Install</button>
+			<h4 class="mid-gray bg-light-gray tc pa3 f6">Admin User</h4>
+			<div class="mb4">
+				<label class="db mb2">Email Address</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="user_email" />
+			</div>
 
-		  </form>
+			<div class="mb4">
+				<label class="db mb2">Screen Name</label>
+				<input class="w-100 ba bw1 pa3 b" type="text" name="user_screenname" value="admin" />
+			</div>
 
-		</div>
+			<div class="mb5">
+				<label class="db mb2">Password</label>
+				<input class="w-100 ba bw1 pa3 b" type="password" name="user_password" />
+			</div>
+
+
+
+
+			<button class="db pv4 w-100 bg-near-black white bn b mb4">Install</button>
+
+		</form>
+
 	</div>
+</div>
 
 
 
@@ -102,7 +113,7 @@
 {{else}}
 
 <div class="dt h-100 center">
-  <div class="dtc v-mid">
+	<div class="dtc v-mid">
 
 		{{#if error}}
 		Installation failed:
@@ -111,16 +122,16 @@
 		</div>
 		{{else}}
 
-	  <a href="/admin"><img src="/images/dw-triangles-black.png" class="db center o-10" /></a>
-	  {{#unless install_deleted}}
+		<a href="/admin"><img src="/images/dw-triangles-black.png" class="db center o-10" /></a>
+		{{#unless install_deleted}}
 		<div class="red mv5">
-		  ** delete install file: <span class="black">./controllers/install.php</span>
+			** delete install file: <span class="black">./controllers/install.php</span>
 		</div>
-	  {{/unless}}
+		{{/unless}}
 
 		{{/if}}
 
-  </div>
+	</div>
 </div>
 
 {{/unless}}
