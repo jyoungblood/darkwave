@@ -3,10 +3,10 @@
 
 
 
-<div class="flex justify-between bg-black-70 w-100 ph3 pv2 pv3-ns ph4-m ph5-l">
+<div class="flex justify-between bg-subnav w-100 ph3 pv2 pv3-ns ph4-m ph5-l">
   <div class="f6 flex-grow">
-    <a class="link white-50 hover-white dib mr4" href="/admin/users" title="All Users">All Users</a>
-    <a class="link {{#unless data._id}}white-90{{else}}white-50{{/unless}} hover-white dib mr4" href="/admin/users/edit/new" title="New User">+ New User</a>
+    <a class="link black-50 dib mr4" href="/admin/users" title="All Users">All Users</a>
+    <a class="link {{#unless data._id}}black-90{{else}}black-50{{/unless}} dib mr4" href="/admin/users/edit/new" title="New User">+ New User</a>
   </div>
 </div>
 
@@ -22,14 +22,14 @@
 		<div class="cf">
 
 	    <div class="fl w-100 w-50-ns pr3-ns mb4 required">
-	      <label class="db mb2">Email Address <small class="silver ml3 dib">* required</small></label>
-	      <input class="db w-100 ba bw1 pa3 b" type="text" name="email" value="{{data.email}}" />
+	      <label class="db mb2 roboto ttu b f6">Email Address <small class="dwa-red roboto b ml2 dib v-mid">* required</small></label>
+	      <input class="db w-100  pa2 f5" type="text" name="email" value="{{data.email}}" />
 	      <span class="db f6 pt2"></span>
 	    </div>
 
 	    <div class="fl w-100 w-50-ns pl3-ns mb4">
-	      <label class="db mb2">Password <small class="silver ml3 dib">(no change if blank)</small></label>
-	      <input class="db w-100 ba bw1 pa3 b" type="password" name="password" />
+	      <label class="db mb2 roboto ttu b f6">Password <small class="dwa-red roboto b ml2 dib v-mid">(no change if blank)</small></label>
+	      <input class="db w-100  pa2 f5" type="password" name="password" />
 	      <span class="db f6 pt2"></span>
 	    </div>
 
@@ -41,13 +41,13 @@
 		<div class="cf">
 
 	    <div class="fl w-100 w-50-ns pr3-ns mb4 required">
-	      <label class="db mb2">Screen Name <small class="silver ml3 dib">* required</small></label>
-	      <input class="db w-100 ba bw1 pa3 b" type="text" name="screenname" value="{{data.screenname}}" />
+	      <label class="db mb2 roboto ttu b f6">Screen Name <small class="dwa-red roboto b ml2 dib v-mid">* required</small></label>
+	      <input class="db w-100  pa2 f5" type="text" name="screenname" value="{{data.screenname}}" />
 	      <span class="db f6 pt2"></span>
 	    </div>
 
 	    <div class="fl w-100 w-50-ns pl3-ns mb4">
-	      <label class="db mb2">Group</label>
+	      <label class="db mb2 roboto ttu b f6">Group</label>
 				<select name="group_id">
 					<option value=""></option>
 					<option {{#is data.group_id "==" "1"}}selected="selected"{{/is}} value="1">Admin</option>
@@ -65,14 +65,14 @@
 		<div class="cf mb2">
 
 	    <div class="fl w-100 w-50-ns pr3-ns mb4">
-	      <label class="db mb2">First Name</label>
-	      <input class="db w-100 ba bw1 pa3 b" type="text" name="first_name" value="{{data.first_name}}" />
+	      <label class="db mb2 roboto ttu b f6">First Name</label>
+	      <input class="db w-100  pa2 f5" type="text" name="first_name" value="{{data.first_name}}" />
 	      <span class="db f6 pt2"></span>
 	    </div>
 
 	    <div class="fl w-100 w-50-ns pl3-ns mb4">
-	      <label class="db mb2">Last Name</label>
-	      <input class="db w-100 ba bw1 pa3 b" type="text" name="last_name" value="{{data.last_name}}" />
+	      <label class="db mb2 roboto ttu b f6">Last Name</label>
+	      <input class="db w-100  pa2 f5" type="text" name="last_name" value="{{data.last_name}}" />
 	      <span class="db f6 pt2"></span>
 	    </div>
 
@@ -87,7 +87,7 @@
 			data-type="user"
 			data-url="/admin/users/save"
 			data-redirect="/admin/users"
-			class="dib pa4 bg-near-black white bn b mb4">Save User</button>
+			class="dib br2 button-submit bn roboto ttu tracked b f6 mb4">Save User</button>
 
 		{{#if data._id}}
 		&nbsp;
@@ -95,7 +95,8 @@
 			data-type="user"
 			data-url="/admin/users/delete"
 			data-id="{{data._id}}"
-			data-redirect="/admin/users">Delete</a>
+			data-redirect="/admin/users"
+			class="ml2 dwa-red ttu f6 b">Delete</a>
 		{{/if}}
 
 
