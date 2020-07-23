@@ -1,11 +1,3 @@
-```
- __              __                                      ___
-|  \     /\     |__)    |__/    |  |     /\     \  /    |__  
-|__/    /~~\    |  \    |  \    |/\|    /~~\     \/     |___
+# MOVED TO GITLAB: [https://gitlab.com/hxgf/darkwave](https://gitlab.com/hxgf/darkwave)
 
-CMS v0.3.0
-
-```
-
-
-### Read the full documentation: [http://darkwave.ltd](http://darkwave.ltd)
+## Thanks for all the fish 😘 ✌️
