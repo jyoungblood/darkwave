@@ -13,7 +13,8 @@ $app->post('/install', function(){
 
 $GLOBALS[\'site_title\'] = \''.$_POST['site_title'].'\';
 $GLOBALS[\'site_code\'] = \''.$_POST['site_code'].'\';
-$GLOBALS[\'site_url\'] = \''.$_POST['site_url'].'\';';
+$GLOBALS[\'site_url\'] = \''.$_POST['site_url'].'\';
+$GLOBALS[\'settings\'][\'mode\'] = \'development\';';
 
 	if ($_POST['db_host'] && $_POST['db_name']){
 		$settings_file .= '
@@ -21,11 +22,6 @@ $GLOBALS[\'settings\'][\'database\'][\'host\'] = \''.$_POST['db_host'].'\';
 $GLOBALS[\'settings\'][\'database\'][\'name\'] = \''.$_POST['db_name'].'\';
 $GLOBALS[\'settings\'][\'database\'][\'user\'] = \''.$_POST['db_user'].'\';
 $GLOBALS[\'settings\'][\'database\'][\'password\'] = \''.$_POST['db_password'].'\';';
-	}
-
-	if ($_POST['api_root']){
-		$settings_file .= '
-$GLOBALS[\'settings\'][\'api_root\'] = \''.$GLOBALS['app']->url_validate($_POST['api_root']).'\';';
 	}
 
 	file_put_contents("./settings.php", $settings_file);
@@ -59,16 +55,16 @@ $GLOBALS[\'settings\'][\'api_root\'] = \''.$GLOBALS['app']->url_validate($_POST[
 			last_name VARCHAR(255) NULL DEFAULT NULL,
 			ua_header VARCHAR(255) NULL DEFAULT NULL,
 			ip_address VARCHAR(255) NULL DEFAULT NULL,
-			date_last_login INT(255) NULL DEFAULT NULL,
+			date_last_login BIGINT(20) NULL DEFAULT NULL,
 			group_id TINYINT NOT NULL DEFAULT '3' COMMENT '1 admin, 2 moderator, 3 end user, 4 blocked user',
-			date_created INT(255) NULL DEFAULT NULL,
+			date_created BIGINT(20) NULL DEFAULT NULL,
 			avatar_filename VARCHAR(255) DEFAULT NULL,
-			avatar_small VARCHAR(255) NOT NULL DEFAULT '/images/auth/avatar-default-s.png',
-			avatar_medium VARCHAR(255) NOT NULL DEFAULT '/images/auth/avatar-default-m.png',
-			avatar_large VARCHAR(255) NOT NULL DEFAULT '/images/auth/avatar-default-l.png',
-			avatar_original VARCHAR(255) NOT NULL DEFAULT '/images/auth/avatar-default-o.png',
+			avatar_small VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-s.png',
+			avatar_medium VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-m.png',
+			avatar_large VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-l.png',
+			avatar_original VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-o.png',
 			PRIMARY KEY (id)
-			)";
+			) ENGINE=InnoDB CHARACTER SET utf8;";
 
 
 			$GLOBALS['database']->exec($sql);

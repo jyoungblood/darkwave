@@ -8,10 +8,7 @@ include('auth.php');
 
 
 
-
-
 // ------- safe to delete after installation (and replace with your own routes) ----- //
-
 if (file_exists('./controllers/install.php')){ include('install.php'); }
 
 
@@ -19,10 +16,21 @@ $app->get('/', function(){
 
 	$GLOBALS['app']->render_template(array(
 		'template' => 'index',
-    'title' => $GLOBALS['site_title'],
+    'title' => $GLOBALS['site_title'] ? $GLOBALS['site_title'] : 'Install Darkwave',
     'data' => array(
 	    'install_deleted' => file_exists('./controllers/install.php') ? false : true
     )
 	));
 
 });
+
+
+
+
+
+
+
+
+
+
+

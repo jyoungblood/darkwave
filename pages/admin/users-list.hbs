@@ -1,22 +1,25 @@
-<div class="flex justify-between bg-subnav w-100 ph3 pv2 pv3-ns ph4-m ph5-l">
+{{> admin/subnav-system}}
+
+<div class="flex justify-between w-100 ph3 pt3-ns pt2 ph4-m ph5-l">
 	<div class="f6 flex-grow">
-		<a class="link black-90 dib mr4" href="/admin/users" title="All Users">All Users</a>
-		<a class="link black-50 dib mr4" href="/admin/users/edit/new" title="New User">+ New User</a>
+	<!-- search bar here -->
+	</div>
+	<div class="flex tr">
+		<a href="/admin/users/edit/new" class="bg-black-80 br2 b f7 ba bw1 b--black-10 no-underline ph2 pv2 dib white-90 hover-bg-black pointer"><i class="fa fa-plus mr1" aria-hidden="true"></i> New User</a>
 	</div>
 </div>
 
 
 
-
 <div class="ph3 pv3 ph4-m ph5-l">
 	<div class="overflow-auto">
-		<table class="f6 w-100 center" cellspacing="0">
+		<table class="f6 black-70 w-100 center" cellspacing="0">
 			<thead>
 				<tr>
-					<th class="fw6 tl pa3">Screen Name</th>
-					<th class="fw6 tl pa3">Email</th>
-					<th class="fw6 tl pa3">Name</th>
-					<th class="fw6 tl pa3">Date Created</th>
+					<th class="fw6 tl pa3 bg-black-10 black-60">Screen Name</th>
+					<th class="fw6 tl pa3 bg-black-10 black-60">Email</th>
+					<th class="fw6 tl pa3 bg-black-10 black-60">Name</th>
+					<th class="fw6 tl pa3 bg-black-10 black-60">Date Created</th>
 				</tr>
 			</thead>
 			<tbody class="lh-copy">

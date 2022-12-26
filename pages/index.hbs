@@ -2,112 +2,75 @@
 
 {{#unless site_title}}
 
-<link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css" />
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,700|Roboto:300,400,700" rel="stylesheet">
 
-<style>
-	body,
-	body * {
-		font-family: Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
-		webkit-font-smoothing: antialiased;
-		font-weight: 300;
-		color: rgba(85, 85, 85, 1);
-	}
-</style>
+<div class="center mw6 pa5">
 
+	<div class="tc f1 mb3">▲▼</div>
 
-<div class="dt h-100 center pv5">
-	<div class="install-container dtc v-mid f5 lh-copy">
+	<div class="tc mb5 fw7 f4">Darkwave v0.4.0</div>
 
-		<img src="/images/dw-triangles-black.png" class="db center mb5 w-50 o-90" />
+	<form action="/install" method="post">
 
-		<h3 class="tc mb5">Darkwave v0.3.0</h3>
+		<div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Site Information</div>
+		<div class="pt2 mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Site Title</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="site_title" />
+		</div>
 
-		<form action="/install" method="post">
+		<div class="mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Site Code</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="site_code" />
+		</div>
 
-			<h4 class="mid-gray bg-light-gray tc pa3 f6">Site Information</h4>
-			<div class="mb4">
-				<label class="db mb2">Site Title</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="site_title" />
-			</div>
+		<div class="mb5">
+			<label class="db mb2 roboto ttu b f6 o-90">Site URL</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="site_url" value="{{site_url}}" />
+		</div>
 
-			<div class="mb4">
-				<label class="db mb2">Site Code</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="site_code" />
-			</div>
+		<div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Database</div>
+		<div class="pt2 mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Host</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="db_host" value="localhost" />
+		</div>
 
-			<div class="mb5">
-				<label class="db mb2">Site URL</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="site_url" value="{{site_url}}" />
-			</div>
+		<div class="mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">DB Name</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="db_name" />
+		</div>
 
+		<div class="mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">DB User</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="db_user" />
+		</div>
 
-			<h4 class="mid-gray bg-light-gray tc pa3 f6">External API</h4>
-			<div class="mb5">
-				<label class="db mb2">Api Host</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="api_root" />
-			</div>
+		<div class="mb5">
+			<label class="db mb2 roboto ttu b f6 o-90">DB Password</label>
+			<input class="db w-100 pa2 f5 br1" type="password" name="db_password" />
+		</div>
 
+		<div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Admin User</div>
+		<div class="pt2 mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Email Address</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="user_email" />
+		</div>
 
-			<h4 class="mid-gray bg-light-gray tc pa3 f6">Database</h4>
-			<div class="mb4">
-				<label class="db mb2">Host</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="db_host" />
-			</div>
+		<div class="mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Screen Name</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="user_screenname" value="admin" />
+		</div>
 
-			<div class="mb4">
-				<label class="db mb2">DB Name</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="db_name" />
-			</div>
+		<div class="mb5">
+			<label class="db mb2 roboto ttu b f6 o-90">Password</label>
+			<input class="db w-100 pa2 f5 br1" type="password" name="user_password" />
+		</div>
 
-			<div class="mb4">
-				<label class="db mb2">DB User</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="db_user" />
-			</div>
+		<button class="roboto ttu f5 br2 db pv3 w-100 bg-near-black hover-bg-black-80 white bn b mb4 pointer">Install</button>
 
-			<div class="mb5">
-				<label class="db mb2">DB Password</label>
-				<input class="w-100 ba bw1 pa3 b" type="password" name="db_password" />
-			</div>
+	</form>
 
-
-
-
-			<h4 class="mid-gray bg-light-gray tc pa3 f6">Admin User</h4>
-			<div class="mb4">
-				<label class="db mb2">Email Address</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="user_email" />
-			</div>
-
-			<div class="mb4">
-				<label class="db mb2">Screen Name</label>
-				<input class="w-100 ba bw1 pa3 b" type="text" name="user_screenname" value="admin" />
-			</div>
-
-			<div class="mb5">
-				<label class="db mb2">Password</label>
-				<input class="w-100 ba bw1 pa3 b" type="password" name="user_password" />
-			</div>
-
-
-
-
-			<button class="db pv4 w-100 bg-near-black white bn b mb4">Install</button>
-
-		</form>
-
-	</div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
 
 
 {{else}}
@@ -122,7 +85,7 @@
 		</div>
 		{{else}}
 
-		<a href="/admin"><img src="/images/dw-triangles-black.png" class="db center o-10" /></a>
+		<div class="tc f-headline mb3">▲▼</div>
 		{{#unless install_deleted}}
 		<div class="red mv5">
 			** delete install file: <span class="black">./controllers/install.php</span>

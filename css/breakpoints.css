@@ -1,29 +1,17 @@
 
-
-/* ------------------------------------------------------- */
 /* 		MEDIUM		*/
-/* ------------------------------------------------------- */
-
 @media screen and (min-width: 48em) and (max-width: 64em){
 
 }
 
 
-
-/* ------------------------------------------------------- */
 /* 		NOT SMALL		*/
-/* ------------------------------------------------------- */
-
 @media screen and (min-width: 48em){
 
 }
 
 
-
-/* ------------------------------------------------------- */
 /* 		LARGE		*/
-/* ------------------------------------------------------- */
-
 @media screen and (min-width: 64em){
 
 }
@@ -31,5 +19,3 @@
 
 
 
-/* breakpoints match Tachyons media queries: https://github.com/tachyons-css/tachyons-queries */
-/* need to be more specific? check this out: https://responsivedesign.is/develop/browser-feature-support/media-queries-for-common-device-breakpoints */

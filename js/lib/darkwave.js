@@ -1,171 +1,79 @@
 
-var darkwave = {
-
+var dw = {
   api_request: function(cfg){
     var data = cfg.data ? cfg.data : {};
-    return $.ajax({
-      type: "POST",
-      url: cfg.url,
-      dataType: 'json',
-      data: data
-    }).fail(function(jqXHr, textStatus, errorThrown){
-      var error_label = 'Can\'t connect to data server.';
-      if (errorThrown != ''){
-        error_label = 'Data server error:<br /><small>'+errorThrown+'</small>';
-      }
-      alert(error_label);
-      console.log(errorThrown);
-      $("body").removeClass('working');
-    }).done(function(data) {
-      if (cfg.callback){
-        cfg.callback(data);
-      }else{
-        if (cfg.debug){
-          console.log(data);
-        }
-        return data;
-      }
-    });
-  },
-	query_string: function(){
-		var qs = document.location.search;
-    qs = qs.split('+').join(' ');
-    var params = {},
-        tokens,
-        re = /[?&]?([^=]+)=([^&]*)/g;
-    while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-    }
-    return params;
+		var request = new XMLHttpRequest();		
+		request.open('POST', cfg.url, true);
+		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+		request.onload = function () {
+		    if (this.status >= 200 && this.status < 400) {			
+			      if (cfg.callback){
+			        cfg.callback(JSON.parse(this.response));
+			      }else{
+			        if (cfg.debug){
+			          console.log(JSON.parse(this.response));
+			        }
+			        return this.response;
+			      }
+		    } else {
+		        // Response error
+		    }
+		};
+		request.onerror = function() {
+		    // Connection error
+		};	
+		var query = "";
+		for (key in data) {
+		    query += encodeURIComponent(key)+"="+encodeURIComponent(data[key])+"&";
+		}
+		return request.send(query);
+	},
+	serialize: function (form) {
+		var serialized = [];
+		for (var i = 0; i < form.elements.length; i++) {	
+			var field = form.elements[i];
+			if (!field.name || field.disabled || field.type === 'file' || field.type === 'reset' || field.type === 'submit' || field.type === 'button') continue;
+			if (field.type === 'select-multiple') {
+				for (var n = 0; n < field.options.length; n++) {
+					if (!field.options[n].selected) continue;
+					serialized.push(encodeURIComponent(field.name) + "=" + encodeURIComponent(field.options[n].value));
+				}
+			}
+			else if ((field.type !== 'checkbox' && field.type !== 'radio') || field.checked) {
+				serialized.push(encodeURIComponent(field.name) + "=" + encodeURIComponent(field.value));
+			}
+		}	
+		return serialized.join('&');
+	},
+	listener_clear_error: function(){
+		document.addEventListener('focusout', function(e){
+			var input = e.target;
+			if (input.parentNode.classList.contains('error')){
+				if (input.value){
+					input.parentNode.classList.remove('error');
+				}
+			}
+		});		
+	},
+
+	form_validate_required: function(callback){
+		document.body.classList.add('working');	
+		var required_items = document.querySelectorAll('.required input');
+		var valid = true;
+		for (var i = 0; i < required_items.length; i++) {
+			var input = required_items[i];			
+			if (!input.value){
+				input.parentNode.classList.add('error');
+				valid = false;
+			}
+		}
+		if (valid){
+			    // here's where we would remove the event listener if it mattered
+			    callback();
+		}else{
+			dw.listener_clear_error();
+			document.body.classList.remove('working');
+			smoke.alert("Required information is missing.");
+		}
 	}
 };
-
-
-
-
-$(function(){
-
-
-
-	$('body').on({ blur: function(){
-		$(this).parents('.error').removeClass('error');
-		$(this).next('span').html('');
-	}},".error input");
-
-
-
-	$("form").on('submit', function(e){
-		$("body").addClass('working');
-		var valid = true;
-	  $(".required input").each(function(){
-	    if (!$(this).val()){
-	      $(this).parents('.required').addClass('error');
-	      valid = false;
-	    }
-	  }).promise().done(function(){
-	    if (valid){
-				if ($(".error").length == 0){
-					return true;
-				}else{
-		      $("body").removeClass('working');
-					e.preventDefault();
-					e.stopPropagation();
-				}
-	    }else{
-	      $("body").removeClass('working');
-				e.preventDefault();
-				e.stopPropagation();
-	    }
-	  });
-	});
-
-
-
-
-
-
-
-
-
-	$(document).on('submit','form.login',function(e){
-    e.preventDefault();
-    darkwave.api_request({
-	    url: "/auth/login/process",
-	    data: {
-	      email: $("input[name='email']").val(),
-	      password: $("input[name='password']").val(),
-	      redirect: $("input[name='redirect']").val(),
-	      website: $("input[name='website']").val(),
-				ua: navigator.userAgent,
-	      ip: $("input[name='ip']").val()
-	    },
-	    callback: function(r){
-	      if (r.success){
-					if (r.user_id){
-						Cookies.set('user_id', r.user_id, { expires: 7300, path: '/' });
-					}
-					if (r.url_title){
-						Cookies.set('url_title', r.url_title, { expires: 7300, path: '/' });
-					}
-					if (r.auth_token){
-						Cookies.set('auth_token', r.auth_token, { expires: 7300, path: '/' });
-					}
-					if (r.admin_token){
-						Cookies.set('admin_token', r.admin_token, { expires: 7300, path: '/' });
-					}
-					if (r.moderator_token){
-						Cookies.set('moderator_token', r.moderator_token, { expires: 7300, path: '/' });
-					}
-	        if (r.redirect){
-	          window.location.href = r.redirect;
-	        }else{
-	          window.location.href = '/';
-	        }
-	      }else{
-	        if (r.error.email){
-					  $("body").removeClass('working');
-	          $(".validate-email").addClass("error");
-	          $(".validate-email span").html(r.error.message);
-	        }
-	        if (r.error.password){
-					  $("body").removeClass('working');
-	          $(".validate-password").addClass("error");
-	          $(".validate-password span").html(r.error.message);
-	        }
-	      }
-	    }
-    });
-	});
-
-
-
-
-
-  $(".validate input").on('blur', function(){
-    var type = $(this).data('type');
-    var ths = $(this);
-
-    darkwave.api_request({
-	    url: "/auth/validate-unique",
-	    data: {
-	      value: $(this).val(),
-	      id: $(this).data('id'),
-	      type: type,
-	      user_id: Cookies.get('user_id')
-	    },
-	    callback: function(r){
-	      if (r.error){
-	        $(".validate-"+type).addClass('error');
-	        ths.siblings('span').html(r.error_message);
-	      }else{
-	        $(".validate-"+type).removeClass('error');
-	        ths.siblings('span').html('');
-	      }
-	    }
-    });
-
-  });
-
-
-
-});

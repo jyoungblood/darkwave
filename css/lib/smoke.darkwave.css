@@ -121,7 +121,6 @@ button.cancel {
 .smoke .dialog-inner{
   font-weight: normal !important;
 	color: #333;
-	font-size: 150%;
 	line-height: 130%;
 	font-family: 'Roboto', sans-serif;
 }
@@ -132,26 +131,10 @@ button.cancel {
 }
 
 .smoke button{
-	/* text-transform: none;
-	margin: 0 10px;
-	display: inline-block;
-	padding: 15px 17px;
-	background: #111;
-	color: #fff;
-	opacity: 0.95;
-	cursor: pointer;
-	position: relative;
-	outline: none;
-	border: 0; */
-
 	background-color: rgba(19, 19, 17, 1);
-	padding: 1.1rem 1.3rem;
+	padding: 0.8rem 1rem;
 	color: rgba(255,255,255,0.9);
-  font-family:'Roboto Mono';
-  
-  font-size: .875rem;
-  text-transform: uppercase;
-  letter-spacing: .1em;
+	font-family: 'Roboto', sans-serif;
   font-weight: 700;
   border-radius: .25rem;
   margin: .7rem;
@@ -159,5 +142,5 @@ button.cancel {
 }
 
 .smoke button.cancel{
-	opacity: 0.35;
+	opacity: 0.2;
 }

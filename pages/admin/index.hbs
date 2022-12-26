@@ -1,14 +1,14 @@
+<div class="ph3 pv4 ph5-l">
 
-<div class="dt h-100 center">
-  <div class="dtc v-mid">
+	{{#unless install_deleted}}
+	<div class="red mb4">
+		** delete install file: <span class="black">./controllers/install.php</span>
+	</div>
+	{{/unless}}
 
-	  <img src="/images/dw-triangles-black.png" class="db center o-10" />
+	<div class="f3 fw7 mb4">Welcome to the admin!</div>
 
-	  {{#unless install_deleted}}
-		<div class="red mv5">
-		  ** delete install file: <span class="black">./controllers/install.php</span>
-		</div>
-	  {{/unless}}
+	Check out the <a class="green" href="https://darkwave.ltd/docs">DW docs</a> to get started building screens and
+	functionality.<br /><br />
 
-  </div>
 </div>

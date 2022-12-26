@@ -1,3 +1,11 @@
-# MOVED TO GITLAB: [https://gitlab.com/hxgf/darkwave](https://gitlab.com/hxgf/darkwave)
+```
+ __              __                                      ___
+|  \     /\     |__)    |__/    |  |     /\     \  /    |__  
+|__/    /~~\    |  \    |  \    |/\|    /~~\     \/     |___
 
-## Thanks for all the fish 😘 ✌️
+v0.4.0
+
+```
+
+
+### documentation: [http://darkwave.ltd](http://darkwave.ltd)

@@ -76,7 +76,7 @@ class StereoSystem {
 
 	// set a cookie
 	public function cookie_set($k, $v, $time = false){
-		$expires = time() + 31536000000;
+		$expires = time() + 31536000;
 		if ($time){
 			$expires = $time;
 		}
@@ -259,18 +259,21 @@ class StereoSystem {
 	public function authenticate(){
 		if ($GLOBALS['app']->cookie_get('user_id')){
 		  $GLOBALS['user_id'] = $GLOBALS['app']->cookie_get('user_id');
-
-			if ($GLOBALS['app']->cookie_get('url_slug')){
-			  $GLOBALS['profile_url'] = $GLOBALS['app']->cookie_get('url_slug');		
+			if ($GLOBALS['app']->cookie_get('group_id')){
+				$GLOBALS['group_id'] = $GLOBALS['app']->cookie_get('group_id');
 			}
 			if (password_verify($GLOBALS['site_code'].'-'.$GLOBALS['app']->cookie_get('user_id'), $GLOBALS['app']->cookie_get('auth_token'))){
 				$GLOBALS['auth'] = true;
 			}
-			if (password_verify($GLOBALS['site_code'], $GLOBALS['app']->cookie_get('admin_token'))){
-				$GLOBALS['is_admin'] = true;
+			if ($GLOBALS['app']->cookie_get('admin_token')){
+				if (password_verify($GLOBALS['site_code'], $GLOBALS['app']->cookie_get('admin_token'))){
+					$GLOBALS['is_admin'] = true;
+				}
 			}
-			if (password_verify($GLOBALS['site_code'].'-moderator', $GLOBALS['app']->cookie_get('moderator_token'))){
-				$GLOBALS['is_moderator'] = true;
+			if ($GLOBALS['app']->cookie_get('moderator_token')){
+				if (password_verify($GLOBALS['site_code'].'-moderator', $GLOBALS['app']->cookie_get('moderator_token'))){
+					$GLOBALS['is_moderator'] = true;
+				}
 			}
 		}
 		return true;
@@ -340,6 +343,9 @@ class StereoSystem {
 			if ($input['cc']){
 				$message['cc'] = $input['cc'];
 			}	
+			if ($input['reply_to']){
+				$message['h:Reply-To'] = $input['reply_to'];
+			}
 			if ($input['bcc']){
 				$message['bcc'] = $input['bcc'];
 			}	

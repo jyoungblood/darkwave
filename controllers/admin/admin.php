@@ -16,6 +16,7 @@ $app->get('/admin/?', function(){
 		'template' => 'admin/index',
     'title' => $title,
 		'data' => array(
+			'current_home' => true,
 	    'ip' => $GLOBALS['app']->client_ip(),
 	    'install_deleted' => file_exists('./controllers/install.php') ? false : true
 		)

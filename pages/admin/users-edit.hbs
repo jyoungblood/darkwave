@@ -1,109 +1,249 @@
-{{#if is_admin}}
+{{> admin/subnav-system}}
 
 
+<link rel="stylesheet" href="/css/lib/dropzone.darkwave.css" />
+<script src="/js/lib/dropzone.min.js"></script>
 
 
-<div class="flex justify-between bg-subnav w-100 ph3 pv2 pv3-ns ph4-m ph5-l">
-  <div class="f6 flex-grow">
-    <a class="link black-50 dib mr4" href="/admin/users" title="All Users">All Users</a>
-    <a class="link {{#unless data._id}}black-90{{else}}black-50{{/unless}} dib mr4" href="/admin/users/edit/new" title="New User">+ New User</a>
-  </div>
-</div>
+<div x-data="users_edit()" class="ph3 pv4 ph5-l">
 
-
-
-
-<div class="ph3 pv4 ph5-l">
-	<form class="admin-edit" action="javascript:void(0);">
-
-
-
+	<form action="javascript:void(0);">
 
 		<div class="cf">
 
-	    <div class="fl w-100 w-50-ns pr3-ns mb4 required">
-	      <label class="db mb2 roboto ttu b f6">Email Address <small class="dwa-red roboto b ml2 dib v-mid">* required</small></label>
-	      <input class="db w-100  pa2 f5" type="text" name="email" value="{{data.email}}" />
-	      <span class="db f6 pt2"></span>
+	    <div class="fl w-100 w-60-ns pr3-ns">
+
+		    <div class="mb4 required">
+		      <label class="db mb2 roboto ttu b f6">Email Address <small class="dwa-red roboto b ml2 dib v-mid">* required</small></label>
+		      <input class="db w-100 pa2 f5" type="text" name="email" value="{{data.email}}" />
+		      <span class="db f6 pt2"></span>
+		    </div>
+	
+		    <div class="mb4">
+		      <label class="db mb2 roboto ttu b f6">Password <small class="black-30 roboto b ml2 dib v-mid">(no change if blank)</small></label>
+		      <input class="db w-100 pa2 f5" type="password" name="password" />
+		      <span class="db f6 pt2"></span>
+		    </div>
+	    	
+				<div class="cf">
+	
+			    <div class="fl w-100 w-50-ns pr3-ns mb4 required">
+			      <label class="db mb2 roboto ttu b f6">Screen Name <small class="dwa-red roboto b ml2 dib v-mid">* required</small></label>
+			      <input class="db w-100 pa2 f5" type="text" name="screenname" value="{{data.screenname}}" />
+			      <span class="db f6 pt2"></span>
+			    </div>
+			    
+			    <div class="fl w-100 w-50-ns pl3-ns mb4">
+			      <label class="db mb2 roboto ttu b f6">Group</label>
+						<select name="group_id">
+							<option value=""></option>
+							<option {{#is data.group_id "==" "1"}}selected="selected"{{/is}} value="1">Admin</option>
+							<option {{#is data.group_id "==" "2"}}selected="selected"{{/is}} value="2">Moderator</option>
+							<option {{#is data.group_id "==" "3"}}selected="selected"{{/is}} {{#is data.group_id "==" ""}}selected="selected"{{/is}} value="3">General User</option>
+							<option {{#is data.group_id "==" "4"}}selected="selected"{{/is}} value="4">Blocked</option>
+						</select>
+			    </div>
+
+				</div>
+	
+				<div class="cf">
+
+			    <div class="fl w-100 w-50-ns pr3-ns mb4">
+			      <label class="db mb2 roboto ttu b f6">First Name</label>
+			      <input class="db w-100 pa2 f5" type="text" name="first_name" value="{{data.first_name}}" />
+			      <span class="db f6 pt2"></span>
+			    </div>
+		
+			    <div class="fl w-100 w-50-ns pl3-ns mb4">
+			      <label class="db mb2 roboto ttu b f6">Last Name</label>
+			      <input class="db w-100 pa2 f5" type="text" name="last_name" value="{{data.last_name}}" />
+			      <span class="db f6 pt2"></span>
+			    </div>
+
+				</div>
+	
 	    </div>
 
-	    <div class="fl w-100 w-50-ns pl3-ns mb4">
-	      <label class="db mb2 roboto ttu b f6">Password <small class="dwa-red roboto b ml2 dib v-mid">(no change if blank)</small></label>
-	      <input class="db w-100  pa2 f5" type="password" name="password" />
-	      <span class="db f6 pt2"></span>
+	    <div class="fl w-100 w-40-ns pl3-ns mb4">
+
+				<div class="upload-container dz-1 mb4" onclick="void(0)">
+					<div class="preview-image">
+						{{#if has_avatar}}
+						<img src="{{data.avatar_medium}}" />
+						<div class="upload-delete"><img @click="delete_photo('1', false)" src="/images/lib/uploader/delete.svg" /></div>
+						{{/if}}
+					</div>
+					{{#unless has_avatar}}
+					<div class="dropzone" id="upload_1" data-id="1"></div>
+					{{/unless}}
+				</div>
+
 	    </div>
 
 		</div>
-
-
-
-
-		<div class="cf">
-
-	    <div class="fl w-100 w-50-ns pr3-ns mb4 required">
-	      <label class="db mb2 roboto ttu b f6">Screen Name <small class="dwa-red roboto b ml2 dib v-mid">* required</small></label>
-	      <input class="db w-100  pa2 f5" type="text" name="screenname" value="{{data.screenname}}" />
-	      <span class="db f6 pt2"></span>
-	    </div>
-
-	    <div class="fl w-100 w-50-ns pl3-ns mb4">
-	      <label class="db mb2 roboto ttu b f6">Group</label>
-				<select name="group_id">
-					<option value=""></option>
-					<option {{#is data.group_id "==" "1"}}selected="selected"{{/is}} value="1">Admin</option>
-					<option {{#is data.group_id "==" "2"}}selected="selected"{{/is}} value="2">Moderator</option>
-					<option {{#is data.group_id "==" "3"}}selected="selected"{{/is}} {{#is data.group_id "==" ""}}selected="selected"{{/is}} value="3">General User</option>
-					<option {{#is data.group_id "==" "4"}}selected="selected"{{/is}} value="4">Blocked</option>
-				</select>
-	    </div>
-
-		</div>
-
-
-
-
-		<div class="cf mb2">
-
-	    <div class="fl w-100 w-50-ns pr3-ns mb4">
-	      <label class="db mb2 roboto ttu b f6">First Name</label>
-	      <input class="db w-100  pa2 f5" type="text" name="first_name" value="{{data.first_name}}" />
-	      <span class="db f6 pt2"></span>
-	    </div>
-
-	    <div class="fl w-100 w-50-ns pl3-ns mb4">
-	      <label class="db mb2 roboto ttu b f6">Last Name</label>
-	      <input class="db w-100  pa2 f5" type="text" name="last_name" value="{{data.last_name}}" />
-	      <span class="db f6 pt2"></span>
-	    </div>
-
-		</div>
-
-
-
-
-		<input type="hidden" name="_id" value="{{data._id}}" />
-
-		<button rel="save"
-			data-type="user"
-			data-url="/admin/users/save"
-			data-redirect="/admin/users"
-			class="dib br2 button-submit bn roboto ttu tracked b f6 mb4">Save User</button>
-
-		{{#if data._id}}
-		&nbsp;
-		<a rel="delete"
-			data-type="user"
-			data-url="/admin/users/delete"
-			data-id="{{data._id}}"
-			data-redirect="/admin/users"
-			class="ml2 dwa-red ttu f6 b">Delete</a>
-		{{/if}}
-
 
 	</form>
+
+  <button class="br2 dib pv3 ph4 bg-near-black hover-bg-black-80 white bn mb4 pointer f5 fw7" @click="save()">Save</button>
+
+	{{#if data._id}}
+		&nbsp;&nbsp;&nbsp;
+	<span class="dib mb0-ns mb3 red no-underline pointer b f6 o-80 hover-o-100" @click="_delete()"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete User</span>
+	{{/if}}
+
 </div>
 
 
 
+<script>
 
-{{/if}}
+Dropzone.autoDiscover = false;
+var dz = [];
+
+var upload_initialize = function(id){
+	var dz_options = {
+		uploadMultiple: false,
+		acceptedFiles: "image/jpeg,image/png,image/gif",
+		maxFilesize: 10, // MB (php default)
+		url: "/utility/upload-file",
+		clickable: ".dz-" + id + " .dropzone",
+		previewTemplate:
+		'<div class="dz-preview dz-file-preview"><img data-dz-thumbnail /><div class="dz-progress-container">'+
+		'<div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div></div>'+
+		'</div>'
+	};
+
+	dz[id] = new Dropzone("#upload_" + id, dz_options);
+
+	dz[id].on('error', function(file, errorMessage){
+		smoke.alert(errorMessage, function(e){
+			dz[id].removeAllFiles(true);
+			document.querySelector(".dz-" + id + " .dz-default").style.display = '';
+		});
+	});
+
+	dz[id].on('thumbnail', function(file, dataUrl){
+		document.querySelector(".dz-" + id + " .dz-default").style.display = 'none';
+	});
+
+	dz[id].on('uploadprogress', function(file, progress){
+		if (progress == 100){
+			document.body.classList.add('working');
+		}
+	});
+
+	dz[id].on('success', function(file){
+		var response = JSON.parse(file['xhr']['responseText']);
+			if (response.error){
+				smoke.alert(response.error_message, function(e){
+					dz[id].removeAllFiles(true);
+					document.body.classList.remove('working');
+					document.querySelector(".dz-" + id + " .dz-default").style.display = '';
+				});
+			}else{
+				document.querySelector(".dz-" + id + " .preview-image").innerHTML ='<img class="new-upload" src="' + response.preview_url + '" ><div class="upload-delete" data-new="true" data-filename="' + response.filename + '" data-id="' + id + '"><img @click="delete_photo(\'' + id + '\', true)" src="/images/lib/uploader/delete.svg" /></div>';
+				document.querySelector(".dz-" + id + " .preview-image .new-upload").addEventListener('load', function(){
+					document.querySelector(".dz-" + id + " .dropzone").style.display = 'none';
+					this.style.display = '';
+					document.body.classList.remove('working');
+					document.querySelector(".dz-" + id + " .new-upload").style.display = 'flex';
+				});
+				document.querySelector(".dz-" + id).classList.remove('error');
+				if (document.querySelector('input[name="file_' + id + '"]')){
+					document.querySelector('input[name="file_' + id + '"]').value = response.filename;
+				}else{
+					var file_input = document.createElement('input');
+					file_input.setAttribute('type', 'hidden');
+					file_input.setAttribute('name', 'file_' + id);
+					file_input.setAttribute('value', response.filename);
+          document.querySelector('form').appendChild(file_input);
+				}			
+
+			}
+	});
+}
+
+if (document.querySelector(".dropzone")){
+	upload_initialize('1');
+}
+
+function users_edit() {
+  return {
+    save: function(){
+			dw.form_validate_required(function(){
+		    dw.api_request({
+			    url: '/admin/users/save/',
+			    data: {
+				    user_id: Cookies.get('user_id'),
+				    _id: '{{data._id}}',
+						form: dw.serialize(document.querySelector('form'))
+			    },
+			    callback: function(r){
+						window.location.href = '/admin/users/';
+					}
+				});
+			});
+    },
+    _delete: function(){
+			smoke.confirm("Are you sure you want to delete this user?", function(e){
+			  if (e){
+					document.body.classList.add('working');
+			    dw.api_request({
+				    url: '/admin/users/delete/',
+				    data: {
+					    _id: '{{data._id}}',
+				    },
+				    callback: function(r){
+							window.location.href = '/admin/users/';
+						}
+					});
+			  }
+			}, {
+				ok: "Delete",
+			  reverseButtons: true,
+			});
+		},
+		delete_photo: function(id, reset_upload){
+			var ths = this;
+			smoke.confirm("Are you sure you want to delete this photo?", function(e){
+			  if (e){
+					if (reset_upload){
+						var filename = document.querySelector('[data-new="true"]').getAttribute('data-filename');
+						dz[id].removeAllFiles(true);
+						document.querySelector(".dz-" + id + " .dz-default").style.display = '';
+						document.querySelector(".dz-" + id + " .dropzone").style.display = '';
+						document.querySelector(".dz-" + id + " .new-upload").style.display = 'none';
+						document.querySelector(".dz-" + id + " .dropzone").style.display = '';
+						document.querySelector(".dz-" + id + " .preview-image").innerHTML = '';
+						document.querySelector("input[name='file_" + id + "']").remove();
+				    dw.api_request({
+					    url: '/utility/delete-upload',
+					    data: {
+				        filename: filename
+					    }
+						});
+					}else{
+						document.querySelector(".dz-" + id + " .preview-image").innerHTML = '';					
+						document.querySelector(".dz-" + id).insertAdjacentHTML('beforeend', '<div class="dropzone" id="upload_' + id + '" data-id="' + id + '"></div>');
+						upload_initialize(id);
+						if (document.querySelector('input[name="file_' + id + '"]')){
+							document.querySelector('input[name="file_' + id + '"]').value = 'DELETE';
+						}else{
+							var file_input = document.createElement('input');
+							file_input.setAttribute('type', 'hidden');
+							file_input.setAttribute('name', 'file_' + id);
+							file_input.setAttribute('value', 'DELETE');
+		          document.querySelector('form').appendChild(file_input);
+						}						
+					}
+			  }
+			}, {
+				ok: "Delete",
+			  reverseButtons: true,
+			});
+		}
+  }
+}
+</script>
+
+

@@ -2,12 +2,53 @@
 
 require 'stereo/darkwave/phmagick/phmagick.php';
 
+// only show errors, not warnings
+error_reporting(E_ERROR | E_PARSE);
+
+// utilities for dev mode only
+if ($GLOBALS['settings']['mode'] == 'development'){
+
+	$app->get('/uuid/?', function(){
+		echo uniqid(uniqid());
+	});
+
+	$app->get('/db-structure', function(){
+		$tf = '';
+		echo "<div style='line-height: 180%; padding: 2rem;'>";
+		foreach ($GLOBALS['database']->query('show tables')->fetchAll(PDO::FETCH_ASSOC) as $table){
+			$table_name = $table['Tables_in_' . $GLOBALS['settings']['database']['name']];
+			$tf .= $table_name . "\n";
+			echo "<h1>" . $table_name . "</h1>";
+			$_fields = array();
+			foreach ($GLOBALS['database']->query('DESCRIBE ' . $table_name)->fetchAll(PDO::FETCH_ASSOC) as $field){
+				if ($field['Field'] != 'id'){
+					$_fields[] = array($field['Field'] => $field['Type']);
+					$tf .= '  ' . $field['Field'] . '		' . $field['Type'] . "\n";
+					echo '<span style="display: inline-block; width: 250px;">' . $field['Field'] . '</span> <span>' . $field['Type'] . '</span><br />';
+				}
+			}
+			$_tables[] = array(
+				$table_name => $_fields
+			);
+
+			$tf .= "\n";	
+			echo "<br /><br />";	
+		}
+		echo "</div>";	
+		// $fp = fopen('data.txt', 'w');
+		// fwrite($fp, $tf);
+		// fclose($fp);
+	});
+
+}
+
+
 
 $app->post('/utility/upload-file', function(){
 
   if ($_FILES['file']['error'] == 0){
-
-		$filename_clean_full = uniqid(uniqid()) . '||-||' . $GLOBALS['app']->url_slug($_FILES['file']['name']);
+		$filename_clean = $GLOBALS['app']->url_slug($_FILES['file']['name']);
+		$filename_clean_full = uniqid(uniqid()) . '||-||' . $filename_clean;
 		$upload_path = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
     $target = $upload_path . $filename_clean_full;
 
@@ -25,6 +66,7 @@ $app->post('/utility/upload-file', function(){
 
 					$out = array(
 						'filename' => $filename_clean_full,
+						'filename_clean' => $filename_clean,
 						'preview_url' => '/uploads/' . $filename_clean_full,
 			      'success' => true,
 			      'error' => false,

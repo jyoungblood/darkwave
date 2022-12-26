@@ -134,8 +134,6 @@ $app->post('/register/process', function(){
 			'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
 			'group_id' => '3',
 			'date_created' => time(),
-
-			'url_slug' => $GLOBALS['app']->url_slug($_POST['screenname']),
 			'screenname' => $_POST['screenname'],
 			'validate_hash' => $hash
 		));
@@ -274,22 +272,29 @@ $app->post('/auth/login/process', function(){
 			  'date_last_login' => time()
 			), "_id='".$user['_id']."'");
 
+			$auth_token = password_hash($GLOBALS['site_code'].'-'.$user['_id'], PASSWORD_BCRYPT);
+
 			// send success data
 			$out = array(
 				'success' => true,
 				'user_id' => $user['_id'],
+				'user_avatar' => $user['avatar_small'],
 				'group_id' => $user['group_id'],
-				'url_slug' => $user['url_slug'],
 				'redirect' => $_POST['redirect'],
-				'auth_token' => password_hash($GLOBALS['site_code'].'-'.$user['_id'], PASSWORD_BCRYPT)
+				'auth_token' => $auth_token
 			);
 
+			$GLOBALS['app']->cookie_set('user_id', $user['_id']);
+			$GLOBALS['app']->cookie_set('auth_token', $auth_token);
+			$GLOBALS['app']->cookie_set('user_avatar', $user['avatar_small']);
 			if ($user['group_id'] == 1){
 				$out['admin_token'] = password_hash($GLOBALS['site_code'], PASSWORD_BCRYPT);
+				$GLOBALS['app']->cookie_set('admin_token', $out['admin_token']);
 			}
 
 			if ($user['group_id'] == 2){
 				$out['moderator_token'] = password_hash($GLOBALS['site_code'].'-moderator', PASSWORD_BCRYPT);
+				$GLOBALS['app']->cookie_set('moderator_token', $out['moderator_token']);
 			}
 
 		}else{
@@ -333,7 +338,7 @@ $app->post('/auth/login/process', function(){
 $app->get('/logout/?', function(){
 
 	$GLOBALS['app']->cookie_delete('user_id');
-	$GLOBALS['app']->cookie_delete('url_slug');
+	$GLOBALS['app']->cookie_delete('user_avatar');
 	$GLOBALS['app']->cookie_delete('auth_token');
 	$GLOBALS['app']->cookie_delete('admin_token');
 	$GLOBALS['app']->cookie_delete('moderator_token');
@@ -384,7 +389,6 @@ $app->post('/account/settings/process', function(){
 	$input = array(
 		'email' => strtolower($_POST['email']),
 		'screenname' => $_POST['screenname'],
-		'url_slug' => $GLOBALS['app']->url_slug($_POST['screenname']),
 		'first_name' => $_POST['first_name'],
 		'last_name' => $_POST['last_name']
 	);
