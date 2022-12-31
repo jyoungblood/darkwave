@@ -1,18 +1,21 @@
 <?php
 
+use Slime\render;
+use Slime\db;
+use Slime\x;
+use Slime\cookie;
 
 
+$app->get('/admin/users[/]', function ($req, $res, $args) {
 
-$app->get('/admin/users/?', function(){
+	$_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
 
-	$_users = db_find("users", "id IS NOT NULL ORDER BY email ASC");
-
-	$GLOBALS['app']->render_template(array(
-		'layout' => 'admin',
+	return render::hbs($req, $res, array(
+		'layout' => '_layouts/admin',
 		'template' => 'admin/users-list',
     'title' => 'Users - ' . $GLOBALS['site_title'] .' Admin',
 		'data' => array(
-	    'ip' => $GLOBALS['app']->client_ip(),
+	    'ip' => x::client_ip(),
 	    'current_users' => true,
 	    'current_system' => true,
 	    'users'=> $_users['data']
@@ -30,9 +33,9 @@ $app->get('/admin/users/?', function(){
 
 
 
-$app->get('/admin/users/edit/[*:user_id]/?', function($user_id){
+$app->get('/admin/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
-	$_data = db_find("users", "_id='".$user_id."'");
+	$_data = db::find("users", "_id='".$args['user_id']."'");
 
 	$data = $_data['data'][0];
 
@@ -49,8 +52,8 @@ $app->get('/admin/users/edit/[*:user_id]/?', function($user_id){
 		}
 	}
 
-	$GLOBALS['app']->render_template(array(
-		'layout' => 'admin',
+	return render::hbs($req, $res, array(
+		'layout' => '_layouts/admin',
 		'template' => 'admin/users-edit',
     'title' => $title,
 		'data' => array(
@@ -73,7 +76,7 @@ $app->get('/admin/users/edit/[*:user_id]/?', function($user_id){
 
 
 
-$app->post('/admin/users/save/?', function(){
+$app->post('/admin/users/save[/]', function ($req, $res, $args) {
 
 	if ($GLOBALS['is_admin']){
 
@@ -83,7 +86,7 @@ $app->post('/admin/users/save/?', function(){
 		$input = array(
 			'email' => strtolower($form['email']),
 			'group_id' => $form['group_id'],
-			'url_slug' => $GLOBALS['app']->url_slug($form['screenname']),
+			'url_slug' => x::url_slug($form['screenname']),
 			'screenname' => $form['screenname'],
 			'first_name' => $form['first_name'],
 			'last_name' => $form['last_name'],
@@ -96,16 +99,16 @@ $app->post('/admin/users/save/?', function(){
 	  if ($_POST['_id'] == ''){
 		  $input['date_created'] = time();
 		  $input['_id'] = uniqid(uniqid());
-			db_insert("users", $input);
+			db::insert("users", $input);
 			$user_id = $input['_id'];
 	  }else{
-			db_update("users", $input, "_id='".$_POST['_id']."'");
+			db::update("users", $input, "_id='".$_POST['_id']."'");
 			$user_id = $_POST['_id'];
 	  }
 	
 	  if ($form['file_1']){
 			if ($form['file_1'] == 'DELETE'){
-				$user = db_find("users", "_id='".$user_id."'");
+				$user = db::find("users", "_id='".$user_id."'");
 				if ($user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
 					unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
 					unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
@@ -119,10 +122,10 @@ $app->post('/admin/users/save/?', function(){
 					'avatar_original' => '/images/users/avatar-default-o.png',
 				);
 				if ($user_id == $GLOBALS['user_id']){
-					$GLOBALS['app']->cookie_set('user_avatar', '/images/users/avatar-default-s.png');
+					cookie::set('user_avatar', '/images/users/avatar-default-s.png');
 				}
 			}else{
-				$user = db_find("users", "_id='".$user_id."'");
+				$user = db::find("users", "_id='".$user_id."'");
 				if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
 					unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
 					unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
@@ -161,17 +164,19 @@ $app->post('/admin/users/save/?', function(){
 					'avatar_original' => '/images/users/' . $filename_original,
 				);
 				if ($user_id == $GLOBALS['user_id']){
-					$GLOBALS['app']->cookie_set('user_avatar', '/images/users/' . $filename_small);
+					cookie::set('user_avatar', '/images/users/' . $filename_small);
 				}
 			}
-			db_update("users", $photo_input, "_id='".$user_id."'");
+			db::update("users", $photo_input, "_id='".$user_id."'");
 		}
 
 	}
 
-	$GLOBALS['app']->render_json(array(
-		'success' => true
-	));
+	return render::json($req, $res, [
+    'data' => array(
+      'success' => true
+    )
+  ]);
 
 });
 
@@ -181,21 +186,24 @@ $app->post('/admin/users/save/?', function(){
 
 
 
-$app->post('/admin/users/delete/?', function(){
+$app->post('/admin/users/delete[/]', function ($req, $res, $args) {
 
 	if ($GLOBALS['is_admin']){
-		$user = db_find("users", "_id='".$_POST['_id']."'");
+		$user = db::find("users", "_id='".$_POST['_id']."'");
 		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_original']);
 		}
-		db_delete("users", "_id='".$_POST['_id']."'");
+		db::delete("users", "_id='".$_POST['_id']."'");
 	}
 
-	$GLOBALS['app']->render_json(array(
-		'success' => true
-	));
+
+  return render::json($req, $res, [
+    'data' => array(
+      'success' => true
+    )
+  ]);
 
 });

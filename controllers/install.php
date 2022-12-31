@@ -1,9 +1,11 @@
 <?php
 
+use Slime\render;
+use Slime\x;
+use Slime\db;
 
-$app->post('/install', function(){
 
-
+$app->post('/install[/]', function ($req, $res, $args) {
 
 	// 1. make the settings file
 
@@ -14,14 +16,24 @@ $app->post('/install', function(){
 $GLOBALS[\'site_title\'] = \''.$_POST['site_title'].'\';
 $GLOBALS[\'site_code\'] = \''.$_POST['site_code'].'\';
 $GLOBALS[\'site_url\'] = \''.$_POST['site_url'].'\';
-$GLOBALS[\'settings\'][\'mode\'] = \'development\';';
+$GLOBALS[\'settings\'][\'mode\'] = \'development\';
+
+$GLOBALS[\'locals\'] = [
+  \'year\' => date(\'Y\'),
+  \'site_title\' => $GLOBALS[\'site_title\'],
+  \'site_code\' => $GLOBALS[\'site_code\'],
+  \'site_url\' => $GLOBALS[\'site_url\'],
+];
+';
 
 	if ($_POST['db_host'] && $_POST['db_name']){
 		$settings_file .= '
-$GLOBALS[\'settings\'][\'database\'][\'host\'] = \''.$_POST['db_host'].'\';
-$GLOBALS[\'settings\'][\'database\'][\'name\'] = \''.$_POST['db_name'].'\';
-$GLOBALS[\'settings\'][\'database\'][\'user\'] = \''.$_POST['db_user'].'\';
-$GLOBALS[\'settings\'][\'database\'][\'password\'] = \''.$_POST['db_password'].'\';';
+$GLOBALS[\'settings\'][\'database\'] = [
+  \'host\' => \''.$_POST['db_host'].'\',
+  \'name\' => \''.$_POST['db_name'].'\',
+  \'user\' => \''.$_POST['db_user'].'\',
+  \'password\' => \''.$_POST['db_password'].'\'
+];';
 	}
 
 	file_put_contents("./settings.php", $settings_file);
@@ -38,9 +50,13 @@ $GLOBALS[\'settings\'][\'database\'][\'password\'] = \''.$_POST['db_password'].'
 		$db_install = true;
 
 		try {
-			$GLOBALS['database'] = new PDO("mysql:host=".$_POST['db_host'].";dbname=".$_POST['db_name'], $_POST['db_user'], $_POST['db_password']);
 
-			$GLOBALS['database']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $GLOBALS['database'] = db::init([
+        'host' => $_POST['db_host'],
+        'name' => $_POST['db_name'],
+        'user' => $_POST['db_user'],
+        'password' => $_POST['db_password']
+      ]);
 
 			$sql = "CREATE TABLE users (
 			id INT(255) NOT NULL AUTO_INCREMENT,
@@ -79,13 +95,13 @@ $GLOBALS[\'settings\'][\'database\'][\'password\'] = \''.$_POST['db_password'].'
 		// 3. insert the admin user
 		if ($_POST['user_email']){
 			if (!$error){
-				db_insert("users", array(
+				db::insert("users", array(
 					'_id' => uniqid(uniqid()),
 					'email' => strtolower($_POST['user_email']),
 					'password' => password_hash($_POST['user_password'], PASSWORD_BCRYPT),
 					'group_id' => '1',
 					'date_created' => time(),
-					'url_slug' => $GLOBALS['app']->url_slug($_POST['user_screenname']),
+					'url_slug' => x::url_slug($_POST['user_screenname']),
 					'screenname' => $_POST['user_screenname'],
 				));
 			}
@@ -98,18 +114,22 @@ $GLOBALS[\'settings\'][\'database\'][\'password\'] = \''.$_POST['db_password'].'
 	// 4. show success/failure
 
 	if ($error){
-		$GLOBALS['app']->render_template(array(
-			'template' => 'index',
-			'site_title' => false,
-	    'title' => 'INSTALL',
-	    'error' => $error
-		));
+
+    return render::hbs($req, $res, [
+      'layout' => '_layouts/base',
+      'template' => 'index',
+      'title' => $GLOBALS['site_title'] ? $GLOBALS['site_title'] : 'Install Darkwave',
+      'data' => [
+        'error' => $error
+      ]
+    ]);
+
 	}else{
 		unlink("controllers/install.php");
 		if ($db_install){
-			header("Location: /admin");
+      return $res->withHeader('Location', '/admin')->withStatus(302);
 		}else{
-			header("Location: /");
+      return $res->withHeader('Location', '/')->withStatus(302);
 		}
 
 	}

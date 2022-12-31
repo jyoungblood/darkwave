@@ -1,16 +1,21 @@
 <?php
 
 
+use Slime\render;
+use Slime\cookie;
+use Slime\x;
+use Slime\db;
 
 
-$app->get('/login/?', function(){
+$app->get('/login[/]', function ($req, $res, $args) {
 
-	$GLOBALS['app']->render_template(array(
+	return render::hbs($req, $res, array(
+    'layout' => '_layouts/base',
 		'template' => 'auth/auth-login',
     'title' => 'Log In - ' . $GLOBALS['site_title'],
     'data' => array(
 	    'current_login' => true,
-	    'ip' => $GLOBALS['app']->client_ip(),
+	    'ip' => x::client_ip(),
 	    'redirect' => $_GET['redirect'] == 'home' ? "/" : $_SERVER['HTTP_REFERER']
 		)
 	));
@@ -24,9 +29,10 @@ $app->get('/login/?', function(){
 
 
 
-$app->get('/register/?', function(){
+$app->get('/register[/]', function ($req, $res, $args) {
 
-	$GLOBALS['app']->render_template(array(
+	return render::hbs($req, $res, array(
+    'layout' => '_layouts/base',
 		'template' => 'auth/auth-register',
     'title' => 'Register - ' . $GLOBALS['site_title'],
     'data' => array(
@@ -44,9 +50,10 @@ $app->get('/register/?', function(){
 
 
 
-$app->get('/forgot/?', function(){
+$app->get('/forgot[/]', function ($req, $res, $args) {
 
-	$GLOBALS['app']->render_template(array(
+	return render::hbs($req, $res, array(
+    'layout' => '_layouts/base',
 		'template' => 'auth/auth-forgot',
     'title' => 'Forgot Password - ' . $GLOBALS['site_title'],
 	));
@@ -62,13 +69,14 @@ $app->get('/forgot/?', function(){
 
 
 
-$app->get('/forgot/reset/[*:hash]', function($hash){
+$app->get('/forgot/reset/{hash}[/]', function ($req, $res, $args) {
 
-	$GLOBALS['app']->render_template(array(
+	return render::hbs($req, $res, array(
+    'layout' => '_layouts/base',
 		'template' => 'auth/auth-feedback',
     'title' => 'New Password - ' . $GLOBALS['site_title'],
 		'data' => array(
-	    'hash' => $hash,
+	    'hash' => $args['hash'],
 			'forgot_reset' => true,
 		)
 	));
@@ -86,17 +94,18 @@ $app->get('/forgot/reset/[*:hash]', function($hash){
 
 
 
-$app->get('/register/activate/[*:hash]', function($hash){
+$app->get('/register/activate/{hash}[/]', function ($req, $res, $args) {
 
-	$_user = db_find("users", "validate_hash='".$hash."'");
+	$_user = db::find("users", "validate_hash='".$args['hash']."'");
 
 	if ($_user['data']){
-		db_update("users", array(
+		db::update("users", array(
 		  'validate_hash' => NULL
-		), "validate_hash='".$hash."'");
+		), "validate_hash='".$args['hash']."'");
 	}
 
-	$GLOBALS['app']->render_template(array(
+	return render::hbs($req, $res, array(
+    'layout' => '_layouts/base',
 		'template' => 'auth/auth-feedback',
     'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
     'data' => array(
@@ -122,13 +131,13 @@ $app->get('/register/activate/[*:hash]', function($hash){
 
 
 
-$app->post('/register/process', function(){
+$app->post('/register/process[/]', function ($req, $res, $args) {
 
 	if (!$_POST['website'] && $_POST['email'] != ''){
 
 		$hash = uniqid(uniqid());
 
-		db_insert("users", array(
+		db::insert("users", array(
 			'_id' => uniqid(uniqid()),
 			'email' => strtolower($_POST['email']),
 			'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
@@ -142,14 +151,15 @@ $app->post('/register/process', function(){
 		"In order to complete your account setup, we will need to verify your email address. Please click the link below and we can activate your account:\r\r".
 		"http://".$GLOBALS['site_url']."/register/activate/".$hash;
 
-		$GLOBALS['app']->email_send(array(
+		x::email_send(array(
 		  'to' => strtolower($_POST['email']),
 		  'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
 		  'subject' => 'Activate your new account',
 		  'message' => $message
 		));
 
-		$GLOBALS['app']->render_template(array(
+		return render::hbs($req, $res, array(
+      'layout' => '_layouts/base',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Register - ' . $GLOBALS['site_title'],
 	    'data' => array(
@@ -158,7 +168,7 @@ $app->post('/register/process', function(){
 		));
 
 	}else{
-		header("Location: /");
+    return $res->withHeader('Location', '/')->withStatus(302);
 	}
 
 });
@@ -175,20 +185,20 @@ $app->post('/register/process', function(){
 
 
 
-$app->post('/forgot/process', function(){
+$app->post('/forgot/process[/]', function ($req, $res, $args) {
 
 	if (!$_POST['website']){
 
 		$hash = uniqid(uniqid());
 
-		db_update("users", array(
+		db::update("users", array(
 			'password_hash' => $hash
 		), "email='".strtolower($_POST['email'])."'");
 
 		$message = "Here's the link to reset the password for your account at ".$GLOBALS['site_title'].".\r\r".
 		"http://".$GLOBALS['site_url']."/forgot/reset/".$hash;
 
-		$GLOBALS['app']->email_send(array(
+		x::email_send(array(
 		  'to' => strtolower($_POST['email']),
 		  'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
 		  'subject' => 'Reset your password',
@@ -196,7 +206,8 @@ $app->post('/forgot/process', function(){
 		));
 
 
-		$GLOBALS['app']->render_template(array(
+		return render::hbs($req, $res, array(
+      'layout' => '_layouts/base',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Reset Password - ' . $GLOBALS['site_title'],
 		  'data' => array(
@@ -205,7 +216,7 @@ $app->post('/forgot/process', function(){
 		));
 
 	}else{
-		header("Location: /");
+    return $res->withHeader('Location', '/')->withStatus(302);
 	}
 
 });
@@ -221,16 +232,17 @@ $app->post('/forgot/process', function(){
 
 
 
-$app->post('/forgot/reset/process', function(){
+$app->post('/forgot/reset/process[/]', function ($req, $res, $args) {
 
 	if (!$_POST['website']){
 
-		db_update("users", array(
+		db::update("users", array(
 			'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
 			'password_hash' => NULL
 		), "password_hash='".$_POST['hash']."'");
 
-		$GLOBALS['app']->render_template(array(
+		return render::hbs($req, $res, array(
+      'layout' => '_layouts/base',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Password Reset Successfully - ' . $GLOBALS['site_title'],
 	    'data' => array(
@@ -239,7 +251,7 @@ $app->post('/forgot/reset/process', function(){
 		));
 
 	}else{
-		header("Location: /");
+    return $res->withHeader('Location', '/')->withStatus(302);
 	}
 
 });
@@ -253,12 +265,12 @@ $app->post('/forgot/reset/process', function(){
 
 
 
-$app->post('/auth/login/process', function(){
+$app->post('/auth/login/process[/]', function ($req, $res, $args) {
 
 	$email = $_POST['email'];
 	$password = $_POST['password'];
 
-	$_user = db_find("users", "email='".strtolower($email)."' OR screenname='".strtolower($email)."' AND validate_hash IS NULL");
+	$_user = db::find("users", "email='".strtolower($email)."' OR screenname='".strtolower($email)."' AND validate_hash IS NULL");
 	if ($_user['data'] && !$_POST['website']){
 		$user = $_user['data'][0];
 
@@ -266,7 +278,7 @@ $app->post('/auth/login/process', function(){
 		if ($user['group_id'] != 4 && password_verify($password, $user['password'])){
 
 			// update user info
-			db_update("users", array(
+			db::update("users", array(
 			  'ua_header' => $_POST['ua'],
 			  'ip_address' => $_POST['ip'],
 			  'date_last_login' => time()
@@ -283,18 +295,17 @@ $app->post('/auth/login/process', function(){
 				'redirect' => $_POST['redirect'],
 				'auth_token' => $auth_token
 			);
-
-			$GLOBALS['app']->cookie_set('user_id', $user['_id']);
-			$GLOBALS['app']->cookie_set('auth_token', $auth_token);
-			$GLOBALS['app']->cookie_set('user_avatar', $user['avatar_small']);
+			cookie::set('user_id', $user['_id']);
+			cookie::set('auth_token', $auth_token);
+			cookie::set('user_avatar', $user['avatar_small']);
 			if ($user['group_id'] == 1){
 				$out['admin_token'] = password_hash($GLOBALS['site_code'], PASSWORD_BCRYPT);
-				$GLOBALS['app']->cookie_set('admin_token', $out['admin_token']);
+				cookie::set('admin_token', $out['admin_token']);
 			}
 
 			if ($user['group_id'] == 2){
 				$out['moderator_token'] = password_hash($GLOBALS['site_code'].'-moderator', PASSWORD_BCRYPT);
-				$GLOBALS['app']->cookie_set('moderator_token', $out['moderator_token']);
+				cookie::set('moderator_token', $out['moderator_token']);
 			}
 
 		}else{
@@ -318,7 +329,9 @@ $app->post('/auth/login/process', function(){
 		);
 	}
 
-	$GLOBALS['app']->render_json($out);
+	return render::json($req, $res, [
+    'data' => $out
+  ]);
 
 });
 
@@ -335,15 +348,15 @@ $app->post('/auth/login/process', function(){
 
 
 
-$app->get('/logout/?', function(){
+$app->get('/logout[/]', function ($req, $res, $args) {
 
-	$GLOBALS['app']->cookie_delete('user_id');
-	$GLOBALS['app']->cookie_delete('user_avatar');
-	$GLOBALS['app']->cookie_delete('auth_token');
-	$GLOBALS['app']->cookie_delete('admin_token');
-	$GLOBALS['app']->cookie_delete('moderator_token');
+  cookie::delete('user_id');
+	cookie::delete('user_avatar');
+	cookie::delete('auth_token');
+	cookie::delete('admin_token');
+	cookie::delete('moderator_token');
 
-	header("Location: /");
+  return $res->withHeader('Location', '/')->withStatus(302);
 
 });
 
@@ -361,11 +374,12 @@ $app->get('/logout/?', function(){
 
 
 
-$app->get('/account/settings', function(){
+$app->get('/account/settings[/]', function ($req, $res, $args) {
 
-	$user_data = db_find("users", "_id='".$GLOBALS['app']->cookie_get('user_id')."'");
+	$user_data = db::find("users", "_id='".cookie::get('user_id')."'");
 
-	$GLOBALS['app']->render_template(array(
+	return render::hbs($req, $res, array(
+    'layout' => '_layouts/base',
 		'template' => 'auth/auth-settings',
     'title' => 'Account Settings - ' . $GLOBALS['site_title'],
     'data' => array(
@@ -384,7 +398,7 @@ $app->get('/account/settings', function(){
 
 
 
-$app->post('/account/settings/process', function(){
+$app->post('/account/settings/process[/]', function ($req, $res, $args) {
 
 	$input = array(
 		'email' => strtolower($_POST['email']),
@@ -397,12 +411,12 @@ $app->post('/account/settings/process', function(){
 		$input['password'] = password_hash($_POST['password'], PASSWORD_BCRYPT);
 	}
 
+	db::update("users", $input, "_id='".cookie::get('user_id')."'");
 
-	db_update("users", $input, "_id='".$GLOBALS['app']->cookie_get('user_id')."'");
+	$user_data = db::find("users", "_id='".cookie::get('user_id')."'");
 
-	$user_data = db_find("users", "_id='".$GLOBALS['app']->cookie_get('user_id')."'");
-
-	$GLOBALS['app']->render_template(array(
+	return render::hbs($req, $res, array(
+    'layout' => '_layouts/base',
 		'template' => 'auth/auth-settings',
     'title' => 'Account Settings - ' . $GLOBALS['site_title'],
     'data' => array(
@@ -429,7 +443,7 @@ $app->post('/account/settings/process', function(){
 
 
 
-$app->post('/auth/validate-unique', function(){
+$app->post('/auth/validate-unique[/]', function ($req, $res, $args) {
 
 	$out = array(
 		'error' => false,
@@ -437,7 +451,7 @@ $app->post('/auth/validate-unique', function(){
 	);
 
 	if ($_POST['type'] == 'email'){
-		$user = db_find("users", "email='".strtolower($_POST['value'])."'");
+		$user = db::find("users", "email='".strtolower($_POST['value'])."'");
 		if ($user['data']){
 			if ($_POST['user_id'] == $user['data'][0]['_id']){
 				// return true
@@ -457,7 +471,7 @@ $app->post('/auth/validate-unique', function(){
 
 
 	if ($_POST['type'] == 'screenname'){
-		$user = db_find("users", "screenname='".$_POST['value']."'");
+		$user = db::find("users", "screenname='".$_POST['value']."'");
 		if ($user['data']){
 			if ($_POST['user_id'] == $user['data'][0]['_id']){
 				// return true
@@ -475,7 +489,9 @@ $app->post('/auth/validate-unique', function(){
 	}
 
 
-	$GLOBALS['app']->render_json($out);
+	return render::json($req, $res, [
+    'data' => $out
+  ]);
 
 });
 

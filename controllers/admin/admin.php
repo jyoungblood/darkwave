@@ -1,9 +1,9 @@
 <?php
 
+use Slime\render;
+use Slime\x;
 
-
-
-$app->get('/admin/?', function(){
+$app->get('/admin[/]', function ($req, $res, $args) {
 
 	$title = $GLOBALS['site_title'] .' Admin';
 
@@ -11,13 +11,14 @@ $app->get('/admin/?', function(){
 		$title = 'Log In - ' . $title;
 	}
 
-	$GLOBALS['app']->render_template(array(
-		'layout' => 'admin',
+
+	return render::hbs($req, $res, array(
+		'layout' => '_layouts/admin',
 		'template' => 'admin/index',
     'title' => $title,
 		'data' => array(
 			'current_home' => true,
-	    'ip' => $GLOBALS['app']->client_ip(),
+	    'ip' => x::client_ip(),
 	    'install_deleted' => file_exists('./controllers/install.php') ? false : true
 		)
 	));

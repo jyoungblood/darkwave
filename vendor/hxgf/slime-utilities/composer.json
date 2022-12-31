@@ -1,0 +1,19 @@
+{
+	"name": "hxgf/slime-utilities",
+  "homepage": "https://github.com/hxgf/slime-utilities",
+	"description": "Enhancement utilities for developing with Slim framework",
+	"type": "library",
+  "license": "MIT",
+	"authors": [
+		{
+      "name": "Jonathan Youngblood",
+      "email": "jy@hxgf.io"
+		}
+	],
+	"keywords": ["metaframework", "utilities", "collection", "abstraction"],
+	"autoload": {
+		"psr-4": {
+			"Slime\\": ["src/"]
+		}
+	}
+}

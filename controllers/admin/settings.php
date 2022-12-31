@@ -1,12 +1,12 @@
 <?php
 
+use Slime\render;
 
 
+$app->get('/admin/settings[/]', function ($req, $res, $args) {
 
-$app->get('/admin/settings/?', function(){
-
-	$GLOBALS['app']->render_template(array(
-		'layout' => 'admin',
+	return render::hbs($req, $res, array(
+		'layout' => '_layouts/admin',
 		'template' => 'admin/settings',
     'title' => 'Settings - ' . $GLOBALS['site_title'] .' Admin',
 		'data' => array(
@@ -22,31 +22,41 @@ $app->get('/admin/settings/?', function(){
 
 
 
-$app->post('/admin/settings/save/?', function(){
+$app->post('/admin/settings/save[/]', function ($req, $res, $args) {
 
 	if ($GLOBALS['is_admin']){
 
 		$form = array();
 		parse_str($_POST['form'],$form);
 
-		$settings_file = '<?php
+
+	$settings_file = '<?php
 
 // WARNING: THIS FILE IS GENERATED PROGRAMMATICALLY. ANY CHANGES YOU MAKE MAY BE OVERWRITTEN.
 
 $GLOBALS[\'site_title\'] = \''.$form['site_title'].'\';
 $GLOBALS[\'site_code\'] = \''.$form['site_code'].'\';
 $GLOBALS[\'site_url\'] = \''.$form['site_url'].'\';
-$GLOBALS[\'settings\'][\'mode\'] = \''.$form['mode'].'\';';
+$GLOBALS[\'settings\'][\'mode\'] = \'development\';
 
+$GLOBALS[\'locals\'] = [
+  \'year\' => date(\'Y\'),
+  \'site_title\' => $GLOBALS[\'site_title\'],
+  \'site_code\' => $GLOBALS[\'site_code\'],
+  \'site_url\' => $GLOBALS[\'site_url\'],
+];
+';
 
-		if ($form['db_host']){
+	if ($form['db_host'] && $form['db_name']){
 		$settings_file .= '
+$GLOBALS[\'settings\'][\'database\'] = [
+  \'host\' => \''.$form['db_host'].'\',
+  \'name\' => \''.$form['db_name'].'\',
+  \'user\' => \''.$form['db_user'].'\',
+  \'password\' => \''.$form['db_password'].'\'
+];';
+	}
 
-$GLOBALS[\'settings\'][\'database\'][\'host\'] = \''.$form['db_host'].'\';
-$GLOBALS[\'settings\'][\'database\'][\'name\'] = \''.$form['db_name'].'\';
-$GLOBALS[\'settings\'][\'database\'][\'user\'] = \''.$form['db_user'].'\';
-$GLOBALS[\'settings\'][\'database\'][\'password\'] = \''.$form['db_password'].'\';';
-		}
 
 		if ($form['mailgun_api_key']){
 			$settings_file .= '
@@ -103,9 +113,10 @@ $GLOBALS[\'settings\'][\'imap\'][\'tls\'] = \''.$form['imap_tls'].'\';';
 		file_put_contents("./settings.php", $settings_file);
 
 	}
-
-	$GLOBALS['app']->render_json(array(
-		'success' => true
-	));
+	return render::json($req, $res, [
+    'data' => array(
+      'success' => true
+    )
+  ]);
 
 });
