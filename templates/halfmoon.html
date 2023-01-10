@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+    <!-- Chrome, Firefox OS and Opera mobile address bar theming -->
+    <meta name="theme-color" content="#000000">
+    <!-- Windows Phone mobile address bar theming -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <!-- iOS Safari mobile address bar theming -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+
+
+
+    <!-- DW -->
+    {{> favicons}}
+
+    <!-- Favicon and title -->
+    <!-- <link rel="icon" href="path/to/fav.png"> -->
+    <title>{{title}}</title>
+
+    <!-- Halfmoon -->
+    <link href="/css/lib/halfmoon-variables.min.css" rel="stylesheet" />
+
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <!-- Roboto font (Used when Apple system fonts are not available) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Documentation styles -->
+    <link href="https://www.gethalfmoon.com/static/site/css/documentation-styles-4.css" rel="stylesheet">
+
+
+    <!-- to disable all animations -->
+    <style>
+/* 
+      * {
+        -webkit-transition: none !important;
+        -moz-transition: none !important;
+        -o-transition: none !important;
+        transition: none !important;        
+      }
+       */
+    </style>
+
+</head>
+
+<body class=" with-custom-webkit-scrollbars with-custom-css-scrollbars" data-dm-shortcut-enabled="true" data-sidebar-shortcut-enabled="true">
+
+    <!-- Page wrapper start -->
+    <div id="page-wrapper" class="page-wrapper with-navbar with-sidebar with-navbar-fixed-bottom" data-sidebar-type="overlayed-sm-and-down">
+
+        <!-- Sticky alerts -->
+        <div class="sticky-alerts"></div>
+
+        <!-- Navbar start -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <button id="toggle-sidebar-btn" class="btn btn-action" type="button" onclick="halfmoon.toggleSidebar()">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+            <a href="#" class="navbar-brand ml-10 ml-sm-20">
+                <img src="https://www.gethalfmoon.com/static/site/img/fake-logo.svg" alt="fake-logo">
+                <span class="d-none d-sm-flex">Brand</span>
+            </a>
+            <div class="navbar-content ml-auto">
+                <button class="btn btn-action mr-5" type="button" onclick="halfmoon.toggleDarkMode()">
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                    <span class="sr-only">Toggle dark mode</span>
+                </button>
+                <a href="#" class="btn btn-primary" role="button">Get started</a>
+            </div>
+        </nav>
+        <!-- Navbar end -->
+
+        <!-- Sidebar overlay -->
+        <div class="sidebar-overlay" onclick="halfmoon.toggleSidebar()"></div>
+
+        <!-- Sidebar start -->
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <div class="sidebar-content">
+                    <input type="text" class="form-control" placeholder="Search">
+                    <div class="mt-10 font-size-12">
+                        Press <kbd>/</kbd> to focus
+                    </div>
+                </div>
+                <h5 class="sidebar-title">Getting started</h5>
+                <div class="sidebar-divider"></div>
+                <a href="#" class="sidebar-link sidebar-link-with-icon active">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-code" aria-hidden="true"></i>
+                    </span>
+                    Installation
+                </a>
+                <a href="#" class="sidebar-link sidebar-link-with-icon">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-terminal" aria-hidden="true"></i>
+                    </span>
+                    CLI commands
+                </a>
+                <br />
+                <h5 class="sidebar-title">Components</h5>
+                <div class="sidebar-divider"></div>
+                <a href="#" class="sidebar-link sidebar-link-with-icon">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-folder-open-o" aria-hidden="true"></i>
+                    </span>
+                    File explorer
+                </a>
+                <a href="#" class="sidebar-link sidebar-link-with-icon">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-table" aria-hidden="true"></i>
+                    </span>
+                    Spreadsheet
+                </a>
+                <a href="#" class="sidebar-link sidebar-link-with-icon">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-map-o" aria-hidden="true"></i>
+                    </span>
+                    Map
+                </a>
+                <a href="#" class="sidebar-link sidebar-link-with-icon">
+                    <span class="sidebar-icon">
+                        <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                    </span>
+                    Messenger
+                </a>
+            </div>
+        </div>
+        <!-- Sidebar end -->
+
+        <!-- Content wrapper start -->
+        <div class="content-wrapper">
+            <div class="container-fluid">
+                <div class="row row-eq-spacing-lg">
+                    <div class="col-lg-9">
+                        <div class="content">
+                            <h1 class="content-title">
+                                Page title
+                            </h1>
+
+<h1>halfmoon demo</h1>
+<h2><a href="https://www.gethalfmoon.com/docs/page-building/">page building options</a></h2>
+<h2><a href="https://www.gethalfmoon.com/docs/customize/">customization options</a></h2>
+
+                            <div class="fake-content"></div>
+                            <div class="fake-content"></div>
+                        </div>
+                        <div class="card">
+                            <h2 class="card-title">
+                                Card title
+                            </h2>
+                            <div class="fake-content"></div>
+                            <div class="fake-content"></div>
+                            <div class="fake-content"></div>
+                            
+                                <button class="btn btn-primary btn-sm" type="button" onclick="toastAlert()">Toast!</button>
+                            
+                        </div>
+                        <div class="content">
+                            <div class="fake-content"></div>
+                            <div class="fake-content w-150"></div>
+                        </div>
+
+
+
+<form action="?" method="get" class="w-400 mw-full"> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
+  <!-- Input -->
+  <div class="form-group">
+    <label for="full-name" class="required">Full name</label>
+    <input type="text" class="form-control" id="full-name" placeholder="Full name" required="required">
+  </div>
+
+  <!-- Radio -->
+  <div class="form-group">
+    <label for="gender-male" class="required">Gender</label>
+    <div class="custom-radio">
+      <input type="radio" name="gender" id="gender-male" value="male" required="required">
+      <label for="gender-male">Male</label>
+    </div>
+    <div class="custom-radio">
+      <input type="radio" name="gender" id="gender-female" value="female" required="required">
+      <label for="gender-female">Female</label>
+    </div>
+    <div class="custom-radio">
+      <input type="radio" name="gender" id="gender-other" value="other" required="required">
+      <label for="gender-other">Other</label>
+    </div>
+  </div>
+
+  <!-- Select -->
+  <div class="form-group">
+    <label for="area-of-specialization" class="required">Area of specialization</label>
+    <select class="form-control" id="area-of-specialization" required="required">
+      <option value="" selected="selected" disabled="disabled">Select your area of specialization</option>
+      <option value="front-end">Front-end</option>
+      <option value="back-end">Back-end</option>
+      <option value="full-stack">Full-stack</option>
+    </select>
+  </div>
+
+  <!-- Multi-select -->
+  <div class="form-group">
+    <label for="languages" class="required">Languages</label>
+    <select class="form-control" id="languages" multiple="multiple" required="required" size="5">
+      <option value="javascript">JavaScript</option>
+      <option value="python">Python</option>
+      <option value="php">PHP</option>
+      ...
+    </select>
+  </div>
+
+  <!-- Textarea -->
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea class="form-control" id="description" placeholder="Write a short description about yourself."></textarea>
+  </div>
+
+  <!-- File input -->
+  <div class="form-group">
+    <label for="picture" class="required">Display picture</label>
+    <div class="custom-file">
+      <input type="file" id="picture" required="required">
+      <label for="picture">Choose picture</label>
+    </div>
+  </div>
+
+  <!-- Switch -->
+  <div class="form-group">
+    <div class="custom-switch">
+      <input type="checkbox" id="remember-my-information">
+      <label for="remember-my-information">Remember my information</label>
+    </div>
+  </div>
+
+  <!-- Checkbox -->
+  <div class="form-group">
+    <div class="custom-checkbox">
+      <input type="checkbox" id="agree-to-terms">
+      <label for="agree-to-terms">I agree to all the <a href="#" class="hyperlink">terms and conditions</a></label>
+    </div>
+  </div>
+
+  <!-- Submit button -->
+  <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+
+
+
+
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>First</th>
+      <th>Last</th>
+      <th class="text-right">Age</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>John</td>
+      <td>Doe</td>
+      <td class="text-right">25</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Jane</td>
+      <td>Violet</td>
+      <td class="text-right">27</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Jack</td>
+      <td>Gates</td>
+      <td class="text-right">33</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+<!-- First collapse panel -->
+<details class="collapse-panel w-400 mw-full"> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
+  <summary class="collapse-header">
+    Why are computers important?
+  </summary>
+  <div class="collapse-content">
+    Computers are important because they are like bicycles for the mind.
+  </div>
+</details>
+
+<!-- Second collapse panel (open by default) -->
+<details class="collapse-panel w-400 mw-full mt-20" open> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100%, mt-20 = margin-top: 2rem (20px) -->
+  <summary class="collapse-header">
+    What is the most efficient animal?
+  </summary>
+  <div class="collapse-content">
+    The condor is the most efficient animal, whereas human beings have a rather unimpressive showing. Given a bicycle however, human beings become far more efficient, easily topping the chart, blowing the condor away.
+  </div>
+</details>
+
+
+
+<button class="btn" data-toggle="tooltip" data-title="Default tooltip" type="button">
+  Default
+</button>
+<button class="btn" data-toggle="tooltip" data-title="Top tooltip" data-placement="top" type="button">
+  Top
+</button>
+<button class="btn" data-toggle="tooltip" data-title="Right tooltip" data-placement="right" type="button">
+  Right
+</button>
+<button class="btn" data-toggle="tooltip" data-title="Bottom tooltip" data-placement="bottom" type="button">
+  Bottom
+</button>
+<button class="btn" data-toggle="tooltip" data-title="Left tooltip" data-placement="left" type="button">
+  Left
+</button>
+
+
+
+
+<!-- Card with no padding with a content container nested inside of it -->
+<div class="w-400 mw-full"> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
+  <div class="card p-0"> <!-- p-0 = padding: 0 -->
+    <img src="https://darkwave.ltd/images/dw-triangles-transparent.png" class="img-fluid rounded-top" alt="..."> <!-- rounded-top = rounded corners on the top -->
+    <!-- Nested content container inside card -->
+    <div class="content">
+      <h2 class="content-title">
+        Title of the article
+      </h2>
+      <p class="text-muted">
+        Subtitle that hooks the reader and prompts them to click on the read more button.
+      </p>
+      <div class="text-right"> <!-- text-right = text-align: right -->
+        <a href="#" class="btn">Read more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Card with no padding with multiple content containers nested inside of it -->
+<div class="w-600 mw-full"> <!-- w-600 = width: 60rem (600px), mw-full = max-width: 100% -->
+  <div class="card p-0"> <!-- p-0 = padding: 0 -->
+    <img src="https://darkwave.ltd/images/dw-triangles-transparent.png" class="img-fluid rounded-top" alt="..."> <!-- rounded-top = rounded corners on the top -->
+    <!-- First content container nested inside card -->
+    <div class="content">
+      <h2 class="content-title">
+        A long and descriptive title of the picture that is slightly pretentious
+      </h2>
+      <div>
+        <span class="text-muted">
+          <i class="fa fa-clock-o mr-5" aria-hidden="true"></i> May 4th, 2020 <!-- mr-5 = margin-right: 0.5rem (5px) -->
+        </span>
+      </div>
+      <div>
+        <span class="badge">
+          <i class="fa fa-comments text-primary mr-5" aria-hidden="true"></i> 5 comments <!-- text-primary = color: primary-color, mr-5 = margin-right: 0.5rem (5px) -->
+        </span>
+        <span class="badge ml-5"> <!-- ml-5 = margin-left: 0.5rem (5px) -->
+          <i class="fa fa-heart text-danger mr-5" aria-hidden="true"></i> 124 likes <!-- text-danger = color: danger-color, mr-5 = margin-right: 0.5rem (5px) -->
+        </span>
+      </div>
+    </div>
+    <hr />
+    <!-- Second content container nested inside card (comments) -->
+    <div class="content">
+      <h2 class="content-title">
+        Comments
+      </h2>
+      <div>
+        <strong>John Doe</strong>
+        <br />
+        Amazing picture! Great job!
+      </div>
+      <hr />
+      <div>
+        <strong>Jane Doe</strong>
+        <br />
+        This is beautiful.
+      </div>
+      <hr />
+      <div>
+        <strong>James Bucks</strong>
+        <br />
+        This is just pretentious enough for my tastes. I love it.
+      </div>
+      <div class="text-center mt-20"> <!-- text-center = text-align: center, mt-20 = margin-top: 2rem (20px) -->
+        <button class="btn btn-sm">Load all comments</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm">First column</div>
+    <div class="col-sm">Second column</div>
+    <div class="col-sm">Third column</div>
+  </div>
+</div>
+
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-1">1</div>
+    <div class="col-11">11</div>
+  </div>
+  <div class="row">
+    <div class="col-2">2</div>
+    <div class="col-10">10</div>
+  </div>
+  ...
+  <div class="row">
+    <div class="col-6">6</div>
+    <div class="col-6">6</div>
+  </div>
+  ...
+  <div class="row">
+    <div class="col-10">10</div>
+    <div class="col-2">2</div>
+  </div>
+  <div class="row">
+    <div class="col-11">11</div>
+    <div class="col-1">1</div>
+  </div>
+</div>
+
+
+
+
+
+<div class="container-fluid">
+  <!-- First row -->
+  <div class="row">
+    <div class="col">.col</div>
+    <div class="col">.col</div>
+    <div class="col">.col</div>
+  </div>
+  <!-- Second row -->
+  <div class="row">
+    <div class="col">.col</div>
+    <div class="col-6">.col-6</div>
+    <div class="col">.col</div>
+  </div>
+  <!-- Third row -->
+  <div class="row">
+    <div class="col-auto">
+      <div class="w-150"> <!-- w-150 = width: 15rem (150px) -->
+        .col-auto (150px)
+      </div>
+    </div>
+    <div class="col">.col</div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="container-fluid">
+  <!-- First row -->
+  <div class="row">
+    <div class="col-xl-6">
+      ...
+    </div>
+    <div class="col-xl-6">
+      ...
+    </div>
+  </div>
+  <!-- Second row -->
+  <div class="row">
+    <div class="col-md-6">
+      ...
+    </div>
+    <div class="col-md-6">
+      ...
+    </div>
+  </div>
+  <!-- Third row -->
+  <div class="row">
+    <div class="col-6 col-sm-5 col-md-4 col-lg-3">
+      ...
+    </div>
+    <div class="col-6 col-sm-5 col-md-4 col-lg-3">
+      ...
+    </div>
+  </div>
+  <!-- Fourth row -->
+  <div class="row">
+    <div class="col-6 col-sm-5 col-md-4 col-lg-3">
+      ...
+    </div>
+    <div class="col-6 col-sm-5 col-md-4 col-lg-3">
+      ...
+    </div>
+    <div class="col-6 col-sm-5 col-md-4 col-lg-3">
+      ...
+    </div>
+    <div class="col-6 col-sm-5 col-md-4 col-lg-3">
+      ...
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- First column -->
+    <div class="col-sm-6">
+      <div class="content">
+        <h2 class="content-title">
+          It was going to rain
+        </h2>
+        <p>
+          The weather forecast didn't say that, but the steel plate in his hip did. He had learned over the years to
+          trust his hip over the weatherman. It was going to rain, so he better get outside and prepare.
+        </p>
+      </div>
+    </div>
+    <!-- Second column -->
+    <div class="col-sm-6">
+      <div class="content">
+        <h2 class="content-title">
+          It was going to rain
+        </h2>
+        <p>
+          The weather forecast didn't say that, but the steel plate in his hip did. He had learned over the years to
+          trust his hip over the weatherman. It was going to rain, so he better get outside and prepare.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Adjacent rows inside the container-fluid -->
+<div class="container-fluid">
+  <!-- First row (equally spaced on small screens and up) -->
+  <div class="row row-eq-spacing-sm">
+    <div class="col-sm-6">
+      <div class="content">
+        ...
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="content">
+        ...
+      </div>
+    </div>
+  </div>
+  <!-- Second row (equally spaced on small screens and up) -->
+  <div class="row row-eq-spacing-sm">
+    <div class="col-sm-10">
+      <div class="content">
+        ...
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="content">
+        ...
+      </div>
+    </div>
+  </div>
+  <!-- Third row (equally spaced) -->
+  <div class="row row-eq-spacing">
+    <div class="col-6">
+      <div class="card">
+        ...
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="card">
+        ...
+      </div>
+    </div>
+  </div>
+  <!-- Fourth row (equally spaced on large screens and up) -->
+  <div class="row row-eq-spacing-lg">
+    <div class="col-lg-8">
+      <div class="content">
+        ...
+      </div>
+      <div class="card">
+        ...
+      </div>
+      <div class="content">
+        ...
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        ...
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<a href="https://www.gethalfmoon.com/docs/grid-system/">a lot of grid system options</a>
+
+
+
+                    </div>
+                    <div class="col-lg-3 d-none d-lg-block">
+                        <div class="content">
+                            <h2 class="content-title font-size-20">
+                                On this page
+                            </h2>
+                            <div class="fake-content"></div>
+                            <div class="fake-content"></div>
+                            <div class="fake-content"></div>
+                            <div class="fake-content"></div>
+                            <div class="fake-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Content wrapper end -->
+
+        <!-- Navbar fixed bottom start -->
+        <nav class="navbar navbar-fixed-bottom">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fa fa-question-circle-o mr-5" aria-hidden="true"></i>
+                        Help
+                    </a>
+                </li>
+            </ul>
+            <span class="navbar-text">
+                &copy; Copyright 2023, Brand
+            </span>
+        </nav>
+        <!-- Navbar fixed bottom end -->
+
+    </div>
+    <!-- Page wrapper end -->
+
+    
+    <!-- Halfmoon JS -->
+    <script src="/js/lib/halfmoon.min.js"></script>
+
+
+    <!-- DW -->
+
+    <script src="/js/lib/darkwave.js"></script>
+    <script src="/js/lib/alpine.min.js"></script>
+    <script src="/js/lib/instant.page.min.js" type="module" defer></script>
+    
+    <script type="text/javascript">
+        // Toasts a default alert
+        function toastAlert() {
+            var alertContent = "This is a default alert with <a href='#' class='alert-link'>a link</a> being toasted.";
+            // Built-in function
+            halfmoon.initStickyAlert({
+                content: alertContent,
+                title: "Toast!"
+            })
+        }
+
+    </script>
+</body>
+
+</html>
+
