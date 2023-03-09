@@ -2,9 +2,9 @@
 
 
 use Slime\render;
-use Slime\cookie;
-use Slime\x;
-use Slime\db;
+use VPHP\cookie;
+use VPHP\x;
+use VPHP\db;
 
 
 $app->get('/login[/]', function ($req, $res, $args) {
@@ -168,7 +168,7 @@ $app->post('/register/process[/]', function ($req, $res, $args) {
 		));
 
 	}else{
-    return $res->withHeader('Location', '/')->withStatus(302);
+    return render::redirect($req, $res, [ 'location' => '/' ]);
 	}
 
 });
@@ -216,7 +216,7 @@ $app->post('/forgot/process[/]', function ($req, $res, $args) {
 		));
 
 	}else{
-    return $res->withHeader('Location', '/')->withStatus(302);
+    return render::redirect($req, $res, [ 'location' => '/' ]);
 	}
 
 });
@@ -251,7 +251,7 @@ $app->post('/forgot/reset/process[/]', function ($req, $res, $args) {
 		));
 
 	}else{
-    return $res->withHeader('Location', '/')->withStatus(302);
+    return render::redirect($req, $res, [ 'location' => '/' ]);
 	}
 
 });
@@ -356,7 +356,7 @@ $app->get('/logout[/]', function ($req, $res, $args) {
 	cookie::delete('admin_token');
 	cookie::delete('moderator_token');
 
-  return $res->withHeader('Location', '/')->withStatus(302);
+  return render::redirect($req, $res, [ 'location' => '/' ]);
 
 });
 

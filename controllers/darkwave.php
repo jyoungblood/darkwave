@@ -2,7 +2,7 @@
 
 
 use Slime\render;
-use Slime\x;
+use VPHP\x;
 
 // require 'stereo/darkwave/phmagick/phmagick.php';
 

@@ -1,8 +1,8 @@
 <?php
 
 use Slime\render;
-use Slime\x;
-use Slime\db;
+use VPHP\x;
+use VPHP\db;
 
 
 $app->post('/install[/]', function ($req, $res, $args) {
@@ -23,6 +23,9 @@ $GLOBALS[\'locals\'] = [
   \'site_title\' => $GLOBALS[\'site_title\'],
   \'site_code\' => $GLOBALS[\'site_code\'],
   \'site_url\' => $GLOBALS[\'site_url\'],
+  \'auth\' => @$GLOBALS[\'auth\'],
+  \'user_id\' => @$GLOBALS[\'user_id\'],
+  \'is_admin\' => @$GLOBALS[\'is_admin\'],
 ];
 ';
 
@@ -80,7 +83,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
 			avatar_large VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-l.png',
 			avatar_original VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-o.png',
 			PRIMARY KEY (id)
-			) ENGINE=InnoDB CHARACTER SET utf8;";
+			) ENGINE=InnoDB CHARACTER SET utf8mb4;";
 
 
 			$GLOBALS['database']->exec($sql);
@@ -127,9 +130,9 @@ $GLOBALS[\'settings\'][\'database\'] = [
 	}else{
 		unlink("controllers/install.php");
 		if ($db_install){
-      return $res->withHeader('Location', '/admin')->withStatus(302);
+      return render::redirect($req, $res, [ 'location' => '/admin' ]);
 		}else{
-      return $res->withHeader('Location', '/')->withStatus(302);
+      return render::redirect($req, $res, [ 'location' => '/' ]);
 		}
 
 	}

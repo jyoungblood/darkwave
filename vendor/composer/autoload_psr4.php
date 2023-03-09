@@ -6,8 +6,9 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'VPHP\\' => array($vendorDir . '/hxgf/cookie/src', $vendorDir . '/hxgf/dbkit/src', $vendorDir . '/hxgf/http-request/src', $vendorDir . '/hxgf/x-utilities/src'),
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
-    'Slime\\' => array($vendorDir . '/hxgf/slime-utilities/src'),
+    'Slime\\' => array($vendorDir . '/hxgf/slime-render/src'),
     'Slim\\Psr7\\' => array($vendorDir . '/slim/psr7/src'),
     'Slim\\' => array($vendorDir . '/slim/slim/Slim'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),

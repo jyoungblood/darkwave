@@ -60,21 +60,168 @@
             "install-path": "../fig/http-message-util"
         },
         {
-            "name": "hxgf/slime-utilities",
+            "name": "hxgf/cookie",
             "version": "1.1.0",
             "version_normalized": "1.1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hxgf/slime-utilities.git",
-                "reference": "0c70795dc7463850cd91329f12110726dadf7f2d"
+                "url": "https://github.com/hxgf/cookie.git",
+                "reference": "11b16dfe0170d2f9c35856f0475decf6086c57e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/slime-utilities/zipball/0c70795dc7463850cd91329f12110726dadf7f2d",
-                "reference": "0c70795dc7463850cd91329f12110726dadf7f2d",
+                "url": "https://api.github.com/repos/hxgf/cookie/zipball/11b16dfe0170d2f9c35856f0475decf6086c57e6",
+                "reference": "11b16dfe0170d2f9c35856f0475decf6086c57e6",
                 "shasum": ""
             },
-            "time": "2022-05-26T20:17:30+00:00",
+            "time": "2023-01-17T20:25:09+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "VPHP\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Youngblood",
+                    "email": "jy@hxgf.io"
+                }
+            ],
+            "description": "PHP functions to handle cookie operations more easily.",
+            "homepage": "https://github.com/hxgf/cookie",
+            "keywords": [
+                "abstraction",
+                "cookies",
+                "utilities"
+            ],
+            "support": {
+                "issues": "https://github.com/hxgf/cookie/issues",
+                "source": "https://github.com/hxgf/cookie/tree/1.1.0"
+            },
+            "install-path": "../hxgf/cookie"
+        },
+        {
+            "name": "hxgf/dbkit",
+            "version": "1.2.0",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hxgf/dbkit.git",
+                "reference": "1bb3d4028d4736a3178ec472c6bb82f0df54d04f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hxgf/dbkit/zipball/1bb3d4028d4736a3178ec472c6bb82f0df54d04f",
+                "reference": "1bb3d4028d4736a3178ec472c6bb82f0df54d04f",
+                "shasum": ""
+            },
+            "time": "2023-01-17T20:25:32+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "VPHP\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Youngblood",
+                    "email": "jy@hxgf.io"
+                }
+            ],
+            "description": "PHP functions to handle database connection and CRUD operations with PDO.",
+            "homepage": "https://github.com/hxgf/dbkit",
+            "keywords": [
+                "abstraction",
+                "database",
+                "mysql",
+                "pdo",
+                "utilities"
+            ],
+            "support": {
+                "issues": "https://github.com/hxgf/dbkit/issues",
+                "source": "https://github.com/hxgf/dbkit/tree/1.2.0"
+            },
+            "install-path": "../hxgf/dbkit"
+        },
+        {
+            "name": "hxgf/http-request",
+            "version": "1.2.0",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hxgf/http-request.git",
+                "reference": "74a359757db3fc0049932508e71db7f0edb453ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hxgf/http-request/zipball/74a359757db3fc0049932508e71db7f0edb453ab",
+                "reference": "74a359757db3fc0049932508e71db7f0edb453ab",
+                "shasum": ""
+            },
+            "time": "2023-01-17T20:25:42+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "VPHP\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Youngblood",
+                    "email": "jy@hxgf.io"
+                }
+            ],
+            "description": "PHP functions to handle sending and receiving HTTP requests with CURL.",
+            "homepage": "https://github.com/hxgf/http-request",
+            "keywords": [
+                "HTTP requests",
+                "curl",
+                "http client",
+                "utilities"
+            ],
+            "support": {
+                "issues": "https://github.com/hxgf/http-request/issues",
+                "source": "https://github.com/hxgf/http-request/tree/1.2.0"
+            },
+            "install-path": "../hxgf/http-request"
+        },
+        {
+            "name": "hxgf/slime-render",
+            "version": "1.2.0",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hxgf/slime-render.git",
+                "reference": "b8030111aed68a010b16af4be49e314b397ab415"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hxgf/slime-render/zipball/b8030111aed68a010b16af4be49e314b397ab415",
+                "reference": "b8030111aed68a010b16af4be49e314b397ab415",
+                "shasum": ""
+            },
+            "time": "2023-01-17T19:38:11+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -94,19 +241,69 @@
                     "email": "jy@hxgf.io"
                 }
             ],
-            "description": "Enhancement utilities for developing with Slim framework",
-            "homepage": "https://github.com/hxgf/slime-utilities",
+            "description": "PHP abstraction functions to help more easily render views for Slim Framework with LightnCandy or Twig.",
+            "homepage": "https://github.com/hxgf/slime-render",
             "keywords": [
-                "abstraction",
-                "collection",
-                "metaframework",
+                "handlebars",
+                "lightncandy",
+                "mustache",
+                "render abstractions",
+                "slim",
+                "twig",
+                "utilities",
+                "view helpers"
+            ],
+            "support": {
+                "issues": "https://github.com/hxgf/slime-render/issues",
+                "source": "https://github.com/hxgf/slime-render/tree/1.2.0"
+            },
+            "install-path": "../hxgf/slime-render"
+        },
+        {
+            "name": "hxgf/x-utilities",
+            "version": "1.2.0",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hxgf/x-utilities.git",
+                "reference": "e0301ca9897f47be0d873e796950223a7b9add49"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hxgf/x-utilities/zipball/e0301ca9897f47be0d873e796950223a7b9add49",
+                "reference": "e0301ca9897f47be0d873e796950223a7b9add49",
+                "shasum": ""
+            },
+            "time": "2023-01-17T20:25:19+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "VPHP\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Youngblood",
+                    "email": "jy@hxgf.io"
+                }
+            ],
+            "description": "A collection of utility functions to help do things faster with PHP.",
+            "homepage": "https://github.com/hxgf/x-utilities",
+            "keywords": [
                 "utilities"
             ],
             "support": {
-                "issues": "https://github.com/hxgf/slime-utilities/issues",
-                "source": "https://github.com/hxgf/slime-utilities/tree/1.1.0"
+                "issues": "https://github.com/hxgf/x-utilities/issues",
+                "source": "https://github.com/hxgf/x-utilities/tree/1.2.0"
             },
-            "install-path": "../hxgf/slime-utilities"
+            "install-path": "../hxgf/x-utilities"
         },
         {
             "name": "nikic/fast-route",

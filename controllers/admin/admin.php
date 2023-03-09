@@ -1,7 +1,7 @@
 <?php
 
 use Slime\render;
-use Slime\x;
+use VPHP\x;
 
 $app->get('/admin[/]', function ($req, $res, $args) {
 

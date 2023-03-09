@@ -40,29 +40,6 @@ $app->get('/', function ($req, $res, $args) {
 
 
 
-
-
-
-
-$app->get('/halfmoon[/]', function ($req, $res, $args) {
-
-  return render::hbs($req, $res, [
-    'template' => 'halfmoon',
-    'title' => 'halfmoon demo - ' . $GLOBALS['site_title'],
-    'data' => [
-
-    ]
-  ]);
-
-});
-
-
-
-
-
-
-
-
 $app->get('/bootstrap[/]', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [
@@ -75,27 +52,6 @@ $app->get('/bootstrap[/]', function ($req, $res, $args) {
 
 });
 
-
-
-
-
-
-
-
-
-
-
-$app->get('/pico[/]', function ($req, $res, $args) {
-
-  return render::hbs($req, $res, [
-    'template' => 'pico',
-    'title' => 'pico demo - ' . $GLOBALS['site_title'],
-    'data' => [
-
-    ]
-  ]);
-
-});
 
 
 

@@ -1,9 +1,9 @@
 <?php
 
 use Slime\render;
-use Slime\db;
-use Slime\x;
-use Slime\cookie;
+use VPHP\db;
+use VPHP\x;
+use VPHP\cookie;
 
 
 $app->get('/admin/users[/]', function ($req, $res, $args) {

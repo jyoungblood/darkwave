@@ -1,7 +1,21 @@
 <?php
 
+/*
+
+  ███████╗ ██╗      ██╗ ███╗   ███╗ ███████╗
+  ██╔════╝ ██║      ██║ ████╗ ████║ ██╔════╝
+  ███████╗ ██║      ██║ ██╔████╔██║ █████╗  
+  ╚════██║ ██║      ██║ ██║╚██╔╝██║ ██╔══╝  
+  ███████║ ███████╗ ██║ ██║ ╚═╝ ██║ ███████╗
+  ╚══════╝ ╚══════╝ ╚═╝ ╚═╝     ╚═╝ ╚══════╝
+                                        
+  1.2.0 - https://github.com/hxgf/slime
+
+*/
+
+
 use Slim\Factory\AppFactory;
-use Slime\db;
+use VPHP\db;
 use Slime\render;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -11,7 +25,12 @@ $app = AppFactory::create();
 
 $app->addBodyParsingMiddleware();
 
-$GLOBALS['database'] = db::init($GLOBALS['settings']['database']);
+$GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBALS['settings']['database']) : false;
+
+
+
+
+
 
 
 
@@ -20,7 +39,7 @@ $GLOBALS['database'] = db::init($GLOBALS['settings']['database']);
 
 // tmp auth "middleware" from stereo version
 
-use Slime\cookie;
+use VPHP\cookie;
 
 if (cookie::get('user_id')){
   $GLOBALS['user_id'] = cookie::get('user_id');
@@ -55,55 +74,6 @@ if (cookie::get('user_id')){
 
 
 
-// tmp middleware for global hbars helpers
-
-  $GLOBALS['hbars_helpers']['date'] = function ($arg1, $arg2) {
-    if ($arg1 == "now"){
-      return date($arg2);
-    }else{
-      return date($arg2, $arg1);
-    }
-  };
-
-  $GLOBALS['hbars_helpers']['is'] = function ($l, $operator, $r, $options) {
-    if ($operator == '=='){
-      $condition = ($l == $r);
-    }
-    if ($operator == '==='){
-      $condition = ($l === $r);
-    }
-    if ($operator == 'not' || $operator == '!='){
-      $condition = ($l != $r);
-    }	
-    if ($operator == '<'){
-      $condition = ($l < $r);
-    }
-    if ($operator == '>'){
-      $condition = ($l > $r);
-    }
-    if ($operator == '<='){
-      $condition = ($l <= $r);
-    }
-    if ($operator == '>='){
-      $condition = ($l >= $r);
-    }
-    if ($operator == 'in'){
-      if (gettype($r) == 'array'){
-        $condition = (in_array($l, $r));
-      }else{
-        // expects a csv string
-        $condition = (in_array($l, str_getcsv($r)));
-      }
-    }
-    if ($operator == 'typeof'){
-      $condition = (gettype($l) == gettype($r));
-    }
-    if ($condition){
-      return $options['fn']();
-    }else{
-      return $options['inverse']();
-    }
-  };     
 
 
 
