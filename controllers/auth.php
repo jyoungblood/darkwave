@@ -9,16 +9,16 @@ use VPHP\db;
 
 $app->get('/login[/]', function ($req, $res, $args) {
 
-	return render::hbs($req, $res, array(
+	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
 		'template' => 'auth/auth-login',
     'title' => 'Log In - ' . $GLOBALS['site_title'],
-    'data' => array(
+    'data' => [
 	    'current_login' => true,
 	    'ip' => x::client_ip(),
 	    'redirect' => $_GET['redirect'] == 'home' ? "/" : $_SERVER['HTTP_REFERER']
-		)
-	));
+    ]
+	]);
 
 });
 
@@ -31,14 +31,14 @@ $app->get('/login[/]', function ($req, $res, $args) {
 
 $app->get('/register[/]', function ($req, $res, $args) {
 
-	return render::hbs($req, $res, array(
+	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
 		'template' => 'auth/auth-register',
     'title' => 'Register - ' . $GLOBALS['site_title'],
-    'data' => array(
+    'data' => [
 	    'current_register' => true
-    )
-	));
+    ]
+	]);
 
 });
 
@@ -52,11 +52,11 @@ $app->get('/register[/]', function ($req, $res, $args) {
 
 $app->get('/forgot[/]', function ($req, $res, $args) {
 
-	return render::hbs($req, $res, array(
+	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
 		'template' => 'auth/auth-forgot',
     'title' => 'Forgot Password - ' . $GLOBALS['site_title'],
-	));
+	]);
 
 });
 
@@ -71,15 +71,15 @@ $app->get('/forgot[/]', function ($req, $res, $args) {
 
 $app->get('/forgot/reset/{hash}[/]', function ($req, $res, $args) {
 
-	return render::hbs($req, $res, array(
+	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
 		'template' => 'auth/auth-feedback',
     'title' => 'New Password - ' . $GLOBALS['site_title'],
-		'data' => array(
+		'data' => [
 	    'hash' => $args['hash'],
 			'forgot_reset' => true,
-		)
-	));
+    ]
+	]);
 
 });
 
@@ -99,19 +99,19 @@ $app->get('/register/activate/{hash}[/]', function ($req, $res, $args) {
 	$_user = db::find("users", "validate_hash='".$args['hash']."'");
 
 	if ($_user['data']){
-		db::update("users", array(
+		db::update("users", [
 		  'validate_hash' => NULL
-		), "validate_hash='".$args['hash']."'");
+    ], "validate_hash='".$args['hash']."'");
 	}
 
-	return render::hbs($req, $res, array(
+	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
 		'template' => 'auth/auth-feedback',
     'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
-    'data' => array(
+    'data' => [
 			'registration_complete' => true
-    )
-	));
+    ]
+	]);
 
 });
 
@@ -137,7 +137,7 @@ $app->post('/register/process[/]', function ($req, $res, $args) {
 
 		$hash = uniqid(uniqid());
 
-		db::insert("users", array(
+		db::insert("users", [
 			'_id' => uniqid(uniqid()),
 			'email' => strtolower($_POST['email']),
 			'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
@@ -145,27 +145,27 @@ $app->post('/register/process[/]', function ($req, $res, $args) {
 			'date_created' => time(),
 			'screenname' => $_POST['screenname'],
 			'validate_hash' => $hash
-		));
+		]);
 
 		$message = "Thanks for registering with ".$GLOBALS['site_title'].".\r\r".
 		"In order to complete your account setup, we will need to verify your email address. Please click the link below and we can activate your account:\r\r".
 		"http://".$GLOBALS['site_url']."/register/activate/".$hash;
 
-		x::email_send(array(
+		x::email_send([
 		  'to' => strtolower($_POST['email']),
 		  'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
 		  'subject' => 'Activate your new account',
 		  'message' => $message
-		));
+		]);
 
-		return render::hbs($req, $res, array(
+		return render::hbs($req, $res, [
       'layout' => '_layouts/base',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Register - ' . $GLOBALS['site_title'],
-	    'data' => array(
+	    'data' => [
 				'register_process' => true
-			)
-		));
+      ]
+		]);
 
 	}else{
     return render::redirect($req, $res, [ 'location' => '/' ]);
@@ -191,29 +191,29 @@ $app->post('/forgot/process[/]', function ($req, $res, $args) {
 
 		$hash = uniqid(uniqid());
 
-		db::update("users", array(
+		db::update("users", [
 			'password_hash' => $hash
-		), "email='".strtolower($_POST['email'])."'");
+    ], "email='".strtolower($_POST['email'])."'");
 
 		$message = "Here's the link to reset the password for your account at ".$GLOBALS['site_title'].".\r\r".
 		"http://".$GLOBALS['site_url']."/forgot/reset/".$hash;
 
-		x::email_send(array(
+		x::email_send([
 		  'to' => strtolower($_POST['email']),
 		  'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
 		  'subject' => 'Reset your password',
 		  'message' => $message
-		));
+		]);
 
 
-		return render::hbs($req, $res, array(
+		return render::hbs($req, $res, [
       'layout' => '_layouts/base',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Reset Password - ' . $GLOBALS['site_title'],
-		  'data' => array(
+		  'data' => [
 				'forgot_process' => true
-			)
-		));
+      ]
+		]);
 
 	}else{
     return render::redirect($req, $res, [ 'location' => '/' ]);
@@ -236,19 +236,19 @@ $app->post('/forgot/reset/process[/]', function ($req, $res, $args) {
 
 	if (!$_POST['website']){
 
-		db::update("users", array(
+		db::update("users", [
 			'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
 			'password_hash' => NULL
-		), "password_hash='".$_POST['hash']."'");
+    ], "password_hash='".$_POST['hash']."'");
 
-		return render::hbs($req, $res, array(
+		return render::hbs($req, $res, [
       'layout' => '_layouts/base',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Password Reset Successfully - ' . $GLOBALS['site_title'],
-	    'data' => array(
+	    'data' => [
 				'forgot_reset_process' => true
-	    )
-		));
+      ]
+		]);
 
 	}else{
     return render::redirect($req, $res, [ 'location' => '/' ]);
@@ -278,23 +278,23 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 		if ($user['group_id'] != 4 && password_verify($password, $user['password'])){
 
 			// update user info
-			db::update("users", array(
+			db::update("users", [
 			  'ua_header' => $_POST['ua'],
 			  'ip_address' => $_POST['ip'],
 			  'date_last_login' => time()
-			), "_id='".$user['_id']."'");
+      ], "_id='".$user['_id']."'");
 
 			$auth_token = password_hash($GLOBALS['site_code'].'-'.$user['_id'], PASSWORD_BCRYPT);
 
 			// send success data
-			$out = array(
+			$out = [
 				'success' => true,
 				'user_id' => $user['_id'],
 				'user_avatar' => $user['avatar_small'],
 				'group_id' => $user['group_id'],
 				'redirect' => $_POST['redirect'],
 				'auth_token' => $auth_token
-			);
+      ];
 			cookie::set('user_id', $user['_id']);
 			cookie::set('auth_token', $auth_token);
 			cookie::set('user_avatar', $user['avatar_small']);
@@ -310,23 +310,23 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 
 		}else{
 			// error: not a valid password
-			$out = array(
-				'error' => array(
+			$out = [
+				'error' => [
 					'password' => true,
 					'message' => "Error: Incorrect password"
-				),
+        ],
 				'success' => false
-			);
+      ];
 		}
 	}else{
 		// error: not a valid email address
-		$out = array(
-			'error' => array(
+		$out = [
+			'error' => [
 				'email' => true,
 				'message' => "Error: Unregistered email address"
-			),
+      ],
 			'success' => false
-		);
+    ];
 	}
 
 	return render::json($req, $res, [
@@ -378,15 +378,15 @@ $app->get('/account/settings[/]', function ($req, $res, $args) {
 
 	$user_data = db::find("users", "_id='".cookie::get('user_id')."'");
 
-	return render::hbs($req, $res, array(
+	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
 		'template' => 'auth/auth-settings',
     'title' => 'Account Settings - ' . $GLOBALS['site_title'],
-    'data' => array(
+    'data' => [
 	    'current_settings' => true,
 	    'data' => $user_data['data'][0]
-    )
-	));
+    ]
+	]);
 
 });
 
@@ -400,12 +400,12 @@ $app->get('/account/settings[/]', function ($req, $res, $args) {
 
 $app->post('/account/settings/process[/]', function ($req, $res, $args) {
 
-	$input = array(
+	$input = [
 		'email' => strtolower($_POST['email']),
 		'screenname' => $_POST['screenname'],
 		'first_name' => $_POST['first_name'],
 		'last_name' => $_POST['last_name']
-	);
+  ];
 
 	if ($_POST['password']){
 		$input['password'] = password_hash($_POST['password'], PASSWORD_BCRYPT);
@@ -415,16 +415,16 @@ $app->post('/account/settings/process[/]', function ($req, $res, $args) {
 
 	$user_data = db::find("users", "_id='".cookie::get('user_id')."'");
 
-	return render::hbs($req, $res, array(
+	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
 		'template' => 'auth/auth-settings',
     'title' => 'Account Settings - ' . $GLOBALS['site_title'],
-    'data' => array(
+    'data' => [
 	    'current_settings' => true,
 	    'saved' => true,
 	    'data' => $user_data['data'][0]
-    )
-	));
+    ]
+	]);
 
 });
 
@@ -445,10 +445,10 @@ $app->post('/account/settings/process[/]', function ($req, $res, $args) {
 
 $app->post('/auth/validate-unique[/]', function ($req, $res, $args) {
 
-	$out = array(
+	$out = [
 		'error' => false,
 		'success' => true
-	);
+  ];
 
 	if ($_POST['type'] == 'email'){
 		$user = db::find("users", "email='".strtolower($_POST['value'])."'");
@@ -457,11 +457,11 @@ $app->post('/auth/validate-unique[/]', function ($req, $res, $args) {
 				// return true
 			}else{
 				// return error
-				$out = array(
+				$out = [
 					'error' => true,
 					'error_message' => '* This address is already registered',
 					'success' => false,
-				);
+        ];
 			}
 		}else{
 			// return true
@@ -477,11 +477,11 @@ $app->post('/auth/validate-unique[/]', function ($req, $res, $args) {
 				// return true
 			}else{
 				// return error
-				$out = array(
+				$out = [
 					'error' => true,
 					'error_message' => '* This name is already registered',
 					'success' => false,
-				);
+        ];
 			}
 		}else{
 			// return true

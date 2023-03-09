@@ -6,21 +6,21 @@ use VPHP\x;
 use VPHP\cookie;
 
 
-$app->get('/admin/users[/]', function ($req, $res, $args) {
+$app->get('/users[/]', function ($req, $res, $args) {
 
 	$_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
 
-	return render::hbs($req, $res, array(
-		'layout' => '_layouts/admin',
+	return render::hbs($req, $res, [
+		'layout' => '_layouts/base',
 		'template' => 'admin/users-list',
     'title' => 'Users - ' . $GLOBALS['site_title'] .' Admin',
-		'data' => array(
+		'data' => [
 	    'ip' => x::client_ip(),
 	    'current_users' => true,
 	    'current_system' => true,
 	    'users'=> $_users['data']
-		)
-	));
+    ]
+	]);
 
 });
 
@@ -33,7 +33,7 @@ $app->get('/admin/users[/]', function ($req, $res, $args) {
 
 
 
-$app->get('/admin/users/edit/{user_id}[/]', function ($req, $res, $args) {
+$app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
 	$_data = db::find("users", "_id='".$args['user_id']."'");
 
@@ -52,17 +52,17 @@ $app->get('/admin/users/edit/{user_id}[/]', function ($req, $res, $args) {
 		}
 	}
 
-	return render::hbs($req, $res, array(
-		'layout' => '_layouts/admin',
+	return render::hbs($req, $res, [
+		'layout' => '_layouts/base',
 		'template' => 'admin/users-edit',
     'title' => $title,
-		'data' => array(
+		'data' => [
 	    'current_users' => true,
 	    'current_system' => true,
 	    'has_avatar' => $has_avatar,
 	    'data' => $data
-		)
-	));
+    ]
+	]);
 
 });
 
@@ -76,21 +76,21 @@ $app->get('/admin/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
 
 
-$app->post('/admin/users/save[/]', function ($req, $res, $args) {
+$app->post('/users/save[/]', function ($req, $res, $args) {
 
 	if ($GLOBALS['is_admin']){
 
-		$form = array();
+		$form = [];
 		parse_str($_POST['form'],$form);
 	
-		$input = array(
+		$input = [
 			'email' => strtolower($form['email']),
 			'group_id' => $form['group_id'],
 			'url_slug' => x::url_slug($form['screenname']),
 			'screenname' => $form['screenname'],
 			'first_name' => $form['first_name'],
 			'last_name' => $form['last_name'],
-		);
+    ];
 	
 		if ($form['password']){
 			$input['password'] = password_hash($form['password'], PASSWORD_BCRYPT);
@@ -115,12 +115,12 @@ $app->post('/admin/users/save[/]', function ($req, $res, $args) {
 					unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
 					unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_original']);
 				}
-				$photo_input = array(
+				$photo_input = [
 					'avatar_small' => '/images/users/avatar-default-s.png',
 					'avatar_medium' => '/images/users/avatar-default-m.png',
 					'avatar_large' => '/images/users/avatar-default-l.png',
 					'avatar_original' => '/images/users/avatar-default-o.png',
-				);
+        ];
 				if ($user_id == $GLOBALS['user_id']){
 					cookie::set('user_avatar', '/images/users/avatar-default-s.png');
 				}
@@ -157,12 +157,12 @@ $app->post('/admin/users/save[/]', function ($req, $res, $args) {
 				}
 				copy($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_original);
 				unlink($source);
-				$photo_input = array(
+				$photo_input = [
 					'avatar_small' => '/images/users/' . $filename_small,
 					'avatar_medium' => '/images/users/' . $filename_medium,
 					'avatar_large' => '/images/users/' . $filename_large,
 					'avatar_original' => '/images/users/' . $filename_original,
-				);
+        ];
 				if ($user_id == $GLOBALS['user_id']){
 					cookie::set('user_avatar', '/images/users/' . $filename_small);
 				}
@@ -173,9 +173,9 @@ $app->post('/admin/users/save[/]', function ($req, $res, $args) {
 	}
 
 	return render::json($req, $res, [
-    'data' => array(
+    'data' => [
       'success' => true
-    )
+    ]
   ]);
 
 });
@@ -186,7 +186,7 @@ $app->post('/admin/users/save[/]', function ($req, $res, $args) {
 
 
 
-$app->post('/admin/users/delete[/]', function ($req, $res, $args) {
+$app->post('/users/delete[/]', function ($req, $res, $args) {
 
 	if ($GLOBALS['is_admin']){
 		$user = db::find("users", "_id='".$_POST['_id']."'");
@@ -201,9 +201,9 @@ $app->post('/admin/users/delete[/]', function ($req, $res, $args) {
 
 
   return render::json($req, $res, [
-    'data' => array(
+    'data' => [
       'success' => true
-    )
+    ]
   ]);
 
 });

@@ -259,13 +259,13 @@ function settings_edit() {
     save: function(){
 			document.body.classList.add('working');
 	    dw.api_request({
-		    url: '/admin/settings/save/',
+		    url: '/settings/save/',
 		    data: {
 			    user_id: Cookies.get('user_id'),
 					form: dw.serialize(document.querySelector('form'))
 		    },
 		    callback: function(r){
-					window.location.href = '/admin';
+					window.location.href = '/';
 				}
 			});
     }

@@ -23,12 +23,23 @@
 
 
 
+
+<!-- dw 0.5 -->
+  <link rel="stylesheet" href="/css/lib/darkwave.css" />
+  <link rel="stylesheet" href="/css/lib/smoke.darkwave.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/css/admin.css?v=2" />
+
+
+
   </head>
   <body class="sans-serif">
 
 
 
+{{#if locals.auth}}
 
+  <!-- boilerplate app frame -->
 
   <!-- sticky pancake stack -->
 
@@ -39,15 +50,43 @@
     }
   </style>
 
-  <header></header>
+  <!-- <header></header> -->
+  <header class="flex justify-between bg-black-90 w-100 ph3 pv3 pv4-ns ph4-m ph5-l">
+  
+    <nav class="f5 fw6 ttu tracked flex-grow">
+      <a class="{{#if current_home}}white{{else}}white-70{{/if}} hover-white dib mr4 roboto fw4 no-underline"
+        href="/" title="Home">▲▼</a>
+    </nav>
+  
+    <div class="f3 fw6 flex tr">
+      <a class="{{#if current_system}}white{{else}}white-30{{/if}} hover-white dib v-mid" href="/users"
+        title="Site Users"><i class="fa fa-sliders" aria-hidden="true"></i></a>
+    </div>
+  
+  </header>
   <main>
     {{outlet}}
   </main>
   <footer></footer>
 
 
+  <!-- // if not authorized to see something -->
+  
+<!-- 
+  <div class="dt h-100 center pv5">
+    <div class="dtc v-mid f4">
+      ∅
+    </div>
+  </div>
+ -->
 
-
+ <!--
+{{#if locals.is_admin}}
+u r admin
+{{else}}
+not admin
+{{/if}}
+ -->
 
 
   <!-- classic holy grail (sticky left/right sidebar, sticky header/footer) -->
@@ -85,11 +124,30 @@
   <header></header>
   <left></left>
   <main>
-    {{outlet}}
+    \{\{outlet\}\}
   </main>
   <right></right>
   <footer></footer>
  -->
+
+
+
+
+
+{{else}}
+
+<!-- logged out -->
+<!-- show login -->
+{{> auth-login}}
+
+{{/if}}
+
+
+
+
+  <div class="loader-container">
+    <div class="loader three-quarters-loader"></div>
+  </div>
 
 
 

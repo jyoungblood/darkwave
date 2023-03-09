@@ -98,7 +98,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
 		// 3. insert the admin user
 		if ($_POST['user_email']){
 			if (!$error){
-				db::insert("users", array(
+				db::insert("users", [
 					'_id' => uniqid(uniqid()),
 					'email' => strtolower($_POST['user_email']),
 					'password' => password_hash($_POST['user_password'], PASSWORD_BCRYPT),
@@ -106,7 +106,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
 					'date_created' => time(),
 					'url_slug' => x::url_slug($_POST['user_screenname']),
 					'screenname' => $_POST['user_screenname'],
-				));
+				]);
 			}
 		}
 
@@ -129,12 +129,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
 
 	}else{
 		unlink("controllers/install.php");
-		if ($db_install){
-      return render::redirect($req, $res, [ 'location' => '/admin' ]);
-		}else{
-      return render::redirect($req, $res, [ 'location' => '/' ]);
-		}
-
+    return render::redirect($req, $res, [ 'location' => '/' ]);
 	}
 
 });

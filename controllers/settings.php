@@ -3,18 +3,18 @@
 use Slime\render;
 
 
-$app->get('/admin/settings[/]', function ($req, $res, $args) {
+$app->get('/settings[/]', function ($req, $res, $args) {
 
-	return render::hbs($req, $res, array(
-		'layout' => '_layouts/admin',
+	return render::hbs($req, $res, [
+    'layout' => '_layouts/base',
 		'template' => 'admin/settings',
     'title' => 'Settings - ' . $GLOBALS['site_title'] .' Admin',
-		'data' => array(
+		'data' => [
 	    'current_settings' => true,
 	    'current_system' => true,
 	    'settings' => $GLOBALS['settings']
-		)
-	));
+    ]
+	]);
 
 });
 
@@ -22,11 +22,11 @@ $app->get('/admin/settings[/]', function ($req, $res, $args) {
 
 
 
-$app->post('/admin/settings/save[/]', function ($req, $res, $args) {
+$app->post('/settings/save[/]', function ($req, $res, $args) {
 
 	if ($GLOBALS['is_admin']){
 
-		$form = array();
+		$form = [];
 		parse_str($_POST['form'],$form);
 
 
@@ -117,9 +117,9 @@ $GLOBALS[\'settings\'][\'imap\'][\'tls\'] = \''.$form['imap_tls'].'\';';
 
 	}
 	return render::json($req, $res, [
-    'data' => array(
+    'data' => [
       'success' => true
-    )
+    ]
   ]);
 
 });

@@ -33,17 +33,17 @@ use VPHP\x;
 			$table_name = $table['Tables_in_' . $GLOBALS['settings']['database']['name']];
 			$tf .= $table_name . "\n";
 			echo "<h1>" . $table_name . "</h1>";
-			$_fields = array();
+			$_fields = [];
 			foreach ($GLOBALS['database']->query('DESCRIBE ' . $table_name)->fetchAll(PDO::FETCH_ASSOC) as $field){
 				if ($field['Field'] != 'id'){
-					$_fields[] = array($field['Field'] => $field['Type']);
+					$_fields[] = [$field['Field'] => $field['Type']];
 					$tf .= '  ' . $field['Field'] . '		' . $field['Type'] . "\n";
 					echo '<span style="display: inline-block; width: 250px;">' . $field['Field'] . '</span> <span>' . $field['Type'] . '</span><br />';
 				}
 			}
-			$_tables[] = array(
+			$_tables[] = [
 				$table_name => $_fields
-			);
+      ];
 
 			$tf .= "\n";	
 			echo "<br /><br />";	
@@ -78,31 +78,31 @@ $app->post('/utility/upload-file[/]', function ($req, $res, $args) {
 
 		if (substr(sprintf('%o', fileperms($upload_path)), -4) != "0755" || !is_writeable($upload_path)){
 
-			$out = array(
+			$out = [
 	      'success' => false,
 	      'error' => true,
 	      'error_message' => 'Server Error: permission denied. Upload folder permissions must be 0755.'
-			);
+      ];
 
 		}else{
 
 	    if (move_uploaded_file($_FILES['file']['tmp_name'], $target)){
 
-					$out = array(
+					$out = [
 						'filename' => $filename_clean_full,
 						'filename_clean' => $filename_clean,
 						'preview_url' => '/uploads/' . $filename_clean_full,
 			      'success' => true,
 			      'error' => false,
-					);
+          ];
 
 	    }else{
 
-				$out = array(
+				$out = [
 		      'success' => false,
 		      'error' => true,
 		      'error_message' => 'An unknown server error occurred.'
-				);
+        ];
 
 	    }
 
@@ -111,11 +111,11 @@ $app->post('/utility/upload-file[/]', function ($req, $res, $args) {
 
   }else{
 
-		$out = array(
+		$out = [
       'success' => false,
       'error' => true,
       'error_message' => 'PHP Error Code: ' . $_FILES['file']['error']
-		);
+    ];
 
   }
 
@@ -139,9 +139,9 @@ $app->post('/utility/delete-upload[/]', function ($req, $res, $args) {
 		unlink($target);
 	}
 
-	$out = array(
+	$out = [
     'success' => true
-	);
+  ];
 
 	return render::json($req, $res, [
     'data' => $out

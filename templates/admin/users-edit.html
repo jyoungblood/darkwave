@@ -172,14 +172,14 @@ function users_edit() {
     save: function(){
 			dw.form_validate_required(function(){
 		    dw.api_request({
-			    url: '/admin/users/save/',
+			    url: '/users/save/',
 			    data: {
 				    user_id: Cookies.get('user_id'),
 				    _id: '{{data._id}}',
 						form: dw.serialize(document.querySelector('form'))
 			    },
 			    callback: function(r){
-						window.location.href = '/admin/users/';
+						window.location.href = '/users/';
 					}
 				});
 			});
@@ -189,12 +189,12 @@ function users_edit() {
 			  if (e){
 					document.body.classList.add('working');
 			    dw.api_request({
-				    url: '/admin/users/delete/',
+				    url: '/users/delete/',
 				    data: {
 					    _id: '{{data._id}}',
 				    },
 				    callback: function(r){
-							window.location.href = '/admin/users/';
+							window.location.href = '/users/';
 						}
 					});
 			  }

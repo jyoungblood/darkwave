@@ -1,9 +1,9 @@
-<!-- IT'S OK TO DELETE THIS ONCE YOU START WORKING ON YOUR SITE -->
+
+
+
+
 
 {{#unless locals.site_title}}
-
-<link rel="stylesheet" href="/css/admin.css" />
-<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,700|Roboto:300,400,700" rel="stylesheet">
 
 <div class="center mw6 pa5">
 
@@ -75,6 +75,40 @@
 
 {{else}}
 
+
+
+
+
+
+
+<!-- admin intro -->
+
+<div class="ph3 pv4 ph5-l">
+
+  {{#unless install_deleted}}
+  <div class="red mb4">
+    ** delete install file: <span class="black">./controllers/install.php</span>
+  </div>
+  {{/unless}}
+
+  <div class="f3 fw7 mb4">Welcome to the admin!</div>
+
+  Check out the <a class="green" href="https://darkwave.ltd/docs">DW docs</a> to get started building screens and
+  functionality.<br /><br />
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- old dw default -->
+<!-- 
 <div class="dt h-100 center">
 	<div class="dtc v-mid">
 
@@ -97,5 +131,6 @@
 
 	</div>
 </div>
+ -->
 
 {{/unless}}
