@@ -297,15 +297,9 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
       ];
 			cookie::set('user_id', $user['_id']);
 			cookie::set('auth_token', $auth_token);
-			cookie::set('user_avatar', $user['avatar_small']);
 			if ($user['group_id'] == 1){
 				$out['admin_token'] = password_hash($GLOBALS['site_code'], PASSWORD_BCRYPT);
 				cookie::set('admin_token', $out['admin_token']);
-			}
-
-			if ($user['group_id'] == 2){
-				$out['moderator_token'] = password_hash($GLOBALS['site_code'].'-moderator', PASSWORD_BCRYPT);
-				cookie::set('moderator_token', $out['moderator_token']);
 			}
 
 		}else{
@@ -351,10 +345,8 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 $app->get('/logout[/]', function ($req, $res, $args) {
 
   cookie::delete('user_id');
-	cookie::delete('user_avatar');
 	cookie::delete('auth_token');
 	cookie::delete('admin_token');
-	cookie::delete('moderator_token');
 
   return render::redirect($req, $res, [ 'location' => '/' ]);
 

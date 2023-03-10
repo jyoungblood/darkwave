@@ -12,7 +12,7 @@ $app->get('/users[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
 		'layout' => '_layouts/base',
-		'template' => 'admin/users-list',
+		'template' => 'users-list',
     'title' => 'Users - ' . $GLOBALS['site_title'] .' Admin',
 		'data' => [
 	    'ip' => x::client_ip(),
@@ -54,7 +54,7 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
 		'layout' => '_layouts/base',
-		'template' => 'admin/users-edit',
+		'template' => 'users-edit',
     'title' => $title,
 		'data' => [
 	    'current_users' => true,
@@ -121,9 +121,6 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 					'avatar_large' => '/images/users/avatar-default-l.png',
 					'avatar_original' => '/images/users/avatar-default-o.png',
         ];
-				if ($user_id == $GLOBALS['user_id']){
-					cookie::set('user_avatar', '/images/users/avatar-default-s.png');
-				}
 			}else{
 				$user = db::find("users", "_id='".$user_id."'");
 				if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
@@ -163,9 +160,6 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 					'avatar_large' => '/images/users/' . $filename_large,
 					'avatar_original' => '/images/users/' . $filename_original,
         ];
-				if ($user_id == $GLOBALS['user_id']){
-					cookie::set('user_avatar', '/images/users/' . $filename_small);
-				}
 			}
 			db::update("users", $photo_input, "_id='".$user_id."'");
 		}

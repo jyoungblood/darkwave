@@ -5,7 +5,6 @@ require 'controllers/darkwave.php';
 
 
 require 'controllers/users.php';
-require 'controllers/settings.php';
 require 'controllers/auth.php';
 
 // ------- safe to delete after installation (and replace with your own routes) ----- //

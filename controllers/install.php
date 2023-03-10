@@ -11,8 +11,6 @@ $app->post('/install[/]', function ($req, $res, $args) {
 
 	$settings_file = '<?php
 
-// WARNING: THIS FILE IS GENERATED PROGRAMMATICALLY. ANY CHANGES YOU MAKE MAY BE OVERWRITTEN.
-
 $GLOBALS[\'site_title\'] = \''.$_POST['site_title'].'\';
 $GLOBALS[\'site_code\'] = \''.$_POST['site_code'].'\';
 $GLOBALS[\'site_url\'] = \''.$_POST['site_url'].'\';

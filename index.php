@@ -58,12 +58,6 @@ if (cookie::get('user_id')){
       $GLOBALS['locals']['is_admin'] = $GLOBALS['is_admin'];
     }
   }
-  if (cookie::get('moderator_token')){
-    if (password_verify($GLOBALS['site_code'].'-moderator', cookie::get('moderator_token'))){
-      $GLOBALS['is_moderator'] = true;
-      $GLOBALS['locals']['is_moderator'] = $GLOBALS['is_moderator'];
-    }
-  }
 }
 
 
