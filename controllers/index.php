@@ -1,6 +1,7 @@
 <?php
 
 require 'controllers/darkwave.php'; 
+require 'controllers/dw.php'; 
 
 
 
