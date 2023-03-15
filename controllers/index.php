@@ -48,11 +48,12 @@ $app->get('/', function ($req, $res, $args) {
 
 
 
-$app->get('/bootstrap[/]', function ($req, $res, $args) {
+$app->get('/elements[/]', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [
-    'template' => 'bootstrap',
-    'title' => 'bootstrap demo - ' . $GLOBALS['site_title'],
+    'layout' => '_layouts/base-unauth',
+    'template' => 'elements',
+    'title' => 'All Elements - ' . $GLOBALS['site_title'],
     'data' => [
 
     ]

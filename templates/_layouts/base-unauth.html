@@ -26,8 +26,10 @@
 
 <!-- idk? -->
 
-    <script src="https://unpkg.com/alpinejs" defer></script>
-    <script src="https://unpkg.com/htmx.org@1.7.0" integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- <script src="https://unpkg.com/alpinejs" defer></script> -->
+    <!-- <script src="https://unpkg.com/htmx.org@1.7.0" integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo" crossorigin="anonymous" defer></script> -->
+    
 <!-- fuck wretch -->
     <!-- <script src="https://unpkg.com/wretch"></script> -->
     
@@ -66,135 +68,21 @@
     <link rel="stylesheet" href="/css/dw.css" />
     <script src="/js/dw.js"></script>
 
-
   </head>
-  <!-- ?? -->
-  <!-- d-flex flex-column -->
-  <body class="">
+  <body>
 
 
-
-
-
-
-<!-- fixit correct auth logic -->
-
-{{#if locals.auth}}
-
-  <!-- boilerplate app frame -->
-
-  <!-- sticky pancake stack -->
-
-  <style>
-    body{
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-    }
-  </style>
-
-  <!-- <header></header> -->
-  <header class="flex justify-between bg-black-90 w-100 ph3 pv3 pv4-ns ph4-m ph5-l">
-  
-    <nav class="f5 fw6 ttu tracked flex-grow">
-      <a class="{{#if current_home}}white{{else}}white-70{{/if}} hover-white dib mr4 roboto fw4 no-underline"
-        href="/" title="Home">▲▼</a>
-    </nav>
-  
-    <div class="f3 fw6 flex tr">
-      <a class="{{#if current_system}}white{{else}}white-30{{/if}} hover-white dib v-mid" href="/users"
-        title="Site Users"><i class="fa fa-sliders" aria-hidden="true"></i></a>
-    </div>
-  
-  </header>
-  <main>
     {{outlet}}
-  </main>
-  <footer></footer>
 
-
-  <!-- // if not authorized to see something -->
-
-<!-- 
-  <div class="dt h-100 center pv5">
-    <div class="dtc v-mid f4">
-      ∅
-    </div>
-  </div>
- -->
-
- <!--
-{{#if locals.is_admin}}
-u r admin
-{{else}}
-not admin
-{{/if}}
- -->
-
-
-  <!-- classic holy grail (sticky left/right sidebar, sticky header/footer) -->
-
-<!-- 
-  <style>
-
-    body {
-      display: grid;
-      grid-template: auto 1fr auto / auto 1fr auto;
-    }
-
-    header {
-      padding: 2rem;
-      grid-column: 1 / 4;
-    }
-
-    left {
-      grid-column: 1 / 2;
-    }
-
-    main {
-      grid-column: 2 / 3;
-    }
-
-    right {
-      grid-column: 3 / 4;
-    }
-
-    footer {
-      grid-column: 1 / 4;
-    }
-  </style>
-
-  <header></header>
-  <left></left>
-  <main>
-    \{\{outlet\}\}
-  </main>
-  <right></right>
-  <footer></footer>
- -->
-
-
-
-
-
-{{else}}
-
-<!-- logged out -->
-<!-- show login -->
-<meta http-equiv="refresh" content="0; url=/login">
-
-{{/if}}
-
-
-
-  <div class="spinner-container">
-    <div class="page page-center align-items-center">
-      <div class="spinner-border text-light" style="width: 8rem; height: 8rem; border-width: 0.5rem;" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <div class="spinner-container">
+      <div class="page page-center align-items-center">
+        <div class="spinner-border text-light" style="width: 8rem; height: 8rem; border-width: 0.5rem;" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script src="https://instant.page/5.1.1" type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script>
+    <script src="https://instant.page/5.1.1" type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script>
 
   </body>
 </html>

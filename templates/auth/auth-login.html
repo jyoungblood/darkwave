@@ -1,129 +1,56 @@
 
-<!-- 
-<style>
-  body {
-    display: grid;
-    place-items: center;
-  }
-</style>
- -->
-
-
-
-
-
-
-    <div class="page page-center">
-      <div class="container container-tight py-4">
-        <div class="text-center mb-4">
-          <a href="." class=""><img src="/images/dw-triangles-transparent.png" class="w-25 d-inline-block" alt=""></a>
+<div class="page page-center align-items-center" x-data="login_form()">
+  <div class="container container-tight py-4">
+    <div class="text-center mb-4">
+      <a href="/" class=""><img src="/images/logo-default.png" class="w-25" alt=""></a>
+    </div>
+    <div class="card p-3">
+      <div class="card-body py-3">
+      <h2 class="h2 text-center mb-4">Log in to your account</h2>
+        <div class="mb-4 form-group" data-validate="email">
+          <label class="form-label">Email address</label>
+          <input name="email" type="email" class="form-control" placeholder="your@email.com" autocomplete="off" x-on:keydown.enter="login()" x-on:blur="remove_error('email')">
+          <div class="invalid-feedback"></div>
         </div>
-        <div class="card card-md">
-          <div class="card-body">
-            <!-- <h2 class="h2 text-center mb-4">Login to your account</h2> -->
-            <form action="./" method="get" autocomplete="off" novalidate>
-              <div class="mb-4">
-                <label class="form-label">Email address</label>
-                <input type="email" class="form-control" placeholder="your@email.com" autocomplete="off">
-              </div>
-              <div class="mb-2">
-                <label class="form-label">
-                  Password
-                </label>
-                <div class="input-group input-group-flat">
-                  <input type="password" class="form-control"  placeholder="Your password"  autocomplete="off">
-                  <span class="input-group-text">
-                    <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
-                    </a>
-                  </span>
-                </div>
-              </div>
-              <div class="form-footer">
-                <button type="submit" class="btn btn-primary w-100">Log in</button>
-              </div>
-            </form>
-          </div>
-
+        <div class="mb-2 form-group" data-validate="password">
+          <label class="form-label">Password</label>
+          <input name="password" type="password" class="form-control"  placeholder="Your password"  autocomplete="off" x-on:keydown.enter="login()" x-on:blur="remove_error('password')">
+          <div class="invalid-feedback"></div>
         </div>
-        <div class="text-center text-muted mt-3">
-          <a href="/forgot" tabindex="-1">Forgot password?</a>
+        <div class="d-none">
+          <label class="form-label">Website</label>
+          <input type="text" name="website" />
+        </div>
+        <input type="hidden" name="redirect" value="{{redirect}}" />
+        <div class="form-footer">
+          <button type="submit" class="btn btn-primary w-100" @click="login()">Log in</button>
+        </div>
+        <div data-validate="general" @click.outside="remove_error('general')">
+          <div class="form-control d-none"></div>
+          <div class="invalid-feedback fs-4 mt-4 text-center"></div>
         </div>
       </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- do this for vertical center instead -->
-<!-- 
-<style>
-body {
-  display: grid;
-  place-items: center;
-}
-</style>
- -->
-
-
-
- <!--
-
-<div class="dt h-100 w-100 w-60-m w-50-l center pv5-ns pv4 ph4">
-	<div class="dtc v-mid f4 lh-copy">
-		<img src="/images/dw-triangles-transparent.png" class="db center mb5 w-70" />
-
-		<div class="login" x-data="login_form()">
-
-			<div class="mb4 validate-email login-field">
-				<label class="db mb2 roboto ttu b f6">Email Address / Screen Name</label>
-				<input class="db w-100 pa2 f5 br1" type="text" name="email" x-on:keydown.enter="login()"
-					x-on:blur="clear_error('validate-email')" />
-				<span class="db f6 pt2"></span>
-			</div>
-
-			<div class="mb4 pb2 validate-password login-field">
-				<label class="db mb2 roboto ttu b f6">Password</label>
-				<input class="db w-100 pa2 f5 br1" type="password" name="password" x-on:keydown.enter="login()"
-					x-on:blur="clear_error('validate-password')" />
-				<span class="db f6 pt2"></span>
-			</div>
-
-			<div class="dn">
-				<input type="text" name="website" />
-			</div>
-
-			<input type="hidden" name="ip" value="{{ip}}" />
-			<input type="hidden" name="redirect" value="/" />
-
-			<button class="roboto ttu f5 br2 db pv3 w-100 bg-near-black hover-bg-black-80 white bn b mb4 pointer" @click="login()">Login</button>
-
-			<div class="tc">
-				<a class="black-50 hover-black-70 f6 u" href="/forgot">Forgot password?</a>
-			</div>
-		</div>
-
-	</div>
+    <div class="text-center text-muted mt-3">
+      <a href="/forgot" tabindex="-1">Forgot password?</a>
+    </div>
+  </div>
 </div>
 
--->
 
 <script>
 	function login_form() {
 		return {
-			clear_error: function (class_name) {
-				document.querySelector('.' + class_name).classList.remove('error');
-				document.querySelector('.' + class_name + ' span').innerHTML = '';
+			remove_error: function (data_name) {
+				document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.remove('is-invalid');
+				document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = '';
 			},
+      display_error: function (data_name, error_message) {
+        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.add('is-invalid');
+        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = error_message;
+      },
 			login: function () {
+        var ths = this;
 				document.body.classList.add('working');
 				dw.api_request({
 					url: '/auth/login/process',
@@ -133,7 +60,6 @@ body {
 						redirect: document.querySelector('[name="redirect"]').value,
 						website: document.querySelector('[name="website"]').value,
 						ua: navigator.userAgent,
-						ip: document.querySelector('[name="ip"]').value
 					},
 					callback: function (r) {
 						document.body.classList.remove('working');
@@ -145,20 +71,12 @@ body {
 							}
 						} else {
 							if (r.error) {
-								if (r.error.email) {
-									document.body.classList.remove('working');
-									document.querySelector('.validate-email').classList.add('error');
-									document.querySelector('.validate-email span').innerHTML = r.error.message;
-								}
-								if (r.error.password) {
-									document.body.classList.remove('working');
-									document.querySelector('.validate-password').classList.add('error');
-									document.querySelector('.validate-password span').innerHTML = r.error.message;
-								}
+                ths.display_error(r.error.type, r.error.message);
 							}
 						}
 					}
 				});
+
 			}
 		}
 	}

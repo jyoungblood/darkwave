@@ -10,13 +10,11 @@ use VPHP\db;
 $app->get('/login[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-unauth',
 		'template' => 'auth/auth-login',
     'title' => 'Log In - ' . $GLOBALS['site_title'],
     'data' => [
-	    'current_login' => true,
-	    'ip' => x::client_ip(),
-	    'redirect' => $_GET['redirect'] == 'home' ? "/" : $_SERVER['HTTP_REFERER']
+	    'redirect' => isset($_GET['redirect']) ? $_GET['redirect'] : '/'
     ]
 	]);
 
@@ -32,7 +30,7 @@ $app->get('/login[/]', function ($req, $res, $args) {
 $app->get('/register[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-unauth',
 		'template' => 'auth/auth-register',
     'title' => 'Register - ' . $GLOBALS['site_title'],
     'data' => [
@@ -53,7 +51,7 @@ $app->get('/register[/]', function ($req, $res, $args) {
 $app->get('/forgot[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-unauth',
 		'template' => 'auth/auth-forgot',
     'title' => 'Forgot Password - ' . $GLOBALS['site_title'],
 	]);
@@ -72,7 +70,7 @@ $app->get('/forgot[/]', function ($req, $res, $args) {
 $app->get('/forgot/reset/{hash}[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-unauth',
 		'template' => 'auth/auth-feedback',
     'title' => 'New Password - ' . $GLOBALS['site_title'],
 		'data' => [
@@ -105,7 +103,7 @@ $app->get('/register/activate/{hash}[/]', function ($req, $res, $args) {
 	}
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-unauth',
 		'template' => 'auth/auth-feedback',
     'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
     'data' => [
@@ -159,7 +157,7 @@ $app->post('/register/process[/]', function ($req, $res, $args) {
 		]);
 
 		return render::hbs($req, $res, [
-      'layout' => '_layouts/base',
+      'layout' => '_layouts/base-unauth',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Register - ' . $GLOBALS['site_title'],
 	    'data' => [
@@ -207,7 +205,7 @@ $app->post('/forgot/process[/]', function ($req, $res, $args) {
 
 
 		return render::hbs($req, $res, [
-      'layout' => '_layouts/base',
+      'layout' => '_layouts/base-unauth',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Reset Password - ' . $GLOBALS['site_title'],
 		  'data' => [
@@ -242,7 +240,7 @@ $app->post('/forgot/reset/process[/]', function ($req, $res, $args) {
     ], "password_hash='".$_POST['hash']."'");
 
 		return render::hbs($req, $res, [
-      'layout' => '_layouts/base',
+      'layout' => '_layouts/base-unauth',
 			'template' => 'auth/auth-feedback',
 	    'title' => 'Password Reset Successfully - ' . $GLOBALS['site_title'],
 	    'data' => [
@@ -255,6 +253,25 @@ $app->post('/forgot/reset/process[/]', function ($req, $res, $args) {
 	}
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -280,7 +297,7 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 			// update user info
 			db::update("users", [
 			  'ua_header' => $_POST['ua'],
-			  'ip_address' => $_POST['ip'],
+			  'ip_address' => x::client_ip(),
 			  'date_last_login' => time()
       ], "_id='".$user['_id']."'");
 
@@ -306,8 +323,10 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 			// error: not a valid password
 			$out = [
 				'error' => [
-					'password' => true,
+          'type' => 'password',
 					'message' => "Error: Incorrect password"
+          // 'type' => 'general',
+          // 'message' => "Error: Incorrect email or password."
         ],
 				'success' => false
       ];
@@ -316,8 +335,10 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 		// error: not a valid email address
 		$out = [
 			'error' => [
-				'email' => true,
+				'type' => 'email',
 				'message' => "Error: Unregistered email address"
+        // 'type' => 'general',
+        // 'message' => "Error: Incorrect email or password."        
       ],
 			'success' => false
     ];
