@@ -16,7 +16,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
 <!-- tabler -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css"> -->
+    <link rel="stylesheet" href="/css/tabler-dw.css">
+
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
 
 
@@ -26,8 +28,10 @@
 
 <!-- idk? -->
 
-    <script src="https://unpkg.com/alpinejs" defer></script>
-    <script src="https://unpkg.com/htmx.org@1.7.0" integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- <script src="https://unpkg.com/alpinejs" defer></script> -->
+    <!-- <script src="https://unpkg.com/htmx.org@1.7.0" integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo" crossorigin="anonymous" defer></script> -->
+
 <!-- fuck wretch -->
     <!-- <script src="https://unpkg.com/wretch"></script> -->
     
@@ -81,37 +85,167 @@
 
 {{#if locals.auth}}
 
-  <!-- boilerplate app frame -->
 
-  <!-- sticky pancake stack -->
 
-  <style>
-    body{
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-    }
-  </style>
+  <div class="page">
 
-  <!-- <header></header> -->
-  <header class="flex justify-between bg-black-90 w-100 ph3 pv3 pv4-ns ph4-m ph5-l">
-  
-    <nav class="f5 fw6 ttu tracked flex-grow">
-      <a class="{{#if current_home}}white{{else}}white-70{{/if}} hover-white dib mr4 roboto fw4 no-underline"
-        href="/" title="Home">▲▼</a>
-    </nav>
-  
-    <div class="f3 fw6 flex tr">
-      <a class="{{#if current_system}}white{{else}}white-30{{/if}} hover-white dib v-mid" href="/users"
-        title="Site Users"><i class="fa fa-sliders" aria-hidden="true"></i></a>
+
+    <div class="sticky-top">
+
+      <header class="navbar navbar-expand-md navbar-light sticky-top d-print-none">
+        <div class="container-xl">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
+            aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+            <a href="/">
+              <img src="/images/logo-default.png" alt="Tabler" class="navbar-brand-image">
+            </a>
+          </h1>
+          <div class="navbar-nav flex-row order-md-last">
+            <div class="nav-item d-none d-md-flex me-3">
+              <div class="btn-list">
+                <a href="/system" class="btn">
+                  <!-- Download SVG icon from http://tabler-icons.io/i/heart -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon text-pink" width="24" height="24" viewBox="0 0 24 24"
+                    stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+                  </svg>
+                  sys
+                </a>
+              </div>
+            </div>
+            <div class="nav-item">
+              <a href="/account" class="nav-link d-flex lh-1 text-reset p-0" aria-label="Open user menu">
+                <span class="avatar avatar-sm" style="background-image: url(./static/avatars/000m.jpg)"></span>
+                <div class="d-none d-xl-block ps-2">
+                  <div>[account settings]</div>
+                  <div class="mt-1 small text-muted">dropdown?</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+      <header class="navbar-expand-md">
+        <div class="collapse navbar-collapse" id="navbar-menu">
+          <div class="navbar navbar-light">
+            <div class="container-xl">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link" href="/">
+                    <span
+                      class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                      </svg>
+                    </span>
+                    <span class="nav-link-title">
+                      Home
+                    </span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/users">
+                    <span
+                      class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M9 11l3 3l8 -8" />
+                        <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
+                      </svg>
+                    </span>
+                    <span class="nav-link-title">
+                      Users
+                    </span>
+                  </a>
+                </li>
+
+                
+              </ul>
+              <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
+                <form action="./" method="get" autocomplete="off" novalidate>
+                  <div class="input-icon">
+                    <span class="input-icon-addon">
+                      <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                        <path d="M21 21l-6 -6" />
+                      </svg>
+                    </span>
+                    <input type="text" value="" class="form-control" placeholder="Search…" aria-label="Search in website">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
     </div>
-  
-  </header>
-  <main>
-    {{outlet}}
-  </main>
-  <footer></footer>
+
+    <div class="page-wrapper">
 
 
+      {{outlet}}
+
+
+
+
+
+
+
+      <footer class="footer footer-transparent d-print-none">
+        <div class="container-xl">
+          <div class="row text-center align-items-center flex-row-reverse">
+            <div class="col-lg-auto ms-lg-auto">
+              <ul class="list-inline list-inline-dots mb-0">
+                <li class="list-inline-item"><a href="#" class="link-secondary">Support</a></li>
+                <li class="list-inline-item"><a href="#" class="link-secondary">Privacy Policy</a></li>
+              </ul>
+            </div>
+            <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+              <ul class="list-inline list-inline-dots mb-0">
+                <li class="list-inline-item">
+                  &copy; {{locals.year}} <a href="." class="link-secondary">{{locals.site_title}}</a>. All Rights Reserved.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+      
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
   <!-- // if not authorized to see something -->
 
 <!-- 
@@ -129,6 +263,44 @@ u r admin
 not admin
 {{/if}}
  -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- boilerplate app frame -->
+  
+  <!-- sticky pancake stack -->
+  
+  <style>
+    /* body{
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      } */
+  </style>
+<!-- header -->
+<!-- main -->
+<!-- footer -->
+
+
 
 
   <!-- classic holy grail (sticky left/right sidebar, sticky header/footer) -->
@@ -176,6 +348,23 @@ not admin
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {{else}}
 
 <!-- logged out -->
@@ -184,8 +373,7 @@ not admin
 
 {{/if}}
 
-
-
+<!-- fixit z-index top -->
   <div class="spinner-container">
     <div class="page page-center align-items-center">
       <div class="spinner-border text-light" style="width: 8rem; height: 8rem; border-width: 0.5rem;" role="status">
@@ -196,5 +384,38 @@ not admin
 
   <script src="https://instant.page/5.1.1" type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   </body>
 </html>

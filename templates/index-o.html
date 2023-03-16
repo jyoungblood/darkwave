@@ -1,0 +1,140 @@
+
+
+
+
+
+{{#if locals.site_title}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- fixit bootstrap -->
+<div class="center mw6 pa5">
+
+	<div class="tc f1 mb3">▲▼</div>
+
+	<div class="tc mb5 fw7 f4">Darkwave v0.4.0</div>
+
+	<form action="/install" method="post">
+
+		<div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Site Information</div>
+		<div class="pt2 mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Site Title</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="site_title" />
+		</div>
+
+		<div class="mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Site Code</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="site_code" />
+		</div>
+
+		<div class="mb5">
+			<label class="db mb2 roboto ttu b f6 o-90">Site URL</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="site_url" value="{{locals.site_url}}" />
+		</div>
+
+		<div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Database</div>
+		<div class="pt2 mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Host</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="db_host" value="localhost" />
+		</div>
+
+		<div class="mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">DB Name</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="db_name" />
+		</div>
+
+		<div class="mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">DB User</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="db_user" />
+		</div>
+
+		<div class="mb5">
+			<label class="db mb2 roboto ttu b f6 o-90">DB Password</label>
+			<input class="db w-100 pa2 f5 br1" type="password" name="db_password" />
+		</div>
+
+		<div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Admin User</div>
+		<div class="pt2 mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Email Address</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="user_email" />
+		</div>
+
+		<div class="mb4">
+			<label class="db mb2 roboto ttu b f6 o-90">Screen Name</label>
+			<input class="db w-100 pa2 f5 br1" type="text" name="user_screenname" value="admin" />
+		</div>
+
+		<div class="mb5">
+			<label class="db mb2 roboto ttu b f6 o-90">Password</label>
+			<input class="db w-100 pa2 f5 br1" type="password" name="user_password" />
+		</div>
+
+		<button class="roboto ttu f5 br2 db pv3 w-100 bg-near-black hover-bg-black-80 white bn b mb4 pointer">Install</button>
+
+	</form>
+
+</div>
+
+
+{{else}}
+
+
+
+
+
+
+
+<!-- admin intro -->
+
+<div class="p-4">
+  <div class="">
+
+    <a href="/elements">bootstrap elements</a>
+<br /><br />
+fixit get public urls for these:<br />
+  -- <a href="file:///Users/jy/Desktop/tabler-main/demo/">tabler components (local)</a><br />
+  -- <a href="file:///Users/jy/Desktop/tabler-main/demo/colors.html">tabler colors (local)</a><br />
+  buttons - file:///Users/jy/Desktop/tabler-main/demo/buttons.html<br />
+  -- <a href="file:///Users/jy/Desktop/tabler-main/demo/form-elements.html">form elements</a>
+<br /><br />
+  <a href="https://tabler.io/preview">tabler preview</a>
+<br /><br />
+  <a href="https://getbootstrap.com/docs">bootstrap docs</a>
+<br /><br />
+  <a href="https://alpinejs.dev/start-here">alpine docs</a>
+
+<br /><br /><br />
+<a href="/logout">Log out</a>
+<br /><br /><br />
+
+  <img class="w-50" src="https://carminerodi.files.wordpress.com/2019/01/screenshot-2019-01-06-11.12.42.png?w=1104&h=622" />
+
+  {{#unless install_deleted}}
+  <br /><br />
+    ** delete install file: <span class="text-light bg-dark">./controllers/install.php</span>
+  {{/unless}}
+
+  </div>
+</div>
+
+
+
+
+
+
+{{/unless}}

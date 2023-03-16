@@ -387,7 +387,7 @@ $app->get('/logout[/]', function ($req, $res, $args) {
 
 
 
-$app->get('/account/settings[/]', function ($req, $res, $args) {
+$app->get('/account[/]', function ($req, $res, $args) {
 
 	$user_data = db::find("users", "_id='".cookie::get('user_id')."'");
 

@@ -1,37 +1,112 @@
-{{> subnav-system}}
 
-<div class="flex justify-between w-100 ph3 pt3-ns pt2 ph4-m ph5-l">
-	<div class="f6 flex-grow">
-	<!-- search bar here -->
-	</div>
-	<div class="flex tr">
-		<a href="/users/edit/new" class="bg-black-80 br2 b f7 ba bw1 b--black-10 no-underline ph2 pv2 dib white-90 hover-bg-black pointer"><i class="fa fa-plus mr1" aria-hidden="true"></i> New User</a>
-	</div>
+
+
+
+<div class="page-header d-print-none">
+  <div class="container-xl">
+    <div class="row g-2 align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          Users
+        </h2>
+      </div>
+      <!-- Page title actions -->
+      <div class="col-auto ms-auto d-print-none">
+        <div class="btn-list">
+
+          <a href="/users/edit/new" class="btn btn-primary d-none d-sm-inline-block">
+            <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+            New User
+          </a>
+          <a href="/users/edit/new" class="btn btn-primary d-sm-none btn-icon" aria-label="New User">
+            <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 
 
-<div class="ph3 pv3 ph4-m ph5-l">
-	<div class="overflow-auto">
-		<table class="f6 black-70 w-100 center" cellspacing="0">
-			<thead>
-				<tr>
-					<th class="fw6 tl pa3 bg-black-10 black-60">Screen Name</th>
-					<th class="fw6 tl pa3 bg-black-10 black-60">Email</th>
-					<th class="fw6 tl pa3 bg-black-10 black-60">Name</th>
-					<th class="fw6 tl pa3 bg-black-10 black-60">Date Created</th>
-				</tr>
-			</thead>
-			<tbody class="lh-copy">
-				{{#each users}}
-				<tr class="stripe-dark">
-					<td class="pa3"><a class="green b no-underline" href="/users/edit/{{_id}}">{{screenname}}</a></td>
-					<td class="pa3">{{email}}</td>
-					<td class="pa3">{{first_name}} {{last_name}}</td>
-					<td class="pa3">{{date date_created "m/d/Y"}}</td>
-				</tr>
-				{{/each}}
-			</tbody>
-		</table>
-	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="page-body">
+  <div class="container-xl">
+    <div class="row row-cards">
+
+
+      <div class="col-12">
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table table-vcenter card-table table-striped">
+              <thead>
+                <tr>
+                  <th>Screen Name</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Date Created</th>
+                  <th class="w-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+        {{#each users}}
+                <tr>
+                  <td>{{screenname}}</td>
+                  <td class="text-muted">
+                    {{first_name}} {{last_name}}
+                  </td>
+                  <td class="text-muted"><a href="#" class="text-reset">{{email}}</a></td>
+                  <td class="text-muted">
+                    {{date date_created "m/d/Y"}}
+                  </td>
+                  <td>
+                    <a href="/users/edit/{{_id}}">Edit</a>
+                  </td>
+                </tr>
+        {{/each}}
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
 </div>
+
+
