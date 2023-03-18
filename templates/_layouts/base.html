@@ -171,7 +171,7 @@
                 
               </ul>
               <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-                <form action="./" method="get" autocomplete="off" novalidate>
+                <form action="/search" method="get" autocomplete="off" novalidate>
                   <div class="input-icon">
                     <span class="input-icon-addon">
                       <!-- Download SVG icon from http://tabler-icons.io/i/search -->
@@ -182,7 +182,7 @@
                         <path d="M21 21l-6 -6" />
                       </svg>
                     </span>
-                    <input type="text" value="" class="form-control" placeholder="Search…" aria-label="Search in website">
+                    <input type="text" name="k" value="{{GET.k}}" class="form-control" placeholder="Search…" aria-label="Search in website">
                   </div>
                 </form>
               </div>
@@ -383,15 +383,6 @@ not admin
   </div>
 
   <script src="https://instant.page/5.1.1" type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script>
-
-
-
-
-
-
-
-
-
 
 
 

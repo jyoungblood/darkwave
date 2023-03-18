@@ -48,6 +48,26 @@ $app->get('/', function ($req, $res, $args) {
 
 
 
+$app->get('/search[/]', function ($req, $res, $args) {
+
+
+  return render::hbs($req, $res, [
+    'layout' => '_layouts/base',
+    'template' => 'search',
+    'title' => 'Search - ' . $GLOBALS['site_title'],
+    'data' => [
+      'GET' => $_GET
+    ]
+  ]);
+
+});
+
+
+
+
+
+
+
 $app->get('/elements[/]', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [

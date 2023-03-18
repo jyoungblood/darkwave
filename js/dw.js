@@ -1,5 +1,46 @@
 
 var dw = {
+  bs_modal: function(cfg){
+    var modal_content = `
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ${cfg.message}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<button type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch modal
+</button>
+
+    `;
+    
+    if (document.getElementById("exampleModal-group")){
+      document.getElementById("exampleModal-group").remove();
+    }
+
+    var g = document.createElement('div');
+    g.setAttribute("id", "exampleModal-group");
+    document.body.appendChild(g);
+
+    document.getElementById("exampleModal-group").innerHTML = modal_content;
+
+    // create element if it doesn't exist
+    // update w/ current content
+
+    document.querySelector('[data-bs-target="#exampleModal"]').click();
+  },
   api_request: function (cfg) {
     var data = cfg.data ? cfg.data : {};
     // fixit auth_token

@@ -1,57 +1,129 @@
 
 
-{{#if locals.auth}}
 
-<div class="dt h-100 w-100 w-60-m w-50-l center pv5 ph4">
-  <div class="dtc v-mid f4 lh-copy">
-	
-	  <form method="post" action="/account/settings/process">
 
-			{{#if saved}}
-			<div class="flex mb5 items-center justify-center pa4 bg-lightest-blue navy">
-			  <span class="lh-title">Settings Saved</span>
-			</div>
-			{{/if}}
+<div class="page-header d-print-none">
+  <div class="container-xl">
+    <div class="row g-2 align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          Account Settings
+        </h2>
+      </div>
+      <!-- Page title actions -->
+      <div class="col-auto ms-auto d-print-none">
+        <div class="btn-list">
 
-	    <div class="mb4 validate-email validate required">
-	      <label class="db mb2">Email Address <small class="silver ml3 dib">* required</small></label>
-	      <input class="db w-100 ba bw1 pa3 b" type="text" name="email" value="{{data.email}}" data-type="email" />
-	      <span class="db f6 pt2"></span>
-	    </div>
-	
-	    <div class="mb4">
-	      <label class="db mb2">Password <small class="silver ml3 dib">(no change if blank)</small></label>
-	      <input class="db w-100 ba bw1 pa3 b" type="password" name="password" />
-	      <span class="db f6 pt2"></span>
-	    </div>
+          <a href="/logout" class="btn btn-outline-danger" data-no-instant>
+            Log Out
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon-right icon-tabler icon-tabler-logout" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
+              <path d="M7 12h14l-3 -3m0 6l3 -3"></path>
+            </svg>
 
-	    <div class="mb4 validate-screenname validate required">
-	      <label class="db mb2">Screen Name <small class="silver ml3 dib">* required</small></label>
-	      <input class="db w-100 ba bw1 pa3 b" type="text" name="screenname" value="{{data.screenname}}" data-type="screenname" />
-	      <span class="db f6 pt2"></span>
-	    </div>
-
-	    <div class="mb4">
-	      <label class="db mb2">First Name</label>
-	      <input class="db w-100 ba bw1 pa3 b" type="text" name="first_name" value="{{data.first_name}}" />
-	      <span class="db f6 pt2"></span>
-	    </div>
-
-	    <div class="mb5">
-	      <label class="db mb2">Last Name</label>
-	      <input class="db w-100 ba bw1 pa3 b" type="text" name="last_name" value="{{data.last_name}}" />
-	      <span class="db f6 pt2"></span>
-	    </div>
-
-			<button class="db pv4 w-100 bg-near-black white bn b mb4">Save Settings</button>
-
-	  </form>
-
-	</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 
 
 
 
-{{/if}}
+
+
+
+
+
+
+
+
+
+
+
+<div class="page-body" x-data="dw.edit_form()">
+  <div class="container-xl">
+    <div class="row row-cards">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <form class="edit-form" action="javascript:void(0);">
+            <div class="row">
+              <div class="col-6">
+
+                <div class="mb-3 required">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" name="email" value="{{data.email}}" x-on:blur="validate($event.target, 'required')">
+                  <div class="invalid-feedback"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">New Password</label>
+                  <input type="password" class="form-control" placeholder="*********" name="password" />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Screen name</label>
+                  <input type="text" class="form-control" name="screenname" value="{{data.screenname}}" >
+                </div>
+
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label class="form-label">First name</label>
+                      <input type="text" class="form-control" name="first_name" value="{{data.first_name}}">
+                    </div>
+                  </div>
+
+                  <div class="col-6">                      
+                    <div class="mb-3">
+                      <label class="form-label">Last name</label>
+                      <input type="text" class="form-control" name="last_name" value="{{data.last_name}}">
+                    </div>                      
+                  </div>
+                </div>
+
+              </div>
+              <div class="col-6">
+                <!-- fixit -->
+                [dropzone upload]
+              </div>
+
+            </div>
+            </form>
+          </div>
+          <div class="card-footer text-end">
+            <div class="d-flex">
+              <span data-container="save">
+
+                <button class="btn btn-primary" @click="save({
+                  'url': '/account/save/',
+                  'data': {
+                    'form': dw.serialize(document.querySelector('.edit-form'))
+                  },
+                  'redirect': '/'
+                })">Save</button>
+
+              </span>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
