@@ -1,0 +1,19 @@
+{
+	"name": "hxgf/slime-render",
+  "homepage": "https://github.com/hxgf/slime-render",
+  "description": "PHP abstraction functions to help more easily render views for Slim Framework with LightnCandy or Twig.",
+	"type": "library",
+  "license": "MIT",
+	"authors": [
+		{
+      "name": "Jonathan Youngblood",
+      "email": "jy@hxgf.io"
+		}
+	],
+	"keywords": ["utilities", "render abstractions", "view helpers", "handlebars", "lightncandy", "mustache", "slim", "twig"],
+	"autoload": {
+		"psr-4": {
+			"Slime\\": ["src/"]
+		}
+	}
+}

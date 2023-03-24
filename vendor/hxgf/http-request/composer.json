@@ -1,0 +1,19 @@
+{
+	"name": "hxgf/http-request",
+  "homepage": "https://github.com/hxgf/http-request",
+	"description": "PHP functions to handle sending and receiving HTTP requests with CURL.",
+	"type": "library",
+  "license": "MIT",
+	"authors": [
+		{
+      "name": "Jonathan Youngblood",
+      "email": "jy@hxgf.io"
+		}
+	],
+	"keywords": ["utilities", "http requests", "http client", "curl"],
+	"autoload": {
+		"psr-4": {
+			"VPHP\\": ["src/"]
+		}
+	}
+}
