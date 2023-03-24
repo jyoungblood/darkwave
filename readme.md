@@ -1,6 +1,6 @@
 # D A R K W A V E
 
-### Pragmatic application development kit
+### Pragmatic web application development kit
 
 
 
