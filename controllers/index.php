@@ -85,7 +85,4 @@ $app->get('/elements[/]', function ($req, $res, $args) {
 
 
 
-
-
-
 ?>

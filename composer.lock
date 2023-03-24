@@ -202,16 +202,16 @@
         },
         {
             "name": "hxgf/slime-render",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hxgf/slime-render.git",
-                "reference": "b8030111aed68a010b16af4be49e314b397ab415"
+                "reference": "c47a9c5014e0cdaa86c3bb190251cdfc4e99af10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/slime-render/zipball/b8030111aed68a010b16af4be49e314b397ab415",
-                "reference": "b8030111aed68a010b16af4be49e314b397ab415",
+                "url": "https://api.github.com/repos/hxgf/slime-render/zipball/c47a9c5014e0cdaa86c3bb190251cdfc4e99af10",
+                "reference": "c47a9c5014e0cdaa86c3bb190251cdfc4e99af10",
                 "shasum": ""
             },
             "type": "library",
@@ -246,9 +246,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hxgf/slime-render/issues",
-                "source": "https://github.com/hxgf/slime-render/tree/1.2.0"
+                "source": "https://github.com/hxgf/slime-render/tree/1.2.1"
             },
-            "time": "2023-01-17T19:38:11+00:00"
+            "time": "2023-03-24T00:34:58+00:00"
         },
         {
             "name": "hxgf/x-utilities",
