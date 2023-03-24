@@ -16,7 +16,6 @@
 ## Installation
 ```
 npx degit hxgf/darkwave#0.5.0 .
-composer install
 ```
 
 
