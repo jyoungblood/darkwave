@@ -5,7 +5,33 @@ use VPHP\x;
 use VPHP\db;
 
 
-$app->post('/install[/]', function ($req, $res, $args) {
+
+
+
+$app->get('/install[/]', function ($req, $res, $args) {
+
+  return render::hbs($req, $res, [
+    'layout' => '_layouts/base-unauth',
+    'template' => 'install',
+    'title' => 'Install Darkwave',
+    'data' => [
+
+    ]
+  ]);
+
+});
+
+
+
+
+
+
+
+
+
+
+
+$app->post('/execute-install[/]', function ($req, $res, $args) {
 
 	// 1. make the settings file
 

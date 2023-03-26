@@ -18,24 +18,13 @@ use Slime\render;
 
 $app->get('/', function ($req, $res, $args) {
 
-// ??
-
-// 	if (!$GLOBALS['is_admin']){
-// 		$title = 'Log In - ' . $title;
-// 	}
-
   return render::hbs($req, $res, [
     'layout' => '_layouts/base',
     'template' => 'index',
-    'title' => $GLOBALS['site_title'] ? $GLOBALS['site_title'] : 'Install Darkwave',
+    'title' => $GLOBALS['site_title'],
     'data' => [
 	    'install_deleted' => file_exists('./controllers/install.php') ? false : true,
-      'what' => 'what',
-      'number' => 327,
-      'foo' => 0,
-      'date_created' => 1672419228,
       'current_home' => true,
-// 	    'ip' => x::client_ip(),
     ]
   ]);
 

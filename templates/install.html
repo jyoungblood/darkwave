@@ -1,0 +1,169 @@
+
+<div class="page page-center align-items-center" x-data="install_form()">
+  <div class="container container-tight py-4">
+    <div class="text-center mb-4">
+      <a href="/" class=""><img src="/images/logo-default.png" class="w-25" alt=""></a>
+    </div>
+    <div class="card p-3 shadow rounded-3">
+      <div class="card-body py-3">
+        <h2 class="h2 text-center mb-4">Install Darkwave v0.6.0</h2>
+
+<!-- fixit fields -->
+
+<!-- fixit stopped here -->
+
+<!-- 
+
+    <div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Site Information</div>
+    <div class="pt2 mb4">
+      <label class="db mb2 roboto ttu b f6 o-90">Site Title</label>
+      <input class="db w-100 pa2 f5 br1" type="text" name="site_title" />
+    </div>
+
+    <div class="mb4">
+      <label class="db mb2 roboto ttu b f6 o-90">Site Code</label>
+      <input class="db w-100 pa2 f5 br1" type="text" name="site_code" />
+    </div>
+
+    <div class="mb5">
+      <label class="db mb2 roboto ttu b f6 o-90">Site URL</label>
+      <input class="db w-100 pa2 f5 br1" type="text" name="site_url" value="{{locals.site_url}}" />
+    </div>
+
+    <div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Database</div>
+    <div class="pt2 mb4">
+      <label class="db mb2 roboto ttu b f6 o-90">Host</label>
+      <input class="db w-100 pa2 f5 br1" type="text" name="db_host" value="localhost" />
+    </div>
+
+    <div class="mb4">
+      <label class="db mb2 roboto ttu b f6 o-90">DB Name</label>
+      <input class="db w-100 pa2 f5 br1" type="text" name="db_name" />
+    </div>
+
+    <div class="mb4">
+      <label class="db mb2 roboto ttu b f6 o-90">DB User</label>
+      <input class="db w-100 pa2 f5 br1" type="text" name="db_user" />
+    </div>
+
+    <div class="mb5">
+      <label class="db mb2 roboto ttu b f6 o-90">DB Password</label>
+      <input class="db w-100 pa2 f5 br1" type="password" name="db_password" />
+    </div>
+
+    <div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Admin User</div>
+    <div class="pt2 mb4">
+      <label class="db mb2 roboto ttu b f6 o-90">Email Address</label>
+      <input class="db w-100 pa2 f5 br1" type="text" name="user_email" />
+    </div>
+
+    <div class="mb4">
+      <label class="db mb2 roboto ttu b f6 o-90">Screen Name</label>
+      <input class="db w-100 pa2 f5 br1" type="text" name="user_screenname" value="admin" />
+    </div>
+
+    <div class="mb5">
+      <label class="db mb2 roboto ttu b f6 o-90">Password</label>
+      <input class="db w-100 pa2 f5 br1" type="password" name="user_password" />
+    </div>
+
+
+-->
+
+
+
+
+        <div class="mb-4 form-group" data-validate="email">
+          <label class="form-label">Email address</label>
+          <input name="email" type="email" class="form-control" placeholder="your@email.com" autocomplete="off" x-on:blur="remove_error('email')">
+          <div class="invalid-feedback"></div>
+        </div>
+        <div class="mb-4 form-group">
+          <label class="form-label">Password</label>
+          <input name="password" type="password" class="form-control"  placeholder="Your password"  autocomplete="off">
+        </div>
+        <div class="mb-4 form-group">
+          <label class="form-label">Screen Name</label>
+          <input name="screenname" type="text" class="form-control" autocomplete="off">
+        </div>
+        <div class="mb-4 form-group">
+          <label class="form-label">First Name</label>
+          <input name="first_name" type="text" class="form-control" autocomplete="off">
+        </div>
+        <div class="mb-2 form-group">
+          <label class="form-label">Last Name</label>
+          <input name="last_name" type="text" class="form-control" autocomplete="off">
+        </div>
+        <div class="d-none">
+          <label class="form-label">Website</label>
+          <input type="text" name="website" />
+        </div>
+        <div class="form-footer">
+          <button type="submit" class="btn btn-primary w-100" @click="install()">Install</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function install_form() {
+    return {
+      remove_error: function (data_name) {
+        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.remove('is-invalid');
+        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = '';
+      },
+      display_error: function (data_name, error_message) {
+        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.add('is-invalid');
+        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = error_message;
+      },
+      install: function () {
+        var ths = this;
+        document.body.classList.add('working');
+        dw.api_request({
+          url: '/install/execute',
+          data: {
+            email: document.querySelector('[name="email"]').value,
+            password: document.querySelector('[name="password"]').value,
+            screenname: document.querySelector('[name="screenname"]').value,
+            first_name: document.querySelector('[name="first_name"]').value,
+            last_name: document.querySelector('[name="last_name"]').value,
+            website: document.querySelector('[name="website"]').value,
+            ua: navigator.userAgent,
+          },
+          callback: function (r) {
+            document.body.classList.remove('working');
+            if (r.success) {
+
+              // fixit redirect or show confirmation
+
+              // document.querySelector('.card-body').innerHTML = `
+              //   <h2 class="h2 text-center mb-3">Your registration is almost complete</h2>
+              //   <div class="mb-2 text-center">Check the email for the address you just registered and click the activation link we sent you.</div>
+              // `;
+
+
+            } else {
+              if (r.error) {
+                ths.display_error(r.error.type, r.error.message);
+              }
+            }
+          }
+        });
+
+      }
+    }
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
