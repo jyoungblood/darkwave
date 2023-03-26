@@ -15,7 +15,6 @@ $app->get('/users[/]', function ($req, $res, $args) {
 		'template' => 'users-list',
     'title' => 'Users - ' . $GLOBALS['site_title'],
 		'data' => [
-	    'ip' => x::client_ip(),
 	    'current_users' => true,
 	    'current_system' => true,
 	    'users'=> $_users['data']

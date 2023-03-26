@@ -11,7 +11,7 @@ $app->get('/login[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-unauth',
-		'template' => 'auth/auth-login',
+		'template' => 'auth/login',
     'title' => 'Log In - ' . $GLOBALS['site_title'],
     'data' => [
 	    'redirect' => isset($_GET['redirect']) ? $_GET['redirect'] : '/'
@@ -31,7 +31,7 @@ $app->get('/register[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-unauth',
-		'template' => 'auth/auth-register',
+		'template' => 'auth/register',
     'title' => 'Register - ' . $GLOBALS['site_title'],
     'data' => [
 	    'current_register' => true
@@ -52,7 +52,7 @@ $app->get('/forgot[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-unauth',
-		'template' => 'auth/auth-forgot',
+		'template' => 'auth/forgot',
     'title' => 'Forgot Password - ' . $GLOBALS['site_title'],
 	]);
 
@@ -67,15 +67,15 @@ $app->get('/forgot[/]', function ($req, $res, $args) {
 
 
 
-$app->get('/forgot/reset/{hash}[/]', function ($req, $res, $args) {
+$app->get('/forgot/reset/{hash}/{e_hash}[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-unauth',
-		'template' => 'auth/auth-feedback',
-    'title' => 'New Password - ' . $GLOBALS['site_title'],
+		'template' => 'auth/forgot-reset',
+    'title' => 'Choose a new password - ' . $GLOBALS['site_title'],
 		'data' => [
 	    'hash' => $args['hash'],
-			'forgot_reset' => true,
+	    'e_hash' => $args['e_hash'],
     ]
 	]);
 
@@ -92,9 +92,9 @@ $app->get('/forgot/reset/{hash}[/]', function ($req, $res, $args) {
 
 
 
-$app->get('/register/activate/{hash}[/]', function ($req, $res, $args) {
+$app->get('/register/activate/{hash}/{e_hash}[/]', function ($req, $res, $args) {
 
-	$_user = db::find("users", "validate_hash='".$args['hash']."'");
+	$_user = db::find("users", "validate_hash='".$args['hash']."' and email='".base64_decode($args['e_hash'])."'");
 
 	if ($_user['data']){
 		db::update("users", [
@@ -104,7 +104,7 @@ $app->get('/register/activate/{hash}[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-unauth',
-		'template' => 'auth/auth-feedback',
+		'template' => 'auth/register-activate',
     'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
     'data' => [
 			'registration_complete' => true
@@ -129,45 +129,48 @@ $app->get('/register/activate/{hash}[/]', function ($req, $res, $args) {
 
 
 
-$app->post('/register/process[/]', function ($req, $res, $args) {
+$app->post('/auth/register/process[/]', function ($req, $res, $args) {
+
+  $out = [
+    'success' => true,
+  ];
 
 	if (!$_POST['website'] && $_POST['email'] != ''){
 
 		$hash = uniqid(uniqid());
 
+    $email = strtolower($_POST['email']);
+
 		db::insert("users", [
 			'_id' => uniqid(uniqid()),
-			'email' => strtolower($_POST['email']),
+			'email' => $email,
 			'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
 			'group_id' => '3',
 			'date_created' => time(),
 			'screenname' => $_POST['screenname'],
+      'url_slug' => x::url_slug($_POST['screenname']),
+			'first_name' => $_POST['first_name'],
+			'last_name' => $_POST['last_name'],
+      'ua_header' => $_POST['ua'],
+      'ip_address' => x::client_ip(),
 			'validate_hash' => $hash
 		]);
 
-		$message = "Thanks for registering with ".$GLOBALS['site_title'].".\r\r".
-		"In order to complete your account setup, we will need to verify your email address. Please click the link below and we can activate your account:\r\r".
-		"http://".$GLOBALS['site_url']."/register/activate/".$hash;
-
 		x::email_send([
-		  'to' => strtolower($_POST['email']),
+		  'to' => $email,
 		  'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
 		  'subject' => 'Activate your new account',
-		  'message' => $message
-		]);
-
-		return render::hbs($req, $res, [
-      'layout' => '_layouts/base-unauth',
-			'template' => 'auth/auth-feedback',
-	    'title' => 'Register - ' . $GLOBALS['site_title'],
-	    'data' => [
-				'register_process' => true
-      ]
+		  'message' => "Thanks for registering with ".$GLOBALS['site_title'].".\r\r". "In order to complete your account setup, we will need to verify your email address.\r\r Please click the link below to activate your account:\r\r"."http://".$GLOBALS['site_url']."/register/activate/".$hash."/".base64_encode($email)
 		]);
 
 	}else{
-    return render::redirect($req, $res, [ 'location' => '/' ]);
+    // no error for bots
 	}
+
+
+	return render::json($req, $res, [
+    'data' => $out
+  ]);
 
 });
 
@@ -183,39 +186,45 @@ $app->post('/register/process[/]', function ($req, $res, $args) {
 
 
 
-$app->post('/forgot/process[/]', function ($req, $res, $args) {
+$app->post('/auth/forgot/process[/]', function ($req, $res, $args) {
 
-	if (!$_POST['website']){
+	$email = strtolower($_POST['email']);
+  $out = [];
+  
+  $_user = db::find("users", "email='".$email."' OR screenname='".$email."' AND validate_hash IS NULL");
+  if ($_user['data'] && !$_POST['website']){
 
-		$hash = uniqid(uniqid());
+    $hash = uniqid(uniqid());
 
-		db::update("users", [
-			'password_hash' => $hash
-    ], "email='".strtolower($_POST['email'])."'");
+    db::update("users", [
+      'password_hash' => $hash
+    ], "email='".$email."'");
 
-		$message = "Here's the link to reset the password for your account at ".$GLOBALS['site_title'].".\r\r".
-		"http://".$GLOBALS['site_url']."/forgot/reset/".$hash;
+    x::email_send([
+      'to' => $email,
+      'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
+      'subject' => 'Reset your password',
+      'message' => "Here's the link to reset the password for your account at ".$GLOBALS['site_title'].".\r\r"."http://".$GLOBALS['site_url']."/forgot/reset/".$hash."/".base64_encode($email)
+    ]);
 
-		x::email_send([
-		  'to' => strtolower($_POST['email']),
-		  'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
-		  'subject' => 'Reset your password',
-		  'message' => $message
-		]);
+    $out = [
+      'success' => true,
+    ];
 
-
-		return render::hbs($req, $res, [
-      'layout' => '_layouts/base-unauth',
-			'template' => 'auth/auth-feedback',
-	    'title' => 'Reset Password - ' . $GLOBALS['site_title'],
-		  'data' => [
-				'forgot_process' => true
-      ]
-		]);
-
-	}else{
-    return render::redirect($req, $res, [ 'location' => '/' ]);
-	}
+  }else{
+    // error: not a valid email address
+    $out = [
+      'error' => [
+        'type' => 'email',
+        'message' => "Error: Unregistered email address"
+      ],
+      'success' => false
+    ];
+  }
+  
+	return render::json($req, $res, [
+    'data' => $out
+  ]);
 
 });
 
@@ -230,27 +239,26 @@ $app->post('/forgot/process[/]', function ($req, $res, $args) {
 
 
 
-$app->post('/forgot/reset/process[/]', function ($req, $res, $args) {
+$app->post('/auth/forgot/reset/process[/]', function ($req, $res, $args) {
+
+  $out = [
+    'success' => true,
+  ];
 
 	if (!$_POST['website']){
 
 		db::update("users", [
 			'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
 			'password_hash' => NULL
-    ], "password_hash='".$_POST['hash']."'");
-
-		return render::hbs($req, $res, [
-      'layout' => '_layouts/base-unauth',
-			'template' => 'auth/auth-feedback',
-	    'title' => 'Password Reset Successfully - ' . $GLOBALS['site_title'],
-	    'data' => [
-				'forgot_reset_process' => true
-      ]
-		]);
+    ], "password_hash='".$_POST['hash']."' and email='".base64_decode($_POST['e_hash'])."'");
 
 	}else{
-    return render::redirect($req, $res, [ 'location' => '/' ]);
+    // no errors now
 	}
+
+	return render::json($req, $res, [
+    'data' => $out
+  ]);
 
 });
 
@@ -402,7 +410,7 @@ $app->get('/account[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
-		'template' => 'auth/auth-settings',
+		'template' => 'auth/settings',
     'title' => 'Account Settings - ' . $GLOBALS['site_title'],
     'data' => [
 	    'current_settings' => true,
@@ -439,7 +447,7 @@ $app->get('/account[/]', function ($req, $res, $args) {
 
 // 	return render::hbs($req, $res, [
 //     'layout' => '_layouts/base',
-// 		'template' => 'auth/auth-settings',
+// 		'template' => 'auth/settings',
 //     'title' => 'Account Settings - ' . $GLOBALS['site_title'],
 //     'data' => [
 // 	    'current_settings' => true,
