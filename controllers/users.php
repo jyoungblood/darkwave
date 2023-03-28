@@ -11,7 +11,7 @@ use VPHP\cookie;
 
 $app->get('/users[/]', function ($req, $res, $args) {
 
-// dw::what();
+// \DW\auth::what();
 
 	$_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
 
@@ -26,10 +26,11 @@ $app->get('/users[/]', function ($req, $res, $args) {
     ]
 	]);
 
-})->add(new is_admin())->add(new is_auth());
-
-
-
+})->add(new dw_restrict_auth([
+  'redirect' => '/'
+]))->add(new dw_authenticate([
+  'redirect' => '/login'
+]));
 
 
 
@@ -69,7 +70,9 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
     ]
 	]);
 
-});
+})->add(new dw_restrict_auth())->add(new dw_authenticate([
+  'redirect' => '/login'
+]));
 
 
 
@@ -180,7 +183,7 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
     ]
   ]);
 
-});
+})->add(new dw_restrict_auth())->add(new dw_authenticate());
 
 
 
@@ -201,23 +204,6 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 
 
 
-
-$app->post('/users/api-fetch-debug[/]', function ($req, $res, $args) {
-
-  $form = [];
-  parse_str($_POST['form'],$form);
-
-	return render::json($req, $res, [
-    'data' => [
-      'success' => true,
-      'form' => $form,
-      'form_string' => $_POST['form'],
-      'user_id' => $_POST['user_id'],
-      '_id' => $_POST['_id']
-    ]
-  ]);
-
-});
 
 
 
@@ -244,4 +230,4 @@ $app->post('/users/delete[/]', function ($req, $res, $args) {
     ]
   ]);
 
-});
+})->add(new dw_restrict_auth())->add(new dw_authenticate());

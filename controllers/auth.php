@@ -320,11 +320,11 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 				'redirect' => $_POST['redirect'],
 				'auth_token' => $auth_token
       ];
-			cookie::set('user_id', $user['_id']);
-			cookie::set('auth_token', $auth_token);
+			// cookie::set('user_id', $user['_id']);
+			// cookie::set('auth_token', $auth_token);
 			if ($user['group_id'] == 1){
 				$out['admin_token'] = password_hash($GLOBALS['site_code'], PASSWORD_BCRYPT);
-				cookie::set('admin_token', $out['admin_token']);
+				// cookie::set('admin_token', $out['admin_token']);
 			}
 
     $jwt_factory = new \PsrJwt\Factory\Jwt();
@@ -416,7 +416,7 @@ $app->get('/logout[/]', function ($req, $res, $args) {
 
 $app->get('/account[/]', function ($req, $res, $args) {
 
-	$user_data = db::find("users", "_id='".cookie::get('user_id')."'");
+	$user_data = db::find("users", "_id='".$GLOBALS['user_id']."'");
 
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
@@ -428,7 +428,9 @@ $app->get('/account[/]', function ($req, $res, $args) {
     ]
 	]);
 
-});
+})->add(new dw_authenticate([
+  'redirect' => '/login'
+]));
 
 
 
@@ -570,7 +572,7 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     ]
   ]);
 
-});
+})->add(new dw_authenticate());
 
 
 

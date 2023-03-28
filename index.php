@@ -21,6 +21,9 @@ use Slime\render;
 require __DIR__ . '/vendor/autoload.php';
 require 'settings.php';
 
+// will disappear w/ autoload package
+require __DIR__ . '/dw-auth-middleware.php';
+
 $app = AppFactory::create();
 
 $app->addBodyParsingMiddleware();

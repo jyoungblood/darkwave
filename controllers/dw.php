@@ -3,8 +3,9 @@
 namespace DW;
 
 
-class dw {
-  
+class auth {
+
+
 	public static function what(){
     echo "hi";
     return true;
