@@ -17,6 +17,10 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
         array (
             'VPHP\\' => 5,
         ),
+        'T' => 
+        array (
+            'Tests\\' => 6,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
@@ -24,16 +28,29 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
             'Slim\\Psr7\\' => 10,
             'Slim\\' => 5,
         ),
+        'R' => 
+        array (
+            'ReallySimpleJWT\\' => 16,
+        ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Server\\' => 16,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
+            'PsrJwt\\' => 7,
+        ),
+        'N' => 
+        array (
+            'Nyholm\\Psr7\\' => 12,
         ),
         'L' => 
         array (
             'LightnCandy\\' => 12,
+        ),
+        'H' => 
+        array (
+            'Http\\Message\\' => 13,
         ),
         'F' => 
         array (
@@ -50,6 +67,10 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
             2 => __DIR__ . '/..' . '/hxgf/http-request/src',
             3 => __DIR__ . '/..' . '/hxgf/x-utilities/src',
         ),
+        'Tests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rbdwllr/psr-jwt/tests',
+        ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
@@ -65,6 +86,10 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
         'Slim\\' => 
         array (
             0 => __DIR__ . '/..' . '/slim/slim/Slim',
+        ),
+        'ReallySimpleJWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rbdwllr/reallysimplejwt/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -84,9 +109,21 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
+        'PsrJwt\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rbdwllr/psr-jwt/src',
+        ),
+        'Nyholm\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nyholm/psr7/src',
+        ),
         'LightnCandy\\' => 
         array (
             0 => __DIR__ . '/..' . '/zordius/lightncandy/src',
+        ),
+        'Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-http/message-factory/src',
         ),
         'Fig\\Http\\Message\\' => 
         array (

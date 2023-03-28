@@ -7,6 +7,8 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]
 
+RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 <ifModule mod_gzip.c>
 mod_gzip_on Yes
 mod_gzip_dechunk Yes

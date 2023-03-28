@@ -327,6 +327,15 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 				cookie::set('admin_token', $out['admin_token']);
 			}
 
+    $jwt_factory = new \PsrJwt\Factory\Jwt();
+    $token = $jwt_factory->builder()->setSecret($GLOBALS['settings']['jwt_secret'])
+        ->setPayloadClaim('_id', $user['_id'])
+        ->setPayloadClaim('admin_token', $out['admin_token'])
+        ->build();
+
+    $out['token'] = $token->getToken();
+    cookie::set('token', $token->getToken());
+
 		}else{
 			// error: not a valid password
 			$out = [
@@ -379,6 +388,7 @@ $app->get('/logout[/]', function ($req, $res, $args) {
   cookie::delete('user_id');
 	cookie::delete('auth_token');
 	cookie::delete('admin_token');
+	cookie::delete('token');
 
   // return $res->withHeader('Location', '/')->withStatus(302);
 

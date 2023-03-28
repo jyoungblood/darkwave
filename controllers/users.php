@@ -6,7 +6,12 @@ use VPHP\x;
 use VPHP\cookie;
 
 
+// use DW\dw;
+
+
 $app->get('/users[/]', function ($req, $res, $args) {
+
+// dw::what();
 
 	$_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
 
@@ -21,7 +26,7 @@ $app->get('/users[/]', function ($req, $res, $args) {
     ]
 	]);
 
-});
+})->add(new is_admin())->add(new is_auth());
 
 
 

@@ -9,12 +9,12 @@
       <h2 class="h2 text-center mb-4">Log in to your account</h2>
         <div class="mb-4 form-group" data-validate="email">
           <label class="form-label">Email address</label>
-          <input name="email" type="email" class="form-control" placeholder="your@email.com" autocomplete="off" x-on:keydown.enter="login()" x-on:blur="remove_error('email')">
+          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:keydown.enter="login()" x-on:blur="remove_error('email')">
           <div class="invalid-feedback"></div>
         </div>
         <div class="mb-2 form-group" data-validate="password">
           <label class="form-label">Password</label>
-          <input name="password" type="password" class="form-control"  placeholder="Your password"  autocomplete="off" x-on:keydown.enter="login()" x-on:blur="remove_error('password')">
+          <input name="password" type="password" class="form-control"  placeholder="*********"  autocomplete="off" x-on:keydown.enter="login()" x-on:blur="remove_error('password')">
           <div class="invalid-feedback"></div>
         </div>
         <div class="d-none">
@@ -62,7 +62,6 @@
 						ua: navigator.userAgent,
 					},
 					callback: function (r) {
-						document.body.classList.remove('working');
 						if (r.success) {
 							if (r.redirect) {
 								window.location.href = r.redirect;
@@ -70,6 +69,7 @@
 								window.location.href = '/';
 							}
 						} else {
+              document.body.classList.remove('working');
 							if (r.error) {
                 ths.display_error(r.error.type, r.error.message);
 							}
