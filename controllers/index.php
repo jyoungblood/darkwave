@@ -21,7 +21,7 @@ $app->get('/', function ($req, $res, $args) {
 // dw::what();
 
   return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-auth',
     'template' => 'index',
     'title' => $GLOBALS['site_title'],
     'data' => [
@@ -42,7 +42,7 @@ $app->get('/search[/]', function ($req, $res, $args) {
 
 
   return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-auth',
     'template' => 'search',
     'title' => 'Search - ' . $GLOBALS['site_title'],
     'data' => [

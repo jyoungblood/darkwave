@@ -244,13 +244,23 @@ var dw = {
       save: function (cfg) {
         document.body.classList.add('working');
         // fixit validation
+        var callback = cfg.callback ? cfg.callback : false;
+        if (cfg.redirect){
+          callback = function (r) {
+            window.location.href = cfg.redirect;
+          }          
+        }
+        if (cfg.debug) {
+          callback = function (r) {
+            document.body.classList.remove('working');
+            console.log(r);
+          }
+        }
         dw.form_validate_required(function () {
           dw.api_request({
             url: cfg.url,
             data: cfg.data,
-            callback: function (r) {
-              window.location.href = cfg.redirect;
-            }
+            callback: callback
           });
         });
       },

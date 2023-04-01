@@ -16,7 +16,7 @@ $app->get('/users[/]', function ($req, $res, $args) {
 	$_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
 
 	return render::hbs($req, $res, [
-		'layout' => '_layouts/base',
+		'layout' => '_layouts/base-auth',
 		'template' => 'users-list',
     'title' => 'Users - ' . $GLOBALS['site_title'],
 		'data' => [
@@ -58,7 +58,7 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
 	}
 
 	return render::hbs($req, $res, [
-		'layout' => '_layouts/base',
+		'layout' => '_layouts/base-auth',
 		'template' => 'users-edit',
     'title' => $title,
 		'data' => [

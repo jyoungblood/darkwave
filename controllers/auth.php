@@ -10,7 +10,7 @@ use VPHP\db;
 $app->get('/login[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base-unauth',
+    'layout' => '_layouts/base',
 		'template' => 'auth/login',
     'title' => 'Log In - ' . $GLOBALS['site_title'],
     'data' => [
@@ -30,7 +30,7 @@ $app->get('/login[/]', function ($req, $res, $args) {
 $app->get('/register[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base-unauth',
+    'layout' => '_layouts/base',
 		'template' => 'auth/register',
     'title' => 'Register - ' . $GLOBALS['site_title'],
     'data' => [
@@ -51,7 +51,7 @@ $app->get('/register[/]', function ($req, $res, $args) {
 $app->get('/forgot[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base-unauth',
+    'layout' => '_layouts/base',
 		'template' => 'auth/forgot',
     'title' => 'Forgot Password - ' . $GLOBALS['site_title'],
 	]);
@@ -70,7 +70,7 @@ $app->get('/forgot[/]', function ($req, $res, $args) {
 $app->get('/forgot/reset/{hash}/{e_hash}[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base-unauth',
+    'layout' => '_layouts/base',
 		'template' => 'auth/forgot-reset',
     'title' => 'Choose a new password - ' . $GLOBALS['site_title'],
 		'data' => [
@@ -103,7 +103,7 @@ $app->get('/register/activate/{hash}/{e_hash}[/]', function ($req, $res, $args) 
 	}
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base-unauth',
+    'layout' => '_layouts/base',
 		'template' => 'auth/register-activate',
     'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
     'data' => [
@@ -327,14 +327,18 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 				// cookie::set('admin_token', $out['admin_token']);
 			}
 
-    $jwt_factory = new \PsrJwt\Factory\Jwt();
-    $token = $jwt_factory->builder()->setSecret($GLOBALS['settings']['jwt_secret'])
-        ->setPayloadClaim('_id', $user['_id'])
-        ->setPayloadClaim('admin_token', $out['admin_token'])
-        ->build();
+      // fixit set expiration for like 6 months from now
+      $jwt_factory = new \PsrJwt\Factory\Jwt();
+      $token = $jwt_factory->builder()->setSecret($GLOBALS['settings']['jwt_secret'])
+          ->setPayloadClaim('_id', $user['_id'])
+          ->setPayloadClaim('admin_token', $out['admin_token'])
+          ->build();
 
-    $out['token'] = $token->getToken();
-    cookie::set('token', $token->getToken());
+      $out['token'] = $token->getToken();
+      cookie::set('token', $token->getToken(), [
+        'secure' => true,
+        'httponly' => true,
+      ]);
 
 		}else{
 			// error: not a valid password
@@ -419,7 +423,7 @@ $app->get('/account[/]', function ($req, $res, $args) {
 	$user_data = db::find("users", "_id='".$GLOBALS['user_id']."'");
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-auth',
 		'template' => 'auth/settings',
     'title' => 'Account Settings - ' . $GLOBALS['site_title'],
     'data' => [
@@ -439,36 +443,6 @@ $app->get('/account[/]', function ($req, $res, $args) {
 
 
 
-
-// $app->post('/account/settings/process[/]', function ($req, $res, $args) {
-
-// 	$input = [
-// 		'email' => strtolower($_POST['email']),
-// 		'screenname' => $_POST['screenname'],
-// 		'first_name' => $_POST['first_name'],
-// 		'last_name' => $_POST['last_name']
-//   ];
-
-// 	if ($_POST['password']){
-// 		$input['password'] = password_hash($_POST['password'], PASSWORD_BCRYPT);
-// 	}
-
-// 	db::update("users", $input, "_id='".cookie::get('user_id')."'");
-
-// 	$user_data = db::find("users", "_id='".cookie::get('user_id')."'");
-
-// 	return render::hbs($req, $res, [
-//     'layout' => '_layouts/base',
-// 		'template' => 'auth/settings',
-//     'title' => 'Account Settings - ' . $GLOBALS['site_title'],
-//     'data' => [
-// 	    'current_settings' => true,
-// 	    'saved' => true,
-// 	    'data' => $user_data['data'][0]
-//     ]
-// 	]);
-
-// });
 
 
 
@@ -500,8 +474,8 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     $input['password'] = password_hash($form['password'], PASSWORD_BCRYPT);
   }
 
-  db::update("users", $input, "_id='".$_POST['user_id']."'");
-  $user_id = $_POST['user_id'];
+  db::update("users", $input, "_id='".$GLOBALS['user_id']."'");
+  $user_id = $GLOBALS['user_id'];
 
     
   // if ($form['file_1']){
@@ -566,14 +540,14 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
 	return render::json($req, $res, [
     'data' => [
       'success' => true,
-      // 'input' => $input,
-      // 'form' => $form,
-      // 'form_string' => $_POST['form']
+      'input' => $input,
+      'form' => $form,
+      'form_string' => $_POST['form'],
+      'user_id' => $GLOBALS['user_id']
     ]
   ]);
 
 })->add(new dw_authenticate());
-
 
 
 

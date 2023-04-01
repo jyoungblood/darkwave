@@ -9,7 +9,7 @@ use VPHP\x;
 $app->get('/elements[/]', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [
-    'layout' => '_layouts/base-unauth',
+    'layout' => '_layouts/base',
     'template' => 'elements',
     'title' => 'All Elements - ' . $GLOBALS['site_title'],
     'data' => [

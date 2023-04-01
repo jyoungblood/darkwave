@@ -15,7 +15,8 @@
         <div class="btn-list">
 <!-- window.location.href = '/' -->
 <!-- fixit make this work consistently -->
-          <span onclick="document.cookie = 'token=; Max-Age=0'; window.location.reload();" class="btn btn-outline-danger" data-no-instant>
+
+          <span onclick="document.cookie = 'token=; Max-Age=0'; window.location.href = window.location.origin;" class="btn btn-outline-danger" data-no-instant>
             Log Out
             <svg xmlns="http://www.w3.org/2000/svg" class="icon-right icon-tabler icon-tabler-logout" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -105,7 +106,11 @@
                   'data': {
                     'form': dw.serialize(document.querySelector('.edit-form'))
                   },
-                  'redirect': '/'
+                  callback: function(r){
+document.body.classList.remove('working');
+console.log(r);
+                  },
+//                  'redirect': '/'
                 })">Save</button>
 
               </span>
