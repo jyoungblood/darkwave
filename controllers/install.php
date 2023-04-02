@@ -1,7 +1,6 @@
 <?php
 
 use Slime\render;
-use VPHP\x;
 use VPHP\db;
 
 
@@ -128,7 +127,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
 					'password' => password_hash($_POST['user_password'], PASSWORD_BCRYPT),
 					'group_id' => '1',
 					'date_created' => time(),
-					'url_slug' => x::url_slug($_POST['user_screenname']),
+					'url_slug' => \VPHP\x::url_slug($_POST['user_screenname']),
 					'screenname' => $_POST['user_screenname'],
 				]);
 			}

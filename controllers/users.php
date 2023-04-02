@@ -2,16 +2,9 @@
 
 use Slime\render;
 use VPHP\db;
-use VPHP\x;
-use VPHP\cookie;
-
-
-// use DW\dw;
 
 
 $app->get('/users[/]', function ($req, $res, $args) {
-
-// \DW\auth::what();
 
 	$_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
 
@@ -94,7 +87,7 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 		$input = [
 			'email' => strtolower($form['email']),
 			'group_id' => $form['group_id'],
-			'url_slug' => x::url_slug($form['screenname']),
+			'url_slug' => \VPHP\x::url_slug($form['screenname']),
 			'screenname' => $form['screenname'],
 			'first_name' => $form['first_name'],
 			'last_name' => $form['last_name'],
@@ -113,7 +106,10 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 			db::update("users", $input, "_id='".$_POST['_id']."'");
 			$user_id = $_POST['_id'];
 	  }
-	
+
+    // fixit photo uploads
+    // fixit make component functions & move to dw.php
+
 	  // if ($form['file_1']){
 		// 	if ($form['file_1'] == 'DELETE'){
 		// 		$user = db::find("users", "_id='".$user_id."'");

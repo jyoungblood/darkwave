@@ -43,10 +43,6 @@ var dw = {
   },
   api_request: function (cfg) {
     var data = cfg.data ? cfg.data : {};
-    // fixit auth_token
-    if (dw.cookie_get('user_id')){
-      cfg.data.user_id = dw.cookie_get('user_id');
-    }
     var request = new XMLHttpRequest();
     request.open('POST', cfg.url, true);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
@@ -273,12 +269,22 @@ var dw = {
       },
       delete_execute: function (cfg) {
         document.body.classList.add('working');
+        var callback = cfg.callback ? cfg.callback : false;
+        if (cfg.redirect) {
+          callback = function (r) {
+            window.location.href = cfg.redirect;
+          }
+        }
+        if (cfg.debug) {
+          callback = function (r) {
+            document.body.classList.remove('working');
+            console.log(r);
+          }
+        }
         dw.api_request({
           url: cfg.url,
           data: cfg.data,
-          callback: function (r) {
-            window.location.href = cfg.redirect;
-          }
+          callback: callback
         });
       },
       delete_cancel: function (cfg) {

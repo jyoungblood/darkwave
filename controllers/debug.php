@@ -2,7 +2,6 @@
 
 
 use Slime\render;
-use VPHP\x;
 
 
 
@@ -22,12 +21,7 @@ $app->get('/elements[/]', function ($req, $res, $args) {
 
 
 
-// fixit make global middleware
-  // turn this into global middleware declaration
-    // all routes require auth except where noted
-  // add ->add('no auth requred middleware') to routes where auth not required (login, forgot, etc)
 
-// using this lib: https://github.com/RobDWaller/psr-jwt
 
 $app->get('/token-validate[/]', function ($req, $res, $args) {
   return render::html($req, $res, 'valid for everyone');
@@ -39,7 +33,7 @@ $app->get('/token-validate[/]', function ($req, $res, $args) {
 
 
 
-use VPHP\cookie;
+
 
 
 
@@ -49,47 +43,40 @@ use VPHP\cookie;
 
 $app->get('/token-debug[/]', function ($req, $res, $args) {
 
-// this works
+  // this works
 
-// $token = cookie::get('token');
+  // $token = \VPHP\cookie::get('token');
 
-// $jwt = new Jwt($token, $GLOBALS['settings']['jwt_secret']);
+  // $jwt = new Jwt($token, $GLOBALS['settings']['jwt_secret']);
 
-// $parse = new Parse($jwt, new Decode());
+  // $parse = new Parse($jwt, new Decode());
 
-// $parsed = $parse->parse();
+  // $parsed = $parse->parse();
 
-// // // Return the token header claims as an associative array.
-// print_r($parsed->getHeader());
+  // // // Return the token header claims as an associative array.
+  // print_r($parsed->getHeader());
 
-// // // Return the token payload claims as an associative array.
-// print_r($parsed->getPayload());
-
-
+  // // // Return the token payload claims as an associative array.
+  // print_r($parsed->getPayload());
 
 
 
+  $jwt_factory = new \PsrJwt\Factory\Jwt();
+
+  // $parser = $jwt_factory->parser(\VPHP\cookie::get('token'), $GLOBALS['settings']['jwt_secret']);
+
+  // // // var_dump($parser);
+
+  // // // $parser->validate();
+
+  // $parsed = $parser->parse()->getPayload();
+  // // var_dump($parsed);
 
 
 
+  // $html = "user_id: " . $parsed['_id'];
 
-
-$jwt_factory = new \PsrJwt\Factory\Jwt();
-
-// $parser = $jwt_factory->parser(cookie::get('token'), $GLOBALS['settings']['jwt_secret']);
-
-// // // var_dump($parser);
-
-// // // $parser->validate();
-
-// $parsed = $parser->parse()->getPayload();
-// // var_dump($parsed);
-
-
-
-// $html = "user_id: " . $parsed['_id'];
-
-$html = '';
+  $html = '';
 
   return render::html($req, $res, 'jesus loves you<br />' . $html);
 

@@ -2,9 +2,49 @@
 
 
 use Slime\render;
-use VPHP\cookie;
-use VPHP\x;
 use VPHP\db;
+
+
+
+
+$app->get('/register[/]', function ($req, $res, $args) {
+
+	return render::hbs($req, $res, [
+    'layout' => '_layouts/base',
+		'template' => 'auth/register',
+    'title' => 'Register - ' . $GLOBALS['site_title'],
+	]);
+
+});
+
+
+
+
+
+
+$app->get('/register/activate/{hash}/{e_hash}[/]', function ($req, $res, $args) {
+
+	$_user = db::find("users", "validate_hash='".$args['hash']."' and email='".base64_decode($args['e_hash'])."'");
+
+	if ($_user['data']){
+		db::update("users", [
+		  'validate_hash' => NULL
+    ], "validate_hash='".$args['hash']."'");
+	}
+
+	return render::hbs($req, $res, [
+    'layout' => '_layouts/base',
+		'template' => 'auth/register-activate',
+    'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
+	]);
+
+});
+
+
+
+
+
+
 
 
 $app->get('/login[/]', function ($req, $res, $args) {
@@ -27,27 +67,6 @@ $app->get('/login[/]', function ($req, $res, $args) {
 
 
 
-$app->get('/register[/]', function ($req, $res, $args) {
-
-	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
-		'template' => 'auth/register',
-    'title' => 'Register - ' . $GLOBALS['site_title'],
-    'data' => [
-	    'current_register' => true
-    ]
-	]);
-
-});
-
-
-
-
-
-
-
-
-
 $app->get('/forgot[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
@@ -57,8 +76,6 @@ $app->get('/forgot[/]', function ($req, $res, $args) {
 	]);
 
 });
-
-
 
 
 
@@ -89,29 +106,41 @@ $app->get('/forgot/reset/{hash}/{e_hash}[/]', function ($req, $res, $args) {
 
 
 
+$app->get('/account[/]', function ($req, $res, $args) {
 
-
-
-$app->get('/register/activate/{hash}/{e_hash}[/]', function ($req, $res, $args) {
-
-	$_user = db::find("users", "validate_hash='".$args['hash']."' and email='".base64_decode($args['e_hash'])."'");
-
-	if ($_user['data']){
-		db::update("users", [
-		  'validate_hash' => NULL
-    ], "validate_hash='".$args['hash']."'");
-	}
+	$user_data = db::find("users", "_id='".$GLOBALS['user_id']."'");
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
-		'template' => 'auth/register-activate',
-    'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
+    'layout' => '_layouts/base-auth',
+		'template' => 'auth/account',
+    'title' => 'Account - ' . $GLOBALS['site_title'],
     'data' => [
-			'registration_complete' => true
+	    'data' => $user_data['data'][0]
     ]
 	]);
 
-});
+})->add(new dw_authenticate([
+  'redirect' => '/login'
+]));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -148,15 +177,15 @@ $app->post('/auth/register/process[/]', function ($req, $res, $args) {
 			'group_id' => '3',
 			'date_created' => time(),
 			'screenname' => $_POST['screenname'],
-      'url_slug' => x::url_slug($_POST['screenname']),
+      'url_slug' => \VPHP\x::url_slug($_POST['screenname']),
 			'first_name' => $_POST['first_name'],
 			'last_name' => $_POST['last_name'],
       'ua_header' => $_POST['ua'],
-      'ip_address' => x::client_ip(),
+      'ip_address' => \VPHP\x::client_ip(),
 			'validate_hash' => $hash
 		]);
 
-		x::email_send([
+		\VPHP\x::email_send([
 		  'to' => $email,
 		  'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
 		  'subject' => 'Activate your new account',
@@ -200,7 +229,7 @@ $app->post('/auth/forgot/process[/]', function ($req, $res, $args) {
       'password_hash' => $hash
     ], "email='".$email."'");
 
-    x::email_send([
+    \VPHP\x::email_send([
       'to' => $email,
       'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
       'subject' => 'Reset your password',
@@ -273,23 +302,6 @@ $app->post('/auth/forgot/reset/process[/]', function ($req, $res, $args) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 
 	$email = $_POST['email'];
@@ -305,7 +317,7 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 			// update user info
 			db::update("users", [
 			  'ua_header' => $_POST['ua'],
-			  'ip_address' => x::client_ip(),
+			  'ip_address' => \VPHP\x::client_ip(),
 			  'date_last_login' => time()
       ], "_id='".$user['_id']."'");
 
@@ -320,22 +332,18 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 				'redirect' => $_POST['redirect'],
 				'auth_token' => $auth_token
       ];
-			// cookie::set('user_id', $user['_id']);
-			// cookie::set('auth_token', $auth_token);
 			if ($user['group_id'] == 1){
 				$out['admin_token'] = password_hash($GLOBALS['site_code'], PASSWORD_BCRYPT);
-				// cookie::set('admin_token', $out['admin_token']);
 			}
 
-      // fixit set expiration for like 6 months from now
       $jwt_factory = new \PsrJwt\Factory\Jwt();
       $token = $jwt_factory->builder()->setSecret($GLOBALS['settings']['jwt_secret'])
-          ->setPayloadClaim('_id', $user['_id'])
-          ->setPayloadClaim('admin_token', $out['admin_token'])
-          ->build();
+        ->setPayloadClaim('_id', $user['_id'])
+        ->setPayloadClaim('admin_token', $out['admin_token'])
+        ->build();
 
       $out['token'] = $token->getToken();
-      cookie::set('token', $token->getToken(), [
+      \VPHP\cookie::set('token', $token->getToken(), [
         'secure' => true,
         'httponly' => true,
       ]);
@@ -382,25 +390,15 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 
 
 
+$app->post('/auth/logout[/]', function ($req, $res, $args) {
 
+	\VPHP\cookie::delete('token');
 
-
-
-
-$app->get('/logout[/]', function ($req, $res, $args) {
-
-  cookie::delete('user_id');
-	cookie::delete('auth_token');
-	cookie::delete('admin_token');
-	cookie::delete('token');
-
-  // return $res->withHeader('Location', '/')->withStatus(302);
-
-    $body = $res->getBody();
-    $body->write('logged out <a href="/">ok</a>');
-    return $res->withStatus(200);
-
-  // return render::redirect($req, $res, [ 'location' => '/' ]);
+	return render::json($req, $res, [
+    'data' => [
+      'success' => true,
+    ]
+  ]);
 
 });
 
@@ -416,25 +414,6 @@ $app->get('/logout[/]', function ($req, $res, $args) {
 
 
 
-
-
-$app->get('/account[/]', function ($req, $res, $args) {
-
-	$user_data = db::find("users", "_id='".$GLOBALS['user_id']."'");
-
-	return render::hbs($req, $res, [
-    'layout' => '_layouts/base-auth',
-		'template' => 'auth/settings',
-    'title' => 'Account Settings - ' . $GLOBALS['site_title'],
-    'data' => [
-	    'current_settings' => true,
-	    'data' => $user_data['data'][0]
-    ]
-	]);
-
-})->add(new dw_authenticate([
-  'redirect' => '/login'
-]));
 
 
 
@@ -464,7 +443,7 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
 
   $input = [
     'email' => strtolower($form['email']),
-    'url_slug' => x::url_slug($form['screenname']),
+    'url_slug' => \VPHP\x::url_slug($form['screenname']),
     'screenname' => $form['screenname'],
     'first_name' => $form['first_name'],
     'last_name' => $form['last_name'],
@@ -477,7 +456,9 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
   db::update("users", $input, "_id='".$GLOBALS['user_id']."'");
   $user_id = $GLOBALS['user_id'];
 
-    
+  // fixit photo uploads
+  // fixit make component functions & move to dw.php
+
   // if ($form['file_1']){
   // 	if ($form['file_1'] == 'DELETE'){
   // 		$user = db::find("users", "_id='".$user_id."'");
@@ -558,7 +539,7 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
 
 
 
-
+// fixit move to dw.php
 
 $app->post('/auth/validate-unique[/]', function ($req, $res, $args) {
 
