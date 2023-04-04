@@ -6,7 +6,6 @@ use VPHP\db;
 
 
 
-
 $app->get('/register[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
@@ -119,10 +118,8 @@ $app->get('/account[/]', function ($req, $res, $args) {
     ]
 	]);
 
-})->add(new dw_authenticate([
-  'redirect' => '/login'
-]));
-
+});
+// ->add(new dw_authorize())
 
 
 
@@ -341,12 +338,8 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
         ->setPayloadClaim('_id', $user['_id'])
         ->setPayloadClaim('admin_token', $out['admin_token'])
         ->build();
-
+      
       $out['token'] = $token->getToken();
-      \VPHP\cookie::set('token', $token->getToken(), [
-        'secure' => true,
-        'httponly' => true,
-      ]);
 
 		}else{
 			// error: not a valid password
@@ -390,17 +383,6 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 
 
 
-$app->post('/auth/logout[/]', function ($req, $res, $args) {
-
-	\VPHP\cookie::delete('token');
-
-	return render::json($req, $res, [
-    'data' => [
-      'success' => true,
-    ]
-  ]);
-
-});
 
 
 
@@ -528,8 +510,8 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     ]
   ]);
 
-})->add(new dw_authenticate());
-
+});
+// ->add(new dw_authorize())
 
 
 

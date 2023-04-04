@@ -39,6 +39,7 @@
 
 
 <script>
+
 	function login_form() {
 		return {
 			remove_error: function (data_name) {
@@ -63,6 +64,9 @@
 					},
 					callback: function (r) {
 						if (r.success) {
+              if (r.token){
+                dw.cookie_set('token', r.token);
+              }
 							if (r.redirect) {
 								window.location.href = r.redirect;
 							} else {

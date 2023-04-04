@@ -23,9 +23,9 @@ $app->get('/elements[/]', function ($req, $res, $args) {
 
 
 
-$app->get('/token-validate[/]', function ($req, $res, $args) {
-  return render::html($req, $res, 'valid for everyone');
-})->add(\PsrJwt\Factory\JwtMiddleware::html($GLOBALS['settings']['jwt_secret'], 'token', '<meta http-equiv="refresh" content="0; url=/login">'));
+// $app->get('/token-validate[/]', function ($req, $res, $args) {
+//   return render::html($req, $res, 'valid for everyone');
+// })->add(\PsrJwt\Factory\JwtMiddleware::html($GLOBALS['settings']['jwt_secret'], 'token', '<meta http-equiv="refresh" content="0; url=/login">'));
 
 
 

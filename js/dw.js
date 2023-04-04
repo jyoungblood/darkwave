@@ -138,10 +138,24 @@ var dw = {
     return Object.entries(data).map(([k, v]) => { return k + '=' + v }).join('&');
   },
 
+  cookie_set: function (name, value, days = 365) {
+    var expires = "";
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  },
+
   cookie_get: function (name) {
     let value = `; ${document.cookie}`;
     let parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
+  },
+
+  cookie_delete: function (name) {
+    document.cookie = name + '=; Max-Age=0';
   },
 
   cookie_parse: function (str) {

@@ -3,7 +3,7 @@
 use Slime\render;
 
 
-require 'controllers/darkwave.php'; 
+// require 'controllers/darkwave.php'; 
 require 'controllers/dw.php';
 
 require 'controllers/users.php';
@@ -18,6 +18,8 @@ if (file_exists('./controllers/install.php')){
 
 $app->get('/', function ($req, $res, $args) {
 
+// echo "what";
+
   return render::hbs($req, $res, [
     'layout' => '_layouts/base-auth',
     'template' => 'index',
@@ -28,10 +30,12 @@ $app->get('/', function ($req, $res, $args) {
     ]
   ]);
 
-})->add(new dw_authenticate([
-  'redirect' => '/login'
-]));
-
+});
+// ->add(new dw_authorize([
+//   'unauthenticated' => [
+//     'redirect' => '/login',
+//   ]
+// ]))
 
 
 
@@ -48,10 +52,8 @@ $app->get('/search[/]', function ($req, $res, $args) {
     ]
   ]);
 
-})->add(new dw_authenticate([
-  'redirect' => '/login'
-]));
-
+});
+// ->add(new dw_authorize())
 
 
 

@@ -6,6 +6,23 @@ use VPHP\db;
 
 $app->get('/users[/]', function ($req, $res, $args) {
 
+
+  if (!isset($GLOBALS['is_admin'])){
+    // show unauthorized
+  // return render::hbs($req, $res, [
+  //   'template' => 'error',
+  //   'status' => 401,
+  //   'title' => '401 - Unauthorized',
+  //   'data' => [
+  //     'status_code' => 401,
+  //     'error_message' => 'You are not authorized to view this page.'
+  //   ]
+  // ]);
+
+  }else{
+    // render route
+  }
+
 	$_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
 
 	return render::hbs($req, $res, [
@@ -19,12 +36,24 @@ $app->get('/users[/]', function ($req, $res, $args) {
     ]
 	]);
 
-})->add(new dw_restrict_auth([
-  'redirect' => '/'
-]))->add(new dw_authenticate([
-  'redirect' => '/login'
-]));
-
+});
+// ->add(new dw_authorize([
+//   'unauthenticated' => [
+//     'redirect' => '/login',
+//     // 'error_response' => 'html',
+//     // 'error_response' => 'json',
+//     // 'error_status' => 401,
+//     // 'error_message' => 'You must be logged in to view this'
+//   ],
+//   'restrict_admin' => true,
+//   'unauthorized' => [
+//     // 'redirect' => '/',
+//     // 'error_response' => 'html',
+//     // 'error_response' => 'json',
+//     // 'error_status' => 401,
+//     'error_message' => 'You don\'t have permission to view this page.'
+//   ],
+// ]))
 
 
 
@@ -63,10 +92,8 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
     ]
 	]);
 
-})->add(new dw_restrict_auth())->add(new dw_authenticate([
-  'redirect' => '/login'
-]));
-
+});
+// ->add(new dw_authorize())
 
 
 
@@ -179,8 +206,8 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
     ]
   ]);
 
-})->add(new dw_restrict_auth())->add(new dw_authenticate());
-
+});
+// ->add(new dw_authorize())
 
 
 
@@ -226,4 +253,5 @@ $app->post('/users/delete[/]', function ($req, $res, $args) {
     ]
   ]);
 
-})->add(new dw_restrict_auth())->add(new dw_authenticate());
+});
+// ->add(new dw_authorize())
