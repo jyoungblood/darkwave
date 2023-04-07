@@ -1,5 +1,5 @@
 
-<div class="page page-center align-items-center" x-data="login_form()">
+<div class="page page-center align-items-center" x-data="auth_form()">
   <div class="container container-tight py-4">
     <div class="text-center mb-4">
       <a href="/" class=""><img src="/images/logo-default.png" class="w-25" alt=""></a>
@@ -8,79 +8,70 @@
       <div class="card-body py-3">
       <h2 class="h2 text-center mb-4">Log in to your account</h2>
         <div class="mb-4 form-group" data-validate="email">
-          <label class="form-label">Email address</label>
-          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:keydown.enter="login()" x-on:blur="remove_error('email')">
+          <label class="form-label">Email</label>
+          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:keydown.enter="submit()" x-on:blur="dw.remove_error('email')" />
           <div class="invalid-feedback"></div>
         </div>
         <div class="mb-2 form-group" data-validate="password">
           <label class="form-label">Password</label>
-          <input name="password" type="password" class="form-control"  placeholder="*********"  autocomplete="off" x-on:keydown.enter="login()" x-on:blur="remove_error('password')">
+          <input name="password" type="password" class="form-control"  placeholder="*********" autocomplete="off" x-on:keydown.enter="submit()" x-on:blur="dw.remove_error('password')" />
           <div class="invalid-feedback"></div>
         </div>
         <div class="d-none">
           <label class="form-label">Website</label>
           <input type="text" name="website" />
         </div>
-        <input type="hidden" name="redirect" value="{{redirect}}" />
         <div class="form-footer">
-          <button type="submit" class="btn btn-primary w-100" @click="login()">Log in</button>
+          <button type="submit" data-id="action-handler" class="btn btn-primary w-100" @click="submit()">Log in</button>
         </div>
-        <div data-validate="general" @click.outside="remove_error('general')">
+        <div data-validate="general" @click.outside="dw.remove_error('general')">
           <div class="form-control d-none"></div>
           <div class="invalid-feedback fs-4 mt-4 text-center"></div>
         </div>
       </div>
     </div>
     <div class="text-center text-muted mt-4">
-      <a href="/forgot" tabindex="-1">Forgot password?</a>
+      <a href="/forgot">Forgot password?</a>
     </div>
   </div>
 </div>
 
 
 <script>
-
-	function login_form() {
+	function auth_form() {
 		return {
-			remove_error: function (data_name) {
-				document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.remove('is-invalid');
-				document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = '';
-			},
-      display_error: function (data_name, error_message) {
-        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.add('is-invalid');
-        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = error_message;
-      },
-			login: function () {
-        var ths = this;
+			submit: function () {
 				document.body.classList.add('working');
 				dw.api_request({
 					url: '/auth/login/process',
 					data: {
 						email: document.querySelector('[name="email"]').value,
 						password: document.querySelector('[name="password"]').value,
-						redirect: document.querySelector('[name="redirect"]').value,
 						website: document.querySelector('[name="website"]').value,
 						ua: navigator.userAgent,
 					},
 					callback: function (r) {
-						if (r.success) {
-              if (r.token){
+            if (r.success) {
+              if (r.token) {
                 dw.cookie_set('token', r.token);
               }
-							if (r.redirect) {
-								window.location.href = r.redirect;
-							} else {
-								window.location.href = '/';
-							}
-						} else {
+              if (window.location.pathname == '/login'){
+                if ('{{redirect}}' != ''){
+                  window.location.href = '{{redirect}}';
+                }else{
+                  window.location.href = '/';
+                }                
+              }else{
+                window.location.reload();
+              }
+            } else {
               document.body.classList.remove('working');
-							if (r.error) {
-                ths.display_error(r.error.type, r.error.message);
-							}
-						}
+              if (r.error) {
+                dw.display_error(r.error.type, r.error.message);
+              }
+            }
 					}
 				});
-
 			}
 		}
 	}

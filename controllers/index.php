@@ -18,8 +18,6 @@ if (file_exists('./controllers/install.php')){
 
 $app->get('/', function ($req, $res, $args) {
 
-// echo "what";
-
   return render::hbs($req, $res, [
     'layout' => '_layouts/base-auth',
     'template' => 'index',
@@ -31,29 +29,10 @@ $app->get('/', function ($req, $res, $args) {
   ]);
 
 });
-// ->add(new dw_authorize([
-//   'unauthenticated' => [
-//     'redirect' => '/login',
-//   ]
-// ]))
 
 
 
 
-$app->get('/search[/]', function ($req, $res, $args) {
-
-
-  return render::hbs($req, $res, [
-    'layout' => '_layouts/base-auth',
-    'template' => 'search',
-    'title' => 'Search - ' . $GLOBALS['site_title'],
-    'data' => [
-      'GET' => $_GET
-    ]
-  ]);
-
-});
-// ->add(new dw_authorize())
 
 
 

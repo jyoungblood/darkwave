@@ -53,7 +53,7 @@
 
     <div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Admin User</div>
     <div class="pt2 mb4">
-      <label class="db mb2 roboto ttu b f6 o-90">Email Address</label>
+      <label class="db mb2 roboto ttu b f6 o-90">Email</label>
       <input class="db w-100 pa2 f5 br1" type="text" name="user_email" />
     </div>
 
@@ -74,25 +74,25 @@
 
 
         <div class="mb-4 form-group" data-validate="email">
-          <label class="form-label">Email address</label>
-          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:blur="remove_error('email')">
+          <label class="form-label">Email</label>
+          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:blur="dw.remove_error('email')" />
           <div class="invalid-feedback"></div>
         </div>
         <div class="mb-4 form-group">
           <label class="form-label">Password</label>
-          <input name="password" type="password" class="form-control"  placeholder="*********"  autocomplete="off">
+          <input name="password" type="password" class="form-control"  placeholder="*********" autocomplete="off" />
         </div>
         <div class="mb-4 form-group">
           <label class="form-label">Screen Name</label>
-          <input name="screenname" type="text" class="form-control" autocomplete="off">
+          <input name="screenname" type="text" class="form-control" autocomplete="off" />
         </div>
         <div class="mb-4 form-group">
           <label class="form-label">First Name</label>
-          <input name="first_name" type="text" class="form-control" autocomplete="off">
+          <input name="first_name" type="text" class="form-control" autocomplete="off" />
         </div>
         <div class="mb-2 form-group">
           <label class="form-label">Last Name</label>
-          <input name="last_name" type="text" class="form-control" autocomplete="off">
+          <input name="last_name" type="text" class="form-control" autocomplete="off" />
         </div>
         <div class="d-none">
           <label class="form-label">Website</label>
@@ -110,16 +110,7 @@
 <script>
   function install_form() {
     return {
-      remove_error: function (data_name) {
-        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.remove('is-invalid');
-        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = '';
-      },
-      display_error: function (data_name, error_message) {
-        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.add('is-invalid');
-        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = error_message;
-      },
       install: function () {
-        var ths = this;
         document.body.classList.add('working');
         dw.api_request({
           url: '/install/execute',
@@ -146,7 +137,7 @@
 
             } else {
               if (r.error) {
-                ths.display_error(r.error.type, r.error.message);
+                dw.display_error(r.error.type, r.error.message);
               }
             }
           }

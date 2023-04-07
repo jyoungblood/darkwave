@@ -35,23 +35,45 @@
             <div class="row">
               <div class="col-6">
 
-                <div class="mb-3 required">
+                <div class="mb-3 form-group required" data-validate="email">
                   <label class="form-label">Email</label>
-                  <input type="email" class="form-control" name="email" value="{{data.email}}" x-on:blur="validate($event.target, 'required')">
+                  <input type="email" class="form-control" name="email" value="{{data.email}}" autocomplete="off" x-on:blur="dw.validate_input({
+                    input: 'email',
+                    element: $event.target,
+                    required: true,
+                    unique: {
+                      collection: 'users',
+                      field: 'email',
+                      error_message: 'This email is already registered',
+                      exempt_id: '{{data._id}}'
+                    }
+                  })" />
                   <div class="invalid-feedback"></div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 form-group {{#is _id "==" "new"}}required{{/is}}" data-validate="password">
                   <label class="form-label">New Password</label>
-                  <input type="password" class="form-control" placeholder="*********" name="password" />
+                  <input type="password" class="form-control" name="password" placeholder="*********" autocomplete="off" />
+                  <div class="invalid-feedback"></div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 form-group required" data-validate="screenname">
                   <label class="form-label">Screen name</label>
-                  <input type="text" class="form-control" name="screenname" value="{{data.screenname}}" >
+                  <input type="text" class="form-control" name="screenname" autocomplete="off" value="{{data.screenname}}" autocomplete="off" x-on:blur="dw.validate_input({
+                    input: 'screenname',
+                    element: $event.target,
+                    required: true,
+                    unique: {
+                      collection: 'users',
+                      field: 'screenname',
+                      error_message: 'This screen name is already in use',
+                      exempt_id: '{{data._id}}'
+                    }
+                  })" />
+                  <div class="invalid-feedback"></div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 form-group">
                   <div class="form-label">User Group</div>
                   <select class="form-select" name="group_id">
                     <option {{#is data.group_id "==" "3"}}selected="selected"{{/is}} {{#is data.group_id "==" ""}}selected="selected"{{/is}} value="3">General User</option>
@@ -63,16 +85,16 @@
 
                 <div class="row">
                   <div class="col-6">
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                       <label class="form-label">First name</label>
-                      <input type="text" class="form-control" name="first_name" value="{{data.first_name}}">
+                      <input type="text" class="form-control" name="first_name" value="{{data.first_name}}" autocomplete="off" />
                     </div>
                   </div>
 
-                  <div class="col-6">                      
-                    <div class="mb-3">
+                  <div class="col-6">
+                    <div class="mb-3 form-group">
                       <label class="form-label">Last name</label>
-                      <input type="text" class="form-control" name="last_name" value="{{data.last_name}}">
+                      <input type="text" class="form-control" name="last_name" value="{{data.last_name}}" autocomplete="off" />
                     </div>                      
                   </div>
                 </div>

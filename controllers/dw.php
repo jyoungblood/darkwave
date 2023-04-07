@@ -11,6 +11,55 @@ use Slime\render;
 
 
 
+
+
+
+$app->post('/api/validate-unique[/]', function ($req, $res, $args) {
+
+	$out = [
+		'error' => false,
+		'success' => true
+  ];
+
+  $query = $_POST['field'] . "='" . $_POST['value'] . "'";
+  if (isset($_POST['exempt_id'])){
+    $query .= " AND _id != '".$_POST['exempt_id']."'";
+  }
+
+  $collection = db::find($_POST['collection'], $query);
+  if ($collection['data']){
+    // return error
+    $out = [
+      'error' => true,
+      'success' => false,
+    ];
+  }else{
+    // return true
+  }
+
+
+  $out['post'] = [
+    'collection' => $collection,
+    'post_collection' => $_POST['collection'],
+    'post_field' => $_POST['field'],
+    'post_value' => $_POST['value'],
+    'post_exempt_id' => $_POST['exempt_id'],
+  ];
+
+	return render::json($req, $res, [
+    'data' => $out,
+  ]);
+
+});
+
+
+
+
+
+
+
+
+
 // fixit dev mode
 
 // utilities for dev mode only

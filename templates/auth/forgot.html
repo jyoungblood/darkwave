@@ -1,5 +1,5 @@
 
-<div class="page page-center align-items-center" x-data="reset_form()">
+<div class="page page-center align-items-center" x-data="auth_form()">
   <div class="container container-tight py-4">
     <div class="text-center mb-4">
       <a href="/" class=""><img src="/images/logo-default.png" class="w-25" alt=""></a>
@@ -8,10 +8,9 @@
       <div class="card-body py-3">
         <h2 class="h2 text-center mb-4">Reset your password</h2>
         <div class="mb-4">Enter your email address and we'll send you a link to reset your password.</div>
-        <div class="mb-2 form-group" data-validate="email">
-          <label class="form-label">Email address</label>
-          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off"
-            x-on:keydown.enter="reset()" x-on:blur="remove_error('email')">
+        <div class="mb-2 form-group required" data-validate="email">
+          <label class="form-label">Email</label>
+          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:keydown.enter="submit()" x-on:blur="dw.remove_error('email')" />
           <div class="invalid-feedback"></div>
         </div>
         <div class="d-none">
@@ -19,7 +18,7 @@
           <input type="text" name="website" />
         </div>
         <div class="form-footer">
-          <button type="submit" class="btn btn-primary w-100" @click="reset()">Request Password Reset</button>
+          <button type="submit" class="btn btn-primary w-100" @click="submit()">Request Password Reset</button>
         </div>
       </div>
     </div>
@@ -28,40 +27,32 @@
 
 
 <script>
-  function reset_form() {
+  function auth_form() {
     return {
-      remove_error: function (data_name) {
-        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.remove('is-invalid');
-        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = '';
-      },
-      display_error: function (data_name, error_message) {
-        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.add('is-invalid');
-        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = error_message;
-      },
-      reset: function () {
-        var ths = this;
+      submit: function () {
         document.body.classList.add('working');
-        dw.api_request({
-          url: '/auth/forgot/process',
-          data: {
-            email: document.querySelector('[name="email"]').value,
-            website: document.querySelector('[name="website"]').value,
-          },
-          callback: function (r) {
-            document.body.classList.remove('working');
-            if (r.success) {
-              document.querySelector('.card-body').innerHTML = `
-                <h2 class="h2 text-center mb-3">Check your email</h2>
-                <div class="mb-2 text-center">We just sent you a link to reset your password.</div>
-              `;
-            } else {
-              if (r.error) {
-                ths.display_error(r.error.type, r.error.message);
+        dw.form_validate_required(function () {
+          dw.api_request({
+            url: '/auth/forgot/process',
+            data: {
+              email: document.querySelector('[name="email"]').value,
+              website: document.querySelector('[name="website"]').value,
+            },
+            callback: function (r) {
+              document.body.classList.remove('working');
+              if (r.success) {
+                document.querySelector('.card-body').innerHTML = `
+                  <h2 class="h2 text-center mb-3">Check your email</h2>
+                  <div class="mb-2 text-center">We just sent you a link to reset your password.</div>
+                `;
+              } else {
+                if (r.error) {
+                  dw.display_error(r.error.type, r.error.message);
+                }
               }
             }
-          }
+          });
         });
-
       }
     }
   }

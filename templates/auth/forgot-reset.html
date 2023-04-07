@@ -1,15 +1,19 @@
 
-<div class="page page-center align-items-center" x-data="reset_form()">
+<div class="page page-center align-items-center" x-data="auth_form()">
   <div class="container container-tight py-4">
     <div class="text-center mb-4">
       <a href="/" class=""><img src="/images/logo-default.png" class="w-25" alt=""></a>
     </div>
     <div class="card p-3 shadow rounded-3">
       <div class="card-body py-3">
+      {{#if invalid_hash}}
+        <h2 class="h2 text-center mb-3 text-danger">Password Reset Error</h2>
+        <div class="mb-2 text-center text-danger">Invalid authentication code</div>
+      {{else}}
         <h2 class="h2 text-center mb-4">Choose a new password</h2>
-        <div class="mb-2 form-group" data-validate="email">
+        <div class="mb-2 form-group required" data-validate="password">
           <label class="form-label">New Password</label>
-          <input name="password" type="password" class="form-control" placeholder="*********"  autocomplete="off" x-on:keydown.enter="reset()" x-on:blur="remove_error('password')">
+          <input name="password" type="password" class="form-control" placeholder="*********" autocomplete="off" x-on:keydown.enter="submit()" x-on:blur="dw.remove_error('password')" />
           <div class="invalid-feedback"></div>
         </div>
         <div class="d-none">
@@ -19,8 +23,9 @@
         <input type="hidden" name="hash" value="{{hash}}" />
         <input type="hidden" name="e_hash" value="{{e_hash}}" />
         <div class="form-footer">
-          <button type="submit" class="btn btn-primary w-100" @click="reset()">Reset Password</button>
+          <button type="submit" class="btn btn-primary w-100" @click="submit()">Reset Password</button>
         </div>
+      {{/if}}
       </div>
     </div>
   </div>
@@ -28,42 +33,34 @@
 
 
 <script>
-  function reset_form() {
+  function auth_form() {
     return {
-      remove_error: function (data_name) {
-        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.remove('is-invalid');
-        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = '';
-      },
-      display_error: function (data_name, error_message) {
-        document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.add('is-invalid');
-        document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = error_message;
-      },
-      reset: function () {
-        var ths = this;
+      submit: function () {
         document.body.classList.add('working');
-        dw.api_request({
-          url: '/auth/forgot/reset/process',
-          data: {
-            password: document.querySelector('[name="password"]').value,
-            hash: document.querySelector('[name="hash"]').value,
-            e_hash: document.querySelector('[name="e_hash"]').value,
-            website: document.querySelector('[name="website"]').value,
-          },
-          callback: function (r) {
-            document.body.classList.remove('working');
-            if (r.success) {
-              document.querySelector('.card-body').innerHTML = `
-                <h2 class="h2 text-center mb-3">Your password has been reset</h2>
-                <div class="mb-2 text-center">You should be able to <a href="/login/">log in</a> to your account now.</div>
-              `;
-            } else {
-              if (r.error) {
-                ths.display_error(r.error.type, r.error.message);
+        dw.form_validate_required(function () {
+          dw.api_request({
+            url: '/auth/forgot/reset/process',
+            data: {
+              password: document.querySelector('[name="password"]').value,
+              hash: document.querySelector('[name="hash"]').value,
+              e_hash: document.querySelector('[name="e_hash"]').value,
+              website: document.querySelector('[name="website"]').value,
+            },
+            callback: function (r) {
+              document.body.classList.remove('working');
+              if (r.success) {
+                document.querySelector('.card-body').innerHTML = `
+                  <h2 class="h2 text-center mb-3">Your password has been reset</h2>
+                  <div class="mb-2 text-center">You should be able to <a href="/login/">log in</a> to your account now.</div>
+                `;
+              } else {
+                if (r.error) {
+                  dw.display_error(r.error.type, r.error.message);
+                }
               }
             }
-          }
+          });
         });
-
       }
     }
   }

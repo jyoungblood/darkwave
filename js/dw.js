@@ -103,6 +103,10 @@ var dw = {
     });
     callback();
   },
+
+
+
+  // fixit validate everything (required fields AND unique/special validation)
   form_validate_required: function (callback) {
     var required_items = document.querySelectorAll('.required input, .required textarea, .required select');
     var valid = true;
@@ -119,10 +123,14 @@ var dw = {
       // here's where we would remove the event listener if it mattered
       callback();
     } else {
-      dw.listener_clear_error();
       document.body.classList.remove('working');
+
+      // fixit is this still needed?
+      dw.listener_clear_error();
+
       // fixit remove
-      smoke.alert("Required information is missing.");
+      // smoke.alert("Required information is missing.");
+      // fixit new alert saying required information is missing
     }
   },
 
@@ -234,26 +242,78 @@ var dw = {
 
 
 
+  
+
+
+
+// auth/input-related methods
+
+  validate_input: function (cfg) {
+
+    // fixit note which params are required
+
+  // cfg.input
+  // cfg.element
+  // cfg.required
+  // cfg.unique
+  //     cfg.unique.collection
+  //     cfg.unique.field
+  //     cfg.unique.error_message
+
+
+    if (cfg.unique){
+      var request_data = {
+        collection: cfg.unique.collection,
+        field: cfg.unique.field,
+        value: cfg.element.value,
+      };
+      if (cfg.unique.exempt_id){
+        request_data.exempt_id = cfg.unique.exempt_id;
+      }
+      dw.api_request({
+        url: '/api/validate-unique/',
+        data: request_data,
+        callback: function (r) {
+          if (r.error) {
+            dw.display_error(cfg.input, cfg.unique.error_message ? cfg.unique.error_message : 'Value must be unique');
+            // cfg.element.focus();
+          } else {
+            dw.remove_error(cfg.input);
+          }
+        }
+      });
+    }else{
+      if (cfg.required) {
+        if (!cfg.element.value) {
+          dw.display_error(cfg.input, 'Required');
+          // cfg.element.focus();
+        } else {
+          dw.remove_error(cfg.input);
+        }
+      }
+    }
+
+
+  },
+  remove_error: function (data_name) {
+    document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.remove('is-invalid');
+    document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = '';
+  },
+  display_error: function (data_name, error_message) {
+    document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.add('is-invalid');
+    document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = error_message;
+  },
+
+
+
 
 
 // new dw functions for 0.6.0
 
   edit_form: function(){
     return {
-      validate: function(el, type){
-        if (type == 'required'){
-          if (el.value){
-            el.classList.remove('is-invalid');
-            el.nextElementSibling.innerHTML = '';
-          }else{
-            el.classList.add('is-invalid')
-            el.nextElementSibling.innerHTML = 'Required';
-          }
-        }
-      },
       save: function (cfg) {
         document.body.classList.add('working');
-        // fixit validation
         var callback = cfg.callback ? cfg.callback : false;
         if (cfg.redirect){
           callback = function (r) {
@@ -307,6 +367,8 @@ var dw = {
         `;
       }
     };
-  }
+  },
+
+
 
 };

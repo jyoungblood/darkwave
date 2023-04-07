@@ -6,54 +6,63 @@ use VPHP\db;
 
 $app->get('/users[/]', function ($req, $res, $args) {
 
-
   if (!isset($GLOBALS['is_admin'])){
-    // show unauthorized
-  // return render::hbs($req, $res, [
-  //   'template' => 'error',
-  //   'status' => 401,
-  //   'title' => '401 - Unauthorized',
-  //   'data' => [
-  //     'status_code' => 401,
-  //     'error_message' => 'You are not authorized to view this page.'
-  //   ]
-  // ]);
+
+    return render::hbs($req, $res, [
+      'template' => 'error',
+      'status' => 401,
+      'title' => '401 - Unauthorized',
+      'data' => [
+        'status_code' => 401,
+        'error_message' => 'You are not authorized to view this page.'
+      ]
+    ]);
 
   }else{
-    // render route
+
+    $_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
+
+    return render::hbs($req, $res, [
+      'layout' => '_layouts/base-auth',
+      'template' => 'users-list',
+      'title' => 'Users - ' . $GLOBALS['site_title'],
+      'data' => [
+        'current_users' => true,
+        'current_system' => true,
+        'users'=> $_users['data']
+      ]
+    ]);
+
   }
 
-	$_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
+});
 
-	return render::hbs($req, $res, [
-		'layout' => '_layouts/base-auth',
-		'template' => 'users-list',
-    'title' => 'Users - ' . $GLOBALS['site_title'],
-		'data' => [
-	    'current_users' => true,
-	    'current_system' => true,
-	    'users'=> $_users['data']
+
+
+
+
+
+
+
+// fixit turn into search just for users
+
+$app->get('/search[/]', function ($req, $res, $args) {
+
+  return render::hbs($req, $res, [
+    'layout' => '_layouts/base-auth',
+    'template' => 'search',
+    'title' => 'Search - ' . $GLOBALS['site_title'],
+    'data' => [
+      'GET' => $_GET
     ]
-	]);
+  ]);
 
 });
-// ->add(new dw_authorize([
-//   'unauthenticated' => [
-//     'redirect' => '/login',
-//     // 'error_response' => 'html',
-//     // 'error_response' => 'json',
-//     // 'error_status' => 401,
-//     // 'error_message' => 'You must be logged in to view this'
-//   ],
-//   'restrict_admin' => true,
-//   'unauthorized' => [
-//     // 'redirect' => '/',
-//     // 'error_response' => 'html',
-//     // 'error_response' => 'json',
-//     // 'error_status' => 401,
-//     'error_message' => 'You don\'t have permission to view this page.'
-//   ],
-// ]))
+
+
+
+
+
 
 
 
@@ -62,38 +71,59 @@ $app->get('/users[/]', function ($req, $res, $args) {
 
 $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
-	$_data = db::find("users", "_id='".$args['user_id']."'");
 
-	$data = $_data['data'][0];
+  if (!isset($GLOBALS['is_admin'])){
 
-	if ($_data['data']){
-		$title = 'Edit User - '.$data['screenname'].' - '.$GLOBALS['site_title'];
-	}else{
-		$title = 'New User - '.$GLOBALS['site_title'];
-	}
+    return render::hbs($req, $res, [
+      'template' => 'error',
+      'status' => 401,
+      'title' => '401 - Unauthorized',
+      'data' => [
+        'status_code' => 401,
+        'error_message' => 'You are not authorized to view this page.'
+      ]
+    ]);
 
-	$has_avatar = false;
-	if ($data['avatar_medium']){
-		if ($data['avatar_medium'] != '/images/users/avatar-default-m.png'){
-			$has_avatar = true;
-		}
-	}
+  }else{
 
-	return render::hbs($req, $res, [
-		'layout' => '_layouts/base-auth',
-		'template' => 'users-edit',
-    'title' => $title,
-		'data' => [
-	    'current_users' => true,
-	    'current_system' => true,
-	    'has_avatar' => $has_avatar,
-	    'data' => $data,
-      '_id' => $args['user_id']
-    ]
-	]);
+    $_data = db::find("users", "_id='".$args['user_id']."'");
+
+    $data = $_data['data'][0];
+
+    if ($_data['data']){
+      $title = 'Edit User - '.$data['screenname'].' - '.$GLOBALS['site_title'];
+    }else{
+      $title = 'New User - '.$GLOBALS['site_title'];
+    }
+
+    $has_avatar = false;
+    if ($data['avatar_medium']){
+      if ($data['avatar_medium'] != '/images/users/avatar-default-m.png'){
+        $has_avatar = true;
+      }
+    }
+
+    return render::hbs($req, $res, [
+      'layout' => '_layouts/base-auth',
+      'template' => 'users-edit',
+      'title' => $title,
+      'data' => [
+        'current_users' => true,
+        'current_system' => true,
+        'has_avatar' => $has_avatar,
+        'data' => $data,
+        '_id' => $args['user_id']
+      ]
+    ]);
+
+  }
+
 
 });
-// ->add(new dw_authorize())
+
+
+
+
 
 
 
@@ -106,7 +136,17 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
 $app->post('/users/save[/]', function ($req, $res, $args) {
 
-	if ($GLOBALS['is_admin']){
+  if (!isset($GLOBALS['is_admin'])){
+
+    return render::json($req, $res, [
+      'status' => 401,
+      'data' => [
+        'error_code' => 401,
+        'error_message' => 'You are not authorized to use this resource.'
+      ]
+    ]);
+
+  }else{
 
 		$form = [];
 		parse_str($_POST['form'],$form);
@@ -195,19 +235,20 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 		// 	db::update("users", $photo_input, "_id='".$user_id."'");
 		// }
 
+
+    return render::json($req, $res, [
+      'data' => [
+        'success' => true,
+        // 'input' => $input,
+        // 'form' => $form,
+        // 'form_string' => $_POST['form']
+      ]
+    ]);
+
 	}
 
-	return render::json($req, $res, [
-    'data' => [
-      'success' => true,
-      // 'input' => $input,
-      // 'form' => $form,
-      // 'form_string' => $_POST['form']
-    ]
-  ]);
 
 });
-// ->add(new dw_authorize())
 
 
 
@@ -235,23 +276,34 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 
 $app->post('/users/delete[/]', function ($req, $res, $args) {
 
-	if ($GLOBALS['is_admin']){
+  if (!isset($GLOBALS['is_admin'])){
+
+    return render::json($req, $res, [
+      'status' => 401,
+      'data' => [
+        'error_code' => 401,
+        'error_message' => 'You are not authorized to use this resource.'
+      ]
+    ]);
+
+  }else{
+
 		$user = db::find("users", "_id='".$_POST['_id']."'");
+
 		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_original']);
 		}
+
 		db::delete("users", "_id='".$_POST['_id']."'");
+
+    return render::json($req, $res, [
+      'data' => [
+        'success' => true
+      ]
+    ]);
 	}
 
-
-  return render::json($req, $res, [
-    'data' => [
-      'success' => true
-    ]
-  ]);
-
 });
-// ->add(new dw_authorize())
