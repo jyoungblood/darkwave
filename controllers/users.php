@@ -165,11 +165,12 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 		}
 	
 	  if ($_POST['_id'] == 'new'){
-		  $input['date_created'] = time();
+		  $input['date_created'] = date('Y-m-d H:i:s');
 		  $input['_id'] = uniqid(uniqid());
 			db::insert("users", $input);
 			$user_id = $input['_id'];
 	  }else{
+		  $input['date_updated'] = date('Y-m-d H:i:s');
 			db::update("users", $input, "_id='".$_POST['_id']."'");
 			$user_id = $_POST['_id'];
 	  }

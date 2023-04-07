@@ -97,19 +97,20 @@ $GLOBALS[\'settings\'][\'database\'] = [
 			last_name VARCHAR(255) NULL DEFAULT NULL,
 			ua_header VARCHAR(255) NULL DEFAULT NULL,
 			ip_address VARCHAR(255) NULL DEFAULT NULL,
-			date_last_login BIGINT(20) NULL DEFAULT NULL,
-			group_id TINYINT NOT NULL DEFAULT '3' COMMENT '1 admin, 2 moderator, 3 end user, 4 blocked user',
-			date_created BIGINT(20) NULL DEFAULT NULL,
+			group_id TINYINT NOT NULL DEFAULT '3' COMMENT '1 Admin, 2 Moderator, 3 General User, 4 Blocked User',
 			avatar_filename VARCHAR(255) DEFAULT NULL,
 			avatar_small VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-s.png',
 			avatar_medium VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-m.png',
 			avatar_large VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-l.png',
 			avatar_original VARCHAR(255) NOT NULL DEFAULT '/images/users/avatar-default-o.png',
+			date_last_login DATETIME NULL DEFAULT NULL,
+			date_created DATETIME NULL DEFAULT NULL,
+			date_updated DATETIME NULL DEFAULT NULL,
 			PRIMARY KEY (id)
 			) ENGINE=InnoDB CHARACTER SET utf8mb4;";
 
-
 			$GLOBALS['database']->exec($sql);
+      
 		}
 		catch(PDOException $e){
 			$error = $e->getMessage();
@@ -126,7 +127,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
 					'email' => strtolower($_POST['user_email']),
 					'password' => password_hash($_POST['user_password'], PASSWORD_BCRYPT),
 					'group_id' => '1',
-					'date_created' => time(),
+					'date_created' => date('Y-m-d H:i:s'),
 					'url_slug' => \VPHP\x::url_slug($_POST['user_screenname']),
 					'screenname' => $_POST['user_screenname'],
 				]);

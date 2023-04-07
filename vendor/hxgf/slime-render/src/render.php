@@ -2,11 +2,14 @@
 
 /**
  * @package    SLIME Render
- * @version    1.2.1
+ * @version    1.2.1 
  * @author     Jonathan Youngblood <jy@hxgf.io>
  * @license    https://github.com/hxgf/slime-render/blob/master/LICENSE.md (MIT License)
  * @source     https://github.com/hxgf/slime-render
  */
+
+
+// MODIFIED, AWAITING NEW VERSION
 
 namespace Slime;
 
@@ -45,11 +48,16 @@ class render {
   // define custom helpers
   public static function initialize_handlebars_helpers(){
 
-    $GLOBALS['hbars_helpers']['date'] = function ($arg1, $arg2) {
+    // MODIFIED FOR DW
+    $GLOBALS['hbars_helpers']['date'] = function ($arg1, $arg2, $arg3 = false) {
       if ($arg1 == "now"){
         return date($arg2);
       }else{
-        return date($arg2, $arg1);
+        if ($arg3 == "convert"){
+          return date($arg2, strtotime($arg1));
+        }else{
+          return date($arg2, $arg1);
+        }
       }
     };
 

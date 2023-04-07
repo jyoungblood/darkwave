@@ -178,7 +178,7 @@ $app->post('/auth/register/process[/]', function ($req, $res, $args) {
 			'email' => $email,
 			'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
 			'group_id' => '3',
-			'date_created' => time(),
+			'date_created' => date('Y-m-d H:i:s'),
 			'screenname' => $_POST['screenname'],
       'url_slug' => \VPHP\x::url_slug($_POST['screenname']),
 			'first_name' => $_POST['first_name'],
@@ -322,7 +322,7 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 			db::update("users", [
 			  'ua_header' => $_POST['ua'],
 			  'ip_address' => \VPHP\x::client_ip(),
-			  'date_last_login' => time()
+			  'date_last_login' => date('Y-m-d H:i:s')
       ], "_id='".$user['_id']."'");
 
 			$auth_token = password_hash($GLOBALS['site_code'].'-'.$user['_id'], PASSWORD_BCRYPT);
@@ -330,10 +330,6 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 			// send success data
 			$out = [
 				'success' => true,
-				'user_id' => $user['_id'],
-				'user_avatar' => $user['avatar_small'],
-				'group_id' => $user['group_id'],
-				// 'redirect' => $_POST['redirect'],
 				'auth_token' => $auth_token
       ];
 			if ($user['group_id'] == 1){
@@ -447,6 +443,7 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
       'screenname' => $form['screenname'],
       'first_name' => $form['first_name'],
       'last_name' => $form['last_name'],
+		  'date_updated' => date('Y-m-d H:i:s')
     ];
 
     if ($form['password']){

@@ -33,12 +33,24 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
 
 
 
+/*
+  ________/\\\\\\\\\\\\__________/\\\______________/\\\____       
+   _______\/\\\////////\\\_______\/\\\_____________\/\\\____       
+    _______\/\\\______\//\\\______\/\\\_____________\/\\\____      
+     _______\/\\\_______\/\\\______\//\\\____/\\\____/\\\_____     
+      _______\/\\\_______\/\\\_______\//\\\__/\\\\\__/\\\______    
+       _______\/\\\_______\/\\\________\//\\\/\\\/\\\/\\\_______   
+        _______\/\\\_______/\\\__________\//\\\\\\//\\\\\________  
+         _______\/\\\\\\\\\\\\/____________\//\\\__\//\\\_________ 
+          _______\////////////_______________\///____\///__________
+  
+            DARKWAVE - 0.6.0 - https://github.com/hxgf/darkwave
+*/
 
-
-// DW
 
 
   // authentication checks
+  // \DW\utility::authenticate();
 
   if (isset($_COOKIE['token'])){
     $jwt_factory = new \PsrJwt\Factory\Jwt();
@@ -47,8 +59,6 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
     if ($parsed['_id']){      
       $GLOBALS['user_id'] = $parsed['_id'];
       $GLOBALS['locals']['user_id'] = $GLOBALS['user_id'];
-      // fixit verify auth token?
-      // if (password_verify($GLOBALS['site_code'].'-'.$parsed['_id'], cookie::get('auth_token'))){
         $GLOBALS['auth'] = true;
         $GLOBALS['locals']['auth'] = $GLOBALS['auth'];
       if ($parsed['admin_token']){
