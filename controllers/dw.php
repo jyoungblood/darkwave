@@ -46,9 +46,7 @@ $app->post('/api/validate-unique[/]', function ($req, $res, $args) {
     'post_exempt_id' => $_POST['exempt_id'],
   ];
 
-	return render::json($req, $res, [
-    'data' => $out,
-  ]);
+	return render::json($req, $res, $out);
 
 });
 
@@ -167,9 +165,7 @@ $app->post('/utility/upload-file[/]', function ($req, $res, $args) {
 
   }
 
-	return render::json($req, $res, [
-    'data' => $out
-  ]);
+	return render::json($req, $res, $out);
 
 });
 
@@ -191,8 +187,6 @@ $app->post('/utility/delete-upload[/]', function ($req, $res, $args) {
     'success' => true
   ];
 
-	return render::json($req, $res, [
-    'data' => $out
-  ]);
+	return render::json($req, $res, $out);
 
 });

@@ -200,9 +200,7 @@ $app->post('/auth/register/process[/]', function ($req, $res, $args) {
 	}
 
 
-	return render::json($req, $res, [
-    'data' => $out
-  ]);
+	return render::json($req, $res, $out);
 
 });
 
@@ -255,9 +253,7 @@ $app->post('/auth/forgot/process[/]', function ($req, $res, $args) {
     ];
   }
   
-	return render::json($req, $res, [
-    'data' => $out
-  ]);
+	return render::json($req, $res, $out);
 
 });
 
@@ -289,9 +285,7 @@ $app->post('/auth/forgot/reset/process[/]', function ($req, $res, $args) {
     // no errors now
 	}
 
-	return render::json($req, $res, [
-    'data' => $out
-  ]);
+	return render::json($req, $res, $out);
 
 });
 
@@ -369,9 +363,7 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
     ];
 	}
 
-	return render::json($req, $res, [
-    'data' => $out
-  ]);
+	return render::json($req, $res, $out);
 
 });
 
@@ -424,12 +416,9 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
   if (!isset($GLOBALS['user_id'])){
 
     return render::json($req, $res, [
-      'status' => 401,
-      'data' => [
-        'error_code' => 401,
-        'error_message' => 'You are not authorized to use this resource.'
-      ]
-    ]);
+      'error_code' => 401,
+      'error_message' => 'You are not authorized to use this resource.'
+    ], 401);
 
   }else{
 
@@ -516,13 +505,11 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
 
     
     return render::json($req, $res, [
-      'data' => [
-        'success' => true,
-        'input' => $input,
-        'form' => $form,
-        'form_string' => $_POST['form'],
-        'user_id' => $GLOBALS['user_id']
-      ]
+      'success' => true,
+      'input' => $input,
+      'form' => $form,
+      'form_string' => $_POST['form'],
+      'user_id' => $GLOBALS['user_id']
     ]);
 
   }

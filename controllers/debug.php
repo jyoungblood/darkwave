@@ -23,6 +23,23 @@ $app->get('/elements[/]', function ($req, $res, $args) {
 
 
 
+$app->get('/htmldemod[/]', function ($req, $res, $args) {
+
+  // return render::redirect($req, $res, '/accounts');
+  // echo "what";
+  return render::html($req, $res, '/huh/what.html');
+
+});
+
+
+
+
+
+
+
+
+
+
 // $app->get('/token-validate[/]', function ($req, $res, $args) {
 //   return render::html($req, $res, 'valid for everyone');
 // })->add(\PsrJwt\Factory\JwtMiddleware::html($GLOBALS['settings']['jwt_secret'], 'token', '<meta http-equiv="refresh" content="0; url=/login">'));
@@ -84,25 +101,23 @@ $app->get('/token-debug[/]', function ($req, $res, $args) {
 
 
 
-// $app->get('/token[/]', function ($req, $res, $args) {
+$app->get('/token[/]', function ($req, $res, $args) {
 
 
-// $jwt_factory = new \PsrJwt\Factory\Jwt();
+$jwt_factory = new \PsrJwt\Factory\Jwt();
 
-// $token = $jwt_factory->builder()->setSecret($GLOBALS['settings']['jwt_secret'])
-//     ->setPayloadClaim('_id', '63ae4eabdc8ea63ae4eabdc8eb')
-//     ->setPayloadClaim('group_id', 1)
-//     ->setPayloadClaim('is_admin', 1)
-//     ->build();
+$token = $jwt_factory->builder()->setSecret($GLOBALS['settings']['jwt_secret'])
+    ->setPayloadClaim('_id', '63ae4eabdc8ea63ae4eabdc8eb')
+    ->setPayloadClaim('group_id', 1)
+    ->setPayloadClaim('is_admin', 1)
+    ->build();
 
-//   $data = [
-//     'token' => $token->getToken()
-//   ];
+  $data = [
+    'token' => $token->getToken()
+  ];
 
-// 	return render::json($req, $res, [
-//     'data' => $data
-//   ]);
+	return render::json($req, $res, $data);
 
-// });
+});
 
 

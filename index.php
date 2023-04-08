@@ -89,13 +89,12 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
   ) {
     return render::hbs($request, new \Slim\Psr7\Response(), [
       'template' => 'error',
-      'status' => 404,
       'title' => '404 - NOT FOUND',
       'data' => [
         'status_code' => 404,
         'error_message' => 'This page could not be found.'
       ]
-    ]);
+    ], 404);
   });
 
 

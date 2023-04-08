@@ -2,62 +2,40 @@
 
 /**
  * @package    SLIME Render
- * @version    1.2.1 
+ * @version    1.3.0
  * @author     Jonathan Youngblood <jy@hxgf.io>
  * @license    https://github.com/hxgf/slime-render/blob/master/LICENSE.md (MIT License)
  * @source     https://github.com/hxgf/slime-render
  */
 
-
-// MODIFIED, AWAITING NEW VERSION
-
 namespace Slime;
 
 use LightnCandy\LightnCandy;
-use Slim\Views\Twig;
 
 class render {
 
 	// render data as json string
-  public static function json($req, $res, $args){
-    $data = [];
-    if (isset($args['data'])){
-      $data = $args['data'];
-    }
-    $status = 200;
-    if (isset($args['status'])){
-      $status = $args['status'];
-    }
+  public static function json($req, $res, $data = [], $status = 200){
     $res->getBody()->write(json_encode($data));
     return $res->withHeader('content-type', 'application/json')->withStatus($status);
-  }
-
-  // return a rendered Twig template
-  public static function twig($req, $res, $args){
-    $data = [];
-    $data['locals'] = $GLOBALS['locals'];
-    if (isset($args['data'])){
-      $data = array_merge($data, $args['data']);
-    }
-    if (isset($args['title'])){
-      $data['title'] = $args['title'];
-    }
-    return Twig::fromRequest($req)->render($res, $args['template'] . '.html', $data);
   }
 
   // define custom helpers
   public static function initialize_handlebars_helpers(){
 
-    // MODIFIED FOR DW
     $GLOBALS['hbars_helpers']['date'] = function ($arg1, $arg2, $arg3 = false) {
-      if ($arg1 == "now"){
-        return date($arg2);
-      }else{
-        if ($arg3 == "convert"){
-          return date($arg2, strtotime($arg1));
+      if (isset($arg1) && $arg1 != ''){
+        if ($arg1 == "now"){
+          return date($arg2);
         }else{
-          return date($arg2, $arg1);
+          if ($arg3 == "convert"){
+            return date($arg2, strtotime($arg1));
+          }else{
+            return date($arg2, $arg1);
+          }
         }
+      }else{
+        return false;
       }
     };
 
@@ -128,10 +106,16 @@ class render {
   }
 
   // return a rendered LightnCandy/HBS template
-  public static function hbs($req, $res, $args){
+  public static function hbs($req, $res, $args, $status = 200){
     $data = [];
     if (isset($GLOBALS['locals'])){
       $data['locals'] = $GLOBALS['locals'];
+    }
+    if (isset($_GET)){
+      $data['GET'] = $_GET;
+    }
+    if (isset($_POST)){
+      $data['POST'] = $_POST;
     }
     if (isset($args['data'])){
       $data = array_merge($data, $args['data']);
@@ -141,18 +125,20 @@ class render {
     }
     $body = $res->getBody();
     $body->write(render::lightncandy_html($args)($data));
-    return $res->withStatus(isset($args['status']) ? $args['status'] : 200);
+    return $res->withStatus($status);
   }
 
   // return a url redirect
-  public static function redirect($req, $res, $args){
-    $args['status'] = isset($args['status']) ? $args['status'] : 301;
-    return $res->withHeader('Location', $args['location'])->withStatus($args['status']);
+  public static function redirect($req, $res, $location, $status = 302){
+    return $res->withHeader('Location', $location)->withStatus($status);
   }
 
-  // return an HTML string
+  // return an HTML string or file
   public static function html($req, $res, $html, $status = 200){
     $body = $res->getBody();
+    if (substr($html, -5) == '.html' && file_exists('./'.$html)){
+      $html = file_get_contents('./'.$html);
+    }
     $body->write($html);
     return $res->withStatus($status);
   }

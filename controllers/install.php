@@ -153,7 +153,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
 
 	}else{
 		unlink("controllers/install.php");
-    return render::redirect($req, $res, [ 'location' => '/' ]);
+    return render::redirect($req, $res, '/');
 	}
 
 });

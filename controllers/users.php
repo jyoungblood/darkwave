@@ -10,13 +10,12 @@ $app->get('/users[/]', function ($req, $res, $args) {
 
     return render::hbs($req, $res, [
       'template' => 'error',
-      'status' => 401,
       'title' => '401 - Unauthorized',
       'data' => [
         'status_code' => 401,
         'error_message' => 'You are not authorized to view this page.'
       ]
-    ]);
+    ], 401);
 
   }else{
 
@@ -139,12 +138,9 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
   if (!isset($GLOBALS['is_admin'])){
 
     return render::json($req, $res, [
-      'status' => 401,
-      'data' => [
-        'error_code' => 401,
-        'error_message' => 'You are not authorized to use this resource.'
-      ]
-    ]);
+      'error_code' => 401,
+      'error_message' => 'You are not authorized to use this resource.'
+    ], 401);
 
   }else{
 
@@ -238,12 +234,10 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 
 
     return render::json($req, $res, [
-      'data' => [
-        'success' => true,
-        // 'input' => $input,
-        // 'form' => $form,
-        // 'form_string' => $_POST['form']
-      ]
+      'success' => true,
+      // 'input' => $input,
+      // 'form' => $form,
+      // 'form_string' => $_POST['form']
     ]);
 
 	}
@@ -278,14 +272,11 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 $app->post('/users/delete[/]', function ($req, $res, $args) {
 
   if (!isset($GLOBALS['is_admin'])){
-
+    
     return render::json($req, $res, [
-      'status' => 401,
-      'data' => [
-        'error_code' => 401,
-        'error_message' => 'You are not authorized to use this resource.'
-      ]
-    ]);
+      'error_code' => 401,
+      'error_message' => 'You are not authorized to use this resource.'
+    ], 401);
 
   }else{
 
@@ -301,10 +292,9 @@ $app->post('/users/delete[/]', function ($req, $res, $args) {
 		db::delete("users", "_id='".$_POST['_id']."'");
 
     return render::json($req, $res, [
-      'data' => [
-        'success' => true
-      ]
+      'success' => true
     ]);
+
 	}
 
 });

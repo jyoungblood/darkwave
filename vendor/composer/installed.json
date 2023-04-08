@@ -208,20 +208,20 @@
         },
         {
             "name": "hxgf/slime-render",
-            "version": "1.2.1",
-            "version_normalized": "1.2.1.0",
+            "version": "1.3.0",
+            "version_normalized": "1.3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hxgf/slime-render.git",
-                "reference": "c47a9c5014e0cdaa86c3bb190251cdfc4e99af10"
+                "reference": "997445d006d8d30e00c15771389cbc4e143f6a17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/slime-render/zipball/c47a9c5014e0cdaa86c3bb190251cdfc4e99af10",
-                "reference": "c47a9c5014e0cdaa86c3bb190251cdfc4e99af10",
+                "url": "https://api.github.com/repos/hxgf/slime-render/zipball/997445d006d8d30e00c15771389cbc4e143f6a17",
+                "reference": "997445d006d8d30e00c15771389cbc4e143f6a17",
                 "shasum": ""
             },
-            "time": "2023-03-24T00:34:58+00:00",
+            "time": "2023-04-08T17:00:05+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -241,7 +241,7 @@
                     "email": "jy@hxgf.io"
                 }
             ],
-            "description": "PHP abstraction functions to help more easily render views for Slim Framework with LightnCandy or Twig.",
+            "description": "PHP abstraction functions to help more easily render views for Slim Framework with Handlebars (LightnCandy).",
             "homepage": "https://github.com/hxgf/slime-render",
             "keywords": [
                 "handlebars",
@@ -249,13 +249,12 @@
                 "mustache",
                 "render abstractions",
                 "slim",
-                "twig",
                 "utilities",
                 "view helpers"
             ],
             "support": {
                 "issues": "https://github.com/hxgf/slime-render/issues",
-                "source": "https://github.com/hxgf/slime-render/tree/1.2.1"
+                "source": "https://github.com/hxgf/slime-render/tree/1.3.0"
             },
             "install-path": "../hxgf/slime-render"
         },
