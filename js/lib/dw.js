@@ -1,45 +1,92 @@
 
 var dw = {
-  bs_modal: function(cfg){
-    var modal_content = `
+  alert: function (message, cfg = {}) {
+    cfg.content = message;
+    this.modal(cfg);
+    // console.log(cfg);
+  },
+  modal: function (cfg) {
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ${cfg.message}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+    var fade = cfg.fade ? 'fade' : '';
+    var blur = cfg.blur ? 'modal-blur' : '';
+    var centered = cfg.centered ? 'modal-dialog-centered' : '';
+    var scrollable = cfg.scrollable ? 'modal-dialog-scrollable' : '';
+
+    var small = cfg.format == 'small' ? 'modal-sm' : '';
+    var large = cfg.format == 'large' ? 'modal-lg' : '';
+    var fullwidth = cfg.format == 'full-width' ? 'modal-full-width' : '';
+
+    var modal_id = cfg.modal_id ? cfg.modal_id : 'modal' + Math.random().toString(36).slice(2, 7);
+
+    var buttons = '';
+
+    if (cfg.buttons){
+      dw.button_callbacks = {};
+      for (var i = 0; i < cfg.buttons.length; i++) {
+        var button_color = 'primary';
+        if (cfg.buttons[i].color){
+          button_color = cfg.buttons[i].color;
+        }
+        if (cfg.buttons[i].callback){
+          dw.button_callbacks[i] = cfg.buttons[i].callback;
+        }
+        buttons += `
+          <button type="button" class="btn ${cfg.buttons[i].role == 'cancel' ? ' me-auto' : `btn-${button_color}`} ${cfg.buttons[i].class_extra}" ${cfg.buttons[i].close_modal ? `data-bs-dismiss="modal"` : ''} ${cfg.buttons[i].callback ? `onclick="dw.button_callbacks[${i}]()"` : ''}>${cfg.buttons[i].label}</button>
+        `;
+      }
+    }
+
+    var modal_content = `
+    <div class="modal ${blur} ${fade}" id="${modal_id}" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog ${small} ${large} ${fullwidth} ${centered} ${scrollable}" role="document">
+        <div class="modal-content">
+        ${cfg.theme ? `<div class="modal-status bg-${cfg.theme}"></div>` : ''}
+        ${cfg.format == 'small' ? '' : `
+          ${ cfg.title ? `
+            <div class="modal-header">
+              <h5 class="modal-title ${cfg.modal_title_extra}">${cfg.title}</h5>
+              ${cfg.no_x ? '' : `<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`}
+            </div>`            
+          : `
+              ${cfg.no_x ? '' : `<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`}
+          `}`
+          }
+          <div class="modal-body ${cfg.modal_body_extra}">
+          ${cfg.form ? '<form action="javascript:void(0);">' : ''}
+            ${cfg.format == 'small' ? `
+              <div class="modal-title">${cfg.title}</div>
+              <div>${cfg.content}</div>
+            `
+            : cfg.content }
+
+          ${cfg.form ? '</form>' : ''}
+          </div>
+          <div class="modal-footer">
+            ${buttons}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-<button type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch modal
-</button>
 
-    `;
-    
-    if (document.getElementById("exampleModal-group")){
-      document.getElementById("exampleModal-group").remove();
+    <a href="#" class="d-none" data-bs-toggle="modal" data-bs-target="#${modal_id}"></a>
+
+`;
+
+
+    if (document.getElementById(modal_id + "-group")) {
+      document.getElementById(modal_id + "-group").remove();
     }
 
     var g = document.createElement('div');
-    g.setAttribute("id", "exampleModal-group");
+    g.setAttribute("id", modal_id + "-group");
     document.body.appendChild(g);
 
-    document.getElementById("exampleModal-group").innerHTML = modal_content;
+    document.getElementById(modal_id + "-group").innerHTML = modal_content;
 
     // create element if it doesn't exist
     // update w/ current content
 
-    document.querySelector('[data-bs-target="#exampleModal"]').click();
+    document.querySelector('[data-bs-target="#' + modal_id + '"]').click();
   },
   api_request: function (cfg) {
     var data = cfg.data ? cfg.data : {};
@@ -139,7 +186,7 @@ var dw = {
 
 
 
-// new functions from 0x00
+  // new functions from 0x00
 
 
   formbody_encode: function (data) {
@@ -242,32 +289,32 @@ var dw = {
 
 
 
-  
 
 
 
-// auth/input-related methods
+
+  // auth/input-related methods
 
   validate_input: function (cfg) {
 
     // fixit note which params are required
 
-  // cfg.input
-  // cfg.element
-  // cfg.required
-  // cfg.unique
-  //     cfg.unique.collection
-  //     cfg.unique.field
-  //     cfg.unique.error_message
+    // cfg.input
+    // cfg.element
+    // cfg.required
+    // cfg.unique
+    //     cfg.unique.collection
+    //     cfg.unique.field
+    //     cfg.unique.error_message
 
 
-    if (cfg.unique){
+    if (cfg.unique) {
       var request_data = {
         collection: cfg.unique.collection,
         field: cfg.unique.field,
         value: cfg.element.value,
       };
-      if (cfg.unique.exempt_id){
+      if (cfg.unique.exempt_id) {
         request_data.exempt_id = cfg.unique.exempt_id;
       }
       dw.api_request({
@@ -282,7 +329,7 @@ var dw = {
           }
         }
       });
-    }else{
+    } else {
       if (cfg.required) {
         if (!cfg.element.value) {
           dw.display_error(cfg.input, 'Required');
@@ -308,17 +355,17 @@ var dw = {
 
 
 
-// new dw functions for 0.6.0
+  // new dw functions for 0.6.0
 
-  edit_form: function(){
+  edit_form: function () {
     return {
       save: function (cfg) {
         document.body.classList.add('working');
         var callback = cfg.callback ? cfg.callback : false;
-        if (cfg.redirect){
+        if (cfg.redirect) {
           callback = function (r) {
             window.location.href = cfg.redirect;
-          }          
+          }
         }
         if (cfg.debug) {
           callback = function (r) {
@@ -334,12 +381,12 @@ var dw = {
           });
         });
       },
-      delete_confirm: function (cfg){
+      delete_confirm: function (cfg) {
         document.querySelector('[data-container="delete"]').innerHTML = `
-        <div class='mb-2'>${cfg.message ? cfg.message : 'Are you sure?'}</div>
+        <div class='mb-2 fw-medium'>${cfg.message ? cfg.message : 'Are you sure?'}</div>
         <button class='btn btn-danger' @click='delete_execute(${JSON.stringify(cfg)})'>Yes</button>
         &nbsp; 
-        <button class='btn btn-secondary' @click='delete_cancel(${JSON.stringify(cfg)})'>Cancel</button>`;
+        <button class='btn' @click='delete_cancel(${JSON.stringify(cfg)})'>Cancel</button>`;
       },
       delete_execute: function (cfg) {
         document.body.classList.add('working');
