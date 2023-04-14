@@ -51,7 +51,7 @@ $(function(){
 					$(".dz-" + id + " .dz-complete").remove();
 					$("input[name='file_" + id + "']").remove();
 			    darkwave.api_request({
-				    url: "/utility/delete-upload",
+				    url: "/dw/utility/delete-upload",
 				    data: {
 			        filename: $(ths).parent().data('filename')
 				    }
@@ -85,7 +85,7 @@ $(function(){
 			uploadMultiple: false,
 			acceptedFiles: "image/jpeg,image/png,image/gif",
 			maxFilesize: 2, // MB (php default)
-			url: "/utility/upload-file",
+			url: "/dw/utility/upload-file",
 			clickable: ".dz-" + id + " .dropzone",
 			previewTemplate:
 			'<div class="dz-preview dz-file-preview"><img data-dz-thumbnail /><div class="dz-progress-container">'+

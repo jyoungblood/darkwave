@@ -62,7 +62,7 @@
                     <h3 class="card-title">Resources</h3>
                     <div>
                       <a href="/elements">bootstrap elements (dw)</a><br />
-                      <a href="file:///Users/jy/Desktop/tabler-main/demo/">tabler components (local)</a><br /><br />
+                      <a href="file:///Users/jy/Desktop/dw/bootstrap-ui-kits/tabler-main/demo/index.html">tabler components (local)</a><br /><br />
 
                       <a href="https://preview.tabler.io/">tabler preview</a><br />
                       -- <a href="https://preview.tabler.io/colors.html">tabler colors</a><br />
@@ -96,367 +96,352 @@
                         </div>
                         <div class="mt-3">
 
-                          <div class="input-group w-50">
-                            <input type="text" class="form-control" name="modaltext" value="This is the content of the modal.<br /><br />it can even have <b>html</b> omg wow 🤠">
-                            <button class="btn btn-primary" onclick="dw.modal({'content':document.querySelector('input[name=modaltext]').value})">Launch Modal</button>
-                          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>MOVED TO DOCS, JUST HERE FOR DEMO, DONT CHANGE</h2>
+
+
+
+<div class="input-group w-50">
+  <input type="text" class="form-control" name="modaltext" value="This is the content of the modal.<br /><br />it can even have <b>html</b> omg wow 🤠">
+  <button class="btn btn-primary" onclick="dw.modal({'content':document.querySelector('input[name=modaltext]').value})">Launch Modal</button>
+</div>
 
 <br /><br />
-                          <button class="btn btn-primary" onclick="dw.modal(
-                            {
-title: 'This is a Modal',
-content: `Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi beatae delectus deleniti dolorem eveniet facere fuga iste nemo nesciunt nihil odio perspiciatis, quia quis reprehenderit sit tempora totam unde.<br /><br />✌️😎`,
 
-// fade: true,
-// blur: true,
-// centered: true,
-// scrollable: true,
-// no_x: true,
-// form: true,
-
-// format: 'small',
-// format: 'large',
-// format: 'full-width',
-
-// theme: 'success',
-// theme: 'danger',
-
-// modal_title_extra: 'text-center w-100 py-5 fs-1',
-// modal_body_extra: 'text-center py-5 fs-1',
-
-
-
-buttons: [
-  {
-    role: 'cancel',
-    label: 'Cancel',
-    close_modal: true,
-    // class_extra: 'btn-link link-secondary',
-    callback: function(){
-      alert('called after no');
-    }
-  },
-  {
-    role: 'action_secondary',
-    label: 'google',
-    color: 'secondary',
-    class_extra: 'me-auto',
-    // close_modal: true,
-    callback: function(){
-      window.open('https://google.com', '_blank');
-    }
-  },
-  {
-    role: 'action',
-    label: 'OK',
-    // color: 'danger',
-    // class_extra: 'w-100',
-    // class_extra: 'w-50',
-    close_modal: true,
-    callback: function(){
-      alert('called after yes');
-    }
-  },
-]
-
-                          })">try dw.alert()</button>
+<button class="btn btn-primary" onclick="dw.modal({
+  title: 'This is a Modal',
+  content: `Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi beatae delectus deleniti dolorem eveniet facere fuga iste nemo nesciunt nihil odio perspiciatis, quia quis reprehenderit sit tempora totam unde.<br /><br />✌️😎`,
+  // modal_id: 'custom_modal_id',
+  // fade: true,
+  // blur: true,
+  // centered: true,
+  // scrollable: true,
+  // hide_x: true,
+  // form: true,
+  // format: 'small',
+  // format: 'large',
+  // format: 'full-width',
+  // theme: 'success',
+  // theme: 'danger',
+  // modal_title_extra: 'text-center w-100 py-5 fs-1',
+  // modal_body_extra: 'text-center py-5 fs-1',
+  // modal_footer_extra: 'text-center py-5 fs-1',
+  // modal_header_extra: 'text-center py-5 fs-1',
+  // modal_content_extra: 'text-center py-5 fs-1',
+  // modal_dialog_extra: 'text-center py-5 fs-1',
+  buttons: [
+    {
+      label: 'Cancel',
+      close_modal: true,
+      class_extra: 'me-auto',
+      // class_extra: 'btn-link link-secondary',
+      callback: function(id){
+        alert('called after no');
+        // dw.modal_destroy(id);
+      }
+    },
+    {
+      label: 'Google me',
+      color: 'secondary',
+      // class_extra: 'me-auto',
+      callback: function(id){
+        window.open('https://www.google.com/search?q=bladee', '_blank');
+      }
+    },
+    {
+      label: 'OK',
+      // color: 'danger',
+      // class_extra: 'w-100',
+      // class_extra: 'w-50 mx-auto',
+      color: 'primary',
+      close_modal: true,
+      callback: function(id){
+        alert('called after yes');
+        console.log(`modal: id: ${id}`);
+      }
+    },
+  ]
+})">try dw.modal()</button>
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
-<br /><br /><br />
-
-
-                          <button class="btn btn-primary"
-                            onclick="js_dw_alert()">forms & launch w/ js</button>
-
+<button class="btn btn-danger" onclick="trigger_error()">error danger "missing required"</button>
 
 <script>
-
-// big form
-
-//   var modal_form = 
-//   `
-
-//         <div class="mb-3">
-//           <label class="form-label">Name</label>
-//           <input type="text" class="form-control" name="example-text-input" placeholder="Your report name">
-//         </div>
-//         <label class="form-label">Report type</label>
-//         <div class="form-selectgroup-boxes row mb-3">
-//           <div class="col-lg-6">
-//             <label class="form-selectgroup-item">
-//               <input type="radio" name="report-type" value="1" class="form-selectgroup-input" checked>
-//               <span class="form-selectgroup-label d-flex align-items-center p-3">
-//                 <span class="me-3">
-//                   <span class="form-selectgroup-check"></span>
-//                 </span>
-//                 <span class="form-selectgroup-label-content">
-//                   <span class="form-selectgroup-title strong mb-1">Simple</span>
-//                   <span class="d-block text-muted">Provide only basic data needed for the report</span>
-//                 </span>
-//               </span>
-//             </label>
-//           </div>
-//           <div class="col-lg-6">
-//             <label class="form-selectgroup-item">
-//               <input type="radio" name="report-type" value="1" class="form-selectgroup-input">
-//               <span class="form-selectgroup-label d-flex align-items-center p-3">
-//                 <span class="me-3">
-//                   <span class="form-selectgroup-check"></span>
-//                 </span>
-//                 <span class="form-selectgroup-label-content">
-//                   <span class="form-selectgroup-title strong mb-1">Advanced</span>
-//                   <span class="d-block text-muted">Insert charts and additional advanced analyses to be inserted in the
-//                     report</span>
-//                 </span>
-//               </span>
-//             </label>
-//           </div>
-//         </div>
-//         <div class="row">
-//           <div class="col-lg-8">
-//             <div class="mb-3">
-//               <label class="form-label">Report url</label>
-//               <div class="input-group input-group-flat">
-//                 <span class="input-group-text">
-//                   https://tabler.io/reports/
-//                 </span>
-//                 <input type="text" class="form-control ps-0" value="report-01" autocomplete="off">
-//               </div>
-//             </div>
-//           </div>
-//           <div class="col-lg-4">
-//             <div class="mb-3">
-//               <label class="form-label">Visibility</label>
-//               <select class="form-select">
-//                 <option value="1" selected>Private</option>
-//                 <option value="2">Public</option>
-//                 <option value="3">Hidden</option>
-//               </select>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//       <div class="modal-body">
-//         <div class="row">
-//           <div class="col-lg-6">
-//             <div class="mb-3">
-//               <label class="form-label">Client name</label>
-//               <input type="text" class="form-control">
-//             </div>
-//           </div>
-//           <div class="col-lg-6">
-//             <div class="mb-3">
-//               <label class="form-label">Reporting period</label>
-//               <input type="date" class="form-control">
-//             </div>
-//           </div>
-//           <div class="col-lg-12">
-//             <div>
-//               <label class="form-label">Additional information</label>
-//               <textarea class="form-control" rows="3"></textarea>
-//             </div>
-//           </div>
-//         </div>
-// `;
-
-
-
-
-
-
-// simple form
-var modal_form = `
-
-
-        <div class="row mb-3 align-items-end">
-          <div class="col-auto">
-            <a href="#" class="avatar avatar-upload rounded">
-              <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M12 5l0 14" />
-                <path d="M5 12l14 0" />
-              </svg>
-              <span class="avatar-upload-text">Add</span>
-            </a>
-          </div>
-          <div class="col">
-            <label class="form-label">Name</label>
-            <input type="text" class="form-control" />
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Pick your team color</label>
-          <div class="row g-2">
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="dark" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-dark"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput form-colorinput-light">
-                <input name="color" type="radio" value="white" class="form-colorinput-input" checked />
-                <span class="form-colorinput-color bg-white"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="blue" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-blue"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="azure" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-azure"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="indigo" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-indigo"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="purple" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-purple"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="pink" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-pink"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="red" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-red"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="orange" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-orange"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="yellow" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-yellow"></span>
-              </label>
-            </div>
-            <div class="col-auto">
-              <label class="form-colorinput">
-                <input name="color" type="radio" value="lime" class="form-colorinput-input" />
-                <span class="form-colorinput-color bg-lime"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div>
-          <label class="form-label">Additional info</label>
-          <textarea class="form-control"></textarea>
-        </div>
-
-
-`;
-
-
-  function js_dw_alert(){
-    dw.modal(
-
-    {
-      content: modal_form,
-        title: 'This is a Modal',
-        buttons: [
-          {
-            role: 'cancel',
-            label: 'Cancel',
-            close_modal: true,
-            // class_extra: 'btn-link link-secondary',
-            callback: function () {
-              alert('called after no');
-            }
-          },
-          {
-            role: 'action',
-            label: `
-            
-<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mood-smile-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-   <path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.8 10.946a1 1 0 0 0 -1.414 .014a2.5 2.5 0 0 1 -3.572 0a1 1 0 0 0 -1.428 1.4a4.5 4.5 0 0 0 6.428 0a1 1 0 0 0 -.014 -1.414zm-6.19 -5.286l-.127 .007a1 1 0 0 0 .117 1.993l.127 -.007a1 1 0 0 0 -.117 -1.993zm6 0l-.127 .007a1 1 0 0 0 .117 1.993l.127 -.007a1 1 0 0 0 -.117 -1.993z" stroke-width="0" fill="currentColor"></path>
-</svg>
-          
-            OK`,
-            // color: 'danger',
-            // class_extra: 'w-100',
-            // class_extra: 'w-50',
-            close_modal: true,
-            callback: function () {
-              alert('called after yes');
-              var what_about = `what about \"complex markup\" or {} syntax in the function?`;
-              console.log(what_about);
-            }
-          },
-        ]
-
-      })
+  function trigger_error(){
+    dw.modal({
+      title: `
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg><br />        
+        Incomplete Data`,
+      content: `<span class="text-muted">Please add missing information to<br /> any <span class="text-danger">required</span> fields and try again.</span>`,
+      format: 'small',
+      theme: 'danger',
+      modal_title_extra: 'text-center w-100 pt-2 fs-2',
+      modal_body_extra: 'text-center',
+      buttons: [
+        {
+          label: 'OK',
+          color: 'danger',
+          class_extra: 'w-75 mx-auto mb-3',
+          close_modal: true,
+        },
+      ]
+    })
   }
+</script>
 
 
+
+
+
+<br /><br />
+
+
+<button class="btn btn-primary" onclick="js_dw_alert(modal_form_big)">big form & launch w/ js</button>
+<button class="btn btn-primary" onclick="js_dw_alert(modal_form_simple)">simple form & launch w/ js</button>
+
+<script>
+  var modal_form_big = `
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input type="text" class="form-control" name="name" placeholder="Your report name">
+  </div>
+  <label class="form-label">Report type</label>
+  <div class="form-selectgroup-boxes row mb-3">
+    <div class="col-lg-6">
+      <label class="form-selectgroup-item">
+        <input type="radio" name="report_type" value="simple" class="form-selectgroup-input" checked>
+        <span class="form-selectgroup-label d-flex align-items-center p-3">
+          <span class="me-3">
+            <span class="form-selectgroup-check"></span>
+          </span>
+          <span class="form-selectgroup-label-content">
+            <span class="form-selectgroup-title strong mb-1">Simple</span>
+            <span class="d-block text-muted">Provide only basic data needed for the report</span>
+          </span>
+        </span>
+      </label>
+    </div>
+    <div class="col-lg-6">
+      <label class="form-selectgroup-item">
+        <input type="radio" name="report_type" value="advanced" class="form-selectgroup-input">
+        <span class="form-selectgroup-label d-flex align-items-center p-3">
+          <span class="me-3">
+            <span class="form-selectgroup-check"></span>
+          </span>
+          <span class="form-selectgroup-label-content">
+            <span class="form-selectgroup-title strong mb-1">Advanced</span>
+            <span class="d-block text-muted">Insert charts and additional advanced analyses to be inserted in the
+              report</span>
+          </span>
+        </span>
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="mb-3">
+        <label class="form-label">Report url</label>
+        <div class="input-group input-group-flat">
+          <span class="input-group-text">
+            https://tabler.io/reports/
+          </span>
+          <input type="text" name="report_url" class="form-control ps-0" value="report-01" autocomplete="off">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="mb-3">
+        <label class="form-label">Visibility</label>
+        <select class="form-select" name="visibility">
+          <option value="1" selected>Private</option>
+          <option value="2">Public</option>
+          <option value="3">Hidden</option>
+        </select>
+      </div>
+    </div>
+  </div>
+<!-- 
+</div>
+<div class="modal-body">
+-->
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="mb-3">
+        <label class="form-label">Client name</label>
+        <input type="text" name="client_name" class="form-control">
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="mb-3">
+        <label class="form-label">Reporting period</label>
+        <input type="date" name="reporting_period" class="form-control">
+      </div>
+    </div>
+    <div class="col-lg-12">
+      <div>
+        <label class="form-label">Additional information</label>
+        <textarea name="additional_information" class="form-control" rows="3"></textarea>
+      </div>
+    </div>
+  </div>
+  `;
+
+
+  var modal_form_simple = `
+  <div class="row mb-3 align-items-end">
+    <div class="col-auto">
+      <a href="#" class="avatar avatar-upload rounded">
+        <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 5l0 14" />
+          <path d="M5 12l14 0" />
+        </svg>
+        <span class="avatar-upload-text">Add</span>
+      </a>
+    </div>
+    <div class="col">
+      <label class="form-label">Name</label>
+      <input type="text" name="name" class="form-control" />
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Pick your team color</label>
+    <div class="row g-2">
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="dark" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-dark"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput form-colorinput-light">
+          <input name="color" type="radio" value="white" class="form-colorinput-input" checked />
+          <span class="form-colorinput-color bg-white"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="blue" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-blue"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="azure" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-azure"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="indigo" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-indigo"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="purple" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-purple"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="pink" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-pink"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="red" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-red"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="orange" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-orange"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="yellow" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-yellow"></span>
+        </label>
+      </div>
+      <div class="col-auto">
+        <label class="form-colorinput">
+          <input name="color" type="radio" value="lime" class="form-colorinput-input" />
+          <span class="form-colorinput-color bg-lime"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div>
+    <label class="form-label">Additional info</label>
+    <textarea name="additional_info" class="form-control"></textarea>
+  </div>
+  `;
+
+  function js_dw_alert(modal_form){
+    dw.modal({
+      content: modal_form,
+      title: 'This is a Modal Form!<div class="fw-normal text-muted fs-5">It can even have a second line for instructions...it\'s just a div</div>',
+      modal_header_extra: 'py-3',
+      form: true,
+      format: 'large',
+      buttons: [
+        {
+          label: 'Cancel',
+          close_modal: true,
+          class_extra: 'me-auto',
+          callback: function (id) {
+            alert('called after cancel');
+          }
+        },
+        {
+          label: `
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mood-smile-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.8 10.946a1 1 0 0 0 -1.414 .014a2.5 2.5 0 0 1 -3.572 0a1 1 0 0 0 -1.428 1.4a4.5 4.5 0 0 0 6.428 0a1 1 0 0 0 -.014 -1.414zm-6.19 -5.286l-.127 .007a1 1 0 0 0 .117 1.993l.127 -.007a1 1 0 0 0 -.117 -1.993zm6 0l-.127 .007a1 1 0 0 0 .117 1.993l.127 -.007a1 1 0 0 0 -.117 -1.993z" stroke-width="0" fill="currentColor"></path></svg>
+            Submit`,
+          color: 'primary',
+          close_modal: true,
+          callback: function (id) {
+            alert('look at the console!');
+            console.log('Here\'s the serialized form content:');
+            console.log(dw.serialize(document.querySelector('#'+ id +' form')));
+          }
+        },
+      ]
+    })
+  }
 
 </script>
 

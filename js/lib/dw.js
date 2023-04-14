@@ -1,93 +1,12 @@
+/*!
+* DW Utilities (JS)
+* @version 0.6.0
+* @link https://darkwave.ltd
+* Copyright 2016-2023 HXGF (Jonathan Youngblood)
+* Licensed under MIT (https://github.com/hxgf/darkwave/blob/master/LICENSE.md)
+*/
 
 var dw = {
-  alert: function (message, cfg = {}) {
-    cfg.content = message;
-    this.modal(cfg);
-    // console.log(cfg);
-  },
-  modal: function (cfg) {
-
-    var fade = cfg.fade ? 'fade' : '';
-    var blur = cfg.blur ? 'modal-blur' : '';
-    var centered = cfg.centered ? 'modal-dialog-centered' : '';
-    var scrollable = cfg.scrollable ? 'modal-dialog-scrollable' : '';
-
-    var small = cfg.format == 'small' ? 'modal-sm' : '';
-    var large = cfg.format == 'large' ? 'modal-lg' : '';
-    var fullwidth = cfg.format == 'full-width' ? 'modal-full-width' : '';
-
-    var modal_id = cfg.modal_id ? cfg.modal_id : 'modal' + Math.random().toString(36).slice(2, 7);
-
-    var buttons = '';
-
-    if (cfg.buttons){
-      dw.button_callbacks = {};
-      for (var i = 0; i < cfg.buttons.length; i++) {
-        var button_color = 'primary';
-        if (cfg.buttons[i].color){
-          button_color = cfg.buttons[i].color;
-        }
-        if (cfg.buttons[i].callback){
-          dw.button_callbacks[i] = cfg.buttons[i].callback;
-        }
-        buttons += `
-          <button type="button" class="btn ${cfg.buttons[i].role == 'cancel' ? ' me-auto' : `btn-${button_color}`} ${cfg.buttons[i].class_extra}" ${cfg.buttons[i].close_modal ? `data-bs-dismiss="modal"` : ''} ${cfg.buttons[i].callback ? `onclick="dw.button_callbacks[${i}]()"` : ''}>${cfg.buttons[i].label}</button>
-        `;
-      }
-    }
-
-    var modal_content = `
-    <div class="modal ${blur} ${fade}" id="${modal_id}" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog ${small} ${large} ${fullwidth} ${centered} ${scrollable}" role="document">
-        <div class="modal-content">
-        ${cfg.theme ? `<div class="modal-status bg-${cfg.theme}"></div>` : ''}
-        ${cfg.format == 'small' ? '' : `
-          ${ cfg.title ? `
-            <div class="modal-header">
-              <h5 class="modal-title ${cfg.modal_title_extra}">${cfg.title}</h5>
-              ${cfg.no_x ? '' : `<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`}
-            </div>`            
-          : `
-              ${cfg.no_x ? '' : `<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`}
-          `}`
-          }
-          <div class="modal-body ${cfg.modal_body_extra}">
-          ${cfg.form ? '<form action="javascript:void(0);">' : ''}
-            ${cfg.format == 'small' ? `
-              <div class="modal-title">${cfg.title}</div>
-              <div>${cfg.content}</div>
-            `
-            : cfg.content }
-
-          ${cfg.form ? '</form>' : ''}
-          </div>
-          <div class="modal-footer">
-            ${buttons}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <a href="#" class="d-none" data-bs-toggle="modal" data-bs-target="#${modal_id}"></a>
-
-`;
-
-
-    if (document.getElementById(modal_id + "-group")) {
-      document.getElementById(modal_id + "-group").remove();
-    }
-
-    var g = document.createElement('div');
-    g.setAttribute("id", modal_id + "-group");
-    document.body.appendChild(g);
-
-    document.getElementById(modal_id + "-group").innerHTML = modal_content;
-
-    // create element if it doesn't exist
-    // update w/ current content
-
-    document.querySelector('[data-bs-target="#' + modal_id + '"]').click();
-  },
   api_request: function (cfg) {
     var data = cfg.data ? cfg.data : {};
     var request = new XMLHttpRequest();
@@ -117,6 +36,12 @@ var dw = {
     return request.send(query);
   },
   serialize: function (form) {
+    // append RTE fields to form before serializing
+    document.querySelectorAll('.quill-editor').forEach(function (editor, i) {
+      document.querySelector('input[name="' + editor.getAttribute('data-target') + '"]').value = editor.querySelector('.ql-editor').innerHTML;
+      // 								.replace(/<\/p><p>/g, '<br>').replace(/(<br>){2,}/g, '</p><p>')
+    });
+    // normal form serialization
     var serialized = [];
     for (var i = 0; i < form.elements.length; i++) {
       var field = form.elements[i];
@@ -133,66 +58,41 @@ var dw = {
     }
     return serialized.join('&');
   },
-  listener_clear_error: function () {
-    document.addEventListener('focusout', function (e) {
-      var input = e.target;
-      if (input.parentNode.classList.contains('error')) {
-        if (input.value) {
-          input.parentNode.classList.remove('error');
-        }
-      }
-    });
-  },
-  form_append_quill: function (callback) {
-    document.querySelectorAll('.quill-editor').forEach(function (editor, i) {
-      document.querySelector('input[name="' + editor.getAttribute('data-target') + '"]').value = editor.querySelector('.ql-editor').innerHTML;
-      // 								.replace(/<\/p><p>/g, '<br>').replace(/(<br>){2,}/g, '</p><p>')
-    });
-    callback();
-  },
-
-
-
-  // fixit validate everything (required fields AND unique/special validation)
-  form_validate_required: function (callback) {
+  form_validate: function (callback) {
     var required_items = document.querySelectorAll('.required input, .required textarea, .required select');
     var valid = true;
     for (var i = 0; i < required_items.length; i++) {
       var input = required_items[i];
       if (!input.value) {
-        // input.parentNode.classList.add('error');
         input.classList.add('is-invalid')
         input.nextElementSibling.innerHTML = 'Required';
         valid = false;
       }
     }
     if (valid) {
-      // here's where we would remove the event listener if it mattered
       callback();
     } else {
       document.body.classList.remove('working');
-
-      // fixit is this still needed?
-      dw.listener_clear_error();
-
-      // fixit remove
-      // smoke.alert("Required information is missing.");
-      // fixit new alert saying required information is missing
+      dw.modal({
+        title: `<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg><br />Incomplete Data`,
+        content: `<span class="text-muted">Please add missing information to<br /> any <span class="text-danger">required</span> fields and try again.</span>`,
+        format: 'small',
+        theme: 'danger',
+        centered: true,
+        modal_title_extra: 'text-center w-100 pt-2 fs-2',
+        modal_body_extra: 'text-center',
+        buttons: [{
+          label: 'OK',
+          color: 'danger',
+          class_extra: 'w-75 mx-auto mb-3',
+          close_modal: true,
+        }]
+      });
     }
   },
-
-
-
-
-
-
-  // new functions from 0x00
-
-
   formbody_encode: function (data) {
     return Object.entries(data).map(([k, v]) => { return k + '=' + v }).join('&');
   },
-
   cookie_set: function (name, value, days = 365) {
     var expires = "";
     if (days) {
@@ -202,17 +102,14 @@ var dw = {
     }
     document.cookie = name + "=" + (value || "") + expires + "; path=/";
   },
-
   cookie_get: function (name) {
     let value = `; ${document.cookie}`;
     let parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
   },
-
   cookie_delete: function (name) {
     document.cookie = name + '=; Max-Age=0';
   },
-
   cookie_parse: function (str) {
     return str
       .split(';')
@@ -222,7 +119,6 @@ var dw = {
         return acc;
       }, {});
   },
-
   jwt_parse: function (token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -231,7 +127,6 @@ var dw = {
     }).join(''));
     return JSON.parse(jsonPayload);
   },
-
   api_xhr: function (cfg) {
     cfg.data = cfg.data || {};
     if (cfg.authenticated && this.cookie_get('auth_token')) {
@@ -261,9 +156,7 @@ var dw = {
       alert(`Network error: ${this.response}`);
     };
     return request.send(this.formbody_encode(cfg.data));
-
   },
-
   api_fetch: function (cfg) {
     if (cfg.authenticated && this.cookie_get('auth_token')) {
       cfg.data.auth_token = this.cookie_get('auth_token');
@@ -286,28 +179,69 @@ var dw = {
       console.log(error);
     });
   },
-
-
-
-
-
-
-
-  // auth/input-related methods
-
+  modal: function (cfg) {
+    var modal_id = cfg.modal_id ? cfg.modal_id : 'modal' + Math.random().toString(36).slice(2, 7);
+    var buttons = '';
+    if (cfg.buttons){
+      dw.button_callbacks = {};
+      for (var i = 0; i < cfg.buttons.length; i++) {
+        if (cfg.buttons[i].callback){
+          dw.button_callbacks[i] = cfg.buttons[i].callback;
+        }
+        buttons += `
+          <button type="button" class="btn ${cfg.buttons[i].color ? `btn-${cfg.buttons[i].color}` : ''} ${cfg.buttons[i].class_extra}" ${cfg.buttons[i].close_modal ? `data-bs-dismiss="modal"` : ''} ${cfg.buttons[i].callback ? `onclick="dw.button_callbacks[${i}]('${modal_id}')"` : ''}>${cfg.buttons[i].label}</button>
+        `;
+      }
+    }
+    var modal_content = `
+    <div class="modal ${cfg.blur ? 'modal-blur' : ''} ${cfg.fade ? 'fade' : ''}" id="${modal_id}" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog ${cfg.format == 'small' ? 'modal-sm' : ''} ${cfg.format == 'large' ? 'modal-lg' : ''} ${cfg.format == 'full-width' ? 'modal-full-width' : ''} ${cfg.centered ? 'modal-dialog-centered' : ''} ${cfg.scrollable ? 'modal-dialog-scrollable' : ''} ${cfg.modal_dialog_extra ? cfg.modal_dialog_extra : ''}" role="document">
+        <div class="modal-content ${cfg.modal_content_extra ? cfg.modal_content_extra : ''}">
+        ${cfg.theme ? `<div class="modal-status bg-${cfg.theme}"></div>` : ''}
+        ${cfg.format == 'small' ? `
+          ${cfg.hide_x ? '' : `<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`}
+        ` : `
+          ${ cfg.title ? `
+            <div class="modal-header ${cfg.modal_header_extra ? cfg.modal_header_extra : ''}">
+              <div class="modal-title ${cfg.modal_title_extra ? cfg.modal_title_extra : ''}">${cfg.title}</div>
+              ${cfg.hide_x ? '' : `<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`}
+            </div>`            
+          : `
+              ${cfg.hide_x ? '' : `<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`}
+          `}`
+          }
+          <div class="modal-body ${cfg.modal_body_extra ? cfg.modal_body_extra : ''}">
+          ${cfg.form ? '<form action="javascript:void(0);">' : ''}
+            ${cfg.format == 'small' ? `
+              ${cfg.title ? `<div class="modal-title ${cfg.modal_title_extra ? cfg.modal_title_extra : ''}">${cfg.title}</div>` : ``}            
+              <div>${cfg.content}</div>
+            `
+            : cfg.content }
+          ${cfg.form ? '</form>' : ''}
+          </div>
+          <div class="modal-footer ${cfg.modal_footer_extra ? cfg.modal_footer_extra : ''}">
+            ${buttons}
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="#" class="d-none" data-bs-toggle="modal" data-bs-target="#${modal_id}"></a>
+    `;
+    if (document.getElementById(modal_id + "-group")) {
+      document.getElementById(modal_id + "-group").remove();
+    }
+    var g = document.createElement('div');
+    g.setAttribute("id", modal_id + "-group");
+    document.body.appendChild(g);
+    document.getElementById(modal_id + "-group").innerHTML = modal_content;
+    document.querySelector('[data-bs-target="#' + modal_id + '"]').click();
+  },
+  modal_destroy: function (modal_id) {
+    if (document.getElementById(modal_id + "-group")) {
+      document.getElementById(modal_id + "-group").remove();
+    }
+  },
   validate_input: function (cfg) {
-
-    // fixit note which params are required
-
-    // cfg.input
-    // cfg.element
-    // cfg.required
-    // cfg.unique
-    //     cfg.unique.collection
-    //     cfg.unique.field
-    //     cfg.unique.error_message
-
-
     if (cfg.unique) {
       var request_data = {
         collection: cfg.unique.collection,
@@ -318,12 +252,11 @@ var dw = {
         request_data.exempt_id = cfg.unique.exempt_id;
       }
       dw.api_request({
-        url: '/api/validate-unique/',
+        url: '/dw/utility/validate-unique/',
         data: request_data,
         callback: function (r) {
           if (r.error) {
             dw.display_error(cfg.input, cfg.unique.error_message ? cfg.unique.error_message : 'Value must be unique');
-            // cfg.element.focus();
           } else {
             dw.remove_error(cfg.input);
           }
@@ -339,8 +272,6 @@ var dw = {
         }
       }
     }
-
-
   },
   remove_error: function (data_name) {
     document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.remove('is-invalid');
@@ -350,13 +281,6 @@ var dw = {
     document.querySelector('[data-validate="' + data_name + '"] .form-control').classList.add('is-invalid');
     document.querySelector('[data-validate="' + data_name + '"] .invalid-feedback').innerHTML = error_message;
   },
-
-
-
-
-
-  // new dw functions for 0.6.0
-
   edit_form: function () {
     return {
       save: function (cfg) {
@@ -373,7 +297,7 @@ var dw = {
             console.log(r);
           }
         }
-        dw.form_validate_required(function () {
+        dw.form_validate(function () {
           dw.api_request({
             url: cfg.url,
             data: cfg.data,
@@ -414,8 +338,5 @@ var dw = {
         `;
       }
     };
-  },
-
-
-
+  }
 };

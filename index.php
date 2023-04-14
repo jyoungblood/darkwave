@@ -50,7 +50,8 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
 
 
   // authentication checks
-  // \DW\utility::authenticate();
+  // use DW\dw;
+  // dw::authenticate();
 
   if (isset($_COOKIE['token'])){
     $jwt_factory = new \PsrJwt\Factory\Jwt();

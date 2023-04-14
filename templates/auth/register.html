@@ -71,7 +71,7 @@
     return {
       submit: function () {
         document.body.classList.add('working');
-        dw.form_validate_required(function () {
+        dw.form_validate(function () {
           dw.api_request({
             url: '/auth/register/process',
             data: {

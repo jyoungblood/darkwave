@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * @package    DW Utilities (PHP)
+ * @version    0.1.0
+ * @author     Jonathan Youngblood <jy@hxgf.io>
+ * @license    https://github.com/hxgf/dw-utilities-php/blob/master/LICENSE.md (MIT License)
+ * @source     https://github.com/hxgf/dw-utilities-php
+ */
+
 namespace DW;
 
-class utility {
+class dw {
 
   public static function authenticate(){
     if (isset($_COOKIE['token'])){
