@@ -3,7 +3,7 @@
 * @version 0.6.0
 * @link https://darkwave.ltd
 * Copyright 2016-2023 HXGF (Jonathan Youngblood)
-* Licensed under MIT (https://github.com/hxgf/darkwave/blob/master/LICENSE.md)
+* Licensed under MIT (https://github.com/hxgf/dw-utilities-js/blob/master/LICENSE.md)
 */
 
 var dw = {
@@ -188,9 +188,7 @@ var dw = {
         if (cfg.buttons[i].callback){
           dw.button_callbacks[i] = cfg.buttons[i].callback;
         }
-        buttons += `
-          <button type="button" class="btn ${cfg.buttons[i].color ? `btn-${cfg.buttons[i].color}` : ''} ${cfg.buttons[i].class_extra}" ${cfg.buttons[i].close_modal ? `data-bs-dismiss="modal"` : ''} ${cfg.buttons[i].callback ? `onclick="dw.button_callbacks[${i}]('${modal_id}')"` : ''}>${cfg.buttons[i].label}</button>
-        `;
+        buttons += `<button type="button" class="btn ${cfg.buttons[i].color ? `btn-${cfg.buttons[i].color}` : ''} ${cfg.buttons[i].class_extra}" ${cfg.buttons[i].close_modal ? `data-bs-dismiss="modal"` : ''} ${cfg.buttons[i].callback ? `onclick="dw.button_callbacks[${i}]('${modal_id}')"` : ''}>${cfg.buttons[i].label}</button>`;
       }
     }
     var modal_content = `
@@ -333,9 +331,7 @@ var dw = {
         });
       },
       delete_cancel: function (cfg) {
-        document.querySelector('[data-container="delete"]').innerHTML = `
-          <button class='btn btn-outline-danger' @click='delete_confirm(${JSON.stringify(cfg)})'>Delete</button>
-        `;
+        document.querySelector('[data-container="delete"]').innerHTML = `<button class='btn btn-outline-danger' @click='delete_confirm(${JSON.stringify(cfg)})'>Delete</button>`;
       }
     };
   }

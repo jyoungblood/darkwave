@@ -51,6 +51,7 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
 
   // authentication checks
   // use DW\dw;
+  // dw::what();
   // dw::authenticate();
 
   if (isset($_COOKIE['token'])){

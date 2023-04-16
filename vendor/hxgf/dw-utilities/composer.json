@@ -1,0 +1,19 @@
+{
+	"name": "hxgf/dw-utilities",
+  "homepage": "https://github.com/hxgf/dw-utilities-php",
+  "description": "A collection of utility functions to facilitate an efficient workflow with the Darkwave web application toolkit.",
+	"type": "library",
+  "license": "MIT",
+	"authors": [
+		{
+      "name": "Jonathan Youngblood",
+      "email": "jy@hxgf.io"
+		}
+	],
+	"keywords": ["utilities"],
+	"autoload": {
+		"psr-4": {
+			"DW\\": ["src/"]
+		}
+	}
+}

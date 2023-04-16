@@ -12,6 +12,11 @@ namespace DW;
 
 class dw {
 
+  public static function what(){
+    echo "what";
+  }
+
+	// parse the JWT 'token' cookie and set global authentication variables
   public static function authenticate(){
     if (isset($_COOKIE['token'])){
       $jwt_factory = new \PsrJwt\Factory\Jwt();
@@ -31,12 +36,7 @@ class dw {
       }
     }
   }
-
-  public static function test($test){
-    return $test;
-	}
-
+  
 }
 
 ?>
-
