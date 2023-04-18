@@ -9,7 +9,7 @@ use VPHP\db;
 $app->get('/register[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-guest',
 		'template' => 'auth/register',
     'title' => 'Register - ' . $GLOBALS['site_title'],
 	]);
@@ -32,7 +32,7 @@ $app->get('/register/activate/{hash}/{e_hash}[/]', function ($req, $res, $args) 
 	}
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-guest',
 		'template' => 'auth/register-activate',
     'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
     'data' => [
@@ -52,12 +52,9 @@ $app->get('/register/activate/{hash}/{e_hash}[/]', function ($req, $res, $args) 
 $app->get('/login[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-guest',
 		'template' => 'auth/login',
     'title' => 'Log In - ' . $GLOBALS['site_title'],
-    'data' => [
-	    'redirect' => isset($_GET['redirect']) ? $_GET['redirect'] : '/'
-    ]
 	]);
 
 });
@@ -72,7 +69,7 @@ $app->get('/login[/]', function ($req, $res, $args) {
 $app->get('/forgot[/]', function ($req, $res, $args) {
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-guest',
 		'template' => 'auth/forgot',
     'title' => 'Forgot Password - ' . $GLOBALS['site_title'],
 	]);
@@ -91,7 +88,7 @@ $app->get('/forgot/reset/{hash}/{e_hash}[/]', function ($req, $res, $args) {
 	$_user = db::find("users", "password_hash='".$args['hash']."' and email='".base64_decode($args['e_hash'])."'");
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-guest',
 		'template' => 'auth/forgot-reset',
     'title' => 'Choose a new password - ' . $GLOBALS['site_title'],
 		'data' => [
@@ -116,7 +113,7 @@ $app->get('/account[/]', function ($req, $res, $args) {
 	$user_data = db::find("users", "_id='".$GLOBALS['user_id']."'");
 
 	return render::hbs($req, $res, [
-    'layout' => '_layouts/base-auth',
+    'layout' => '_layouts/base',
 		'template' => 'auth/account',
     'title' => 'Account - ' . $GLOBALS['site_title'],
     'data' => [

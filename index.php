@@ -74,7 +74,10 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
 
 
 
-  // custom error handling
+
+
+  
+
 
   if ($GLOBALS['settings']['mode'] == 'development'){
     $errorMiddleware = $app->addErrorMiddleware(true, true, true);

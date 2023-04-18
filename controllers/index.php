@@ -19,7 +19,7 @@ if (file_exists('./controllers/install.php')){
 $app->get('/', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [
-    'layout' => '_layouts/base-auth',
+    'layout' => '_layouts/base',
     'template' => 'index',
     'title' => $GLOBALS['site_title'],
     'data' => [

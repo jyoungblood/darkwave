@@ -8,7 +8,7 @@ use Slime\render;
 $app->get('/elements[/]', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
+    'layout' => '_layouts/base-guest',
     'template' => 'elements',
     'title' => 'All Elements - ' . $GLOBALS['site_title'],
     'data' => [

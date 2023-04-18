@@ -20,6 +20,7 @@
         <div class="d-none">
           <label class="form-label">Website</label>
           <input type="text" name="website" />
+          <input type="hidden" name="redirect" value="{{GET.redirect}}" />
         </div>
         <div class="form-footer">
           <button type="submit" data-id="action-handler" class="btn btn-primary w-100" @click="submit()">Log in</button>
@@ -55,14 +56,14 @@
               if (r.token) {
                 dw.cookie_set('token', r.token);
               }
-              if (window.location.pathname == '/login'){
-                if ('{{redirect}}' != ''){
-                  window.location.href = '{{redirect}}';
-                }else{
-                  window.location.href = '/';
-                }                
+              if (document.querySelector('[name="redirect"]').value){
+                window.location.href = document.querySelector('[name="redirect"]').value;
               }else{
-                window.location.reload();
+                if (window.location.pathname == '/login') {
+                  window.location.href = '/';
+                } else {
+                  window.location.reload();
+                }
               }
             } else {
               document.body.classList.remove('working');

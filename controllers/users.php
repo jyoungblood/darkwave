@@ -6,7 +6,7 @@ use VPHP\db;
 
 $app->get('/users[/]', function ($req, $res, $args) {
 
-  if (!isset($GLOBALS['is_admin'])){
+  if (isset($GLOBALS['auth']) && !isset($GLOBALS['is_admin'])){
 
     return render::hbs($req, $res, [
       'template' => 'error',
@@ -22,7 +22,7 @@ $app->get('/users[/]', function ($req, $res, $args) {
     $_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
 
     return render::hbs($req, $res, [
-      'layout' => '_layouts/base-auth',
+      'layout' => '_layouts/base',
       'template' => 'users-list',
       'title' => 'Users - ' . $GLOBALS['site_title'],
       'data' => [
@@ -48,7 +48,7 @@ $app->get('/users[/]', function ($req, $res, $args) {
 $app->get('/search[/]', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [
-    'layout' => '_layouts/base-auth',
+    'layout' => '_layouts/base',
     'template' => 'search',
     'title' => 'Search - ' . $GLOBALS['site_title'],
     'data' => [
@@ -71,7 +71,7 @@ $app->get('/search[/]', function ($req, $res, $args) {
 $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
 
-  if (!isset($GLOBALS['is_admin'])){
+  if (isset($GLOBALS['auth']) && !isset($GLOBALS['is_admin'])){
 
     return render::hbs($req, $res, [
       'template' => 'error',
@@ -103,7 +103,7 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
     }
 
     return render::hbs($req, $res, [
-      'layout' => '_layouts/base-auth',
+      'layout' => '_layouts/base',
       'template' => 'users-edit',
       'title' => $title,
       'data' => [
@@ -135,7 +135,7 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
 $app->post('/users/save[/]', function ($req, $res, $args) {
 
-  if (!isset($GLOBALS['is_admin'])){
+  if (isset($GLOBALS['auth']) && !isset($GLOBALS['is_admin'])){
 
     return render::json($req, $res, [
       'error_code' => 401,
@@ -271,7 +271,7 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 
 $app->post('/users/delete[/]', function ($req, $res, $args) {
 
-  if (!isset($GLOBALS['is_admin'])){
+  if (isset($GLOBALS['auth']) && !isset($GLOBALS['is_admin'])){
     
     return render::json($req, $res, [
       'error_code' => 401,
