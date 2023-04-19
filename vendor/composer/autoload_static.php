@@ -59,7 +59,7 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
         ),
         'D' => 
         array (
-            'DW\\' => 3,
+            'Darkwave\\' => 9,
         ),
     );
 
@@ -137,7 +137,7 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
         array (
             0 => __DIR__ . '/..' . '/nikic/fast-route/src',
         ),
-        'DW\\' => 
+        'Darkwave\\' => 
         array (
             0 => __DIR__ . '/..' . '/hxgf/dw-utilities/src',
         ),

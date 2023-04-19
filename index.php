@@ -54,6 +54,16 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
   // dw::what();
   // dw::authenticate();
 
+
+  // fixit stopped here
+
+// include 'darkwave.php';
+use Darkwave\dw;
+// dw::what();
+// use VPHP\x;
+echo dw::client_ip();
+
+
   if (isset($_COOKIE['token'])){
     $jwt_factory = new \PsrJwt\Factory\Jwt();
     $parser = $jwt_factory->parser($_COOKIE['token'], $GLOBALS['settings']['jwt_secret']);
@@ -93,7 +103,7 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
     bool $logErrorDetails
   ) {
     return render::hbs($request, new \Slim\Psr7\Response(), [
-      'template' => 'error',
+      'template' => 'dw/error',
       'title' => '404 - NOT FOUND',
       'data' => [
         'status_code' => 404,

@@ -2,12 +2,13 @@
 
 /**
  * DW Utility Routes
- * @version    0.1.0
+ * @version    0.6.0
  * @author     Jonathan Youngblood <jy@hxgf.io>
  */
 
 use Slime\render;
 use VPHP\db;
+
 
 
 $app->post('/dw/utility/validate-unique[/]', function ($req, $res, $args) {
@@ -81,11 +82,8 @@ $app->post('/dw/utility/upload-file[/]', function ($req, $res, $args) {
 
 $app->post('/dw/utility/delete-upload[/]', function ($req, $res, $args) {
 	if ($_POST['filename']){
-		$target = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $_POST['filename'];
-		unlink($target);
+		unlink($_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $_POST['filename']);
 	}
-	$out = [
-    'success' => true
-  ];
+	$out = [ 'success' => true ];
 	return render::json($req, $res, $out);
 });

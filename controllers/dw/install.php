@@ -5,28 +5,13 @@ use VPHP\db;
 
 
 
-
-
 $app->get('/install[/]', function ($req, $res, $args) {
-
   return render::hbs($req, $res, [
     'layout' => '_layouts/base-guest',
-    'template' => 'install',
+    'template' => 'dw/install',
     'title' => 'Install Darkwave',
-    'data' => [
-
-    ]
   ]);
-
 });
-
-
-
-
-
-
-
-
 
 
 
@@ -144,7 +129,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
 
     return render::hbs($req, $res, [
       'layout' => '_layouts/base-guest',
-      'template' => 'index',
+      'template' => 'dw/install',
       'title' => $GLOBALS['site_title'] ? $GLOBALS['site_title'] : 'Install Darkwave',
       'data' => [
         'error' => $error

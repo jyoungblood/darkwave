@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '5f40cfe797bc5c169a791677f1703d4188ff7569',
+        'reference' => '679453ad33a94bd4e3d2891f4d9b0587c3e8776d',
         'name' => 'hxgf/slime',
         'dev' => true,
     ),
@@ -38,12 +38,12 @@
             'dev_requirement' => false,
         ),
         'hxgf/dw-utilities' => array(
-            'pretty_version' => '0.1.0',
-            'version' => '0.1.0.0',
+            'pretty_version' => '1.0',
+            'version' => '1.0.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../hxgf/dw-utilities',
             'aliases' => array(),
-            'reference' => '2a86293db799c92773402afdc68bc6ede551aed6',
+            'reference' => '6dec95ebd187b9fee1479f331d7db782414c5dad',
             'dev_requirement' => false,
         ),
         'hxgf/http-request' => array(
@@ -61,7 +61,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '5f40cfe797bc5c169a791677f1703d4188ff7569',
+            'reference' => '679453ad33a94bd4e3d2891f4d9b0587c3e8776d',
             'dev_requirement' => false,
         ),
         'hxgf/slime-render' => array(
