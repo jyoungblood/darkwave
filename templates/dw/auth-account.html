@@ -44,7 +44,7 @@
 
 
 
-<div class="page-body" x-data="dw.edit_form()">
+<div class="page-body" x-data="dw.edit_form()" @keyup.ctrl.enter.window="document.querySelector('[data-container=save] button').click()">
   <div class="container-xl">
     <div class="row row-cards">
       <div class="col-12">

@@ -57,10 +57,6 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
             'Fig\\Http\\Message\\' => 17,
             'FastRoute\\' => 10,
         ),
-        'D' => 
-        array (
-            'Darkwave\\' => 9,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -136,10 +132,6 @@ class ComposerStaticInit964b1307ce3c233ca7de983842afc012
         'FastRoute\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/fast-route/src',
-        ),
-        'Darkwave\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/hxgf/dw-utilities/src',
         ),
     );
 

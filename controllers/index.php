@@ -7,6 +7,7 @@ foreach (glob("controllers/dw/*.php") as $file) {
 }
 
 $app->get('/', function ($req, $res, $args) {
+
   return render::hbs($req, $res, [
     'layout' => '_layouts/base',
     'template' => 'index',

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "12f413b3b0ab542530d19a9981e9a218",
+    "content-hash": "c7bb37a25cb487fccaf4f5e344fe31d4",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -153,49 +153,6 @@
                 "source": "https://github.com/hxgf/dbkit/tree/1.2.0"
             },
             "time": "2023-01-17T20:25:32+00:00"
-        },
-        {
-            "name": "hxgf/dw-utilities",
-            "version": "1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hxgf/dw-utilities-php.git",
-                "reference": "6dec95ebd187b9fee1479f331d7db782414c5dad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/dw-utilities-php/zipball/6dec95ebd187b9fee1479f331d7db782414c5dad",
-                "reference": "6dec95ebd187b9fee1479f331d7db782414c5dad",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Darkwave\\": [
-                        "src/"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jonathan Youngblood",
-                    "email": "jy@hxgf.io"
-                }
-            ],
-            "description": "A collection of utility functions to facilitate an efficient workflow with the Darkwave web application toolkit.",
-            "homepage": "https://github.com/hxgf/dw-utilities-php",
-            "keywords": [
-                "utilities"
-            ],
-            "support": {
-                "issues": "https://github.com/hxgf/dw-utilities-php/issues",
-                "source": "https://github.com/hxgf/dw-utilities-php/tree/1.0"
-            },
-            "time": "2023-04-19T18:32:44+00:00"
         },
         {
             "name": "hxgf/http-request",

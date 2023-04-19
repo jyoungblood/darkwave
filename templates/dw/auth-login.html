@@ -59,7 +59,7 @@
               if (document.querySelector('[name="redirect"]').value){
                 window.location.href = document.querySelector('[name="redirect"]').value;
               }else{
-                if (window.location.pathname == '/login') {
+                if (window.location.pathname.includes('/login')) {
                   window.location.href = '/';
                 } else {
                   window.location.reload();

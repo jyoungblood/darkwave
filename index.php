@@ -48,69 +48,35 @@ $GLOBALS['database'] = isset($GLOBALS['settings']['database']) ? db::init($GLOBA
 */
 
 
-
-  // authentication checks
-  // use DW\dw;
-  // dw::what();
-  // dw::authenticate();
-
-
-  // fixit stopped here
-
-// include 'darkwave.php';
+require_once 'darkwave.php';
 use Darkwave\dw;
-// dw::what();
-// use VPHP\x;
-echo dw::client_ip();
-
-
-  if (isset($_COOKIE['token'])){
-    $jwt_factory = new \PsrJwt\Factory\Jwt();
-    $parser = $jwt_factory->parser($_COOKIE['token'], $GLOBALS['settings']['jwt_secret']);
-    $parsed = $parser->parse()->getPayload();
-    if ($parsed['_id']){      
-      $GLOBALS['user_id'] = $parsed['_id'];
-      $GLOBALS['locals']['user_id'] = $GLOBALS['user_id'];
-        $GLOBALS['auth'] = true;
-        $GLOBALS['locals']['auth'] = $GLOBALS['auth'];
-      if ($parsed['admin_token']){
-        if (password_verify($GLOBALS['site_code'], $parsed['admin_token'])){
-          $GLOBALS['is_admin'] = true;
-          $GLOBALS['locals']['is_admin'] = $GLOBALS['is_admin'];
-        }
-      }
-    }
-  }
+dw::authenticate();
 
 
 
 
+if ($GLOBALS['settings']['mode'] == 'development'){
+  $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+}else{
+  $errorMiddleware = $app->addErrorMiddleware(false, false, false);
+}
 
-  
-
-
-  if ($GLOBALS['settings']['mode'] == 'development'){
-    $errorMiddleware = $app->addErrorMiddleware(true, true, true);
-  }else{
-    $errorMiddleware = $app->addErrorMiddleware(false, false, false);
-  }
-
-  $errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, function (
-    \Psr\Http\Message\ServerRequestInterface $request,
-    \Throwable $exception,
-    bool $displayErrorDetails,
-    bool $logErrors,
-    bool $logErrorDetails
-  ) {
-    return render::hbs($request, new \Slim\Psr7\Response(), [
-      'template' => 'dw/error',
-      'title' => '404 - NOT FOUND',
-      'data' => [
-        'status_code' => 404,
-        'error_message' => 'This page could not be found.'
-      ]
-    ], 404);
-  });
+$errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, function (
+  \Psr\Http\Message\ServerRequestInterface $request,
+  \Throwable $exception,
+  bool $displayErrorDetails,
+  bool $logErrors,
+  bool $logErrorDetails
+) {
+  return render::hbs($request, new \Slim\Psr7\Response(), [
+    'template' => 'dw/error',
+    'title' => '404 - NOT FOUND',
+    'data' => [
+      'status_code' => 404,
+      'error_message' => 'This page could not be found.'
+    ]
+  ], 404);
+});
 
 
 

@@ -158,52 +158,6 @@
             "install-path": "../hxgf/dbkit"
         },
         {
-            "name": "hxgf/dw-utilities",
-            "version": "1.0",
-            "version_normalized": "1.0.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hxgf/dw-utilities-php.git",
-                "reference": "6dec95ebd187b9fee1479f331d7db782414c5dad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/dw-utilities-php/zipball/6dec95ebd187b9fee1479f331d7db782414c5dad",
-                "reference": "6dec95ebd187b9fee1479f331d7db782414c5dad",
-                "shasum": ""
-            },
-            "time": "2023-04-19T18:32:44+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Darkwave\\": [
-                        "src/"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jonathan Youngblood",
-                    "email": "jy@hxgf.io"
-                }
-            ],
-            "description": "A collection of utility functions to facilitate an efficient workflow with the Darkwave web application toolkit.",
-            "homepage": "https://github.com/hxgf/dw-utilities-php",
-            "keywords": [
-                "utilities"
-            ],
-            "support": {
-                "issues": "https://github.com/hxgf/dw-utilities-php/issues",
-                "source": "https://github.com/hxgf/dw-utilities-php/tree/1.0"
-            },
-            "install-path": "../hxgf/dw-utilities"
-        },
-        {
             "name": "hxgf/http-request",
             "version": "1.2.0",
             "version_normalized": "1.2.0.0",
