@@ -1,7 +1,5 @@
 
 
-
-
 <div class="page-header d-print-none">
   <div class="container-xl">
     <div class="row g-2 align-items-center">
@@ -10,20 +8,41 @@
           Users
         </h2>
       </div>
-      <!-- Page title actions -->
-      <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
 
-          <a href="/users/edit/new" class="btn btn-primary d-none d-sm-inline-block">
+      
+      <div class="col-auto ms-auto d-print-none">
+
+        <div class="d-flex">
+
+          <form action="/users" method="get" autocomplete="off" class="d-inline-block me-3" novalidate>
+            <div class="input-icon">
+              <span class="input-icon-addon">
+                <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                  stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                  <path d="M21 21l-6 -6" />
+                </svg>
+              </span>
+              <input type="text" name="k" value="{{GET.k}}" class="form-control" placeholder="Search users…"
+                aria-label="Search users…">
+            </div>
+          </form>
+
+          <a href="/users/edit/new" class="btn btn-primary">
             <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-            New User
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M12 5l0 14"></path>
+              <path d="M5 12l14 0"></path>
+            </svg>
+            New user
           </a>
-          <a href="/users/edit/new" class="btn btn-primary d-sm-none btn-icon" aria-label="New User">
-            <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-          </a>
+          
         </div>
+
       </div>
     </div>
   </div>
@@ -64,32 +83,30 @@
 <div class="page-body">
   <div class="container-xl">
     <div class="row row-cards">
-
-
       <div class="col-12">
         <div class="card">
           <div class="table-responsive">
-            <table class="table table-vcenter card-table table-striped">
+            <table id="users-list" class="table card-table table-striped">
               <thead>
                 <tr>
-                  <th>Screen Name</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Date Created</th>
+                  <th><button class="table-sort" data-sort="sort-screenname">Screen Name</button></th>
+                  <th><button class="table-sort" data-sort="sort-name">Name</button></th>
+                  <th><button class="table-sort" data-sort="sort-email">Email</button></th>
+                  <th><button class="table-sort" data-sort="sort-date-created">Date Created</button></th>
                   <th class="w-1"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="table-tbody">
 
               {{#each users}}
                 <tr>
-                  <td>{{screenname}}</td>
-                  <td class="text-muted">
+                  <td class="sort-screenname">{{screenname}}</td>
+                  <td class="sort-name text-muted" data-lastname="{{last_name}}">
                     {{first_name}} {{last_name}}
                   </td>
-                  <td class="text-muted"><a href="#" class="text-reset">{{email}}</a></td>
-                  <td class="text-muted">
-                    {{date date_created "m/d/Y" "convert"}}
+                  <td class="sort-email text-muted"><a href="/users/edit/{{_id}}" class="text-reset">{{email}}</a></td>
+                  <td class="sort-date-created text-muted" data-date="{{date date_created "m-d-y" "convert"}}">
+                    {{date date_created "M j, Y" "convert"}}
                   </td>
                   <td>
                     <a href="/users/edit/{{_id}}">Edit</a>
@@ -110,3 +127,18 @@
 </div>
 
 
+<script src="/js/lib/list.min.js" defer></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const list = new List('users-list', {
+      sortClass: 'table-sort',
+      listClass: 'table-tbody',
+      valueNames: ['sort-screenname',
+        { attr: 'data-lastname', name: 'sort-name' },
+        'sort-email', 
+        { attr: 'data-date', name: 'sort-date-created' },
+      ]
+    });
+  })
+</script>

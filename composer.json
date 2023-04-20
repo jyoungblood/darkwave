@@ -20,7 +20,7 @@
     "hxgf/cookie": "^1.1",
     "hxgf/http-request": "^1.2",
     "hxgf/x-utilities": "^1.2",
-    "hxgf/slime-render": "^1.2",
-		"rbdwllr/psr-jwt": "^2.0"
+		"rbdwllr/psr-jwt": "^2.0",
+		"hxgf/slime-render": "^1.3"
   }
 }

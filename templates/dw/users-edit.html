@@ -53,7 +53,15 @@
 
                 <div class="mb-3 form-group {{#is _id "==" "new"}}required{{/is}}" data-validate="password">
                   <label class="form-label">New Password</label>
-                  <input type="password" class="form-control" name="password" placeholder="*********" autocomplete="off" />
+                  <input type="password" class="form-control" name="password" placeholder="*********" autocomplete="off"
+                    {{#is _id "==" "new"}}
+                      x-on:blur="dw.validate_input({
+                          input: 'password',
+                          element: $event.target,
+                          required: true
+                        })"
+                    {{/is}}
+                  />
                   <div class="invalid-feedback"></div>
                 </div>
 

@@ -21,7 +21,11 @@ $app->get('/users[/]', function ($req, $res, $args) {
       ]
     ], 401);
   }else{
-    $_users = db::find("users", "id IS NOT NULL ORDER BY email ASC");
+    $query = "id IS NOT NULL";
+    if (isset($_GET['k'])){
+      $query =  "screenname LIKE '%" . $_GET['k'] . "%' OR first_name LIKE '%" . $_GET['k'] . "%' OR last_name LIKE '%" . $_GET['k'] . "%' OR email LIKE '%" . $_GET['k'] . "%'";
+    }
+    $_users = db::find("users", $query . " ORDER BY date_created DESC");
     return render::hbs($req, $res, [
       'layout' => '_layouts/base',
       'template' => 'dw/users-list',
@@ -33,20 +37,6 @@ $app->get('/users[/]', function ($req, $res, $args) {
       ]
     ]);
   }
-});
-
-
-
-// fixit turn into search just for users
-$app->get('/search[/]', function ($req, $res, $args) {
-  return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
-    'template' => 'search',
-    'title' => 'Search - ' . $GLOBALS['site_title'],
-    'data' => [
-      'GET' => $_GET
-    ]
-  ]);
 });
 
 
