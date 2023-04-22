@@ -18,3 +18,8 @@ body.working .spinner-container {
 }
 
 
+.invert {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(invert='1');
+}
