@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'a48bc213281fcf7362e6c9927ce74ae2d2c6d730',
+        'reference' => '078bd869e5142b51a37bdb9b41cf61fb874fe941',
         'name' => 'hxgf/slime',
         'dev' => true,
     ),
@@ -52,7 +52,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'a48bc213281fcf7362e6c9927ce74ae2d2c6d730',
+            'reference' => '078bd869e5142b51a37bdb9b41cf61fb874fe941',
             'dev_requirement' => false,
         ),
         'hxgf/slime-render' => array(
@@ -83,12 +83,12 @@
             'dev_requirement' => false,
         ),
         'nyholm/psr7' => array(
-            'pretty_version' => '1.5.1',
-            'version' => '1.5.1.0',
+            'pretty_version' => '1.6.1',
+            'version' => '1.6.1.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../nyholm/psr7',
             'aliases' => array(),
-            'reference' => 'f734364e38a876a23be4d906a2a089e1315be18a',
+            'reference' => 'e874c8c4286a1e010fb4f385f3a55ac56a05cc93',
             'dev_requirement' => false,
         ),
         'php-http/message-factory' => array(
@@ -99,6 +99,12 @@
             'aliases' => array(),
             'reference' => 'a478cb11f66a6ac48d8954216cfed9aa06a501a1',
             'dev_requirement' => false,
+        ),
+        'php-http/message-factory-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '1.0',
+            ),
         ),
         'psr/container' => array(
             'pretty_version' => '2.0.2',
