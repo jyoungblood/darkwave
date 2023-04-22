@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'ffac1cb74270d6dec7dc1884c3bf1903a7fff7dc',
+        'reference' => 'a48bc213281fcf7362e6c9927ce74ae2d2c6d730',
         'name' => 'hxgf/slime',
         'dev' => true,
     ),
@@ -52,7 +52,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'ffac1cb74270d6dec7dc1884c3bf1903a7fff7dc',
+            'reference' => 'a48bc213281fcf7362e6c9927ce74ae2d2c6d730',
             'dev_requirement' => false,
         ),
         'hxgf/slime-render' => array(
@@ -194,12 +194,12 @@
             'dev_requirement' => false,
         ),
         'slim/psr7' => array(
-            'pretty_version' => '1.6',
-            'version' => '1.6.0.0',
+            'pretty_version' => '1.6.1',
+            'version' => '1.6.1.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../slim/psr7',
             'aliases' => array(),
-            'reference' => '3471c22c1a0d26c51c78f6aeb06489d38cf46a4d',
+            'reference' => '72d2b2bac94ab4575d369f605dbfafbe168d3163',
             'dev_requirement' => false,
         ),
         'slim/slim' => array(

@@ -37,15 +37,7 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 				'success' => true,
 				'auth_token' => $auth_token
       ];
-			if ($user['group_id'] == 1){
-				$out['admin_token'] = password_hash($GLOBALS['site_code'], PASSWORD_BCRYPT);
-			}
-      $jwt_factory = new \PsrJwt\Factory\Jwt();
-      $token = $jwt_factory->builder()->setSecret($GLOBALS['settings']['jwt_secret'])
-        ->setPayloadClaim('_id', $user['_id'])
-        ->setPayloadClaim('admin_token', $out['admin_token'])
-        ->build();
-      $out['token'] = $token->getToken();
+      $out['token'] = \Darkwave\dw::generate_jwt($user);
 		}else{
 			// error: not a valid password
 			$out = [

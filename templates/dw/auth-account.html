@@ -10,20 +10,8 @@
           Account Settings
         </h2>
       </div>
-      <!-- Page title actions -->
       <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
 
-          <span onclick=" dw.cookie_delete('token'); window.location.href = window.location.origin; " class="btn btn-outline-danger" data-no-instant>
-            Log Out
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon-right icon-tabler icon-tabler-logout" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-              <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
-              <path d="M7 12h14l-3 -3m0 6l3 -3"></path>
-            </svg>
-
-          </span>
-        </div>
       </div>
     </div>
   </div>
@@ -125,7 +113,12 @@
                   'data': {
                     'form': dw.serialize(document.querySelector('.edit-form'))
                   },
-                  'redirect': '/'
+                  'callback': function(r){
+                    if (r.token) {
+                      dw.cookie_set('token', r.token);
+                    }
+                    window.location.href = '/';
+                  }
                 })">Save</button>
 
               </span>

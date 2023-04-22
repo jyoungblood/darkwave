@@ -29,11 +29,17 @@ class dw {
       $jwt_factory = new \PsrJwt\Factory\Jwt();
       $parser = $jwt_factory->parser($_COOKIE['token'], $GLOBALS['settings']['jwt_secret']);
       $parsed = $parser->parse()->getPayload();
-      if ($parsed['_id']){      
+      if ($parsed['_id']){
+        $GLOBALS['auth'] = true;
         $GLOBALS['user_id'] = $parsed['_id'];
+        $GLOBALS['identity'] = [
+          'name' => $parsed['name'],
+          'screenname' => $parsed['screenname'],
+          'avatar_url' => $parsed['avatar_url'],
+        ];
+        $GLOBALS['locals']['auth'] = $GLOBALS['auth'];
         $GLOBALS['locals']['user_id'] = $GLOBALS['user_id'];
-          $GLOBALS['auth'] = true;
-          $GLOBALS['locals']['auth'] = $GLOBALS['auth'];
+        $GLOBALS['locals']['identity'] = $GLOBALS['identity'];
         if ($parsed['admin_token']){
           if (password_verify($GLOBALS['site_code'], $parsed['admin_token'])){
             $GLOBALS['is_admin'] = true;
@@ -42,6 +48,18 @@ class dw {
         }
       }
     }
+  }
+
+  public static function generate_jwt($user){
+    $jwt_factory = new \PsrJwt\Factory\Jwt();
+    $token = $jwt_factory->builder()->setSecret($GLOBALS['settings']['jwt_secret'])
+      ->setPayloadClaim('_id', $user['_id'])
+      ->setPayloadClaim('name', $user['first_name'] .' '.$user['last_name'])
+      ->setPayloadClaim('avatar_url', '//' . $GLOBALS['site_url'] . $user['avatar_small'])
+      ->setPayloadClaim('screenname', $user['screenname'])
+      ->setPayloadClaim('admin_token', $user['group_id'] == 1 ? password_hash($GLOBALS['site_code'], PASSWORD_BCRYPT) : false)
+      ->build();
+    return $token->getToken();
   }
   
 }

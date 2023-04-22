@@ -54,7 +54,6 @@ dw::authenticate();
 
 
 
-
 if ($GLOBALS['settings']['mode'] == 'development'){
   $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 }else{

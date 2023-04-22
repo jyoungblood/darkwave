@@ -105,12 +105,17 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     // 	db::update("users", $photo_input, "_id='".$user_id."'");
     // }
 
+
+    $_user = db::find("users", "_id = '".$GLOBALS['user_id']."'");
+    $user = $_user['data'][0];
+
     return render::json($req, $res, [
       'success' => true,
       'input' => $input,
       'form' => $form,
       'form_string' => $_POST['form'],
-      'user_id' => $GLOBALS['user_id']
+      'user_id' => $GLOBALS['user_id'],
+      'token' => \Darkwave\dw::generate_jwt($user)
     ]);
   }
 });
