@@ -9,6 +9,13 @@ RewriteRule ^ index.php [QSA,L]
 
 RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+options -Indexes
+
+<Files ~ "\.(env|json|config.js|md|xml|gitignore|gitattributes|lock|editorconfig|yml|styleci.yml)$">
+  order allow,deny
+  deny from all
+</Files>
+
 <ifModule mod_gzip.c>
 mod_gzip_on Yes
 mod_gzip_dechunk Yes

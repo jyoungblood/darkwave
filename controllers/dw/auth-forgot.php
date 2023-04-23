@@ -11,7 +11,7 @@ $app->get('/forgot[/]', function ($req, $res, $args) {
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-guest',
 		'template' => 'dw/auth-forgot',
-    'title' => 'Forgot Password - ' . $GLOBALS['site_title'],
+    'title' => 'Forgot Password - ' . $_ENV['SITE_TITLE'],
 	]);
 });
 
@@ -22,7 +22,7 @@ $app->get('/forgot/reset/{hash}/{e_hash}[/]', function ($req, $res, $args) {
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-guest',
 		'template' => 'dw/auth-forgot-reset',
-    'title' => 'Choose a new password - ' . $GLOBALS['site_title'],
+    'title' => 'Choose a new password - ' . $_ENV['SITE_TITLE'],
 		'data' => [
 	    'hash' => $args['hash'],
 	    'e_hash' => $args['e_hash'],
@@ -44,9 +44,9 @@ $app->post('/auth/forgot/process[/]', function ($req, $res, $args) {
     ], "email='".$email."'");
     \VPHP\x::email_send([
       'to' => $email,
-      'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
+      'from' => '"'.$_ENV['SITE_TITLE'].'" <notifications@'.$_ENV['SITE_URL'].'>',
       'subject' => 'Reset your password',
-      'message' => "Here's the link to reset the password for your account at ".$GLOBALS['site_title'].".\r\r"."http://".$GLOBALS['site_url']."/forgot/reset/".$hash."/".base64_encode($email)
+      'message' => "Here's the link to reset the password for your account at ".$_ENV['SITE_TITLE'].".\r\r"."http://".$_ENV['SITE_URL']."/forgot/reset/".$hash."/".base64_encode($email)
     ]);
     $out = [ 'success' => true ];
   }else{

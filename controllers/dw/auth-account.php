@@ -12,7 +12,7 @@ $app->get('/account[/]', function ($req, $res, $args) {
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base',
 		'template' => 'dw/auth-account',
-    'title' => 'Account - ' . $GLOBALS['site_title'],
+    'title' => 'Account - ' . $_ENV['SITE_TITLE'],
     'data' => [
 	    'data' => $user_data['data'][0]
     ]

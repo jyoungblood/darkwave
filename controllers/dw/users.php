@@ -29,7 +29,7 @@ $app->get('/users[/]', function ($req, $res, $args) {
     return render::hbs($req, $res, [
       'layout' => '_layouts/base',
       'template' => 'dw/users-list',
-      'title' => 'Users - ' . $GLOBALS['site_title'],
+      'title' => 'Users - ' . $_ENV['SITE_TITLE'],
       'data' => [
         'current_users' => true,
         'current_system' => true,
@@ -56,9 +56,9 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
     $_data = db::find("users", "_id='".$args['user_id']."'");
     $data = $_data['data'][0];
     if ($_data['data']){
-      $title = 'Edit User - '.$data['screenname'].' - '.$GLOBALS['site_title'];
+      $title = 'Edit User - '.$data['screenname'].' - '.$_ENV['SITE_TITLE'];
     }else{
-      $title = 'New User - '.$GLOBALS['site_title'];
+      $title = 'New User - '.$_ENV['SITE_TITLE'];
     }
     $has_avatar = false;
     if ($data['avatar_medium']){

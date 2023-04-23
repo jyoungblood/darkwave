@@ -11,7 +11,7 @@ $app->get('/register[/]', function ($req, $res, $args) {
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-guest',
 		'template' => 'dw/auth-register',
-    'title' => 'Register - ' . $GLOBALS['site_title'],
+    'title' => 'Register - ' . $_ENV['SITE_TITLE'],
 	]);
 });
 
@@ -27,7 +27,7 @@ $app->get('/register/activate/{hash}/{e_hash}[/]', function ($req, $res, $args) 
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-guest',
 		'template' => 'dw/auth-register-activate',
-    'title' => 'Registration Complete - ' . $GLOBALS['site_title'],
+    'title' => 'Registration Complete - ' . $_ENV['SITE_TITLE'],
     'data' => [
 	    'invalid_hash' => !$_user['data'] ? true : false
     ]
@@ -57,9 +57,9 @@ $app->post('/auth/register/process[/]', function ($req, $res, $args) {
 		]);
 		\VPHP\x::email_send([
 		  'to' => $email,
-		  'from' => '"'.$GLOBALS['site_title'].'" <notifications@'.$GLOBALS['site_url'].'>',
+		  'from' => '"'.$_ENV['SITE_TITLE'].'" <notifications@'.$_ENV['SITE_URL'].'>',
 		  'subject' => 'Activate your new account',
-		  'message' => "Thanks for registering with ".$GLOBALS['site_title'].".\r\r". "In order to complete your account setup, we will need to verify your email address.\r\r Please click the link below to activate your account:\r\r"."http://".$GLOBALS['site_url']."/register/activate/".$hash."/".base64_encode($email)
+		  'message' => "Thanks for registering with ".$_ENV['SITE_TITLE'].".\r\r". "In order to complete your account setup, we will need to verify your email address.\r\r Please click the link below to activate your account:\r\r"."http://".$_ENV['SITE_URL']."/register/activate/".$hash."/".base64_encode($email)
 		]);
 	}
 	return render::json($req, $res, $out);

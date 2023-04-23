@@ -11,7 +11,7 @@ $app->get('/login[/]', function ($req, $res, $args) {
 	return render::hbs($req, $res, [
     'layout' => '_layouts/base-guest',
 		'template' => 'dw/auth-login',
-    'title' => 'Log In - ' . $GLOBALS['site_title'],
+    'title' => 'Log In - ' . $_ENV['SITE_TITLE'],
 	]);
 });
 
@@ -31,7 +31,7 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 			  'ip_address' => \VPHP\x::client_ip(),
 			  'date_last_login' => date('Y-m-d H:i:s')
       ], "_id='".$user['_id']."'");
-			$auth_token = password_hash($GLOBALS['site_code'].'-'.$user['_id'], PASSWORD_BCRYPT);
+			$auth_token = password_hash($_ENV['SITE_CODE'].'-'.$user['_id'], PASSWORD_BCRYPT);
 			// send success data
 			$out = [
 				'success' => true,

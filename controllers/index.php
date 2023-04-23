@@ -1,5 +1,8 @@
 <?php
 
+date_default_timezone_set('America/Chicago');
+// error_reporting(E_ERROR | E_PARSE);
+
 use Slime\render;
 
 foreach (glob("controllers/dw/*.php") as $file) {
@@ -11,7 +14,7 @@ $app->get('/', function ($req, $res, $args) {
   return render::hbs($req, $res, [
     'layout' => '_layouts/base',
     'template' => 'index',
-    'title' => $GLOBALS['site_title'],
+    'title' => $_ENV['SITE_TITLE'],
     'data' => [
 	    'install_deleted' => file_exists('./controllers/dw/install.php') ? false : true,
       'current_home' => true,
@@ -67,7 +70,7 @@ $app->get('/demo/{page}[/]', function ($req, $res, $args) {
   return render::hbs($req, $res, [
     'layout' => '_layouts/base',
     'template' => 'index',
-    'title' => 'DEMO ' . $args['page'] . ' - ' . $GLOBALS['site_title'],
+    'title' => 'DEMO ' . $args['page'] . ' - ' . $_ENV['SITE_TITLE'],
     'data' => [
       'current_first' => $args['page'] == 'first' ? true : false,
       'current_second' => $args['page'] == 'second' ? true : false,

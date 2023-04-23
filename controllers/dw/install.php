@@ -130,7 +130,7 @@ $GLOBALS[\'settings\'][\'database\'] = [
     return render::hbs($req, $res, [
       'layout' => '_layouts/base-guest',
       'template' => 'dw/install',
-      'title' => $GLOBALS['site_title'] ? $GLOBALS['site_title'] : 'Install Darkwave',
+      'title' => $_ENV['SITE_TITLE'] ? $_ENV['SITE_TITLE'] : 'Install Darkwave',
       'data' => [
         'error' => $error
       ]
