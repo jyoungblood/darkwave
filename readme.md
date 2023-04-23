@@ -8,6 +8,7 @@
 - Apache
 - PHP >= 7.4
 - PDO-compatible database
+- GD or ImageMagick
 
 
 
@@ -15,7 +16,7 @@
 
 ## Installation
 ```
-npx degit hxgf/darkwave#0.5.0 .
+composer create-project hxgf/dw new-project-name
 ```
 
 
