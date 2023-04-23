@@ -1,4 +1,4 @@
-# ▲ ▼ D A R K W A V E
+# ▲▼ D A R K W A V E
 
 ### Pragmatic web application development kit
 
