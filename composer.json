@@ -1,7 +1,7 @@
 {
-	"name": "hxgf/slime",
-  "homepage": "https://github.com/hxgf/slime",
-	"description": "Starter kit for building web apps with Slim 4",
+	"name": "hxgf/dw",
+  "homepage": "https://github.com/hxgf/darkwave",
+	"description": "Pragmatic web application toolkit",
 	"type": "project",
   "license": "MIT",
 	"authors": [
