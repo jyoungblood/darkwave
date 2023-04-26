@@ -9,6 +9,8 @@ foreach (glob("controllers/dw/*.php") as $file) {
   require $file;
 }
 
+
+
 $app->get('/', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [
@@ -24,15 +26,8 @@ $app->get('/', function ($req, $res, $args) {
 
 
 
-
-
-
-
-
 $app->get('/demo/{page}[/]', function ($req, $res, $args) {
-
   $subnav = false;
-
   if ($args['page'] == 'first'){
     $subnav = [
       [
@@ -49,7 +44,6 @@ $app->get('/demo/{page}[/]', function ($req, $res, $args) {
       ]
     ];
   }
-
   if ($args['page'] == 'second'){
     $subnav = [
       [
@@ -66,7 +60,6 @@ $app->get('/demo/{page}[/]', function ($req, $res, $args) {
       ]
     ];
   }
-
   return render::hbs($req, $res, [
     'layout' => '_layouts/base',
     'template' => 'index',
@@ -78,5 +71,4 @@ $app->get('/demo/{page}[/]', function ($req, $res, $args) {
       'subnav' => $subnav,
     ]
   ]);
-  
 });

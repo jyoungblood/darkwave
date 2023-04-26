@@ -41,30 +41,40 @@ $app->post('/dw/utility/validate-unique[/]', function ($req, $res, $args) {
 
 $app->post('/dw/utility/upload-file[/]', function ($req, $res, $args) {
   if ($_FILES['file']['error'] == 0){
-		$filename_clean = \VPHP\x::url_slug($_FILES['file']['name']);
+    $filename_original_full = $_FILES['file']['name'];
+    $ext = pathinfo($_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $filename_original_full, PATHINFO_EXTENSION);
+    $filename_original = str_replace('.' . $ext, '', $filename_original_full);
+    $filename_clean = \VPHP\x::url_slug($_FILES['file']['name']);
 		$filename_clean_full = uniqid(uniqid()) . '||-||' . $filename_clean;
 		$upload_path = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
     $target = $upload_path . $filename_clean_full;
-		if (substr(sprintf('%o', fileperms($upload_path)), -4) != "0755" || !is_writeable($upload_path)){
+    if (substr(sprintf('%o', fileperms($upload_path)), -4) != "0755" || !is_writeable($upload_path)){
 			$out = [
 	      'success' => false,
 	      'error' => true,
-	      'error_message' => 'Server Error: permission denied. Upload folder permissions must be 0755.'
+        'error_title' => 'Error: Permission Denied',
+	      'error_message' => 'Upload folder permissions must be 0755.'
       ];
 		}else{
 	    if (move_uploaded_file($_FILES['file']['tmp_name'], $target)){
-					$out = [
-						'filename' => $filename_clean_full,
-						'filename_clean' => $filename_clean,
-						'preview_url' => '/uploads/' . $filename_clean_full,
-			      'success' => true,
-			      'error' => false,
-          ];
+        $out = [
+          'filename_original' => $filename_original,
+          'filename_original_full' => $filename_original_full,
+          'filename' => $filename_clean_full,
+          'filename_clean' => $filename_clean,
+          'preview_url' => '/uploads/' . $filename_clean_full,
+          'success' => true,
+          'error' => false,
+        ];
 	    }else{
 				$out = [
 		      'success' => false,
 		      'error' => true,
-		      'error_message' => 'An unknown server error occurred.'
+          'error_title' => 'Server Error',
+		      'error_message' => 'An unknown server error occurred.',
+          'tmp_name' => $_FILES['file']['tmp_name'],
+          '_FILES' => $_FILES,
+          'target' => $target
         ];
 	    }
 		}
@@ -72,6 +82,7 @@ $app->post('/dw/utility/upload-file[/]', function ($req, $res, $args) {
 		$out = [
       'success' => false,
       'error' => true,
+      'error_title' => 'Server Error',
       'error_message' => 'PHP Error Code: ' . $_FILES['file']['error']
     ];
   }

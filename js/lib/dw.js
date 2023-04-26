@@ -1,6 +1,6 @@
 /*!
 * DW Utilities (JS)
-* @version 0.6.0
+* @version 0.7.0
 * @link https://darkwave.ltd
 * Copyright 2016-2023 HXGF (Jonathan Youngblood)
 * Licensed under MIT (https://github.com/hxgf/dw-utilities-js/blob/master/LICENSE.md)
@@ -212,7 +212,10 @@ var dw = {
           ${cfg.form ? '<form action="javascript:void(0);">' : ''}
             ${cfg.format == 'small' ? `
               ${cfg.title ? `<div class="modal-title ${cfg.modal_title_extra ? cfg.modal_title_extra : ''}">${cfg.title}</div>` : ``}            
-              <div>${cfg.content}</div>
+              ${ cfg.content ? `
+                <div>${cfg.content}</div>
+                `
+              : ''}
             `
             : cfg.content }
           ${cfg.form ? '</form>' : ''}
@@ -334,5 +337,204 @@ var dw = {
         document.querySelector('[data-container="delete"]').innerHTML = `<button class='btn btn-outline-danger' @click='delete_confirm(${JSON.stringify(cfg)})'>Delete</button>`;
       }
     };
+  },
+  
+
+
+  dz: [],
+
+  // fixit refactor & cleanup
+  upload_initialize: function (id, cfg = false) {
+    
+    var dz_options = {
+      uploadMultiple: false,
+      acceptedFiles: "image/jpeg,image/png,image/gif",
+      maxFilesize: 10, // MB
+      url: "/dw/utility/upload-file",
+      clickable: ".dz-" + id + " .dropzone",
+      previewTemplate:
+        '<div class="dz-preview dz-file-preview"><img data-dz-thumbnail /><div class="dz-progress-container">' +
+        '<div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div></div>' +
+        '</div>'
+    };
+
+    if (document.querySelector(`[data-dz-upload="${id}"]`)){
+
+      dw.dz[id] = new Dropzone(document.querySelector(`[data-dz-upload="${id}"]`), dz_options);
+
+      dw.dz[id].on('error', function (file, errorMessage) {
+        document.body.classList.remove('working');
+        dw.modal({
+          title: `
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg><br />        
+          Upload Error`,
+          content: `<span class="text-muted">${errorMessage}</span>`,
+          format: 'small',
+          theme: 'danger',
+          modal_title_extra: 'text-center w-100 pt-2 fs-2',
+          modal_body_extra: 'text-center',
+          buttons: [
+            {
+              label: 'OK',
+              color: 'danger',
+              class_extra: 'w-75 mx-auto mb-3',
+              close_modal: true,
+              callback: function (modal_id) {
+                dw.dz[id].removeAllFiles(true);
+                document.querySelector(".dz-" + id + " .dz-default").style.display = '';
+              }
+            },
+          ]
+        })
+      });
+
+      dw.dz[id].on('thumbnail', function (file, dataUrl) {
+        document.querySelector(".dz-" + id + " .dz-default").style.display = 'none';
+      });
+
+      dw.dz[id].on('uploadprogress', function (file, progress) {
+        if (progress == 100) {
+          document.body.classList.add('working');
+        }
+      });
+
+      dw.dz[id].on('success', function (file) {
+        var r = JSON.parse(file['xhr']['responseText']);
+        if (r.error) {
+          document.body.classList.remove('working');
+
+          dw.modal({
+            title: `
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg><br />
+            ${r.error_title}`,
+            content: `<span class="text-muted">${r.error_message}</span>`,
+            format: 'small',
+            theme: 'danger',
+            modal_title_extra: 'text-center w-100 pt-2 fs-2',
+            modal_body_extra: 'text-center',
+            buttons: [
+              {
+                label: 'OK',
+                color: 'danger',
+                class_extra: 'w-75 mx-auto mb-3',
+                close_modal: true,
+                callback: function (modal_id) {
+                  dw.dz[id].removeAllFiles(true);
+                  document.querySelector(".dz-" + id + " .dz-default").style.display = '';
+                }
+              },
+            ]
+          })
+
+        } else {
+// fixit cleanup
+          document.querySelector(".dz-" + id + " .preview-image").innerHTML = 
+            `<img class="new-upload" src="${r.preview_url}" >
+            
+<div class="upload-delete" data-new="true" data-filename="${r.filename}" data-id="${id}">
+          <span onclick="dw.upload_delete('${id}', true)" class="cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+            </svg>
+          </span>            
+</div>
+          
+          `;
+
+
+
+
+          document.querySelector(".dz-" + id + " .preview-image .new-upload").addEventListener('load', function () {
+            document.querySelector(".dz-" + id + " .dropzone").style.display = 'none';
+            this.style.display = '';
+            document.body.classList.remove('working');
+            document.querySelector(".dz-" + id + " .new-upload").style.display = 'flex';
+          });
+          document.querySelector(".dz-" + id).classList.remove('error');
+          if (document.querySelector('input[name="upload_' + id + '"]')) {
+            document.querySelector('input[name="upload_' + id + '"]').value = r.filename;
+          } else {
+            var file_input = document.createElement('input');
+            file_input.setAttribute('type', 'hidden');
+            file_input.setAttribute('name', 'upload_' + id);
+            file_input.setAttribute('value', r.filename);
+            document.querySelector('form.edit-form').appendChild(file_input);
+          }
+
+        }
+      });
+
+    }
+
+  },
+
+  // fixit cleanup & refactor
+  upload_delete: function (id, reset_upload) {
+
+    dw.modal({
+      title: `
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg><br />        
+        Are you sure you want<br /> to remove this photo?`,
+      // content: `<span class="text-muted">This action cannot be undone.</span>`,
+      format: 'small',
+      theme: 'danger',
+      modal_title_extra: 'text-center w-100 pt-2 fs-2 mb-0', 
+      modal_body_extra: 'text-center',
+      buttons: [
+        {
+          label: 'Yes',
+          color: 'danger',
+          class_extra: 'w-75 mx-auto mb-2',
+          close_modal: true,
+          callback: function (modal_id) {
+
+
+            if (reset_upload) {
+              var filename = document.querySelector('[data-new="true"]').getAttribute('data-filename');
+              dw.dz[id].removeAllFiles(true);
+              document.querySelector(".dz-" + id + " .dz-default").style.display = '';
+              document.querySelector(".dz-" + id + " .dropzone").style.display = '';
+              document.querySelector(".dz-" + id + " .new-upload").style.display = 'none';
+              document.querySelector(".dz-" + id + " .dropzone").style.display = '';
+              document.querySelector(".dz-" + id + " .preview-image").innerHTML = '';
+              document.querySelector("input[name='upload_" + id + "']").remove();
+              dw.api_request({
+                url: '/utility/delete-upload',
+                data: {
+                  filename: filename
+                }
+              });
+            } else {
+              document.querySelector(".dz-" + id + " .preview-image").innerHTML = '';
+              document.querySelector(".dz-" + id).insertAdjacentHTML('beforeend', `<div class="dropzone" data-dz-upload="${id}" ></div>`);
+              dw.upload_initialize(id);
+              if (document.querySelector('input[name="upload_' + id + '"]')) {
+                document.querySelector('input[name="upload_' + id + '"]').value = 'DELETE';
+              } else {
+                var file_input = document.createElement('input');
+                file_input.setAttribute('type', 'hidden');
+                file_input.setAttribute('name', 'upload_' + id);
+                file_input.setAttribute('value', 'DELETE');
+                document.querySelector('.form-edit form').appendChild(file_input);
+              }
+            }
+
+
+
+          }
+        },
+
+        {
+          label: 'No',
+          close_modal: true,
+          class_extra: 'w-75 mx-auto mb-3',
+        },
+
+      ]
+    });
+
+
   }
+
 };
