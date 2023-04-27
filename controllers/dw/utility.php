@@ -7,8 +7,6 @@
  */
 
 use Slime\render;
-use VPHP\db;
-
 
 
 $app->post('/dw/utility/validate-unique[/]', function ($req, $res, $args) {
@@ -20,7 +18,7 @@ $app->post('/dw/utility/validate-unique[/]', function ($req, $res, $args) {
   if (isset($_POST['exempt_id'])){
     $query .= " AND _id != '".$_POST['exempt_id']."'";
   }
-  $collection = db::find($_POST['collection'], $query);
+  $collection = \VPHP\db::find($_POST['collection'], $query);
   if ($collection['data']){
     $out = [
       'error' => true,

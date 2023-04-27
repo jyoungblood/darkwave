@@ -98,66 +98,7 @@
               </div>
               <div class="col-6">
 
-
-
-
-
-<!-- v5 -->
-<script src="/js/lib/dropzone.min.js"></script>
-
-<!-- <script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script> -->
-<!-- <link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" type="text/css" /> -->
-
-<link rel="stylesheet" href="/css/lib/dropzone.min.css" type="text/css" />
-<link rel="stylesheet" href="/css/lib/tabler-vendors.min.css" type="text/css" />
-
-
-
-<!-- JCDV -->
-
-
-<div class="upload-container dz-1 mb4 shadow-4 bg-white pa1 w5" onclick="void(0)">
-
-  <div class="preview-image">
-    {{#if data.avatar_medium}}
-    <img src="{{data.avatar_medium}}" />
-    <div class="upload-delete">
-      
-      <span onclick="dw.upload_delete('1', false)" class="cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-        </svg>
-      </span>
-
-    </div>
-    {{/if}}
-  </div>
-
-  <br /><br /><br />
-
-  {{#unless data.avatar_medium}}
-  <div class="dropzone" data-dz-upload="1"></div>
-  {{/unless}}
-
-</div>
-
-
-
-
-<script>
-
-    Dropzone.autoDiscover = false;
-
-    dw.upload_initialize('1');
-
-</script>
-
-
-
-
-
-
+                {{> dw/component-avatar-upload}}
 
               </div>
 
