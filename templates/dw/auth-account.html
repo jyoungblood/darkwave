@@ -1,7 +1,4 @@
 
-
-
-
 <div class="page-header d-print-none">
   <div class="container-xl">
     <div class="row g-2 align-items-center">
@@ -16,20 +13,6 @@
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <div class="page-body" x-data="dw.edit_form()" @keyup.ctrl.enter.window="document.querySelector('[data-container=save] button').click()">
@@ -107,8 +90,8 @@
           </div>
           <div class="card-footer text-end">
             <div class="d-flex">
-              <span data-container="save">
 
+              <span data-container="save">
                 <button class="btn btn-primary" @click="save({
                   'url': '/account/save/',
                   'data': {
@@ -121,7 +104,6 @@
                     window.location.href = '/';
                   }
                 })">Save</button>
-
               </span>
 
             </div>

@@ -53,18 +53,13 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
       ]
     ]);
   }else{
-    $_data = db::find("users", "_id='".$args['user_id']."'");
-    $data = $_data['data'][0];
-    if ($_data['data']){
-      $title = 'Edit User - '.$data['screenname'].' - '.$_ENV['SITE_TITLE'];
-    }else{
+    if ($args['user_id'] == 'new'){
       $title = 'New User - '.$_ENV['SITE_TITLE'];
-    }
-    $has_avatar = false;
-    if ($data['avatar_medium']){
-      if ($data['avatar_medium'] != '/images/users/avatar-default-m.png'){
-        $has_avatar = true;
-      }
+      $data = false;
+    }else{
+      $_data = db::find("users", "_id='".$args['user_id']."'");
+      $data = $_data['data'][0];
+      $title = 'Edit User - '.$data['screenname'].' - '.$_ENV['SITE_TITLE'];
     }
     return render::hbs($req, $res, [
       'layout' => '_layouts/base',
@@ -73,7 +68,6 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
       'data' => [
         'current_users' => true,
         'current_system' => true,
-        'has_avatar' => $has_avatar,
         'data' => $data,
         '_id' => $args['user_id']
       ]
@@ -90,7 +84,6 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
       'error_message' => 'You are not authorized to use this resource.'
     ], 401);
   }else{
-		$form = [];
 		parse_str($_POST['form'],$form);
 		$input = [
 			'email' => strtolower($form['email']),
@@ -114,27 +107,25 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 			$user_id = $_POST['_id'];
 	  }
 
-    // fixit photo uploads
-    // fixit make component functions & move to dw.php
-
+// fixit can we just delete this? (i think it's fine)
 	  // if ($form['file_1']){
 		// 	if ($form['file_1'] == 'DELETE'){
 		// 		$user = db::find("users", "_id='".$user_id."'");
-		// 		if ($user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
+		// 		if ($user['data'][0]['avatar_small'] != '/images/avatar-default.png'){
 		// 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
 		// 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
 		// 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
 		// 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_original']);
 		// 		}
 		// 		$photo_input = [
-		// 			'avatar_small' => '/images/users/avatar-default-s.png',
-		// 			'avatar_medium' => '/images/users/avatar-default-m.png',
-		// 			'avatar_large' => '/images/users/avatar-default-l.png',
-		// 			'avatar_original' => '/images/users/avatar-default-o.png',
+		// 			'avatar_small' => '/images/avatar-default.png',
+		// 			'avatar_medium' => '/images/avatar-default.png',
+		// 			'avatar_large' => '/images/avatar-default.png',
+		// 			'avatar_original' => '/images/avatar-default.png',
     //     ];
 		// 	}else{
 		// 		$user = db::find("users", "_id='".$user_id."'");
-		// 		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
+		// 		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/avatar-default.png'){
 		// 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
 		// 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
 		// 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
@@ -149,31 +140,128 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 		// 		$filename_large = $user_id . '-' . $filename_clean[1] . '-l.' . $ext;
 		// 		$filename_original = $user_id . '-' . $filename_clean[1] . '-o.' . $ext;
 		// 		list($photo_width, $photo_height) = getimagesize($source);
-		// 		$sq = new phMagick($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_small);
+		// 		$sq = new phMagick($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_small);
 		// 		$sq->resizeExactly(300,300);
 		// 		if ($photo_width > 800){
-		// 			$md = new phMagick($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_medium);
+		// 			$md = new phMagick($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_medium);
 		// 			$md->resize(800, 0);
 		// 		}else{
-		// 			copy($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_medium);
+		// 			copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_medium);
 		// 		}
 		// 		if ($photo_width > 1024){
-		// 			$ld = new phMagick($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_large);
+		// 			$ld = new phMagick($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_large);
 		// 			$ld->resize(1024, 0);
 		// 		}else{
-		// 			copy($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_large);
+		// 			copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_large);
 		// 		}
-		// 		copy($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_original);
+		// 		copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_original);
 		// 		unlink($source);
 		// 		$photo_input = [
-		// 			'avatar_small' => '/images/users/' . $filename_small,
-		// 			'avatar_medium' => '/images/users/' . $filename_medium,
-		// 			'avatar_large' => '/images/users/' . $filename_large,
-		// 			'avatar_original' => '/images/users/' . $filename_original,
+		// 			'avatar_small' => '/media/avatars/' . $filename_small,
+		// 			'avatar_medium' => '/media/avatars/' . $filename_medium,
+		// 			'avatar_large' => '/media/avatars/' . $filename_large,
+		// 			'avatar_original' => '/media/avatars/' . $filename_original,
     //     ];
 		// 	}
 		// 	db::update("users", $photo_input, "_id='".$user_id."'");
 		// }
+
+
+
+
+
+    
+// fixit can we make it more concise and efficient? anything we can abstract?
+
+    if (isset($form['upload_avatar'])){
+    	if ($form['upload_avatar'] == 'DELETE'){
+
+    		$user = db::find("users", "_id='".$user_id."'");
+    		if ($user['data'][0]['avatar_small'] != '/images/avatar-default.png'){
+    			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
+    			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
+    			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
+    			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_original']);
+    		}
+
+    		$photo_input = [
+    			'avatar_small' => '/images/avatar-default.png',
+    			'avatar_medium' => '/images/avatar-default.png',
+    			'avatar_large' => '/images/avatar-default.png',
+    			'avatar_original' => '/images/avatar-default.png',
+        ];
+
+    	}else{
+
+    		$user = db::find("users", "_id='".$user_id."'");
+    		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/avatar-default.png'){
+    			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
+    			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
+    			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
+    			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_original']);
+    		}
+
+    		$filename = $form['upload_avatar'];
+    		$ext = strtolower(pathinfo($_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $filename, PATHINFO_EXTENSION));
+    		$filename_clean = explode('||-||', str_replace('.'.$ext, '', $filename));
+        $source = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $filename;
+    		$filename_small = $user_id . '-' . $filename_clean[1] . '-s.' . $ext;
+    		$filename_medium = $user_id . '-' . $filename_clean[1] . '-m.' . $ext;
+    		$filename_large = $user_id . '-' . $filename_clean[1] . '-l.' . $ext;
+    		$filename_original = $user_id . '-' . $filename_clean[1] . '-o.' . $ext;
+
+    		$photo_input = [
+    			'avatar_small' => '/media/avatars/' . $filename_small,
+    			'avatar_medium' => '/media/avatars/' . $filename_medium,
+    			'avatar_large' => '/media/avatars/' . $filename_large,
+    			'avatar_original' => '/media/avatars/' . $filename_original,
+        ];
+
+
+
+
+
+
+        list($photo_width, $photo_height) = getimagesize($source);
+
+        // fixit abstraction
+        $sq = new \Gumlet\ImageResize($source);
+        $sq->crop(300, 300, true, \Gumlet\ImageResize::CROPCENTER);
+        $sq->save($_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_small);
+        $sq = null;
+
+        if ($photo_width > 800){
+          // fixit abstraction
+          $md = new \Gumlet\ImageResize($source);
+          $md->resizeToBestFit(800, 800);
+          $md->save($_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_medium);
+          $md = null;
+        }else{
+          // fixit save compressed version
+    			copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_medium);
+    		}
+
+        if ($photo_width > 1024){
+          // fixit abstraction
+          $ld = new \Gumlet\ImageResize($source);
+          $ld->resizeToBestFit(1024, 1024);
+          $ld->save($_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_large);
+          $ld = null;
+        }else{
+          // fixit save compressed version
+          copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_large);
+    		}
+
+
+
+    		copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_original);
+    		unlink($source);
+
+    	}
+    	db::update("users", $photo_input, "_id='".$user_id."'");
+    }
+
+
 
     return render::json($req, $res, [
       'success' => true,
@@ -194,7 +282,7 @@ $app->post('/users/delete[/]', function ($req, $res, $args) {
     ], 401);
   }else{
 		$user = db::find("users", "_id='".$_POST['_id']."'");
-		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
+		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/avatar-default.png'){
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
 			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);

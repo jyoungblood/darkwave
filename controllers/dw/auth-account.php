@@ -50,7 +50,7 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     	if ($form['upload_avatar'] == 'DELETE'){
 
     		$user = db::find("users", "_id='".$user_id."'");
-    		if ($user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
+    		if ($user['data'][0]['avatar_small'] != '/images/avatar-default.png'){
     			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
     			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
     			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
@@ -58,16 +58,20 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     		}
 
     		$photo_input = [
-    			'avatar_small' => '/images/users/avatar-default-s.png',
-    			'avatar_medium' => '/images/users/avatar-default-m.png',
-    			'avatar_large' => '/images/users/avatar-default-l.png',
-    			'avatar_original' => '/images/users/avatar-default-o.png',
+    			'avatar_small' => '/images/avatar-default.png',
+    			'avatar_medium' => '/images/avatar-default.png',
+    			'avatar_large' => '/images/avatar-default.png',
+    			'avatar_original' => '/images/avatar-default.png',
         ];
 
     	}else{
 
+        if (!is_dir($_SERVER['DOCUMENT_ROOT'] . '/images/avatars/')) {
+          mkdir($_SERVER['DOCUMENT_ROOT'] . '/images/avatars/', 0755, true);
+        }
+
     		$user = db::find("users", "_id='".$user_id."'");
-    		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/users/avatar-default-s.png'){
+    		if ($user['data'][0]['avatar_small'] && $user['data'][0]['avatar_small'] != '/images/avatar-default.png'){
     			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_small']);
     			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_medium']);
     			unlink($_SERVER['DOCUMENT_ROOT'] . $user['data'][0]['avatar_large']);
@@ -84,10 +88,10 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     		$filename_original = $user_id . '-' . $filename_clean[1] . '-o.' . $ext;
 
     		$photo_input = [
-    			'avatar_small' => '/images/users/' . $filename_small,
-    			'avatar_medium' => '/images/users/' . $filename_medium,
-    			'avatar_large' => '/images/users/' . $filename_large,
-    			'avatar_original' => '/images/users/' . $filename_original,
+    			'avatar_small' => '/media/avatars/' . $filename_small,
+    			'avatar_medium' => '/media/avatars/' . $filename_medium,
+    			'avatar_large' => '/media/avatars/' . $filename_large,
+    			'avatar_original' => '/media/avatars/' . $filename_original,
         ];
 
 
@@ -100,34 +104,32 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
         // fixit abstraction
         $sq = new \Gumlet\ImageResize($source);
         $sq->crop(300, 300, true, \Gumlet\ImageResize::CROPCENTER);
-        $sq->save($_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_small);
+        $sq->save($_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_small);
         $sq = null;
 
         if ($photo_width > 800){
           // fixit abstraction
           $md = new \Gumlet\ImageResize($source);
           $md->resizeToBestFit(800, 800);
-          $md->save($_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_medium);
+          $md->save($_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_medium);
           $md = null;
         }else{
           // fixit save compressed version
-    			copy($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_medium);
+    			copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_medium);
     		}
 
         if ($photo_width > 1024){
           // fixit abstraction
           $ld = new \Gumlet\ImageResize($source);
           $ld->resizeToBestFit(1024, 1024);
-          $ld->save($_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_large);
+          $ld->save($_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_large);
           $ld = null;
         }else{
           // fixit save compressed version
-          copy($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_large);
+          copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_large);
     		}
-
-
-
-    		copy($source, $_SERVER['DOCUMENT_ROOT'].'/images/users/'.$filename_original);
+        
+    		copy($source, $_SERVER['DOCUMENT_ROOT'].'/media/avatars/'.$filename_original);
     		unlink($source);
 
     	}

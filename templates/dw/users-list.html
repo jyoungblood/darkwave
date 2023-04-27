@@ -97,35 +97,23 @@
                 </tr>
               </thead>
               <tbody class="table-tbody">
-
               {{#each users}}
                 <tr>
                   <td class="sort-screenname">{{screenname}}</td>
-                  <td class="sort-name text-muted" data-lastname="{{last_name}}">
-                    {{first_name}} {{last_name}}
-                  </td>
+                  <td class="sort-name text-muted" data-lastname="{{last_name}}">{{first_name}} {{last_name}}</td>
                   <td class="sort-email text-muted"><a href="/users/edit/{{_id}}" class="text-reset">{{email}}</a></td>
-                  <td class="sort-date-created text-muted" data-date="{{date date_created "m-d-y" "convert"}}">
-                    {{date date_created "M j, Y" "convert"}}
-                  </td>
-                  <td>
-                    <a href="/users/edit/{{_id}}">Edit</a>
-                  </td>
+                  <td class="sort-date-created text-muted" data-date="{{date date_created "m-d-y" "convert"}}">{{date date_created "M j, Y" "convert"}}</td>
+                  <td><a href="/users/edit/{{_id}}">Edit</a></td>
                 </tr>
-              {{/each}}
-                
+              {{/each}}                
               </tbody>
             </table>
           </div>
         </div>
       </div>
-
-
-
     </div>
   </div>
 </div>
-
 
 <script src="/js/lib/list.min.js" defer></script>
 

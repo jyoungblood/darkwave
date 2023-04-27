@@ -25,13 +25,6 @@ $app->post('/dw/utility/validate-unique[/]', function ($req, $res, $args) {
       'success' => false,
     ];
   }
-  $out['post'] = [
-    'collection' => $collection,
-    'post_collection' => $_POST['collection'],
-    'post_field' => $_POST['field'],
-    'post_value' => $_POST['value'],
-    'post_exempt_id' => $_POST['exempt_id'],
-  ];
 	return render::json($req, $res, $out);
 });
 
@@ -56,13 +49,13 @@ $app->post('/dw/utility/upload-file[/]', function ($req, $res, $args) {
 		}else{
 	    if (move_uploaded_file($_FILES['file']['tmp_name'], $target)){
         $out = [
+          'success' => true,
+          'error' => false,
           'filename_original' => $filename_original,
           'filename_original_full' => $filename_original_full,
           'filename' => $filename_clean_full,
           'filename_clean' => $filename_clean,
           'preview_url' => '/uploads/' . $filename_clean_full,
-          'success' => true,
-          'error' => false,
         ];
 	    }else{
 				$out = [

@@ -1,3 +1,4 @@
+
 <div class="page-header d-print-none">
   <div class="container-xl">
     <div class="row g-2 align-items-center">
@@ -9,20 +10,6 @@
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <div class="page-body" x-data="dw.edit_form()" @keyup.ctrl.enter.window="document.querySelector('[data-container=save] button').click()">
@@ -109,8 +96,9 @@
 
               </div>
               <div class="col-6">
-                <!-- fixit -->
-                [dropzone upload]
+
+                {{> dw/component-avatar-upload}}
+
               </div>
 
             </div>
@@ -118,8 +106,8 @@
           </div>
           <div class="card-footer text-end">
             <div class="d-flex">
-              <span data-container="save">
 
+              <span data-container="save">
                 <button class="btn btn-primary" @click="save({
                   'url': '/users/save/',
                   'data': {
@@ -128,8 +116,8 @@
                   },
                   'redirect': '/users/'
                 })">Save</button>
-
               </span>
+
               {{#is _id "!=" "new"}}
               <span data-container="delete" class="ms-auto">
                 <button class="btn btn-outline-danger" @click="delete_confirm({
@@ -142,6 +130,7 @@
                 })">Delete</button>
               </span>
               {{/is}}
+
             </div>
           </div>
         </div>
