@@ -61,6 +61,50 @@ class dw {
       ->build();
     return $token->getToken();
   }
+
+  public static function convert_image($args){
+
+
+    $ext = strtolower(pathinfo($args['source'], PATHINFO_EXTENSION));
+
+    $image = new \Gumlet\ImageResize($args['source']);
+
+    if (isset($args['crop'])){
+      if ($args['crop'] == 'center'){
+        $image->crop($args['resize'][0], $args['resize'][1], true, \Gumlet\ImageResize::CROPCENTER);
+      }
+    }else{
+      if (isset($args['threshold'])){
+        list($photo_width, $photo_height) = getimagesize($args['source']);
+        if ($photo_width >= $args['threshold']){
+          $image->resizeToBestFit($args['resize'][0], $args['resize'][1]);
+        }
+      }else{
+        if (isset($args['resize'])){
+          $image->resizeToBestFit($args['resize'][0], $args['resize'][1]);
+        }
+      }
+    }
+
+    if (isset($args['quality'])){
+      if ($ext == 'jpeg' || $ext == 'jpg'){
+        $image->quality_jpg = $args['quality'];
+      }
+      if ($ext == 'png'){
+        $image->quality_png = $args['quality'];
+      }
+      if ($ext == 'webp'){
+        $image->quality_webp = $args['quality'];
+      }
+    }
+
+    $image->save($args['target']);
+    $image = null;
+
+    return true;
+  }
+
+
   
 }
 

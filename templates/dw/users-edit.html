@@ -89,7 +89,7 @@
                   <div class="col-6">
                     <div class="mb-3 form-group">
                       <label class="form-label">Last name</label>
-                      <input @keyup.cmd.enter="alert('meta enter')" type="text" class="form-control" name="last_name" value="{{data.last_name}}" autocomplete="off" />
+                      <input type="text" class="form-control" name="last_name" value="{{data.last_name}}" autocomplete="off" />
                     </div>                      
                   </div>
                 </div>
@@ -114,9 +114,17 @@
                     '_id': '{{_id}}',
                     'form': dw.serialize(document.querySelector('.edit-form'))
                   },
-                  'redirect': '/users/'
+                  'callback': function(r){
+                    if (r.token) {
+                      dw.cookie_set('token', r.token);
+                    }
+                    window.location.href = '/';
+                  }
                 })">Save</button>
               </span>
+
+
+
 
               {{#is _id "!=" "new"}}
               <span data-container="delete" class="ms-auto">
