@@ -1,109 +1,282 @@
 
-<div class="page page-center align-items-center" x-data="install_form()">
-  <div class="container container-tight py-4">
-    <div class="text-center mb-4">
-      <a href="/" class=""><img src="/images/logo-default.png" class="w-25" alt=""></a>
-    </div>
-    <div class="card p-3 shadow rounded-3">
-      <div class="card-body py-3">
-        <h2 class="h2 text-center mb-4">Install Darkwave v0.6.0</h2>
-
-<!-- fixit fields -->
-
-
-<!-- 
-
-    <div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Site Information</div>
-    <div class="pt2 mb4">
-      <label class="db mb2 roboto ttu b f6 o-90">Site Title</label>
-      <input class="db w-100 pa2 f5 br1" type="text" name="site_title" />
-    </div>
-
-    <div class="mb4">
-      <label class="db mb2 roboto ttu b f6 o-90">Site Code</label>
-      <input class="db w-100 pa2 f5 br1" type="text" name="site_code" />
-    </div>
-
-    <div class="mb5">
-      <label class="db mb2 roboto ttu b f6 o-90">Site URL</label>
-      <input class="db w-100 pa2 f5 br1" type="text" name="site_url" value="{{locals.site_url}}" />
-    </div>
-
-    <div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Database</div>
-    <div class="pt2 mb4">
-      <label class="db mb2 roboto ttu b f6 o-90">Host</label>
-      <input class="db w-100 pa2 f5 br1" type="text" name="db_host" value="localhost" />
-    </div>
-
-    <div class="mb4">
-      <label class="db mb2 roboto ttu b f6 o-90">DB Name</label>
-      <input class="db w-100 pa2 f5 br1" type="text" name="db_name" />
-    </div>
-
-    <div class="mb4">
-      <label class="db mb2 roboto ttu b f6 o-90">DB User</label>
-      <input class="db w-100 pa2 f5 br1" type="text" name="db_user" />
-    </div>
-
-    <div class="mb5">
-      <label class="db mb2 roboto ttu b f6 o-90">DB Password</label>
-      <input class="db w-100 pa2 f5 br1" type="password" name="db_password" />
-    </div>
-
-    <div class="fs80 fw7 ttu pb1 bb bw2 b--black-40 mb3 o-30">Admin User</div>
-    <div class="pt2 mb4">
-      <label class="db mb2 roboto ttu b f6 o-90">Email</label>
-      <input class="db w-100 pa2 f5 br1" type="text" name="user_email" />
-    </div>
-
-    <div class="mb4">
-      <label class="db mb2 roboto ttu b f6 o-90">Screen Name</label>
-      <input class="db w-100 pa2 f5 br1" type="text" name="user_screenname" value="admin" />
-    </div>
-
-    <div class="mb5">
-      <label class="db mb2 roboto ttu b f6 o-90">Password</label>
-      <input class="db w-100 pa2 f5 br1" type="password" name="user_password" />
-    </div>
-
-
--->
 
 
 
+<div class="page-header d-print-none pt-5">
+  <div class="container">
+    <div class="row g-2 align-items-center">
+      <div class="col">
 
-        <div class="mb-4 form-group" data-validate="email">
-          <label class="form-label">Email</label>
-          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:blur="dw.remove_error('email')" />
-          <div class="invalid-feedback"></div>
-        </div>
-        <div class="mb-4 form-group">
-          <label class="form-label">Password</label>
-          <input name="password" type="password" class="form-control"  placeholder="*********" autocomplete="off" />
-        </div>
-        <div class="mb-4 form-group">
-          <label class="form-label">Screen Name</label>
-          <input name="screenname" type="text" class="form-control" autocomplete="off" />
-        </div>
-        <div class="mb-4 form-group">
-          <label class="form-label">First Name</label>
-          <input name="first_name" type="text" class="form-control" autocomplete="off" />
-        </div>
-        <div class="mb-2 form-group">
-          <label class="form-label">Last Name</label>
-          <input name="last_name" type="text" class="form-control" autocomplete="off" />
-        </div>
-        <div class="d-none">
-          <label class="form-label">Website</label>
-          <input type="text" name="website" />
-        </div>
-        <div class="form-footer">
-          <button type="submit" class="btn btn-primary w-100" @click="install()">Install</button>
-        </div>
+        <h2 class="h2 text-center mb-4"><a href="/" class=""><img src="/images/logo-default.png" style="height: 2rem;" class="d-inline-block align-middle" alt=""></a> <span class="align-middle">Darkwave 0.6.0</span></h2>
+        
       </div>
+
     </div>
   </div>
 </div>
+
+
+
+<div class="page-body pb-5 px-5" x-data="install_form()">
+  <div class="container container-md">
+
+          <form class="edit-form" action="javascript:void(0);">
+
+
+
+
+<div class="card mb-3">
+<div class="card-header">
+  <h4 class="card-title">Site Information</h4>
+</div>
+<div class="card-body">
+
+<div class="row">
+  <div class="col-6">
+
+    <div class="mb-3 form-group">
+      <label class="form-label"> <span class="align-middle">Site Title</span>
+        <a href="#" class="d-inline-block align-middle ps-1" data-bs-toggle="tooltip" data-bs-title='Appended to all HTML <title> elements. Available as a global "site_title" variable.'>  
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-info-circle-fill mb-1" viewBox="0 0 16 16">
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+          </svg>
+        </a>
+      </label>
+      <input type="text" class="form-control" name="site_title" value="" autocomplete="off" />
+    </div>
+
+
+  </div>
+  <div class="col-6">
+
+
+    <div class="mb-3 form-group">
+      <label class="form-label"><span class="align-middle">Site URL</span>
+        <a href="#" class="d-inline-block align-middle ps-1" data-bs-toggle="tooltip"
+          data-bs-title='Domain where this site is deployed. Available as a global "site_url" variable.'>
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+            class="bi bi-info-circle-fill mb-1" viewBox="0 0 16 16">
+            <path
+              d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+          </svg>
+        </a></label>
+      <input type="text" class="form-control" name="site_url" value="{{site_url_default}}" autocomplete="off" />
+    </div>
+
+
+
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-6">
+
+<div class="mb-3 form-group">
+  <label class="form-label"><span class="align-middle">Site Code</span>
+    <a href="#" class="d-inline-block align-middle ps-1" data-bs-toggle="tooltip"
+      data-bs-title='Available as a global "site_code" variable.'>
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+        class="bi bi-info-circle-fill mb-1" viewBox="0 0 16 16">
+        <path
+          d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+      </svg>
+    </a></label>
+  <input type="text" class="form-control" name="site_code" value="DW" autocomplete="off" />
+</div>
+
+
+  </div>
+  <div class="col-6">
+
+
+<div class="mb-3 form-group">
+  <label class="form-label"><span class="align-middle">JWT Secret Key</span>
+    <a href="#" class="d-inline-block align-middle ps-1" data-bs-toggle="tooltip"
+      data-bs-title='Only change this if you need to match the key from an existing DW app.'>
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor"
+        class="bi bi-info-circle-fill mb-1" viewBox="0 0 16 16">
+        <path
+          d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+      </svg>
+    </a></label>
+  <input type="text" class="form-control" name="jwt_secret" value="{{jwt_secret}}" autocomplete="off" />
+</div>
+
+  </div>
+</div>
+
+
+
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="card mb-3">
+<div class="card-header">
+  <h4 class="card-title">Database Connection</h4>
+</div>
+<div class="card-body">
+
+
+  <div class="row">
+    <div class="col-6">
+
+      <div class="mb-3 form-group">
+        <label class="form-label">Host</label>
+        <input type="text" class="form-control" name="db_host" value="localhost" autocomplete="off" />
+      </div>
+
+
+    </div>
+    <div class="col-6">
+
+      <div class="mb-3 form-group">
+        <label class="form-label">DB Name</label>
+        <input type="text" class="form-control" name="db_name" value="" autocomplete="off" />
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+
+      <div class="mb-3 form-group">
+        <label class="form-label">DB User</label>
+        <input type="text" class="form-control" name="db_user" value="" autocomplete="off" />
+      </div>
+
+    </div>
+    <div class="col-6">
+
+      <div class="mb-3 form-group">
+        <label class="form-label">DB Password</label>
+        <input type="password" class="form-control" name="db_password" value="" autocomplete="off" />
+      </div>
+
+    </div>
+  </div>
+
+  <label class="form-check mb-2">
+    <input class="form-check-input" type="checkbox" name="create_default_users" checked="checked">
+    <span class="form-check-label">Initialize database (create default "users" table)</span>
+  </label>
+
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div class="card mb-3">
+<div class="card-header">
+  <h4 class="card-title">Admin User</h4>
+</div>
+<div class="card-body">
+
+<label class="form-check mb-3">
+  <input class="form-check-input" type="checkbox" name="create_admin_user" checked="checked">
+  <span class="form-check-label">Create admin user account</span>
+</label>
+
+
+<div class="row">
+  <div class="col-6">
+
+    <div class="mb-3 form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" name="user_email" value="" autocomplete="off" />
+    </div>
+
+    <div class="mb-3 form-group">
+      <label class="form-label">Screen Name</label>
+      <input type="text" class="form-control" name="user_screenname" value="admin" autocomplete="off" />
+    </div>
+
+  </div>
+  <div class="col-6">
+
+
+    <div class="mb-3 form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-control" name="user_password" value="" autocomplete="off" />
+    </div>
+
+
+  </div>
+</div>
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+          </form>
+
+
+
+            <div class="row g-2 align-items-center pt-1">
+
+              <div class="col-auto ms-auto d-print-none">
+              
+                <button type="submit" class="btn btn-primary" @click="install()">Save configuration</button>
+              
+              </div>
+
+              <div class="col fs-6 text-end">
+                * Saving configuration will create a new .env file.<br /> It's best not to commit this file to version control (add it to your .gitignore), as that's where the sensitive information is stored.<br /> Make a copy with environment-specific changes for each environment you plan to host this site (local development, staging, production, etc).
+              </div>
+
+
+            </div>
+
+
+
+
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+  </div>
+</div>
+
+
+
 
 
 <script>
@@ -114,16 +287,11 @@
         dw.api_request({
           url: '/install/execute',
           data: {
-            email: document.querySelector('[name="email"]').value,
-            password: document.querySelector('[name="password"]').value,
-            screenname: document.querySelector('[name="screenname"]').value,
-            first_name: document.querySelector('[name="first_name"]').value,
-            last_name: document.querySelector('[name="last_name"]').value,
-            website: document.querySelector('[name="website"]').value,
-            ua: navigator.userAgent,
+            form: dw.serialize(document.querySelector('.edit-form'))
           },
           callback: function (r) {
             document.body.classList.remove('working');
+            console.log(r);
             if (r.success) {
 
               // fixit redirect or show confirmation
@@ -136,7 +304,10 @@
 
             } else {
               if (r.error) {
-                dw.display_error(r.error.type, r.error.message);
+
+                // fixit show errors correctly
+
+                // dw.display_error(r.error.type, r.error.message);
               }
             }
           }
