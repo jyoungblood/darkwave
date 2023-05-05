@@ -1,8 +1,6 @@
 <?php
 
 use Slime\render;
-use VPHP\db;
-
 
 
 $app->get('/install[/]', function ($req, $res, $args) {
@@ -27,135 +25,92 @@ $app->get('/install[/]', function ($req, $res, $args) {
 
 $app->post('/install/execute[/]', function ($req, $res, $args) {
 
-    parse_str($_POST['form'],$form);
+  $out = [ 'success' => true ];
+  parse_str($_POST['form'], $form);
 
-    return render::json($req, $res, [
-      'form' => $form
-    ]);
+  $env_file = '
+SITE_TITLE = "'. $form['site_title'] .'"
+SITE_CODE = "'. $form['site_code'] .'"
+SITE_URL = "'. $form['site_url'] .'"
+SITE_MODE = "development"
+JWT_SECRET="'. $form['jwt_secret'] .'"
+  ';
 
-// 	// 1. make the settings file
+  if (isset($form['db_name'])){
+    $env_file .= '
+DB_HOST="'. $form['db_host'] .'"
+DB_NAME="'. $form['db_name'] .'"
+DB_USER="'. $form['db_user'] .'"
+DB_PASSWORD="'. $form['db_password'] .'"';
+  }
 
-// 	$settings_file = '<?php
+	file_put_contents("./.env", $env_file);
 
-// $GLOBALS[\'site_title\'] = \''.$_POST['site_title'].'\';
-// $GLOBALS[\'site_code\'] = \''.$_POST['site_code'].'\';
-// $GLOBALS[\'site_url\'] = \''.$_POST['site_url'].'\';
-// $GLOBALS[\'settings\'][\'mode\'] = \'development\';
-
-// $GLOBALS[\'locals\'] = [
-//   \'year\' => date(\'Y\'),
-//   \'site_title\' => $GLOBALS[\'site_title\'],
-//   \'site_code\' => $GLOBALS[\'site_code\'],
-//   \'site_url\' => $GLOBALS[\'site_url\'],
-//   \'auth\' => @$GLOBALS[\'auth\'],
-//   \'user_id\' => @$GLOBALS[\'user_id\'],
-//   \'is_admin\' => @$GLOBALS[\'is_admin\'],
-// ];
-// ';
-
-// 	if ($_POST['db_host'] && $_POST['db_name']){
-// 		$settings_file .= '
-// $GLOBALS[\'settings\'][\'database\'] = [
-//   \'host\' => \''.$_POST['db_host'].'\',
-//   \'name\' => \''.$_POST['db_name'].'\',
-//   \'user\' => \''.$_POST['db_user'].'\',
-//   \'password\' => \''.$_POST['db_password'].'\'
-// ];';
-// 	}
-
-// 	file_put_contents("./settings.php", $settings_file);
-
-
-
-// 	// 2. make the db tables (only if there's a database to connect to)
-
-// 	$error = false;
-// 	$db_install = false;
-
-// 	if ($_POST['db_host'] && $_POST['db_name']){
-
-// 		$db_install = true;
-
-// 		try {
-
-//       $GLOBALS['database'] = db::init([
-//         'host' => $_POST['db_host'],
-//         'name' => $_POST['db_name'],
-//         'user' => $_POST['db_user'],
-//         'password' => $_POST['db_password']
-//       ]);
-
-// 			$sql = "CREATE TABLE users (
-// 			id INT(255) NOT NULL AUTO_INCREMENT,
-// 			_id VARCHAR(255) NULL DEFAULT NULL,
-// 			password VARCHAR(255) NULL DEFAULT NULL,
-// 			email VARCHAR(255) NULL DEFAULT NULL,
-// 			validate_hash VARCHAR(255) NULL DEFAULT NULL,
-// 			password_hash VARCHAR(255) NULL DEFAULT NULL,
-// 			url_slug VARCHAR(255) NULL DEFAULT NULL COMMENT 'profile url handle (url-safe version of screenname)',
-// 			screenname VARCHAR(255) NULL DEFAULT NULL COMMENT 'display name',
-// 			first_name VARCHAR(255) NULL DEFAULT NULL,
-// 			last_name VARCHAR(255) NULL DEFAULT NULL,
-// 			ua_header VARCHAR(255) NULL DEFAULT NULL,
-// 			ip_address VARCHAR(255) NULL DEFAULT NULL,
-// 			group_id TINYINT NOT NULL DEFAULT '3' COMMENT '1 Admin, 2 Moderator, 3 General User, 4 Blocked User',
-// 			avatar_filename VARCHAR(255) DEFAULT NULL,
-// 			avatar_small VARCHAR(255) NOT NULL DEFAULT '/images/avatar-default.png',
-// 			avatar_medium VARCHAR(255) NOT NULL DEFAULT '/images/avatar-default.png',
-// 			avatar_large VARCHAR(255) NOT NULL DEFAULT '/images/avatar-default.png',
-// 			avatar_original VARCHAR(255) NOT NULL DEFAULT '/images/avatar-default.png',
-// 			date_last_login DATETIME NULL DEFAULT NULL,
-// 			date_created DATETIME NULL DEFAULT NULL,
-// 			date_updated DATETIME NULL DEFAULT NULL,
-// 			PRIMARY KEY (id)
-// 			) ENGINE=InnoDB CHARACTER SET utf8mb4;";
-
-// 			$GLOBALS['database']->exec($sql);
-      
-// 		}
-// 		catch(PDOException $e){
-// 			$error = $e->getMessage();
-// 		}
+  if (isset($form['create_default_users']) && $form['create_default_users'] == 'on'){
+    if (isset($form['db_host']) && isset($form['db_name'])){
+      try {
+        $GLOBALS['database'] = \VPHP\db::init([
+          'host' => $form['db_host'],
+          'name' => $form['db_name'],
+          'user' => $form['db_user'],
+          'password' => $form['db_password']
+        ]);
+        $sql = "CREATE TABLE users (
+        id INT(255) NOT NULL AUTO_INCREMENT,
+        _id VARCHAR(255) NULL DEFAULT NULL,
+        password VARCHAR(255) NULL DEFAULT NULL,
+        email VARCHAR(255) NULL DEFAULT NULL,
+        validate_hash VARCHAR(255) NULL DEFAULT NULL,
+        password_hash VARCHAR(255) NULL DEFAULT NULL,
+        url_slug VARCHAR(255) NULL DEFAULT NULL COMMENT 'profile url handle (url-safe version of screenname)',
+        screenname VARCHAR(255) NULL DEFAULT NULL COMMENT 'display name',
+        first_name VARCHAR(255) NULL DEFAULT NULL,
+        last_name VARCHAR(255) NULL DEFAULT NULL,
+        ua_header VARCHAR(255) NULL DEFAULT NULL,
+        ip_address VARCHAR(255) NULL DEFAULT NULL,
+        group_id TINYINT NOT NULL DEFAULT '3' COMMENT '1 Admin, 2 Staff, 3 General User, 4 Blocked User',
+        avatar_filename VARCHAR(255) DEFAULT NULL,
+        avatar_small VARCHAR(255) NOT NULL DEFAULT '/images/avatar-default.png',
+        avatar_medium VARCHAR(255) NOT NULL DEFAULT '/images/avatar-default.png',
+        avatar_large VARCHAR(255) NOT NULL DEFAULT '/images/avatar-default.png',
+        avatar_original VARCHAR(255) NOT NULL DEFAULT '/images/avatar-default.png',
+        date_last_login DATETIME NULL DEFAULT NULL,
+        date_created DATETIME NULL DEFAULT NULL,
+        date_updated DATETIME NULL DEFAULT NULL,
+        PRIMARY KEY (id)
+        ) ENGINE=InnoDB CHARACTER SET utf8mb4;";
+        $GLOBALS['database']->exec($sql);
+      }
+      catch(PDOException $e){
+        $out['success'] = false;
+        $out['error'] = true;
+        $out['error_message'] = $e->getMessage();
+      }
+    }
+  }
 
 
+  if (isset($form['create_admin_user']) && $form['create_admin_user'] == 'on'){
+    if (isset($GLOBALS['database'])){
+      \VPHP\db::insert("users", [
+        '_id' => uniqid(uniqid()),
+        'email' => strtolower($form['user_email']),
+        'password' => password_hash($form['user_password'], PASSWORD_BCRYPT),
+        'group_id' => '1',
+        'date_created' => date('Y-m-d H:i:s'),
+        'url_slug' => \VPHP\x::url_slug($form['user_screenname']),
+        'screenname' => $form['user_screenname'],
+      ]);
+    }
+  }
+
+  if ($out['success'] == true){
+    // unlink("controllers/install.php");
+  }
 
 
-// 		// 3. insert the admin user
-// 		if ($_POST['user_email']){
-// 			if (!$error){
-// 				db::insert("users", [
-// 					'_id' => uniqid(uniqid()),
-// 					'email' => strtolower($_POST['user_email']),
-// 					'password' => password_hash($_POST['user_password'], PASSWORD_BCRYPT),
-// 					'group_id' => '1',
-// 					'date_created' => date('Y-m-d H:i:s'),
-// 					'url_slug' => \VPHP\x::url_slug($_POST['user_screenname']),
-// 					'screenname' => $_POST['user_screenname'],
-// 				]);
-// 			}
-// 		}
+  return render::json($req, $res, $out);
 
-
-// 	}
-
-
-// 	// 4. show success/failure
-
-// 	if ($error){
-
-//     return render::hbs($req, $res, [
-//       'layout' => '_layouts/base-guest',
-//       'template' => 'dw/install',
-//       'title' => $_ENV['SITE_TITLE'] ? $_ENV['SITE_TITLE'] : 'Install Darkwave',
-//       'data' => [
-//         'error' => $error
-//       ]
-//     ]);
-
-// 	}else{
-// 		unlink("controllers/install.php");
-//     return render::redirect($req, $res, '/');
-// 	}
 
 });
 

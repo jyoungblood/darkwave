@@ -72,8 +72,8 @@
                   <div class="form-label">User Group</div>
                   <select class="form-select" name="group_id">
                     <option {{#is data.group_id "==" "3"}}selected="selected"{{/is}} {{#is data.group_id "==" ""}}selected="selected"{{/is}} value="3">General User</option>
-                    <option {{#is data.group_id "==" "2"}}selected="selected"{{/is}} value="2">Moderator</option>
                     <option {{#is data.group_id "==" "1"}}selected="selected"{{/is}} value="1">Admin</option>
+                    <option {{#is data.group_id "==" "2" }}selected="selected" {{/is}} value="2">Staff</option>
                     <option {{#is data.group_id "==" "4"}}selected="selected"{{/is}} value="4">Blocked</option>
                   </select>
                 </div>
