@@ -3,7 +3,7 @@
 use Slime\render;
 
 
-$app->get('/install[/]', function ($req, $res, $args) {
+$app->get('/configure[/]', function ($req, $res, $args) {
 
   $digits    = array_flip(range('0', '9'));
   $lowercase = array_flip(range('a', 'z'));
@@ -12,8 +12,8 @@ $app->get('/install[/]', function ($req, $res, $args) {
 
   return render::hbs($req, $res, [
     'layout' => '_layouts/base-guest',
-    'template' => 'dw/install',
-    'title' => 'Install Darkwave',
+    'template' => 'dw/configure',
+    'title' => 'Configure Darkwave',
     'data' => [
       'jwt_secret' => str_shuffle(array_rand($digits) . array_rand($lowercase) . array_rand($uppercase) . array_rand($special) . implode(array_rand(array_merge($digits, $lowercase, $uppercase, $special), rand(12, 20)))),
       'site_url_default' => $_SERVER['HTTP_HOST']
@@ -23,28 +23,10 @@ $app->get('/install[/]', function ($req, $res, $args) {
 
 
 
-$app->post('/install/execute[/]', function ($req, $res, $args) {
+$app->post('/configure/execute[/]', function ($req, $res, $args) {
 
   $out = [ 'success' => true ];
   parse_str($_POST['form'], $form);
-
-  $env_file = '
-SITE_TITLE = "'. $form['site_title'] .'"
-SITE_CODE = "'. $form['site_code'] .'"
-SITE_URL = "'. $form['site_url'] .'"
-SITE_MODE = "development"
-JWT_SECRET="'. $form['jwt_secret'] .'"
-  ';
-
-  if (isset($form['db_name'])){
-    $env_file .= '
-DB_HOST="'. $form['db_host'] .'"
-DB_NAME="'. $form['db_name'] .'"
-DB_USER="'. $form['db_user'] .'"
-DB_PASSWORD="'. $form['db_password'] .'"';
-  }
-
-	file_put_contents("./.env", $env_file);
 
   if (isset($form['create_default_users']) && $form['create_default_users'] == 'on'){
     if (isset($form['db_host']) && isset($form['db_name'])){
@@ -85,12 +67,15 @@ DB_PASSWORD="'. $form['db_password'] .'"';
         $out['success'] = false;
         $out['error'] = true;
         $out['error_message'] = $e->getMessage();
+      } catch (Exception $e) {
+        $out['success'] = false;
+        $out['error'] = true;
+        $out['error_message'] = $e->getMessage();
       }
     }
   }
 
-
-  if (isset($form['create_admin_user']) && $form['create_admin_user'] == 'on'){
+  if ($out['success'] == true && isset($form['create_admin_user']) && $form['create_admin_user'] == 'on'){
     if (isset($GLOBALS['database'])){
       \VPHP\db::insert("users", [
         '_id' => uniqid(uniqid()),
@@ -100,17 +85,37 @@ DB_PASSWORD="'. $form['db_password'] .'"';
         'date_created' => date('Y-m-d H:i:s'),
         'url_slug' => \VPHP\x::url_slug($form['user_screenname']),
         'screenname' => $form['user_screenname'],
+        'first_name' => $form['user_first_name'],
+        'last_name' => $form['user_last_name'],
       ]);
     }
   }
 
   if ($out['success'] == true){
-    // unlink("controllers/install.php");
+    $env_file = 
+'SITE_TITLE = "'. $form['site_title'] .'"
+SITE_CODE = "'. $form['site_code'] .'"
+SITE_URL = "'. $form['site_url'] .'"
+SITE_MODE = "development"
+JWT_SECRET="'. $form['jwt_secret'] .'"
+    ';
+
+    if (isset($form['db_host']) && isset($form['db_name']) && isset($form['db_user']) && isset($form['db_password'])){
+      $env_file .= 
+'DB_HOST="'. $form['db_host'] .'"
+DB_NAME="'. $form['db_name'] .'"
+DB_USER="'. $form['db_user'] .'"
+DB_PASSWORD="'. $form['db_password'] .'"';
+    }
+    file_put_contents("./.env", $env_file);
   }
 
+  if ($out['success'] == true && $form['delete_configure_files'] == 'on'){
+    unlink("controllers/dw/configure.php");
+    unlink("templates/dw/configure.html");
+  }
 
   return render::json($req, $res, $out);
-
 
 });
 

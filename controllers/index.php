@@ -1,7 +1,6 @@
 <?php
 
 date_default_timezone_set('America/Chicago');
-// error_reporting(E_ERROR | E_PARSE);
 
 use Slime\render;
 
@@ -10,18 +9,21 @@ foreach (glob("controllers/dw/*.php") as $file) {
 }
 
 
-
 $app->get('/', function ($req, $res, $args) {
 
-  return render::hbs($req, $res, [
-    'layout' => '_layouts/base',
-    'template' => 'index',
-    'title' => $_ENV['SITE_TITLE'],
-    'data' => [
-	    'install_deleted' => file_exists('./controllers/dw/install.php') ? false : true,
-      'current_home' => true,
-    ]
-  ]);
+  if (!isset($_ENV['SITE_TITLE'])){
+    return render::redirect($req, $res, '/configure');
+  }else{
+    return render::hbs($req, $res, [
+      'layout' => '_layouts/base',
+      'template' => 'index',
+      'title' => $_ENV['SITE_TITLE'],
+      'data' => [
+        'current_home' => true,
+      ]
+    ]);
+  }
+
 });
 
 
