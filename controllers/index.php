@@ -50,21 +50,6 @@ $app->get('/', function ($req, $res, $args) {
 
 
 
-$app->get('/elements', function ($req, $res, $args) {
-
-
-    return render::hbs($req, $res, [
-      'layout' => '_layouts/base',
-      'template' => 'elements',
-      'title' => $_ENV['SITE_TITLE'],
-      'data' => [
-        'current_home' => true,
-      ]
-    ]);
-
-});
-
-
 
 
 $app->get('/demo/{page}[/]', function ($req, $res, $args) {
