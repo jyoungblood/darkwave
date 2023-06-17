@@ -15,10 +15,13 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/dw-utilities@0.6/dist/dw.min.js"></script> -->
     <!-- <script src="https://instant.page/5.1.1" type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script> -->
 
-    <link href="/css/lib/tabler-dw.css" rel="stylesheet" />
+    <!-- <link href="/css/lib/tabler-dw.css" rel="stylesheet" /> -->
+    <link href="/css/lib/tabler.min.css" rel="stylesheet" />
+    <!-- <link href="/css/lib/bootstrap.min.css" rel="stylesheet" /> -->
     <link href="/css/lib/dw.css" rel="stylesheet" />
 
     <script src="/js/lib/tabler.min.js" defer></script>
+    <!-- <script src="/js/lib/bootstrap.bundle.min.js" defer></script> -->
     <script src="/js/lib/alpine.min.js" defer></script>
     <!-- <script src="/js/lib/dw.min.js"></script> -->
     <script src="/js/lib/dw.js"></script>
@@ -159,7 +162,7 @@
                           {{#if locals.is_admin}}
                             <a href="/users" class="dropdown-item">
                               
-                              <span class="nav-link-icon d-inline-block">
+                              <span class="nav-link-icon d-inline-block me-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
                                   <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
                                 </svg>
@@ -168,7 +171,7 @@
                               Users
 
                             </a>                    
-                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-divider my-1"></div>
                           {{/if}}
                           <!--
                             <a href="#" class="dropdown-item">Status</a>
@@ -177,7 +180,7 @@
                           -->
                           <a href="/account" class="dropdown-item">
                             
-                            <span class="nav-link-icon d-inline-block">
+                            <span class="nav-link-icon d-inline-block me-3">
                               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
                                 <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Zm9.886-3.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/>
                               </svg>                    
@@ -190,7 +193,7 @@
 
                           <span onclick=" dw.cookie_delete('token'); window.location.href = window.location.origin;" class="dropdown-item cursor-pointer">
                           
-                            <span class="nav-link-icon d-inline-block">
+                            <span class="nav-link-icon d-inline-block me-3">
                               <svg xmlns="http://www.w3.org/2000/svg" class="icon-right icon-tabler icon-tabler-logout" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"></path>
