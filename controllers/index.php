@@ -10,39 +10,18 @@ foreach (glob("controllers/dw/*.php") as $file) {
 
 
 $app->get('/', function ($req, $res, $args) {
-
   if (!isset($_ENV['SITE_TITLE'])){
     return render::redirect($req, $res, '/configure');
   }else{
-
-  	$welcome_headline = array(
-      'Given enough time, all your code will get deleted',
-      'Valar Morghoulis',
-      'Anyone can have a good time',
-      'There is much pain in the world, but not in this room',
-      'Any gyroscope can spin forever',
-      'Why tear out single pages when you can throw away the book?',
-      'I\'m heaven-sent...don\'t you dare forget',
-      'Live your dreams, don\'t chase \'em',
-      'Do what you love, and the necessary resources will follow',
-      'Take a knife and drain your life',
-      'We were promised bicycles for the mind, but we got aircraft carriers instead',
-      'No need to ask my name to figure out how cool I am',
-      'You don\'t need to hide, my friend, I\'m just like you',
-      'It\'s so hard to focus when everything is broken'
-    );
-
     return render::hbs($req, $res, [
       'layout' => '_layouts/base',
       'template' => 'index',
       'title' => $_ENV['SITE_TITLE'],
       'data' => [
         'current_home' => true,
-        'welcome_headline' => $welcome_headline[array_rand($welcome_headline)]
       ]
     ]);
   }
-
 });
 
 
