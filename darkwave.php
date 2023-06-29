@@ -41,9 +41,15 @@ class dw {
         $GLOBALS['locals']['user_id'] = $GLOBALS['user_id'];
         $GLOBALS['locals']['identity'] = $GLOBALS['identity'];
         if ($parsed['admin_token']){
-          if (password_verify($_ENV['SITE_CODE'], $parsed['admin_token'])){
+          if (password_verify($_ENV['SITE_CODE'].'-ADMIN', $parsed['admin_token'])){
             $GLOBALS['is_admin'] = true;
             $GLOBALS['locals']['is_admin'] = $GLOBALS['is_admin'];
+          }
+        }
+        if ($parsed['staff_token']){
+          if (password_verify($_ENV['SITE_CODE'].'-STAFF', $parsed['staff_token'])){
+            $GLOBALS['is_staff'] = true;
+            $GLOBALS['locals']['is_staff'] = $GLOBALS['is_staff'];
           }
         }
       }
@@ -57,7 +63,8 @@ class dw {
       ->setPayloadClaim('name', $user['first_name'] .' '.$user['last_name'])
       ->setPayloadClaim('avatar_url', '//' . $_ENV['SITE_URL'] . $user['avatar_small'])
       ->setPayloadClaim('screenname', $user['screenname'])
-      ->setPayloadClaim('admin_token', $user['group_id'] == 1 ? password_hash($_ENV['SITE_CODE'], PASSWORD_BCRYPT) : false)
+      ->setPayloadClaim('admin_token', $user['group_id'] == 1 ? password_hash($_ENV['SITE_CODE'].'-ADMIN', PASSWORD_BCRYPT) : false)
+      ->setPayloadClaim('staff_token', $user['group_id'] == 1 || $user['group_id'] == 2 ? password_hash($_ENV['SITE_CODE'].'-STAFF', PASSWORD_BCRYPT) : false)
       ->build();
     return $token->getToken();
   }

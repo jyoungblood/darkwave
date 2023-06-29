@@ -34,7 +34,7 @@ $app->get('/forgot/reset/{hash}/{e_hash}[/]', function ($req, $res, $args) {
 
 
 $app->post('/auth/forgot/process[/]', function ($req, $res, $args) {
-	$email = strtolower($_POST['email']);
+	$email = trim(strtolower($_POST['email']));
   $out = [];
   $_user = db::find("users", "(email='".$email."' OR screenname='".$email."') AND validate_hash IS NULL");
   if ($_user['data'] && !$_POST['website']){

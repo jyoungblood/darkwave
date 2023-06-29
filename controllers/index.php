@@ -25,27 +25,24 @@ $app->get('/', function ($req, $res, $args) {
 });
 
 
-
-
-
-
-
-
 $app->get('/demo/{page}[/]', function ($req, $res, $args) {
   $subnav = false;
   if ($args['page'] == 'first'){
     $subnav = [
       [
         'href' => '?subnav=1',
-        'title' => 'Subnav 1'
+        'title' => 'Subnav 1',
+        'current' => $_GET['subnav'] == '1' || $_GET['subnav'] == '' ? true : false
       ], 
       [
         'href' => '?subnav=2',
-        'title' => 'Subnav 2'
+        'title' => 'Subnav 2',
+        'current' => $_GET['subnav'] == '2' ? true : false
       ],
       [
         'href' => '?subnav=3',
-        'title' => 'Subnav 3'
+        'title' => 'Subnav 3',
+        'current' => $_GET['subnav'] == '3' ? true : false
       ]
     ];
   }
@@ -53,15 +50,18 @@ $app->get('/demo/{page}[/]', function ($req, $res, $args) {
     $subnav = [
       [
         'href' => '?subnav=different-subnav',
-        'title' => 'Different Subnav'
+        'title' => 'Different Subnav',
+        'current' => $_GET['subnav'] == 'different-subnav' || $_GET['subnav'] == '' ? true : false
       ], 
       [
         'href' => '?subnav=ok-cool',
-        'title' => 'OK Cool'
+        'title' => 'OK Cool',
+        'current' => $_GET['subnav'] == 'ok-cool' ? true : false
       ],
       [
         'href' => '?subnav=new-thing',
-        'title' => '+ New Thing'
+        'title' => '+ New Thing',
+        'current' => $_GET['subnav'] == 'new-thing' ? true : false
       ]
     ];
   }

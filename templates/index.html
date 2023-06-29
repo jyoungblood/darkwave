@@ -30,8 +30,7 @@
                 <path d="M21 21l-6 -6"></path>
               </svg>
             </span>
-            <input type="text" name="k" value="{{GET.k}}" class="form-control" placeholder="Search something…"
-              aria-label="Search something…">
+            <input type="text" name="k" value="{{GET.k}}" class="form-control" placeholder="Search something…" aria-label="Search something…">
           </div>
         </form>
       </div>
@@ -51,9 +50,10 @@
               <li class="mb-2"><a href="https://slimframework.com/" target="_blank">Slim</a> <span class="text-muted">- base PHP framework</span></li>
               <li class="mb-2"><a href="https://slime.technology/" target="_blank">Slime</a> <span class="text-muted">- Slim application scaffolding and rendering helpers</span></li>
               <li class="mb-2"><a href="https://handlebarsjs.com/" target="_blank">Handlebars</a> <span class="text-muted">- template rendering via <a href="https://github.com/zordius/lightncandy" target="_blank">LightnCandy</a></span></li>
-              <li class="mb-2"><a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> <span class="text-muted">- base front-end framework</span></li>
+              <li class="mb-2"><a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> <span class="text-muted">- base UI framework</span></li>
               <li class="mb-2"><a href="https://tabler.io/" target="_blank">Tabler</a> <span class="text-muted">- Bootstrap-based UI kit</span></li>
               <li class="mb-2"><a href="https://alpinejs.dev/" target="_blank">Alpine.js</a> <span class="text-muted">- JS utility framework</span></li>
+              <li class="mb-2"><a href="https://htmx.org//" target="_blank">htmx</a> <span class="text-muted">- utilities for AJAX, CSS transitions, websockets, SSE</span></li>
               <li class="mb-2"><a href="https://github.com/hxgf/dw-utilities-php" target="_blank">DW Utilities (PHP)</a> <span class="text-muted">- back-end utility functions for authentication, image conversion, etc.</span></li>
               <li class="mb-2"><a href="https://github.com/hxgf/dw-utilities-js" target="_blank">DW Utilities (JS)</a> <span class="text-muted">- front-end utility functions for authentication, modals, form handlers, etc.</span></li>
             </ul>
@@ -1615,7 +1615,7 @@
                 <p>Here's a simple demo of some of the kinds of modals you can make. If you inspect the source, you'll notice they're all triggered with JS <code>onclick</code> events.</p>
                 <div class="input-group w-75 mb-4 mt-4">
                   <input type="text" class="form-control" name="modaltext" value="Type custom modal content here.<br /><br />You can even use <b>html elements</b> if you want.<br /><br />Amazing! 🤠">
-                  <button class="btn btn-secondary" onclick="dw.modal({'content':document.querySelector('input[name=modaltext]').value})">Launch Modal</button>
+                  <button class="btn btn-secondary" onclick="dw.modal({'content':document.querySelector('input[name=modaltext]').value, 'modal_footer_extra': 'd-none'})">Launch Modal</button>
                 </div>
                 <div class="btn-list mb-3">
                   <button class="btn btn-secondary" onclick="dw.modal({
@@ -1685,6 +1685,7 @@
                       theme: 'danger',
                       modal_title_extra: 'text-center w-100 pt-2 fs-2',
                       modal_body_extra: 'text-center',
+                      modal_footer_extra: 'border-top-0 bg-transparent',
                       buttons: [
                         {
                           label: 'OK',

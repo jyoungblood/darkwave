@@ -53,9 +53,6 @@
 					},
 					callback: function (r) {
             if (r.success) {
-              if (r.token) {
-                dw.cookie_set('token', r.token);
-              }
               if (document.querySelector('[name="redirect"]').value){
                 window.location.href = document.querySelector('[name="redirect"]').value;
               }else{

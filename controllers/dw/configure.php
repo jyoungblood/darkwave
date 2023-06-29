@@ -79,7 +79,7 @@ $app->post('/configure/execute[/]', function ($req, $res, $args) {
     if (isset($GLOBALS['database'])){
       \VPHP\db::insert("users", [
         '_id' => uniqid(uniqid()),
-        'email' => strtolower($form['user_email']),
+        'email' => trim(strtolower($form['user_email'])),
         'password' => password_hash($form['user_password'], PASSWORD_BCRYPT),
         'group_id' => '1',
         'date_created' => date('Y-m-d H:i:s'),

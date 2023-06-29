@@ -40,7 +40,7 @@ $app->post('/auth/register/process[/]', function ($req, $res, $args) {
   $out = [ 'success' => true ];
 	if (!$_POST['website'] && $_POST['email'] != ''){
 		$hash = uniqid(uniqid());
-    $email = strtolower($_POST['email']);
+    $email = trim(strtolower($_POST['email']));
 		db::insert("users", [
 			'_id' => uniqid(uniqid()),
 			'email' => $email,

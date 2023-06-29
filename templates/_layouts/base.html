@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html>
+  <head>
 
-<head>
+    <title>{{title}}</title>
 
-  <title>{{title}}</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CDN Links for all libs -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css"> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/dw-utilities@0.6/dist/dw.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/htmx.org@1.9.2/dist/htmx.min.js" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://instant.page/5.1.1" type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script> -->
 
-  <!-- CDN Links for all libs -->
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css"> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/dw-utilities@0.6/dist/dw.min.js"></script> -->
-  <!-- <script src="https://instant.page/5.1.1" type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script> -->
-
-  <!-- <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.0/js/mdb.min.js"></script> -->
-  <!-- <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.0/css/mdb.min.css" rel="stylesheet"> -->
-
-
-
-  <!-- <link href="/css/lib/tabler-dw.css" rel="stylesheet" /> -->
-  <link href="/css/lib/tabler.min.css" rel="stylesheet" />
-  <!-- <link href="/css/lib/bootstrap.min.css" rel="stylesheet" /> -->
-  <link href="/css/lib/dw.css" rel="stylesheet" />
-
-  <script src="/js/lib/tabler.min.js" defer></script>
-  <!-- <script src="/js/lib/bootstrap.bundle.min.js" defer></script> -->
-  <script src="/js/lib/alpine.min.js" defer></script>
-  <!-- <script src="/js/lib/dw.min.js"></script> -->
-  <script src="/js/lib/dw.js"></script>
-  <script src="/js/lib/instant.page.min.js" type="module"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.0/js/mdb.min.js"></script> -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.0/css/mdb.min.css" rel="stylesheet"> -->
 
 
-  <style>
-    :root {
-      --tblr-modal-footer-gap: 0.75rem;
-      --tblr-modal-footer-bg: ;
-      --tblr-modal-footer-border-color: var(--tblr-border-color);
-      --tblr-modal-footer-border-width: 0;
+    <!-- <link href="/css/lib/tabler-dw.css" rel="stylesheet" /> -->
+    <link href="/css/lib/tabler.min.css" rel="stylesheet" />
+    <!-- <link href="/css/lib/bootstrap.min.css" rel="stylesheet" /> -->
+    <link href="/css/lib/dw.css" rel="stylesheet" />
 
-    }
-  </style>
+    <script src="/js/lib/tabler.min.js" defer></script>
+    <!-- <script src="/js/lib/bootstrap.bundle.min.js" defer></script> -->
+    <script src="/js/lib/alpine.min.js" defer></script>
+    <!-- <script src="/js/lib/dw.min.js"></script> -->
+    <script src="/js/lib/dw.js"></script>
+    <script src="/js/lib/htmx.min.js"></script>
+    <script src="/js/lib/instant.page.min.js" type="module"></script>
 
-</head>
+
+    <style>
+      :root {
+        /* --tblr-modal-footer-gap: 0.75rem;
+        --tblr-modal-footer-bg: ;
+        --tblr-modal-footer-border-color: var(--tblr-border-color);
+        --tblr-modal-footer-border-width: 0; */
+
+      }
+    </style>
+
+  </head>
 
 <body>
 
@@ -251,8 +251,7 @@
                 </a>
 
 
-                <span onclick=" dw.cookie_delete('token'); window.location.href = window.location.origin;"
-                  class="dropdown-item cursor-pointer">
+                <a href="/logout" data-no-instant class="dropdown-item">
 
                   <span class="nav-link-icon d-inline-block me-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon-right icon-tabler icon-tabler-logout" width="24"
@@ -266,7 +265,7 @@
 
                   Log Out
 
-                </span>
+                </a>
 
 
 
@@ -353,7 +352,7 @@
             <div class="container-xl">
               <ul class="navbar-nav">
                 {{#each subnav}}
-                <li class="nav-item">
+                <li class="nav-item {{#if current}}active{{/if}}">
                   <a class="nav-link text-secondary" href="{{href}}">
                     {{title}}
                   </a>
@@ -425,7 +424,7 @@
   {{/if}}
 
   <div class="spinner-container">
-    <div class="page page-center align-items-center">
+    <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
       <div class="spinner-border text-light" style="width: 8rem; height: 8rem; border-width: 0.5rem;" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>

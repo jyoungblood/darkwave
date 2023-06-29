@@ -18,9 +18,9 @@ $app->get('/login[/]', function ($req, $res, $args) {
 
 
 $app->post('/auth/login/process[/]', function ($req, $res, $args) {
-	$email = $_POST['email'];
+	$email = trim(strtolower($_POST['email']));
 	$password = $_POST['password'];
-	$_user = db::find("users", "(email='".strtolower($email)."' OR screenname='".strtolower($email)."') AND validate_hash IS NULL");
+	$_user = db::find("users", "(email='".$email."' OR screenname='".$email."') AND validate_hash IS NULL");
 	if ($_user['data'] && !$_POST['website']){
 		$user = $_user['data'][0];
 		// successful login
@@ -31,13 +31,13 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 			  'ip_address' => \VPHP\x::client_ip(),
 			  'date_last_login' => date('Y-m-d H:i:s')
       ], "_id='".$user['_id']."'");
-			$auth_token = password_hash($_ENV['SITE_CODE'].'-'.$user['_id'], PASSWORD_BCRYPT);
-			// send success data
-			$out = [
+  		$out = [
 				'success' => true,
-				'auth_token' => $auth_token
       ];
-      $out['token'] = \Darkwave\dw::generate_jwt($user);
+      \VPHP\cookie::set('token', \Darkwave\dw::generate_jwt($user), [
+        'secure' => true,
+        'httponly' => true,
+      ]);
 		}else{
 			// error: not a valid password
 			$out = [
@@ -63,4 +63,12 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
     ];
 	}
 	return render::json($req, $res, $out);
+});
+
+
+
+
+$app->get('/logout[/]', function ($req, $res, $args) {
+  \VPHP\cookie::delete('token');
+  return render::redirect($req, $res, '/');
 });

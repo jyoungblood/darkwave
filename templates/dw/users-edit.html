@@ -115,10 +115,7 @@
                     'form': dw.serialize(document.querySelector('.edit-form'))
                   },
                   'callback': function(r){
-                    if (r.token) {
-                      dw.cookie_set('token', r.token);
-                    }
-                    window.location.href = '/';
+                    window.location.href = '/users/';
                   }
                 })">Save</button>
               </span>

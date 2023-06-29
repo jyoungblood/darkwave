@@ -165,14 +165,15 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
     	}
     	db::update("users", $photo_input, "_id='".$user_id."'");
     }
-    $token = false;
     if ($user_id == $GLOBALS['user_id']){
-      $_user = db::find("users", "_id = '".$GLOBALS['user_id']."'");
-      $token = \Darkwave\dw::generate_jwt($_user['data'][0]);
+      $_user = db::find("users", "_id = '".$GLOBALS['user_id']."'");      
+      \VPHP\cookie::set('token', \Darkwave\dw::generate_jwt($_user['data'][0]), [
+        'secure' => true,
+        'httponly' => true,
+      ]);
     }
     return render::json($req, $res, [
-      'success' => true,
-      'token' => $token
+      'success' => true
     ]);
 	}
 });

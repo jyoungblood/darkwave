@@ -13,7 +13,8 @@ var dw = {
     request.open('POST', cfg.url, true);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     request.onload = function () {
-      if (this.status >= 200 && this.status < 400) {
+      if (this.status <= 399) {
+        // Response success
         if (cfg.callback) {
           cfg.callback(JSON.parse(this.response));
         } else {
@@ -24,6 +25,24 @@ var dw = {
         }
       } else {
         // Response error
+        document.body.classList.remove('working');
+        
+        var error_message = 'Server Error';
+        try {
+          var r = JSON.parse(this.response);
+          if (r.error_code){
+            error_message += ` (${r.error_code})`;
+          }
+          if (r.error_message) {
+            error_message += ` - ${r.error_message}`;
+          }
+          console.log(r);
+        } catch (e) {
+          error_message += ` (${this.status})`;
+          console.log(this.response);
+        }
+
+        alert(error_message + "\nSee console for more details.");
       }
     };
     request.onerror = function () {
@@ -69,24 +88,29 @@ var dw = {
         valid = false;
       }
     }
+    if (!valid) {
+      var error_title = 'Incomplete Data';
+      var error_description = 'Please add missing information to<br /> any <span class="text-danger">required</span> fields and try again.';
+    }
     if (document.querySelectorAll('.is-invalid').length > 0){
       valid = false;
-      // fixit error
-      // fixit corect message
+      error_title = 'Invalid Data';
+      error_description = 'Please correct any<br /> <span class="text-danger">error</span> fields and try again.';
     }
-    // fixit catch error for validation (run the is-unique again?)
     if (valid) {
+      console.log('valid, will submit');
       callback();
     } else {
       document.body.classList.remove('working');
       dw.modal({
-        title: `<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg><br />Incomplete Data`,
-        content: `<span class="text-muted">Please add missing information to<br /> any <span class="text-danger">required</span> fields and try again.</span>`,
+        title: `<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg><br />${error_title}`,
+        content: `<span class="text-muted">${error_description}</span>`,
         format: 'small',
         theme: 'danger',
         centered: true,
         modal_title_extra: 'text-center w-100 pt-2 fs-2',
         modal_body_extra: 'text-center',
+        modal_footer_extra: 'border-top-0 bg-transparent',
         buttons: [{
           label: 'OK',
           color: 'danger',
@@ -249,6 +273,7 @@ var dw = {
     }
   },
   validate_input: function (cfg) {
+    dw.prevent_submit = true;
     if (cfg.unique) {
       var request_data = {
         collection: cfg.unique.collection,
@@ -264,8 +289,10 @@ var dw = {
         callback: function (r) {
           if (r.error) {
             dw.display_error(cfg.input, cfg.unique.error_message ? cfg.unique.error_message : 'Value must be unique');
+            dw.prevent_submit = false;
           } else {
             dw.remove_error(cfg.input);
+            dw.prevent_submit = false;
           }
         }
       });
@@ -274,8 +301,10 @@ var dw = {
         if (!cfg.element.value) {
           dw.display_error(cfg.input, 'Required');
           // cfg.element.focus();
+          dw.prevent_submit = false;
         } else {
           dw.remove_error(cfg.input);
+          dw.prevent_submit = false;
         }
       }
     }
@@ -291,26 +320,28 @@ var dw = {
   edit_form: function () {
     return {
       save: function (cfg) {
-        document.body.classList.add('working');
-        var callback = cfg.callback ? cfg.callback : false;
-        if (cfg.redirect) {
-          callback = function (r) {
-            window.location.href = cfg.redirect;
+        if (!dw.prevent_submit){
+          document.body.classList.add('working');
+          var callback = cfg.callback ? cfg.callback : false;
+          if (cfg.redirect) {
+            callback = function (r) {
+              window.location.href = cfg.redirect;
+            }
           }
-        }
-        if (cfg.debug) {
-          callback = function (r) {
-            document.body.classList.remove('working');
-            console.log(r);
+          if (cfg.debug) {
+            callback = function (r) {
+              document.body.classList.remove('working');
+              console.log(r);
+            }
           }
-        }
-        dw.form_validate(function () {
-          dw.api_request({
-            url: cfg.url,
-            data: cfg.data,
-            callback: callback
+          dw.form_validate(function () {
+            dw.api_request({
+              url: cfg.url,
+              data: cfg.data,
+              callback: callback
+            });
           });
-        });
+        }
       },
       delete_confirm: function (cfg) {
         document.querySelector('[data-container="delete"]').innerHTML = `
@@ -369,6 +400,7 @@ var dw = {
           theme: 'danger',
           modal_title_extra: 'text-center w-100 pt-2 fs-2',
           modal_body_extra: 'text-center',
+          modal_footer_extra: 'border-top-0 bg-transparent',
           buttons: [
             {
               label: 'OK',
@@ -405,6 +437,7 @@ var dw = {
             theme: 'danger',
             modal_title_extra: 'text-center w-100 pt-2 fs-2',
             modal_body_extra: 'text-center',
+            modal_footer_extra: 'border-top-0 bg-transparent',
             buttons: [
               {
                 label: 'OK',
@@ -495,7 +528,7 @@ var dw = {
         theme: 'danger',
         modal_title_extra: 'text-center w-100 pt-2 fs-2 mb-0',
         modal_body_extra: 'text-center',
-        modal_footer_extra: 'justify-content-center',
+        modal_footer_extra: 'border-top-0 bg-transparent justify-content-center',
         buttons: [
           {
             label: 'Yes',

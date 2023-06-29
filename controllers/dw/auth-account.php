@@ -30,7 +30,7 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
   }else{
     parse_str($_POST['form'],$form);
     $input = [
-      'email' => strtolower($form['email']),
+      'email' => trim(strtolower($form['email'])),
       'url_slug' => \VPHP\x::url_slug($form['screenname']),
       'screenname' => $form['screenname'],
       'first_name' => $form['first_name'],
@@ -102,9 +102,13 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     	db::update("users", $photo_input, "_id='".$user_id."'");
     }
     $_user = db::find("users", "_id = '".$GLOBALS['user_id']."'");
+
+    \VPHP\cookie::set('token', \Darkwave\dw::generate_jwt($_user['data'][0]), [
+      'secure' => true,
+      'httponly' => true,
+    ]);
     return render::json($req, $res, [
       'success' => true,
-      'token' => \Darkwave\dw::generate_jwt($_user['data'][0])
     ]);
   }
 });
