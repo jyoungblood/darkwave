@@ -372,16 +372,16 @@
         },
         {
             "name": "hxgf/x-utilities",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hxgf/x-utilities.git",
-                "reference": "e0301ca9897f47be0d873e796950223a7b9add49"
+                "reference": "44132d599fec54f47ba6ad337e92ef19ab495a1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/x-utilities/zipball/e0301ca9897f47be0d873e796950223a7b9add49",
-                "reference": "e0301ca9897f47be0d873e796950223a7b9add49",
+                "url": "https://api.github.com/repos/hxgf/x-utilities/zipball/44132d599fec54f47ba6ad337e92ef19ab495a1f",
+                "reference": "44132d599fec54f47ba6ad337e92ef19ab495a1f",
                 "shasum": ""
             },
             "type": "library",
@@ -409,9 +409,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hxgf/x-utilities/issues",
-                "source": "https://github.com/hxgf/x-utilities/tree/1.2.0"
+                "source": "https://github.com/hxgf/x-utilities/tree/1.2.1"
             },
-            "time": "2023-01-17T20:25:19+00:00"
+            "time": "2023-06-30T18:13:04+00:00"
         },
         {
             "name": "nikic/fast-route",

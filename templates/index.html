@@ -56,8 +56,11 @@
               <li class="mb-2"><a href="https://htmx.org//" target="_blank">htmx</a> <span class="text-muted">- utilities for AJAX, CSS transitions, websockets, SSE</span></li>
               <li class="mb-2"><a href="https://github.com/hxgf/dw-utilities-php" target="_blank">DW Utilities (PHP)</a> <span class="text-muted">- back-end utility functions for authentication, image conversion, etc.</span></li>
               <li class="mb-2"><a href="https://github.com/hxgf/dw-utilities-js" target="_blank">DW Utilities (JS)</a> <span class="text-muted">- front-end utility functions for authentication, modals, form handlers, etc.</span></li>
+              <li class="mb-2"><a href="https://github.com/gumlet/php-image-resize" target="_blank">php-image-resize</a> <span class="text-muted">- GD-based image manipulation library</span></li>
+              <li class="mb-2"><a href="https://github.com/vlucas/phpdotenv" target="_blank">phpdotenv</a> <span class="text-muted">- automatic .env variable loading</span></li>
+              <li class="mb-2"><a href="https://github.com/RobDWaller/psr-jwt" target="_blank">psr-jwt</a> <span class="text-muted">- PSR-compliant JWT middleware</span></li>
             </ul>
-            <h3 class="mt-4 mb-1">Optional libraries:</h3>
+            <h3 class="mt-4 mb-1">Optional included libraries:</h3>
             <ul class="pt-1 mb-5">
               <li class="mb-2"><a href="https://www.dropzone.dev/" target="_blank">Dropzone</a> <span class="text-muted">- file uploader</span></li>
               <li class="mb-2"><a href="https://litepicker.com/" target="_blank">Litepicker</a> <span class="text-muted">- date picker</span></li>
@@ -1113,6 +1116,23 @@
                         </div>
                       </div>
                     </div>
+                    <div class="mb-3">
+                      <label class="form-label">Datepicker</label>
+                      <input class="form-control mb-2" placeholder="Select a date" id="datepicker-default" />
+                    </div>
+                    <script>
+                      document.addEventListener("DOMContentLoaded", function () {
+                        window.Litepicker && (new Litepicker({
+                          element: document.getElementById('datepicker-default'),
+                          buttonText: {
+                            previousMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>`,
+                            nextMonth: `<!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>`,
+                          },
+                        }));
+                      });
+                    </script>
                     <div class="mb-3">
                       <label class="form-label">Text mask</label>
                       <input type="text" name="input-mask" class="form-control" data-mask="00/00/0000" data-mask-visible="true" placeholder="00/00/0000" autocomplete="off">
@@ -2368,7 +2388,7 @@ const notify = function(message){
                   <li>Red Light</li>
                   <li>The Fool</li>
                   <li>Crest
-                    <ul>
+                    <ul class="ps-2">
                       <li>Desire is a Trap</li>
                       <li>Faust</li>
                     </ul>

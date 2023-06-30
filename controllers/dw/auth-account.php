@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * DW Account Management Routes / Controllers
+ * @version    0.6.0
+ * @author     Jonathan Youngblood <jy@hxgf.io>
+ */
 
 use Slime\render;
 use VPHP\db;
@@ -102,7 +106,6 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
     	db::update("users", $photo_input, "_id='".$user_id."'");
     }
     $_user = db::find("users", "_id = '".$GLOBALS['user_id']."'");
-
     \VPHP\cookie::set('token', \Darkwave\dw::generate_jwt($_user['data'][0]), [
       'secure' => true,
       'httponly' => true,
@@ -113,47 +116,3 @@ $app->post('/account/save[/]', function ($req, $res, $args) {
   }
 });
 
-
-
-
-
-
-
-
-
-// fixit delete after debugging
-
-$app->get('/demo-resize', function ($req, $res, $args) {
-  // phpinfo();
-  // die;
-
-  $source = $_SERVER['DOCUMENT_ROOT'] .'/uploads/demo-o.jpg';
-  $destination = $_SERVER['DOCUMENT_ROOT'] .'/uploads/demo-r.jpg';
-
-
-
-
-
-
-  // $image = new \Gumlet\ImageResize($source);
-  // $image->scale(50);
-  // $image->save($destination);
-
-
-  // $image2 = new \Gumlet\ImageResize($source);
-  // $image2->resizeToBestFit(800, 600);
-  // $image2->save($_SERVER['DOCUMENT_ROOT'] .'/uploads/demo-r-800.jpg');
-
-
-
-  echo "<img src='/uploads/demo-r.jpg' style='width: 50%;' />";
-
-  echo "<img src='/uploads/demo-o.jpg' style='width: 50%;' />";
-
-
-
-  echo "<img src='/uploads/demo-r-800.jpg' style='' />";
-  // echo "<img src='/uploads/demo-r-300.jpg' style='' />";
-
-  return render::html($req, $res, '');
-});

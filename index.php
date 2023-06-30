@@ -1,4 +1,5 @@
 <?php
+
 /*
   ▲▼ DARKWAVE - 0.6.0 - https://github.com/hxgf/darkwave
   based on Slime - 1.2.1 - https://github.com/hxgf/slime
@@ -17,22 +18,9 @@ $GLOBALS['database'] = isset($_ENV['DB_HOST']) ? \VPHP\db::init([ 'host' => $_EN
 
 \Darkwave\dw::authenticate();
 
+$errorMiddleware = isset($_ENV['SITE_MODE']) && $_ENV['SITE_MODE'] == 'development' ? $app->addErrorMiddleware(true, true, true) : $app->addErrorMiddleware(false, false, false);
 
-// fixit move this to middleware
-
-if (isset($_ENV['SITE_MODE']) && $_ENV['SITE_MODE'] == 'development'){
-  $errorMiddleware = $app->addErrorMiddleware(true, true, true);
-}else{
-  $errorMiddleware = $app->addErrorMiddleware(false, false, false);
-}
-
-$errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, function (
-  \Psr\Http\Message\ServerRequestInterface $request,
-  \Throwable $exception,
-  bool $displayErrorDetails,
-  bool $logErrors,
-  bool $logErrorDetails
-) {
+$errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, function ( \Psr\Http\Message\ServerRequestInterface $request, \Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails ) {
   return \Slime\render::hbs($request, new \Slim\Psr7\Response(), [
     'template' => 'dw/error',
     'title' => '404 - NOT FOUND',
@@ -42,17 +30,6 @@ $errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, 
     ]
   ], 404);
 });
-
-
-
-
-
-
-
-
-
-
-
 
 require 'controllers/index.php';
 

@@ -1,25 +1,4 @@
 <label class="form-label">Avatar</label>
-
-<script src="/js/lib/dropzone.min.js"></script>
-<link rel="stylesheet" href="/css/lib/dropzone.min.css" type="text/css" />
-<link rel="stylesheet" href="/css/lib/tabler-vendors.min.css" type="text/css" />
-
-<style>
-  .upload-delete{
-    display: none;
-    opacity: 0.8;
-  }
-  .upload-delete:hover{
-    opacity: 1;
-  }
-  .preview-image:hover img {
-    opacity: .5;
-  }
-  .preview-image:hover .upload-delete{
-    display: block;
-  }
-</style>
-
 <div class="mb-3" data-dz-upload="avatar">
   <div class="preview-image position-relative w-75">
     {{#if data.avatar_medium}}
@@ -44,6 +23,7 @@
     </div>
   </div>
 </div>
+
 
 <script>
   Dropzone.autoDiscover = false;

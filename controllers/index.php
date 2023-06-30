@@ -1,12 +1,13 @@
 <?php
 
+foreach (glob("controllers/dw/*.php") as $file) {
+  require $file;
+}
+
 date_default_timezone_set('America/Chicago');
 
 use Slime\render;
 
-foreach (glob("controllers/dw/*.php") as $file) {
-  require $file;
-}
 
 
 $app->get('/', function ($req, $res, $args) {
@@ -25,6 +26,7 @@ $app->get('/', function ($req, $res, $args) {
 });
 
 
+
 $app->get('/demo/{page}[/]', function ($req, $res, $args) {
   $subnav = false;
   if ($args['page'] == 'first'){
@@ -32,17 +34,17 @@ $app->get('/demo/{page}[/]', function ($req, $res, $args) {
       [
         'href' => '?subnav=1',
         'title' => 'Subnav 1',
-        'current' => $_GET['subnav'] == '1' || $_GET['subnav'] == '' ? true : false
+        'current' => isset($_GET['subnav']) && $_GET['subnav'] == '1' || !isset($_GET['subnav']) ? true : false
       ], 
       [
         'href' => '?subnav=2',
         'title' => 'Subnav 2',
-        'current' => $_GET['subnav'] == '2' ? true : false
+        'current' => isset($_GET['subnav']) && $_GET['subnav'] == '2' ? true : false
       ],
       [
         'href' => '?subnav=3',
         'title' => 'Subnav 3',
-        'current' => $_GET['subnav'] == '3' ? true : false
+        'current' => isset($_GET['subnav']) && $_GET['subnav'] == '3' ? true : false
       ]
     ];
   }
@@ -51,17 +53,17 @@ $app->get('/demo/{page}[/]', function ($req, $res, $args) {
       [
         'href' => '?subnav=different-subnav',
         'title' => 'Different Subnav',
-        'current' => $_GET['subnav'] == 'different-subnav' || $_GET['subnav'] == '' ? true : false
+        'current' => isset($_GET['subnav']) && $_GET['subnav'] == 'different-subnav' || !isset($_GET['subnav']) ? true : false
       ], 
       [
         'href' => '?subnav=ok-cool',
         'title' => 'OK Cool',
-        'current' => $_GET['subnav'] == 'ok-cool' ? true : false
+        'current' => isset($_GET['subnav']) && $_GET['subnav'] == 'ok-cool' ? true : false
       ],
       [
         'href' => '?subnav=new-thing',
         'title' => '+ New Thing',
-        'current' => $_GET['subnav'] == 'new-thing' ? true : false
+        'current' => isset($_GET['subnav']) && $_GET['subnav'] == 'new-thing' ? true : false
       ]
     ];
   }

@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * DW Auth Register Routes / Controllers
+ * @version    0.6.0
+ * @author     Jonathan Youngblood <jy@hxgf.io>
+ */
 
 use Slime\render;
 use VPHP\db;

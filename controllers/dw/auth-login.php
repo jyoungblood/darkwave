@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * DW Auth Login Routes / Controllers
+ * @version    0.6.0
+ * @author     Jonathan Youngblood <jy@hxgf.io>
+ */
 
 use Slime\render;
 use VPHP\db;
@@ -20,11 +24,11 @@ $app->get('/login[/]', function ($req, $res, $args) {
 $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 	$email = trim(strtolower($_POST['email']));
 	$password = $_POST['password'];
-	$_user = db::find("users", "(email='".$email."' OR screenname='".$email."') AND validate_hash IS NULL");
+	$_user = db::find("users", "(email='".$email."' OR screenname='".$email."') AND validate_hash IS NULL AND group_id != '4'");
 	if ($_user['data'] && !$_POST['website']){
 		$user = $_user['data'][0];
 		// successful login
-		if ($user['group_id'] != 4 && password_verify($password, $user['password'])){
+		if (password_verify($password, $user['password'])){
 			// update user info
 			db::update("users", [
 			  'ua_header' => $_POST['ua'],
@@ -64,7 +68,6 @@ $app->post('/auth/login/process[/]', function ($req, $res, $args) {
 	}
 	return render::json($req, $res, $out);
 });
-
 
 
 

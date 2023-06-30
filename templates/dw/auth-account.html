@@ -1,4 +1,3 @@
-
 <div class="page-header d-print-none">
   <div class="container-xl">
     <div class="row g-2 align-items-center">
@@ -8,12 +7,11 @@
         </h2>
       </div>
       <div class="col-auto ms-auto d-print-none">
-
+        &nbsp;
       </div>
     </div>
   </div>
 </div>
-
 
 <div class="page-body" x-data="dw.edit_form()" @keyup.ctrl.enter.window="document.querySelector('[data-container=save] button').click()">
   <div class="container-xl">
@@ -24,7 +22,6 @@
             <form class="edit-form" action="javascript:void(0);">
             <div class="row">
               <div class="col-6">
-
                 <div class="mb-3 form-group required" data-validate="email">
                   <label class="form-label">Email</label>
                   <input type="email" class="form-control" name="email" value="{{data.email}}" autocomplete="off" x-on:blur="dw.validate_input({
@@ -40,12 +37,10 @@
                   })" />
                   <div class="invalid-feedback"></div>
                 </div>
-
                 <div class="mb-3 form-group">
                   <label class="form-label">New Password</label>
                   <input type="password" class="form-control" name="password" placeholder="*********" autocomplete="off" />
                 </div>
-
                 <div class="mb-3 form-group" data-validate="screenname">
                   <label class="form-label">Screen name</label>
                   <input type="text" class="form-control" name="screenname" value="{{data.screenname}}" autocomplete="off" x-on:blur="dw.validate_input({
@@ -61,7 +56,6 @@
                   })" />
                   <div class="invalid-feedback"></div>
                 </div>
-
                 <div class="row">
                   <div class="col-6">
                     <div class="mb-3 form-group">
@@ -69,7 +63,6 @@
                       <input type="text" class="form-control" name="first_name" value="{{data.first_name}}" autocomplete="off" />
                     </div>
                   </div>
-
                   <div class="col-6">
                     <div class="mb-3 form-group">
                       <label class="form-label">Last name</label>
@@ -77,20 +70,15 @@
                     </div>                      
                   </div>
                 </div>
-
               </div>
               <div class="col-6">
-
                 {{> dw/component-avatar-upload}}
-
               </div>
-
             </div>
             </form>
           </div>
           <div class="card-footer text-end">
             <div class="d-flex">
-
               <span data-container="save">
                 <button class="btn btn-primary" @click="save({
                   'url': '/account/save/',
@@ -102,7 +90,6 @@
                   }
                 })">Save</button>
               </span>
-
             </div>
           </div>
         </div>

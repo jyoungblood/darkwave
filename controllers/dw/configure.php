@@ -1,15 +1,19 @@
 <?php
 
+/**
+ * DW System Configuration Routes / Controllers
+ * @version    0.6.0
+ * @author     Jonathan Youngblood <jy@hxgf.io>
+ */
+
 use Slime\render;
 
 
 $app->get('/configure[/]', function ($req, $res, $args) {
-
   $digits    = array_flip(range('0', '9'));
   $lowercase = array_flip(range('a', 'z'));
   $uppercase = array_flip(range('A', 'Z')); 
   $special   = array_flip(str_split('*&!@%^#$'));
-
   return render::hbs($req, $res, [
     'layout' => '_layouts/base-guest',
     'template' => 'dw/configure',
@@ -24,10 +28,8 @@ $app->get('/configure[/]', function ($req, $res, $args) {
 
 
 $app->post('/configure/execute[/]', function ($req, $res, $args) {
-
   $out = [ 'success' => true ];
   parse_str($_POST['form'], $form);
-
   if (isset($form['create_default_users']) && $form['create_default_users'] == 'on'){
     if (isset($form['db_host']) && isset($form['db_name'])){
       try {
@@ -74,7 +76,6 @@ $app->post('/configure/execute[/]', function ($req, $res, $args) {
       }
     }
   }
-
   if ($out['success'] == true && isset($form['create_admin_user']) && $form['create_admin_user'] == 'on'){
     if (isset($GLOBALS['database'])){
       \VPHP\db::insert("users", [
@@ -90,7 +91,6 @@ $app->post('/configure/execute[/]', function ($req, $res, $args) {
       ]);
     }
   }
-
   if ($out['success'] == true){
     $env_file = 
 'SITE_TITLE = "'. $form['site_title'] .'"
@@ -99,7 +99,6 @@ SITE_URL = "'. $form['site_url'] .'"
 SITE_MODE = "development"
 JWT_SECRET="'. $form['jwt_secret'] .'"
     ';
-
     if (isset($form['db_host']) && isset($form['db_name']) && isset($form['db_user']) && isset($form['db_password'])){
       $env_file .= 
 'DB_HOST="'. $form['db_host'] .'"
@@ -109,14 +108,11 @@ DB_PASSWORD="'. $form['db_password'] .'"';
     }
     file_put_contents("./.env", $env_file);
   }
-
   if ($out['success'] == true && $form['delete_configure_files'] == 'on'){
     unlink("controllers/dw/configure.php");
     unlink("templates/dw/configure.html");
   }
-
   return render::json($req, $res, $out);
-
 });
 
 

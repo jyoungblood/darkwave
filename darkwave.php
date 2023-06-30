@@ -70,12 +70,8 @@ class dw {
   }
 
   public static function convert_image($args){
-
-
     $ext = strtolower(pathinfo($args['source'], PATHINFO_EXTENSION));
-
     $image = new \Gumlet\ImageResize($args['source']);
-
     if (isset($args['crop'])){
       if ($args['crop'] == 'center'){
         $image->crop($args['resize'][0], $args['resize'][1], true, \Gumlet\ImageResize::CROPCENTER);
@@ -92,7 +88,6 @@ class dw {
         }
       }
     }
-
     if (isset($args['quality'])){
       if ($ext == 'jpeg' || $ext == 'jpg'){
         $image->quality_jpg = $args['quality'];
@@ -104,15 +99,11 @@ class dw {
         $image->quality_webp = $args['quality'];
       }
     }
-
     $image->save($args['target']);
     $image = null;
-
     return true;
   }
 
-
-  
 }
 
 ?>
