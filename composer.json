@@ -15,7 +15,7 @@
   "require": {
     "slim/slim": "4.*",
     "slim/psr7": "^1.5",
-    "zordius/lightncandy": "dev-master",
+    "zordius/lightncandy": "^1.2",
     "hxgf/dbkit": "^1.2",
     "hxgf/cookie": "^1.1",
     "hxgf/http-request": "^1.2",

@@ -4,7 +4,7 @@ foreach (glob("controllers/dw/*.php") as $file) {
   require $file;
 }
 
-date_default_timezone_set('America/Chicago');
+// date_default_timezone_set('America/Chicago');
 
 use Slime\render;
 

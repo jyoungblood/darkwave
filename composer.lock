@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "14ef43db2188ae8b13624981a14e708d",
+    "content-hash": "5d9af56606a9fc582934c699bc3fe9c7",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -1694,30 +1694,28 @@
         },
         {
             "name": "zordius/lightncandy",
-            "version": "dev-master",
+            "version": "v1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zordius/lightncandy.git",
-                "reference": "2beab0f1add20a9ddaa58e5d229e52c1d1b9c3b0"
+                "reference": "b451f73e8b5c73e62e365997ba3c993a0376b72a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zordius/lightncandy/zipball/2beab0f1add20a9ddaa58e5d229e52c1d1b9c3b0",
-                "reference": "2beab0f1add20a9ddaa58e5d229e52c1d1b9c3b0",
+                "url": "https://api.github.com/repos/zordius/lightncandy/zipball/b451f73e8b5c73e62e365997ba3c993a0376b72a",
+                "reference": "b451f73e8b5c73e62e365997ba3c993a0376b72a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=7.1.0"
             },
             "require-dev": {
-                "php-coveralls/php-coveralls": "^2.1",
                 "phpunit/phpunit": ">=7"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2.6-dev"
+                    "dev-master": "1.2.5-dev"
                 }
             },
             "autoload": {
@@ -1746,17 +1744,15 @@
             ],
             "support": {
                 "issues": "https://github.com/zordius/lightncandy/issues",
-                "source": "https://github.com/zordius/lightncandy/tree/master"
+                "source": "https://github.com/zordius/lightncandy/tree/v1.2.6"
             },
-            "time": "2022-03-22T00:22:29+00:00"
+            "time": "2021-07-11T04:52:41+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "zordius/lightncandy": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

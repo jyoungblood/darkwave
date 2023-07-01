@@ -26,6 +26,8 @@
 
 
 <script>
-  Dropzone.autoDiscover = false;
-  dw.upload_initialize('avatar');
+  document.addEventListener("DOMContentLoaded", function () {
+    Dropzone.autoDiscover = false;
+    dw.upload_initialize('avatar');
+  });
 </script>
