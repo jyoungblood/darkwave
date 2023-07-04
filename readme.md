@@ -47,7 +47,7 @@ DW is a "batteries-included" tool kit for quickly developing data-driven web app
 
 
 ## Installation
-Composer is recommended for the easiest installation:
+Use Composer for the easiest installation:
 ```
 composer create-project hxgf/dw new-project-name
 ```
@@ -60,9 +60,7 @@ Darkwave is designed to function in a LAMP environment, so we recommend developi
 
 Of course, it's still possible to develop your application locally with the common `php -S localhost:8080` command. Just make sure you also have a MySQL host running in your local environemt as well ([MAMP](https://www.mamp.info/), [DBngn](https://github.com/TablePlus/DBngin), etc).
 
-Once you have your environemt set up, visit the url for your site to initiate the configuration process.
-
-The configuration process will generate a `.env` file with your database connection and basic site info and create an "Admin" user for your application.
+Once your environemt is set up, visit the url for your site to initiate the configuration process. This will generate a `.env` file with your database connection and basic site info and create an "Admin" user for your application.
 
 <sub>* Note that DW ships with a blank `.env` as part of the repository. It's required for the application to operate, but as a best practice we'd recommend adding this to the `.gitignore` before making your own repository with this codebase.</sub>
 
@@ -71,22 +69,22 @@ After configuration, log in with the newly-created admin account to see the boil
 
 
 ## Building with DW
-The [official documentation](https://darkwave.ltd/docs) and [user guide](https://darkwave.ltd/guide) are perpetual works in progress and may not be completely ready for a while. In the mean time, take a look at the various pieces of the `users` section to see a functional example of managing data collections and CRUD operations with this toolkit:
+The [official documentation](https://darkwave.ltd/docs) and [user guide](https://darkwave.ltd/guide) are perpetual works in progress and may not be completely ready for a while. In the mean time, take a look at the various pieces of the `users` section to see functional examples of how to manage data collections and perform CRUD operations with this tool kit:
 
 - [controllers/users.php](https://github.com/hxgf/darkwave/blob/master/controllers/dw/users.php)
 - [templates/dw/users-list.html](https://github.com/hxgf/darkwave/blob/master/templates/dw/users-list.html)
 - [templates/dw/users-edit.html](https://github.com/hxgf/darkwave/blob/master/templates/dw/users-edit.html)
 
-This section also provides examples of working with modals, input validation, image uploading and resizing, table sorting, and more. If you're looking for a "best practices" example of working with DW, this is a good place to start.
+This section also provides examples of working with modals, input validation, image uploading and resizing, table sorting, and more. If you're looking for a "best practices" illustration of working with DW, this is a good place to start.
 
 ## Deployment
-Deployment is intended to be pretty straightforward, just put the files in your production environment and you should be good to go. There are a few minor things worth considering:
+Deployment is intended to be very straightforward, just put the files in your production environment and you should be good to go. Aside from this, there are a few minor points worth considering:
 
 - In your production `.env` file, set the `SITE_MODE` variable to "production"
-- It's helpful to run the following commands to optimize your composer packages and css files:
+- It's helpful to run the following commands to optimize your composer packages and CSS files:
   - `composer update --optimize-autoloader`
-  - `purgecss --css css/lib/*.css --content "pages/**/*.hbs" --output css/build`
-- The [.htaccess](https://github.com/hxgf/darkwave/blob/master/.htaccess) file has certain file extensions disabled from being served by default for security purposes. If you need to enable any of them for your application (.json, for example), remember to be security conscious and deny access to specific files (composer.json) to prevent leaking sensitive information.
+  - `purgecss --css css/lib/*.css --content "templates/**/*.hbs" --output css/build`
+- For security purposes, the [.htaccess](https://github.com/hxgf/darkwave/blob/master/.htaccess) file has certain file extensions disabled from being served by default. If you need to enable any of them for your application (`.json`, for example), remember to be security conscious and deny access to specific files (`composer.json`, for example) to prevent leaking sensitive information.
 - Further performance and security optimizations can be made, of course, but be careful not to let the optimizing get in the way of providing value for your users and customers :)
 
 ## Reference and Resources
@@ -154,9 +152,9 @@ Deployment is intended to be pretty straightforward, just put the files in your 
 
 - **Subnav** - When using the default base template and components, a subnav can be easily added using a simple PHP array. See the `/demo` section of the [index controller](https://github.com/hxgf/darkwave/blob/master/controllers/index.php) and the `subnav` section of the [base template](https://github.com/hxgf/darkwave/blob/master/templates/_layouts/base.html).
 
-- **HBS helpers** - Slime-render provides a couple custom HBS helpers and makes it easy to add your own. See the `initialize_handlebars_helpers()` section of the [slime-render](https://github.com/hxgf/slime-render/blob/master/src/render.php) class for an example. The [HBS Cookbook](https://zordius.github.io/HandlebarsCookbook/) provides more information for building [simple](https://zordius.github.io/HandlebarsCookbook/0021-customhelper.html) and [block](https://zordius.github.io/HandlebarsCookbook/0022-blockhelper.html) custom helpers.
+- **HBS helpers** - [Slime-render](https://github.com/hxgf/slime-render) provides a couple custom HBS helpers and makes it easy to add your own. See the `initialize_handlebars_helpers()` section of the [slime-render](https://github.com/hxgf/slime-render/blob/master/src/render.php) class for an example. The [HBS Cookbook](https://zordius.github.io/HandlebarsCookbook/) provides more information for building [simple](https://zordius.github.io/HandlebarsCookbook/0021-customhelper.html) and [block](https://zordius.github.io/HandlebarsCookbook/0022-blockhelper.html) custom helpers.
 
 - **More BS components** - There are <em>A LOT</em> of Bootstrap components out there. The official [BS examples](https://getbootstrap.com/docs/5.3/examples/) and [BS cheatsheet](https://getbootstrap.com/docs/5.3/examples/cheatsheet/) are good places to start.
 
-- **Customizing Tabler** - Tabler is designed to be easy to customized with css variables added to the `:root` element. See the [Tabler docs](https://tabler.io/docs/getting-started/customize) for a customization example, and [tabler.css](https://github.com/tabler/tabler/blob/dev/dist/css/tabler.css) for the default variable names and values.
+- **Customizing Tabler** - Tabler is designed to be easily customized with CSS variables added to the `:root` element. See the [Tabler docs](https://tabler.io/docs/getting-started/customize) for a customization example, and [tabler.css](https://github.com/tabler/tabler/blob/dev/dist/css/tabler.css) for the default variable names and values.
 
