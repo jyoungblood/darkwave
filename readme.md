@@ -56,7 +56,7 @@ You could also [download the zip](https://github.com/hxgf/darkwave/archive/refs/
 
 
 ## Getting Started
-Darkwave is designed to function in a LAMP environment, so we recommend developing on an actual web server (VPS, shared php host, etc)
+Darkwave is designed to function in a LAMP environment, so we recommend developing on an actual web server (VPS or shared host).
 
 Of course, it's still possible to develop your application locally with the common `php -S localhost:8080` command. Just make sure you also have a MySQL host running in your local environemt as well ([MAMP](https://www.mamp.info/), [DBngn](https://github.com/TablePlus/DBngin), etc).
 
