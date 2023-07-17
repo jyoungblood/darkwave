@@ -97,11 +97,10 @@ $app->post('/configure/execute[/]', function ($req, $res, $args) {
 SITE_CODE = "'. $form['site_code'] .'"
 SITE_URL = "'. $form['site_url'] .'"
 SITE_MODE = "development"
-JWT_SECRET="'. $form['jwt_secret'] .'"
-    ';
+JWT_SECRET="'. $form['jwt_secret'] .'"';
     if (isset($form['db_host']) && isset($form['db_name']) && isset($form['db_user']) && isset($form['db_password'])){
-      $env_file .= 
-'DB_HOST="'. $form['db_host'] .'"
+      $env_file .= '
+DB_HOST="'. $form['db_host'] .'"
 DB_NAME="'. $form['db_name'] .'"
 DB_USER="'. $form['db_user'] .'"
 DB_PASSWORD="'. $form['db_password'] .'"';
