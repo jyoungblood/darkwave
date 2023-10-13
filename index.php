@@ -1,7 +1,7 @@
 <?php
 
 /*
-  ▲▼ DARKWAVE - 0.6.0 - https://github.com/hxgf/darkwave
+  ▲▼ DARKWAVE - 0.6.1 - https://github.com/hxgf/darkwave
   based on Slime - 1.2.1 - https://github.com/hxgf/slime
 */
 

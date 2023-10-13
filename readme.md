@@ -52,7 +52,7 @@ Use Composer for the easiest installation:
 composer create-project hxgf/dw new-project-name
 ```
 
-You could also [download the zip](https://github.com/hxgf/darkwave/archive/refs/tags/0.6.0.zip) with all the files, or clone this repository with GIT or Degit (`npx degit hxgf/darkwave`). If you do any of these, be sure to run `composer install` the files are on your system.
+You could also [download the zip](https://github.com/hxgf/darkwave/archive/refs/tags/0.6.1.zip) with all the files, or clone this repository with GIT or Degit (`npx degit hxgf/darkwave`). If you do any of these, be sure to run `composer install` the files are on your system.
 
 
 ## Getting Started
