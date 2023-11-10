@@ -19,12 +19,13 @@
             <form class="edit-form" action="javascript:void(0);">
               <div class="row">
                 <div class="col-6">
-                  <div class="mb-3 form-group required" data-validate="email">
+                  <div class="mb-3 form-group" data-validate="email">
                     <label class="form-label">Email</label>
                     <input type="email" class="form-control" name="email" value="{{data.email}}" autocomplete="off" x-on:blur="dw.validate_input({
                       input: 'email',
                       element: $event.target,
                       required: true,
+                      is_email: true,
                       unique: {
                         collection: 'users',
                         field: 'email',
@@ -34,7 +35,7 @@
                     })" />
                     <div class="invalid-feedback"></div>
                   </div>
-                  <div class="mb-3 form-group {{#is _id "==" "new"}}required{{/is}}" data-validate="password">
+                  <div class="mb-3 form-group {{#is _id "==" "new"}}data-validate="password"{{/is}}">
                     <label class="form-label">New Password</label>
                     <input type="password" class="form-control" name="password" placeholder="*********" autocomplete="off"
                       {{#is _id "==" "new"}}
@@ -47,7 +48,7 @@
                     />
                     <div class="invalid-feedback"></div>
                   </div>
-                  <div class="mb-3 form-group required" data-validate="screenname">
+                  <div class="mb-3 form-group" data-validate="screenname">
                     <label class="form-label">Screen name</label>
                     <input type="text" class="form-control" name="screenname" autocomplete="off" value="{{data.screenname}}" autocomplete="off" x-on:blur="dw.validate_input({
                       input: 'screenname',

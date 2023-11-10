@@ -7,12 +7,13 @@
     <div class="card p-3 shadow rounded-3">
       <div class="card-body py-3">
         <h2 class="h2 text-center mb-4">Register a new account</h2>
-        <div class="mb-4 form-group required" data-validate="email">
+        <div class="mb-4 form-group" data-validate="email">
           <label class="form-label">Email</label>
           <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:blur="dw.validate_input({
             input: 'email',
             element: $event.target,
             required: true,
+            is_email: true,
             unique: {
               collection: 'users',
               field: 'email',
@@ -21,7 +22,7 @@
           })" />
           <div class="invalid-feedback"></div>
         </div>
-        <div class="mb-4 form-group required" data-validate="password">
+        <div class="mb-4 form-group" data-validate="password">
           <label class="form-label">Password</label>
           <input name="password" type="password" class="form-control" placeholder="*********" autocomplete="off" x-on:blur="dw.validate_input({
             input: 'password',
@@ -30,7 +31,7 @@
           })" />
           <div class="invalid-feedback"></div>
         </div>
-        <div class="mb-4 form-group required" data-validate="screenname">
+        <div class="mb-4 form-group" data-validate="screenname">
           <label class="form-label">Screen Name</label>
           <input name="screenname" type="text" class="form-control" autocomplete="off" x-on:blur="dw.validate_input({
             input: 'screenname',

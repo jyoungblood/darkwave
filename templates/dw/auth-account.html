@@ -22,12 +22,13 @@
             <form class="edit-form" action="javascript:void(0);">
             <div class="row">
               <div class="col-6">
-                <div class="mb-3 form-group required" data-validate="email">
+                <div class="mb-3 form-group" data-validate="email">
                   <label class="form-label">Email</label>
                   <input type="email" class="form-control" name="email" value="{{data.email}}" autocomplete="off" x-on:blur="dw.validate_input({
                     input: 'email',
                     element: $event.target,
                     required: true,
+                    is_email: true,
                     unique: {
                       collection: 'users',
                       field: 'email',
