@@ -16,8 +16,8 @@ DW is a "batteries-included" tool kit for quickly developing data-driven web app
 - [Tabler](https://tabler.io/) - Bootstrap-based UI kit
 - [Alpine.js](https://alpinejs.dev/) - JS utility framework
 - [htmx](https://htmx.org//) - utilities for AJAX, CSS transitions, websockets, SSE
-- [DW Utilities (PHP)](https://github.com/hxgf/dw-utilities-php) - back-end utility functions for authentication, image conversion, etc.
-- [DW Utilities (JS)](https://github.com/hxgf/dw-utilities-js) - front-end utility functions for authentication, modals, form handlers, etc.
+- [DW Utilities (PHP)](https://github.com/jyoungblood/dw-utilities-php) - back-end utility functions for authentication, image conversion, etc.
+- [DW Utilities (JS)](https://github.com/jyoungblood/dw-utilities-js) - front-end utility functions for authentication, modals, form handlers, etc.
 - [php-image-resize](https://github.com/gumlet/php-image-resize) - GD-based image manipulation library
 - [phpdotenv](https://github.com/vlucas/phpdotenv) - automatic .env variable loading
 - [psr-jwt](https://github.com/RobDWaller/psr-jwt) - PSR-compliant JWT middleware
@@ -49,10 +49,10 @@ DW is a "batteries-included" tool kit for quickly developing data-driven web app
 ## Installation
 Use Composer for the easiest installation:
 ```
-composer create-project hxgf/dw new-project-name
+composer create-project jyoungblood/dw new-project-name
 ```
 
-You could also [download the zip](https://github.com/hxgf/darkwave/archive/refs/tags/0.6.1.zip) with all the files, or clone this repository with GIT or Degit (`npx degit hxgf/darkwave`). If you do any of these, be sure to run `composer install` the files are on your system.
+You could also [download the zip](https://github.com/jyoungblood/darkwave/archive/refs/tags/0.6.1.zip) with all the files, or clone this repository with GIT or Degit (`npx degit jyoungblood/darkwave`). If you do any of these, be sure to run `composer install` the files are on your system.
 
 
 ## Getting Started
@@ -71,9 +71,9 @@ After configuration, log in with the newly-created admin account to see the boil
 ## Building with DW
 The [official documentation](https://darkwave.ltd/docs) and [user guide](https://darkwave.ltd/guide) are perpetual works in progress and may not be completely ready for a while. In the mean time, take a look at the various pieces of the `users` section to see functional examples of how to manage data collections and perform CRUD operations with this tool kit:
 
-- [controllers/users.php](https://github.com/hxgf/darkwave/blob/master/controllers/dw/users.php)
-- [templates/dw/users-list.html](https://github.com/hxgf/darkwave/blob/master/templates/dw/users-list.html)
-- [templates/dw/users-edit.html](https://github.com/hxgf/darkwave/blob/master/templates/dw/users-edit.html)
+- [controllers/users.php](https://github.com/jyoungblood/darkwave/blob/master/controllers/dw/users.php)
+- [templates/dw/users-list.html](https://github.com/jyoungblood/darkwave/blob/master/templates/dw/users-list.html)
+- [templates/dw/users-edit.html](https://github.com/jyoungblood/darkwave/blob/master/templates/dw/users-edit.html)
 
 This section also provides examples of working with modals, input validation, image uploading and resizing, table sorting, and more. If you're looking for a "best practices" illustration of working with DW, this is a good place to start.
 
@@ -84,7 +84,7 @@ Deployment is intended to be very straightforward, just put the files in your pr
 - It's helpful to run the following commands to optimize your composer packages and CSS files:
   - `composer update --optimize-autoloader`
   - `purgecss --css css/lib/*.css --content "templates/**/*.hbs" --output css/build`
-- For security purposes, the [.htaccess](https://github.com/hxgf/darkwave/blob/master/.htaccess) file has certain file extensions disabled from being served by default. If you need to enable any of them for your application (`.json`, for example), remember to be security conscious and deny access to specific files (`composer.json`, for example) to prevent leaking sensitive information.
+- For security purposes, the [.htaccess](https://github.com/jyoungblood/darkwave/blob/master/.htaccess) file has certain file extensions disabled from being served by default. If you need to enable any of them for your application (`.json`, for example), remember to be security conscious and deny access to specific files (`composer.json`, for example) to prevent leaking sensitive information.
 - Further performance and security optimizations can be made, of course, but be careful not to let the optimizing get in the way of providing value for your users and customers :)
 
 ## Reference and Resources
@@ -106,10 +106,10 @@ Deployment is intended to be very straightforward, just put the files in your pr
 - [DW field guide](https://darkwave.ltd/guide)
 - [Slim 4 docs](https://www.slimframework.com/docs/v4/)
 - [Slim 4 cheatsheet](https://blog.programster.org/slim-4-cheatsheet)
-- [SLIME Render](https://github.com/hxgf/slime-render)
-- [VPHP - DB Kit](https://github.com/hxgf/dbkit)
-- [VPHP - X-Utilities](https://github.com/hxgf/x-utilities)
-- [VPHP - HTTP Request](https://github.com/hxgf/http-request)
+- [SLIME Render](https://github.com/jyoungblood/slime-render)
+- [VPHP - DB Kit](https://github.com/jyoungblood/dbkit)
+- [VPHP - X-Utilities](https://github.com/jyoungblood/x-utilities)
+- [VPHP - HTTP Request](https://github.com/jyoungblood/http-request)
 - [HBS Cookbook](https://zordius.github.io/HandlebarsCookbook/)
 - [HBS Cheatsheet](https://gist.github.com/nessthehero/4ea763350fc93100f002)
 
@@ -150,9 +150,9 @@ Deployment is intended to be very straightforward, just put the files in your pr
 #### Misc
 
 
-- **Subnav** - When using the default base template and components, a subnav can be easily added using a simple PHP array. See the `/demo` section of the [index controller](https://github.com/hxgf/darkwave/blob/master/controllers/index.php) and the `subnav` section of the [base template](https://github.com/hxgf/darkwave/blob/master/templates/_layouts/base.html).
+- **Subnav** - When using the default base template and components, a subnav can be easily added using a simple PHP array. See the `/demo` section of the [index controller](https://github.com/jyoungblood/darkwave/blob/master/controllers/index.php) and the `subnav` section of the [base template](https://github.com/jyoungblood/darkwave/blob/master/templates/_layouts/base.html).
 
-- **HBS helpers** - [Slime-render](https://github.com/hxgf/slime-render) provides a couple custom HBS helpers and makes it easy to add your own. See the `initialize_handlebars_helpers()` section of the [slime-render](https://github.com/hxgf/slime-render/blob/master/src/render.php) class for an example. The [HBS Cookbook](https://zordius.github.io/HandlebarsCookbook/) provides more information for building [simple](https://zordius.github.io/HandlebarsCookbook/0021-customhelper.html) and [block](https://zordius.github.io/HandlebarsCookbook/0022-blockhelper.html) custom helpers.
+- **HBS helpers** - [Slime-render](https://github.com/jyoungblood/slime-render) provides a couple custom HBS helpers and makes it easy to add your own. See the `initialize_handlebars_helpers()` section of the [slime-render](https://github.com/jyoungblood/slime-render/blob/master/src/render.php) class for an example. The [HBS Cookbook](https://zordius.github.io/HandlebarsCookbook/) provides more information for building [simple](https://zordius.github.io/HandlebarsCookbook/0021-customhelper.html) and [block](https://zordius.github.io/HandlebarsCookbook/0022-blockhelper.html) custom helpers.
 
 - **More BS components** - There are <em>A LOT</em> of Bootstrap components out there. The official [BS examples](https://getbootstrap.com/docs/5.3/examples/) and [BS cheatsheet](https://getbootstrap.com/docs/5.3/examples/cheatsheet/) are good places to start.
 

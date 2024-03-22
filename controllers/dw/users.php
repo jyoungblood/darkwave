@@ -2,7 +2,7 @@
 
 /**
  * DW User Management Routes / Controllers
- * @version    0.6.0
+ * @version    0.6.1
  * @author     Jonathan Youngblood <jy@hxgf.io>
  */
 
@@ -12,7 +12,7 @@ use VPHP\db;
 
 
 $app->get('/users[/]', function ($req, $res, $args) {
-  if (isset($GLOBALS['auth']) && !isset($GLOBALS['is_admin'])){
+  if (!(isset($GLOBALS['auth']) && isset($GLOBALS['is_admin']))){
     return render::hbs($req, $res, [
       'template' => 'error',
       'title' => '401 - Unauthorized',
@@ -43,7 +43,7 @@ $app->get('/users[/]', function ($req, $res, $args) {
 
 
 $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
-  if (isset($GLOBALS['auth']) && !isset($GLOBALS['is_admin'])){
+  if (!(isset($GLOBALS['auth']) && isset($GLOBALS['is_admin']))){
     return render::hbs($req, $res, [
       'template' => 'error',
       'status' => 401,
@@ -79,7 +79,7 @@ $app->get('/users/edit/{user_id}[/]', function ($req, $res, $args) {
 
 
 $app->post('/users/save[/]', function ($req, $res, $args) {
-  if (isset($GLOBALS['auth']) && !isset($GLOBALS['is_admin'])){
+  if (!(isset($GLOBALS['auth']) && isset($GLOBALS['is_admin']))){
     return render::json($req, $res, [
       'error_code' => 401,
       'error_message' => 'You are not authorized to use this resource.'
@@ -182,7 +182,7 @@ $app->post('/users/save[/]', function ($req, $res, $args) {
 
 
 $app->post('/users/delete[/]', function ($req, $res, $args) {
-  if (isset($GLOBALS['auth']) && !isset($GLOBALS['is_admin'])){
+  if (!(isset($GLOBALS['auth']) && isset($GLOBALS['is_admin']))){
     return render::json($req, $res, [
       'error_code' => 401,
       'error_message' => 'You are not authorized to use this resource.'

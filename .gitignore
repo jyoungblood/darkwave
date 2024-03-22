@@ -1,3 +1,5 @@
 /vendor
+# .env
 .vscode
 .DS_Store
+error_log
