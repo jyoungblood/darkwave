@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5d9af56606a9fc582934c699bc3fe9c7",
+    "content-hash": "cdd26ee48330f74fd6ad7896c68145b4",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -64,24 +64,24 @@
         },
         {
             "name": "graham-campbell/result-type",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GrahamCampbell/Result-Type.git",
-                "reference": "672eff8cf1d6fe1ef09ca0f89c4b287d6a3eb831"
+                "reference": "fbd48bce38f73f8a4ec8583362e732e4095e5862"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Result-Type/zipball/672eff8cf1d6fe1ef09ca0f89c4b287d6a3eb831",
-                "reference": "672eff8cf1d6fe1ef09ca0f89c4b287d6a3eb831",
+                "url": "https://api.github.com/repos/GrahamCampbell/Result-Type/zipball/fbd48bce38f73f8a4ec8583362e732e4095e5862",
+                "reference": "fbd48bce38f73f8a4ec8583362e732e4095e5862",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2.5 || ^8.0",
-                "phpoption/phpoption": "^1.9.1"
+                "phpoption/phpoption": "^1.9.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.5.32 || ^9.6.3 || ^10.0.12"
+                "phpunit/phpunit": "^8.5.34 || ^9.6.13 || ^10.4.2"
             },
             "type": "library",
             "autoload": {
@@ -110,7 +110,7 @@
             ],
             "support": {
                 "issues": "https://github.com/GrahamCampbell/Result-Type/issues",
-                "source": "https://github.com/GrahamCampbell/Result-Type/tree/v1.1.1"
+                "source": "https://github.com/GrahamCampbell/Result-Type/tree/v1.1.2"
             },
             "funding": [
                 {
@@ -122,7 +122,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-25T20:23:15+00:00"
+            "time": "2023-11-12T22:16:48+00:00"
         },
         {
             "name": "gumlet/php-image-resize",
@@ -184,16 +184,16 @@
             "time": "2023-10-11T14:16:03+00:00"
         },
         {
-            "name": "hxgf/cookie",
+            "name": "jyoungblood/cookie",
             "version": "1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hxgf/cookie.git",
+                "url": "https://github.com/jyoungblood/cookie.git",
                 "reference": "11b16dfe0170d2f9c35856f0475decf6086c57e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/cookie/zipball/11b16dfe0170d2f9c35856f0475decf6086c57e6",
+                "url": "https://api.github.com/repos/jyoungblood/cookie/zipball/11b16dfe0170d2f9c35856f0475decf6086c57e6",
                 "reference": "11b16dfe0170d2f9c35856f0475decf6086c57e6",
                 "shasum": ""
             },
@@ -223,22 +223,22 @@
                 "utilities"
             ],
             "support": {
-                "issues": "https://github.com/hxgf/cookie/issues",
-                "source": "https://github.com/hxgf/cookie/tree/1.1.0"
+                "issues": "https://github.com/jyoungblood/cookie/issues",
+                "source": "https://github.com/jyoungblood/cookie/tree/1.1.0"
             },
             "time": "2023-01-17T20:25:09+00:00"
         },
         {
-            "name": "hxgf/dbkit",
+            "name": "jyoungblood/dbkit",
             "version": "1.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hxgf/dbkit.git",
+                "url": "https://github.com/jyoungblood/dbkit.git",
                 "reference": "1bb3d4028d4736a3178ec472c6bb82f0df54d04f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/dbkit/zipball/1bb3d4028d4736a3178ec472c6bb82f0df54d04f",
+                "url": "https://api.github.com/repos/jyoungblood/dbkit/zipball/1bb3d4028d4736a3178ec472c6bb82f0df54d04f",
                 "reference": "1bb3d4028d4736a3178ec472c6bb82f0df54d04f",
                 "shasum": ""
             },
@@ -270,22 +270,22 @@
                 "utilities"
             ],
             "support": {
-                "issues": "https://github.com/hxgf/dbkit/issues",
-                "source": "https://github.com/hxgf/dbkit/tree/1.2.0"
+                "issues": "https://github.com/jyoungblood/dbkit/issues",
+                "source": "https://github.com/jyoungblood/dbkit/tree/1.2.0"
             },
             "time": "2023-01-17T20:25:32+00:00"
         },
         {
-            "name": "hxgf/http-request",
+            "name": "jyoungblood/http-request",
             "version": "1.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hxgf/http-request.git",
+                "url": "https://github.com/jyoungblood/http-request.git",
                 "reference": "74a359757db3fc0049932508e71db7f0edb453ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/http-request/zipball/74a359757db3fc0049932508e71db7f0edb453ab",
+                "url": "https://api.github.com/repos/jyoungblood/http-request/zipball/74a359757db3fc0049932508e71db7f0edb453ab",
                 "reference": "74a359757db3fc0049932508e71db7f0edb453ab",
                 "shasum": ""
             },
@@ -316,22 +316,22 @@
                 "utilities"
             ],
             "support": {
-                "issues": "https://github.com/hxgf/http-request/issues",
-                "source": "https://github.com/hxgf/http-request/tree/1.2.0"
+                "issues": "https://github.com/jyoungblood/http-request/issues",
+                "source": "https://github.com/jyoungblood/http-request/tree/1.2.0"
             },
             "time": "2023-01-17T20:25:42+00:00"
         },
         {
-            "name": "hxgf/slime-render",
+            "name": "jyoungblood/slime-render",
             "version": "1.3.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hxgf/slime-render.git",
+                "url": "https://github.com/jyoungblood/slime-render.git",
                 "reference": "df01a1c010a42309c2ff227d1c88d2c580924cf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/slime-render/zipball/df01a1c010a42309c2ff227d1c88d2c580924cf8",
+                "url": "https://api.github.com/repos/jyoungblood/slime-render/zipball/df01a1c010a42309c2ff227d1c88d2c580924cf8",
                 "reference": "df01a1c010a42309c2ff227d1c88d2c580924cf8",
                 "shasum": ""
             },
@@ -365,22 +365,22 @@
                 "view helpers"
             ],
             "support": {
-                "issues": "https://github.com/hxgf/slime-render/issues",
-                "source": "https://github.com/hxgf/slime-render/tree/1.3.2"
+                "issues": "https://github.com/jyoungblood/slime-render/issues",
+                "source": "https://github.com/jyoungblood/slime-render/tree/1.3.2"
             },
             "time": "2023-11-01T21:44:07+00:00"
         },
         {
-            "name": "hxgf/x-utilities",
+            "name": "jyoungblood/x-utilities",
             "version": "1.2.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hxgf/x-utilities.git",
+                "url": "https://github.com/jyoungblood/x-utilities.git",
                 "reference": "44132d599fec54f47ba6ad337e92ef19ab495a1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hxgf/x-utilities/zipball/44132d599fec54f47ba6ad337e92ef19ab495a1f",
+                "url": "https://api.github.com/repos/jyoungblood/x-utilities/zipball/44132d599fec54f47ba6ad337e92ef19ab495a1f",
                 "reference": "44132d599fec54f47ba6ad337e92ef19ab495a1f",
                 "shasum": ""
             },
@@ -408,8 +408,8 @@
                 "utilities"
             ],
             "support": {
-                "issues": "https://github.com/hxgf/x-utilities/issues",
-                "source": "https://github.com/hxgf/x-utilities/tree/1.2.1"
+                "issues": "https://github.com/jyoungblood/x-utilities/issues",
+                "source": "https://github.com/jyoungblood/x-utilities/tree/1.2.1"
             },
             "time": "2023-06-30T18:13:04+00:00"
         },
@@ -465,16 +465,16 @@
         },
         {
             "name": "nyholm/psr7",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nyholm/psr7.git",
-                "reference": "3cb4d163b58589e47b35103e8e5e6a6a475b47be"
+                "reference": "aa5fc277a4f5508013d571341ade0c3886d4d00e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/3cb4d163b58589e47b35103e8e5e6a6a475b47be",
-                "reference": "3cb4d163b58589e47b35103e8e5e6a6a475b47be",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/aa5fc277a4f5508013d571341ade0c3886d4d00e",
+                "reference": "aa5fc277a4f5508013d571341ade0c3886d4d00e",
                 "shasum": ""
             },
             "require": {
@@ -527,7 +527,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Nyholm/psr7/issues",
-                "source": "https://github.com/Nyholm/psr7/tree/1.8.0"
+                "source": "https://github.com/Nyholm/psr7/tree/1.8.1"
             },
             "funding": [
                 {
@@ -539,20 +539,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-05-02T11:26:24+00:00"
+            "time": "2023-11-13T09:31:12+00:00"
         },
         {
             "name": "phpoption/phpoption",
-            "version": "1.9.1",
+            "version": "1.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/php-option.git",
-                "reference": "dd3a383e599f49777d8b628dadbb90cae435b87e"
+                "reference": "80735db690fe4fc5c76dfa7f9b770634285fa820"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/dd3a383e599f49777d8b628dadbb90cae435b87e",
-                "reference": "dd3a383e599f49777d8b628dadbb90cae435b87e",
+                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/80735db690fe4fc5c76dfa7f9b770634285fa820",
+                "reference": "80735db690fe4fc5c76dfa7f9b770634285fa820",
                 "shasum": ""
             },
             "require": {
@@ -560,7 +560,7 @@
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8.2",
-                "phpunit/phpunit": "^8.5.32 || ^9.6.3 || ^10.0.12"
+                "phpunit/phpunit": "^8.5.34 || ^9.6.13 || ^10.4.2"
             },
             "type": "library",
             "extra": {
@@ -602,7 +602,7 @@
             ],
             "support": {
                 "issues": "https://github.com/schmittjoh/php-option/issues",
-                "source": "https://github.com/schmittjoh/php-option/tree/1.9.1"
+                "source": "https://github.com/schmittjoh/php-option/tree/1.9.2"
             },
             "funding": [
                 {
@@ -614,7 +614,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-25T19:38:58+00:00"
+            "time": "2023-11-12T21:59:55+00:00"
         },
         {
             "name": "psr/container",
@@ -1192,16 +1192,16 @@
         },
         {
             "name": "slim/slim",
-            "version": "4.12.0",
+            "version": "4.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Slim.git",
-                "reference": "e9e99c2b24398b967841c6c4c3048622cc7e2b18"
+                "reference": "038fd5713d5a41636fdff0e8dcceedecdd17fc17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Slim/zipball/e9e99c2b24398b967841c6c4c3048622cc7e2b18",
-                "reference": "e9e99c2b24398b967841c6c4c3048622cc7e2b18",
+                "url": "https://api.github.com/repos/slimphp/Slim/zipball/038fd5713d5a41636fdff0e8dcceedecdd17fc17",
+                "reference": "038fd5713d5a41636fdff0e8dcceedecdd17fc17",
                 "shasum": ""
             },
             "require": {
@@ -1210,7 +1210,7 @@
                 "php": "^7.4 || ^8.0",
                 "psr/container": "^1.0 || ^2.0",
                 "psr/http-factory": "^1.0",
-                "psr/http-message": "^1.1",
+                "psr/http-message": "^1.1 || ^2.0",
                 "psr/http-server-handler": "^1.0",
                 "psr/http-server-middleware": "^1.0",
                 "psr/log": "^1.1 || ^2.0 || ^3.0"
@@ -1218,19 +1218,19 @@
             "require-dev": {
                 "adriansuter/php-autoload-override": "^1.4",
                 "ext-simplexml": "*",
-                "guzzlehttp/psr7": "^2.5",
+                "guzzlehttp/psr7": "^2.6",
                 "httpsoft/http-message": "^1.1",
                 "httpsoft/http-server-request": "^1.1",
-                "laminas/laminas-diactoros": "^2.17",
+                "laminas/laminas-diactoros": "^2.17 || ^3",
                 "nyholm/psr7": "^1.8",
-                "nyholm/psr7-server": "^1.0",
-                "phpspec/prophecy": "^1.17",
-                "phpspec/prophecy-phpunit": "^2.0",
+                "nyholm/psr7-server": "^1.1",
+                "phpspec/prophecy": "^1.19",
+                "phpspec/prophecy-phpunit": "^2.1",
                 "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^9.6",
                 "slim/http": "^1.3",
                 "slim/psr7": "^1.6",
-                "squizlabs/php_codesniffer": "^3.7"
+                "squizlabs/php_codesniffer": "^3.9"
             },
             "suggest": {
                 "ext-simplexml": "Needed to support XML format in BodyParsingMiddleware",
@@ -1303,20 +1303,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-23T04:54:29+00:00"
+            "time": "2024-03-03T21:25:30+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.28.0",
+            "version": "v1.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "ea208ce43cbb04af6867b4fdddb1bdbf84cc28cb"
+                "reference": "ef4d7e442ca910c4764bce785146269b30cb5fc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/ea208ce43cbb04af6867b4fdddb1bdbf84cc28cb",
-                "reference": "ea208ce43cbb04af6867b4fdddb1bdbf84cc28cb",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/ef4d7e442ca910c4764bce785146269b30cb5fc4",
+                "reference": "ef4d7e442ca910c4764bce785146269b30cb5fc4",
                 "shasum": ""
             },
             "require": {
@@ -1330,9 +1330,6 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.28-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -1369,7 +1366,7 @@
                 "portable"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.28.0"
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -1385,20 +1382,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-26T09:26:14+00:00"
+            "time": "2024-01-29T20:11:03+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.28.0",
+            "version": "v1.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "42292d99c55abe617799667f454222c54c60e229"
+                "reference": "9773676c8a1bb1f8d4340a62efe641cf76eda7ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/42292d99c55abe617799667f454222c54c60e229",
-                "reference": "42292d99c55abe617799667f454222c54c60e229",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/9773676c8a1bb1f8d4340a62efe641cf76eda7ec",
+                "reference": "9773676c8a1bb1f8d4340a62efe641cf76eda7ec",
                 "shasum": ""
             },
             "require": {
@@ -1412,9 +1409,6 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.28-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -1452,7 +1446,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.28.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -1468,20 +1462,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-28T09:04:16+00:00"
+            "time": "2024-01-29T20:11:03+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.28.0",
+            "version": "v1.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "6caa57379c4aec19c0a12a38b59b26487dcfe4b5"
+                "reference": "87b68208d5c1188808dd7839ee1e6c8ec3b02f1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/6caa57379c4aec19c0a12a38b59b26487dcfe4b5",
-                "reference": "6caa57379c4aec19c0a12a38b59b26487dcfe4b5",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/87b68208d5c1188808dd7839ee1e6c8ec3b02f1b",
+                "reference": "87b68208d5c1188808dd7839ee1e6c8ec3b02f1b",
                 "shasum": ""
             },
             "require": {
@@ -1489,9 +1483,6 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.28-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -1535,7 +1526,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.28.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -1551,35 +1542,35 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-26T09:26:14+00:00"
+            "time": "2024-01-29T20:11:03+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v5.5.0",
+            "version": "v5.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "1a7ea2afc49c3ee6d87061f5a233e3a035d0eae7"
+                "reference": "2cf9fb6054c2bb1d59d1f3817706ecdb9d2934c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/1a7ea2afc49c3ee6d87061f5a233e3a035d0eae7",
-                "reference": "1a7ea2afc49c3ee6d87061f5a233e3a035d0eae7",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/2cf9fb6054c2bb1d59d1f3817706ecdb9d2934c4",
+                "reference": "2cf9fb6054c2bb1d59d1f3817706ecdb9d2934c4",
                 "shasum": ""
             },
             "require": {
                 "ext-pcre": "*",
-                "graham-campbell/result-type": "^1.0.2",
-                "php": "^7.1.3 || ^8.0",
-                "phpoption/phpoption": "^1.8",
-                "symfony/polyfill-ctype": "^1.23",
-                "symfony/polyfill-mbstring": "^1.23.1",
-                "symfony/polyfill-php80": "^1.23.1"
+                "graham-campbell/result-type": "^1.1.2",
+                "php": "^7.2.5 || ^8.0",
+                "phpoption/phpoption": "^1.9.2",
+                "symfony/polyfill-ctype": "^1.24",
+                "symfony/polyfill-mbstring": "^1.24",
+                "symfony/polyfill-php80": "^1.24"
             },
             "require-dev": {
-                "bamarni/composer-bin-plugin": "^1.4.1",
+                "bamarni/composer-bin-plugin": "^1.8.2",
                 "ext-filter": "*",
-                "phpunit/phpunit": "^7.5.20 || ^8.5.30 || ^9.5.25"
+                "phpunit/phpunit": "^8.5.34 || ^9.6.13 || ^10.4.2"
             },
             "suggest": {
                 "ext-filter": "Required to use the boolean validator."
@@ -1591,7 +1582,7 @@
                     "forward-command": true
                 },
                 "branch-alias": {
-                    "dev-master": "5.5-dev"
+                    "dev-master": "5.6-dev"
                 }
             },
             "autoload": {
@@ -1623,7 +1614,7 @@
             ],
             "support": {
                 "issues": "https://github.com/vlucas/phpdotenv/issues",
-                "source": "https://github.com/vlucas/phpdotenv/tree/v5.5.0"
+                "source": "https://github.com/vlucas/phpdotenv/tree/v5.6.0"
             },
             "funding": [
                 {
@@ -1635,7 +1626,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-16T01:01:54+00:00"
+            "time": "2023-11-12T22:43:29+00:00"
         },
         {
             "name": "zordius/lightncandy",
@@ -1702,5 +1693,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.6.0"
 }
