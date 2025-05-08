@@ -1,0 +1,65 @@
+---
+// DW - Auth - Verify email form
+
+import Layout from "@/layouts/Layout.astro";
+import { auth } from "@/lib/auth/better";
+
+const { url } = Astro;
+
+// Get verification token and status parameters
+const token = url.searchParams.get("token");
+const success = url.searchParams.get("success");
+const errorMessage = url.searchParams.get("error");
+
+let error = null;
+let verified = false;
+
+// Process verification if we have a token
+if (token) {
+  try {
+    // Call Better Auth's API to verify the email
+    const result = await auth.api.verifyEmail({
+      query: { token }
+    });
+    
+    verified = true;
+  } catch (verificationError: any) {
+    error = verificationError.message || "Failed to verify email";
+  }
+} else if (success) {
+  // If we got redirected here with a success parameter, show success
+  verified = true;
+} else if (errorMessage) {
+  // If we got redirected here with an error parameter, show error
+  error = errorMessage;
+} else {
+  error = "Missing verification token";
+}
+---
+
+<Layout title="Email Verification">
+  <div class="flex flex-col items-center justify-center flex-1 p-4">
+    {
+      error ? (
+        <div 
+          class="mb-6 p-4 bg-red-100 border border-red-300 text-red-700 rounded-md text-center w-full max-w-sm"
+          role="alert"
+          aria-live="assertive"
+        >
+          <h2 class="text-xl font-bold mb-2">Verification Failed:</h2>
+          <p class="font-semibold">{error}</p>
+        </div>
+      ) : (
+        <div 
+          class="mb-6 p-4 bg-green-100 border border-green-300 text-green-700 rounded-md text-center w-full max-w-sm focus:outline-none"
+          role="status"
+          aria-live="polite"
+        >
+          <h2 class="text-xl font-bold mb-2">Email Confirmed</h2>
+          <p class="text-sm mb-1">Your email has been successfully verified.</p>
+          <p class="text-sm">You can now <a href="/login" class="underline hover:opacity-80">log in to your account</a>.</p>
+        </div>
+      )
+    }
+  </div>
+</Layout> 

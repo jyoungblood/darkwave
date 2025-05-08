@@ -1,0 +1,457 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import InputText from "@/components/forms/InputText.astro";
+---
+
+<AdminLayout title="DW Components Demo">
+  <div class="w-full">
+    <script>
+      import "@/components/ui/scripts/alert.js";
+    </script>
+
+    <div class="text-2xl font-bold mb-4">DW Components Demo</div>
+
+    <!-- 
+
+          <div class="flex flex-col mb-4">
+            <label class="label label-text">Alternate Photo</label>
+            <PhotoUploadSingle
+              related_id={horse?.uuid}
+              related_table="horses"            
+              related_column="alt_photo_url"
+              url={horse?.alt_photo_url}
+              url_parameters={horse?.alt_photo_url_parameters}
+              upload_path="/horses/alt"
+              file_limit_size={1}
+              file_formats="image/jpeg"
+              dz_icon="tabler--cloud-upload"
+            />
+          </div>
+ 
+
+
+ -->
+
+    <!-- dw version -->
+    <!-- 
+
+          <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:blur="dw.validate_input({
+            input: 'email',
+            element: $event.target,
+            required: true,
+            is_email: true,
+            unique: {
+              collection: 'users',
+              field: 'email',
+              error_message: 'This email is already registered',
+            }
+          })" />
+ -->
+
+    <!-- SME version -->
+    <!-- 
+                <div class="mb-3 form-group" data-validate="name">
+                  <label class="form-label">Registered Name</label>
+                  <input type="text" class="form-control" name="name" autocomplete="off" value="{{data.name}}" autocomplete="off"
+                    x-on:blur="dw.validate_input({
+                      input: 'name',
+                      element: $event.target,
+                      required: true,
+                      unique: {
+                        collection: 'horses',
+                        field: 'name',
+                        error_message: 'This name is already in use',
+                        exempt_id: '{{data._id}}'
+                      }
+                    })" 
+                  />
+                  <div class="invalid-feedback"></div>
+                </div>
+ -->
+
+    <!-- 
+                <div class="mb-3 form-group" data-validate="breed">
+                  <label class="form-label">Breed</label>
+                  <input type="text" class="form-control" name="breed" value="{{data.breed}}" autocomplete="off"
+                    x-on:blur="dw.validate_input({
+                      input: 'breed',
+                      element: $event.target,
+                      required: true
+                    })"
+                  />
+                  <div class="invalid-feedback"></div>
+                </div>
+ -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- DW version of validation rules on input component -->
+
+
+<!-- 
+    <div class="flex flex-col mb-4">
+      <InputText
+        label="Registered Name"
+        sublabel="<span class='text-red-500 text-xs font-bold'>* Required</span>"
+        name="name"
+        value={horse?.name}
+        required
+        validation={{
+          types: ["alphanumericWithSpaces"],
+          unique: {
+            collection: "horses",
+            field: "name",
+            errorMessage: "This name is already registered",
+            exempt: horse
+              ? {
+                  uuid: horse.uuid,
+                }
+              : undefined,
+          },
+          // success: { message: '✅ Name looks good!' }
+          // success: true
+        }}
+      />
+    </div>
+ -->
+    <div class="flex flex-col mb-4">
+      <InputText
+        label="Email"
+        name="email"
+        required
+        validation={{
+          rules: [
+            {
+              type: "email",
+              errorMessage: "Please enter a valid email address",
+            },
+          ],
+          unique: {
+            collection: "user",
+            field: "email",
+            errorMessage: "This email is already registered",
+            // exempt:{
+            //   "id": "J5iDwysuwswSxhOeMgqldXCNXrZRQxBc"
+            // }
+          },
+          success: {
+            message: "Email looks good!",
+          },
+        }}
+      />
+    </div>
+
+    <!-- see 'validate-input.js' for more all potential rules -->
+
+    <!-- // simple validation w/ strings in array -->
+
+    <div class="flex flex-col mb-4">
+      <InputText
+        label="Email"
+        name="email"
+        required
+        validation={{
+          types: ["email", "alphanumeric"],
+        }}
+      />
+    </div>
+    <!-- 
+validation={{
+  rules: [
+    {
+      type: 'email',
+      options: { allow_display_name: true },
+      errorMessage: 'Custom error message'
+    },
+    {
+      type: 'mobilePhone',
+      locale: 'en-US',
+      options: { strictMode: true }
+    }
+  ]
+}}
+ -->
+
+    <!-- 
+// Email with options
+{
+  type: 'email',
+  options: { allow_display_name: true, require_display_name: true },
+  errorMessage: 'Please enter a valid email address'
+}
+
+// Mobile phone with locale and options
+{
+  type: 'mobilePhone',
+  locale: 'en-US',
+  options: { strictMode: true },
+  errorMessage: 'Please enter a valid US phone number'
+}
+
+// Strong password with options
+{
+  type: 'strongPassword',
+  options: {
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1
+  },
+  errorMessage: 'Password must be stronger'
+} -->
+
+    <!-- Mixed approach (both simple and detailed) -->
+    <!-- 
+    <InputText
+      label="Email"
+      name="email"
+      validation={{
+        types: ["email"],
+        rules: [
+          {
+            type: "length",
+            min: 5,
+            max: 100,
+          },
+        ],
+      }}
+    />
+ -->
+
+    <!-- pattern names too! -->
+    <!-- 
+    <InputText
+      label="Username"
+      name="username"
+      validation={{
+        types: ["simpleUsername"],
+      }}
+    />
+ -->
+
+    <!--  
+    <InputText
+      label="Username"
+      name="username"
+      validation={{
+        rules: [
+          {
+            type: "pattern",
+            pattern: "simpleUsername",
+            errorMessage:
+              "Please enter a valid username (letters, numbers, hyphens, and underscores only)",
+          },
+        ],
+      }}
+    />
+ -->
+
+    <div class="flex flex-col mb-4">
+      <InputText
+        label="Age"
+        name="age"
+        validation={{
+          rules: [
+            {
+              type: "number",
+              min: 18,
+              max: 120,
+              errorMessage: "Age must be between 18 and 120",
+            },
+          ],
+          success: {
+            message: "Age is valid!",
+          },
+        }}
+      />
+
+      <!-- Show success UI with a message -->
+      <InputText
+        label="Email"
+        name="email"
+        required
+        validation={{
+          rules: [
+            {
+              type: "email",
+              errorMessage: "Please enter a valid email address",
+            },
+          ],
+          success: { message: "Email looks good!" },
+        }}
+      />
+
+      <!-- Show success UI without a message -->
+      <InputText
+        label="Age"
+        name="age"
+        validation={{
+          rules: [
+            {
+              type: "number",
+              min: 18,
+              max: 120,
+              errorMessage: "Age must be between 18 and 120",
+            },
+          ],
+          success: true,
+        }}
+      />
+
+      <!-- Show success UI with a message -->
+      <InputText
+        label="Email"
+        name="email"
+        required
+        validation={{
+          rules: [
+            {
+              type: "email",
+              errorMessage: "Please enter a valid email address",
+            },
+          ],
+        }}
+      />
+    </div>
+
+    <br /><br />
+    <br /><br />
+
+    <button type="button" class="btn" onclick="errordialog()"
+      >dialog demo</button
+    >
+
+    <script is:inline>
+      function errordialog() {
+        window.showAlert({
+          type: "warning",
+          variant: "soft",
+          title: "Are you sure you want to remove this photo?",
+          text: false,
+          icon: true,
+          buttons: [
+            {
+              text: "No",
+              variant: "outline",
+              size: "sm",
+              type: "warning",
+            },
+            {
+              type: "warning",
+              text: "Yes",
+              variant: "solid",
+              size: "sm",
+              onClick: () => {
+                // continue with photo removal
+              },
+            },
+          ],
+        });
+      }
+    </script>
+
+    <br /><br />
+
+    <button type="button" class="btn" onclick="erroralert()">error alert</button
+    >
+
+    <script is:inline>
+      function erroralert() {
+        if (window.showAlert) {
+          window.showAlert({
+            type: "error",
+            variant: "soft",
+            title: "Error title",
+            text: "Error text goes here",
+            icon: true,
+            buttons: [
+              {
+                type: "error",
+                text: "OK",
+                variant: "solid",
+              },
+            ],
+          });
+        } else {
+          console.error("Alert system not initialized");
+        }
+      }
+    </script>
+
+    <br /><br />
+
+    <button type="button" class="btn" onclick="testalert()"
+      >test alert (full-ish demo)</button
+    >
+
+    <script is:inline>
+      function testalert() {
+        if (window.showAlert) {
+          // Top-left info alert
+          window.showAlert({
+            type: "info",
+            variant: "soft",
+            title: "Processing",
+            text: "Starting the operation...",
+            icon: true,
+            duration: 3000,
+            position: { vertical: "top", horizontal: "left" },
+          });
+
+          // Center warning alert after 1 second
+          setTimeout(() => {
+            window.showAlert({
+              type: "warning",
+              variant: "soft",
+              title: "Attention",
+              text: "This operation requires confirmation",
+              icon: true,
+              // position: { vertical: 'middle', horizontal: 'center' },
+              position: { vertical: "top", horizontal: "left" },
+              buttons: [
+                {
+                  text: "Cancel",
+                  variant: "soft",
+                  icon: "icon-[tabler--x]",
+                  size: "sm",
+                  type: "warning",
+                },
+                {
+                  text: "Proceed",
+                  variant: "solid",
+                  icon: "icon-[tabler--check]",
+                  size: "sm",
+                  onClick: () => {
+                    // Bottom-right success alert
+                    window.showAlert({
+                      type: "success",
+                      variant: "soft",
+                      title: "Success",
+                      text: "Operation completed successfully!",
+                      icon: true,
+                      duration: 3000,
+                      position: { vertical: "bottom", horizontal: "right" },
+                    });
+                  },
+                },
+              ],
+            });
+          }, 1000);
+        } else {
+          console.error("Alert system not initialized");
+        }
+      }
+    </script>
+  </div>
+</AdminLayout>

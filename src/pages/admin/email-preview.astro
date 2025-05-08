@@ -1,0 +1,58 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import mjml2html from "mjml";
+import { createEmailTemplate } from "@/email-templates/main.mjml.ts";
+
+// Mock data for preview
+const previewData = {
+  to: "jonathan.youngblood@gmail.com",
+  name: "John",
+  surname: "Ritch",
+  email: "icarus@dvst.cc",
+  tel: "+420666666666",
+  subject: `FFFFFTest email from ${new URL(Astro.url).hostname}`,
+  message:
+    "fully dynamic params from template. NEAT! This is a test email! NOW WE ARE USING THJE ABNSTRACTION FUNCTIONS",
+};
+
+const mjmlTemplate = createEmailTemplate(previewData);
+const { html } = mjml2html(mjmlTemplate);
+---
+
+<AdminLayout title="Email Preview">
+  <div class="email-preview w-full">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Email Preview</h1>
+      <!-- <a
+        href=`/api/admin/email-old?name=${previewData.name}&surname=${previewData.surname}&email=${previewData.email}&tel=${previewData.tel}&subject=${previewData.subject}&message=${previewData.message}&to=${previewData.to}`
+        target="_blank"
+        class="inline-flex px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+      >
+        Send Test Email (old)
+      </a> -->
+
+      <a
+        href=`/api/admin/email`
+        target="_blank"
+        class="inline-flex px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+      >
+        sendEmail()
+      </a>
+
+    </div>
+    <div class="preview-container" set:html={html} />
+  </div>
+</AdminLayout>
+
+<style>
+  .email-preview {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .preview-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-top: 20px;
+  }
+</style>

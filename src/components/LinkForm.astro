@@ -1,0 +1,108 @@
+---
+interface Props {
+  link?: any;
+  redirect?: string;
+}
+
+const { link, redirect = "" } = Astro.props;
+
+import InputText from "@/components/forms/InputText.astro";
+import Textarea from "@/components/forms/Textarea.astro";
+import Select from "@/components/forms/Select.astro";
+import ButtonSubmit from "@/components/forms/ButtonSubmit.astro";
+import ButtonDelete from "@/components/forms/ButtonDelete.astro";
+import PhotoUploadSingle from "@/components/forms/PhotoUploadSingle.astro";
+import PhotoUploadGallery from "@/components/forms/PhotoUploadGallery.astro";
+import { ensureCsrfToken } from "@/lib/csrf";
+ensureCsrfToken(Astro.cookies);
+---
+
+<form class="" data-form aria-label="Link form">
+  <input type="hidden" name="csrf" value={Astro.cookies.get("csrf")?.value} />
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <div class="flex flex-col">
+      <div class="flex flex-col mb-4">
+        <InputText label="Title" name="title" value={link?.title} required />
+      </div>
+      <div class="flex flex-col mb-4">
+        <InputText label="URL" name="url" value={link?.url} required />
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+
+
+
+{ link && (
+
+          <div class="flex flex-col mb-4">
+            <label class="label label-text">Primary Photo</label>
+            <PhotoUploadSingle
+              related_id={link?.uuid}
+              related_table="links"
+              related_column="photo_url"
+              url={link?.photo_url}
+              url_parameters={link?.photo_url_parameters}
+              upload_path="/links"
+
+            />
+          </div>
+
+
+
+
+          <div class="flex flex-col mb-4">
+            <label class="label label-text">Gallery Photos</label>
+            <PhotoUploadGallery
+              related_id={link?.uuid}
+              related_table="links"
+              gallery_type="link-gallery"
+              upload_path="/links/gallery"
+            />
+          </div>
+
+
+          <div class="flex flex-col mb-4">
+            <label class="label label-text">Slideshow Photos</label>
+            <PhotoUploadGallery
+              related_id={link?.uuid}
+              related_table="links"
+              gallery_type="link-slideshow"
+              upload_path="/links/slideshow"
+              file_limit_quantity={6}
+              file_limit_size={1}
+              file_formats="image/jpeg"
+            />
+          </div>
+
+)}
+
+
+    </div>
+
+  </div>
+
+  {link && <input name="uuid" value={link.uuid} type="hidden" />}
+
+  <div class="flex gap-4">
+    <ButtonSubmit
+      text={link ? "Save Link" : "Create Link"}
+      workingText="Saving..."
+      form="[data-form]"
+      endpoint="/api/link/save"
+      redirect={redirect}
+    />
+
+    {
+      link && (
+        <ButtonDelete
+          text="Delete"
+          type="link"
+          uuid={link.uuid}
+          endpoint="/api/link/delete"
+          redirect={redirect}
+        />
+      )
+    }
+  </div>
+</form>

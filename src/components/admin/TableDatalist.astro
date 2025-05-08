@@ -1,0 +1,79 @@
+---
+interface Column {
+  header: string;
+  cell: {
+    class?: string;
+    content: (item: any) => string | Promise<string>;
+  };
+}
+
+interface Props {
+  data: any[] | { error: string };
+  columns: Column[];
+  title?: string;
+  newItemLink?: {
+    href: string;
+    text: string;
+  };
+  publicLink?: {
+    href: string;
+    text: string;
+  };
+}
+
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+
+const { data, columns, title, newItemLink, publicLink } = Astro.props;
+---
+
+<div class="flex gap-8 w-full items-center justify-between mb-8">
+  <div class="">
+    <h2 class="text-xl font-semibold">{title}</h2>
+  </div>
+  <div class="">
+    {publicLink && <><ButtonLink href={publicLink.href} text={publicLink.text} /> &nbsp;</>}
+    {
+      newItemLink && (
+        <ButtonLink href={newItemLink.href} text={newItemLink.text} />
+      )
+    }
+  </div>
+</div>
+
+{
+  data && (
+    <div>
+      {'error' in data ? (
+        <p class="text-red-500">Error loading data</p>
+      ) : data.length === 0 ? (
+        <p class="text-gray-500">No items found</p>
+      ) : (
+        <div class="border-base-content/25 w-full overflow-x-auto border">
+          <table class="table table-md">
+            <thead>
+              <tr class="bg-gray-100">
+                {columns.map((column) => (
+                  <th class="font-bold text-xs text-gray-500">
+                    {column.header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item) => (
+                <tr class="row-hover">
+                  {columns.map((column) => (
+                    <td
+                      class="text-nowrap {column.cell.class}"
+                      set:html={column.cell.content(item)}
+                    />
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}

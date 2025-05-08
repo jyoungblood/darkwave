@@ -1,0 +1,165 @@
+---
+// DW - Form submit button
+
+interface Props {
+  text: string;
+  class?: string;
+  form: string;
+  endpoint: string;
+  redirect: string;
+  workingText: string;
+}
+
+const {
+  text: buttonText,
+  class: className = "",
+  form,
+  endpoint,
+  redirect,
+  workingText,
+} = Astro.props;
+---
+
+<!-- class="bg-black text-white p-3 text-sm font-semibold rounded-md
+hover:bg-gray-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+flex items-center justify-center" -->
+<span class="flex items-center justify-center">
+  <button
+    type="submit"
+    data-button-submit
+    class="btn btn-primary flex items-center justify-center"
+    aria-busy="false"
+  >
+    <svg
+      data-button-spinner
+      class="hidden w-5 h-5 mr-3 animate-spin"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+        fill="none"></circle>
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      ></path>
+    </svg>
+    <span data-button-text>{buttonText}</span>
+  </button>
+  <span data-button-submit-error class="text-red-500 text-sm ml-4 hidden"
+  ></span>
+</span>
+
+<script>
+  import "@/components/ui/scripts/alert.js";
+  import { validateForm } from "@/components/ui/scripts/validate-form.js";
+</script>
+
+<script define:vars={{ form, endpoint, redirect, workingText, buttonText }}>
+  const formElement = document.querySelector(form);
+  const submitButton = document.querySelector("[data-button-submit]");
+  const buttonTextValue = document.querySelector("[data-button-text]");
+  const loadingSpinner = document.querySelector("[data-button-spinner]");
+
+  if (!formElement || !submitButton || !buttonTextValue || !loadingSpinner)
+    return;
+
+  formElement.addEventListener("submit", async (event) => {
+    // Always prevent default submission first
+    event.preventDefault();
+    event.stopPropagation();
+
+    // ----------- FORM VALIDATION ------------
+
+    if (!validateForm(formElement)) {
+      return;
+    }
+
+    // ----------- FORM SUBMISSION PROCESSING ------------
+
+    document.querySelector("[data-button-submit-error]").textContent = "";
+    document
+      .querySelector("[data-button-submit-error]")
+      .classList.add("hidden");
+    // Set loading state
+    submitButton.disabled = true;
+    submitButton.setAttribute("aria-busy", "true");
+    buttonTextValue.textContent = workingText;
+    loadingSpinner.classList.remove("hidden");
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: new FormData(event.target),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Reset loading state only for errors
+        submitButton.disabled = false;
+        submitButton.setAttribute("aria-busy", "false");
+        buttonTextValue.textContent = buttonText;
+        loadingSpinner.classList.add("hidden");
+
+        console.error("Error:", data.error);
+
+        window.showAlert({
+          type: "error",
+          variant: "soft",
+          title: "Error",
+          text: data.error || "An error occurred while saving the data.",
+          icon: true,
+          buttons: [
+            {
+              type: "error",
+              text: "OK",
+              variant: "solid",
+            },
+          ],
+        });
+      } else {
+        // Process the redirect string with response data
+        const processedRedirect = redirect.replace(
+          /\$([a-zA-Z_][a-zA-Z0-9_]*)/g,
+          (match, key) => {
+            // Remove the $ prefix to get the actual key
+            return data[key] ?? match;
+          }
+        );
+
+        window.location.href = processedRedirect;
+      }
+    } catch (error) {
+      // Reset loading state for unexpected errors
+      submitButton.disabled = false;
+      submitButton.setAttribute("aria-busy", "false");
+      buttonTextValue.textContent = buttonText;
+      loadingSpinner.classList.add("hidden");
+
+      console.error("Error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
+
+      window.showAlert({
+        type: "error",
+        variant: "soft",
+        title: "Error",
+        text: errorMessage,
+        icon: true,
+        buttons: [
+          {
+            type: "error",
+            text: "OK",
+            variant: "solid",
+          },
+        ],
+      });
+    }
+  });
+</script>

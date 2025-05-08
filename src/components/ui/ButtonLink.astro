@@ -1,0 +1,16 @@
+---
+// DW - Button link component
+
+interface Props {
+  text: string;
+  href: string;
+  class?: string;
+}
+
+const { text, href, class: className = "" } = Astro.props;
+---
+
+<!-- rounded-md bg-stone-200 text-stone-600 p-3 text-sm font-semibold hover:bg-stone-300 hover:text-stone-700 cursor-pointer -->
+<a href={href} class="btn btn-primary">
+  {text}
+</a>

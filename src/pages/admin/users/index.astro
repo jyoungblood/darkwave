@@ -1,0 +1,74 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import TableDatalist from "@/components/admin/TableDatalist.astro";
+import { formatDate } from "@/lib/dw";
+import { db } from "@/lib/db";
+
+let users;
+
+try {
+  users = await db
+    .selectFrom('user')
+    .selectAll()
+    .orderBy('createdAt')
+    .execute();
+} catch (error) {
+  console.error("Error fetching users:", error);
+}
+
+// DW
+// Quick check using JWT claims stored in locals
+if (Astro.locals.authRoles?.includes("admin")) {
+  // Show admin UI elements
+}
+---
+
+<AdminLayout title="All Users">
+  <div class="w-full">
+    <TableDatalist
+      data={users ?? []}
+      columns={[
+        {
+          header: "Email",
+          cell: {
+            content: (user: any) =>
+              `<a href="/admin/users/edit?id=${user.id}">${user.email}</a>`,
+          },
+        },
+        {
+          header: "Name",
+          cell: {
+            content: (user: any) => user.name,
+          },
+        },
+        {
+          header: "Created At",
+          cell: {
+            content: (user: any) => formatDate(user.createdAt),
+          },
+        },
+        {
+          header: "Updated At",
+          cell: {
+            content: (user: any) => user.updatedAt ? formatDate(user.updatedAt) : "",
+          },
+        },
+        {
+          header: "Actions",
+          cell: {
+            class: "text-right",
+            content: (user: any) => `
+            <a href="/admin/users/edit?id=${user.id}" 
+              class="btn btn-circle btn-text btn-sm" 
+              aria-label="Edit" 
+              data-astro-prefetch>
+              <span class="icon-[tabler--pencil] size-5"></span>
+            </a>
+            `,
+          },
+        },
+      ]}
+      title="All Users"
+    />
+  </div>
+</AdminLayout>

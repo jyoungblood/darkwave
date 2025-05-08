@@ -1,0 +1,85 @@
+---
+interface Props {
+  user?: any;
+  redirect?: string;
+}
+
+const { user, redirect = "" } = Astro.props;
+
+import InputText from "@/components/forms/InputText.astro";
+import ButtonSubmit from "@/components/forms/ButtonSubmit.astro";
+import { ensureCsrfToken } from "@/lib/csrf";
+import { db } from "@/lib/db";
+import CheckboxGroup from "@/components/forms/CheckboxGroup.astro";
+ensureCsrfToken(Astro.cookies);
+
+let allRoles: { label: string; value: string }[] = [];
+let userRoles: string[] = [];
+
+try {
+  // Fetch all roles and user's roles in parallel
+  const [allRolesResult, userRolesResult] = await Promise.all([
+    // Get all available roles
+    db
+      .selectFrom("auth_roles")
+      .select(["id", "name", "description"])
+      .execute(),
+
+    // Get roles for this user if we have a user
+    user?.id
+      ? db
+          .selectFrom("rel_users_roles")
+          .innerJoin("auth_roles", "auth_roles.id", "rel_users_roles.role_id")
+          .where("rel_users_roles.user_id", "=", user.id)
+          .select(["auth_roles.id", "auth_roles.name", "auth_roles.description"])
+          .execute()
+      : Promise.resolve([]),
+  ]);
+
+  // Format roles for the checkbox group
+  allRoles = allRolesResult.map(role => ({
+    label: role.name.charAt(0).toUpperCase() + role.name.slice(1),
+    value: role.id.toString()
+  }));
+
+  // Get just the role IDs for the selected values
+  userRoles = userRolesResult.map(role => role.id.toString());
+} catch (error) {
+  console.error("Error fetching roles:", error);
+}
+---
+
+<form class="" data-form aria-label="User form">
+  <input type="hidden" name="csrf" value={Astro.cookies.get("csrf")?.value} />
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <div class="flex flex-col">
+      <div class="flex flex-col mb-4">
+        <InputText label="Email" name="email" value={user?.email} required />
+      </div>
+      <div class="flex flex-col mb-4">
+        <InputText label="Name" name="name" value={user?.name} required />
+      </div>
+      <div class="flex flex-col mb-4">
+        <CheckboxGroup
+          label="Roles"
+          name="roles"
+          columns={2}
+          options={allRoles}
+          selected={userRoles}
+        />
+      </div>
+    </div>
+  </div>
+
+  {user && <input name="id" value={user.id} type="hidden" />}
+
+  <div class="flex gap-4">
+    <ButtonSubmit
+      text={user ? "Save User" : "Create User"}
+      workingText="Saving..."
+      form="[data-form]"
+      endpoint="/api/user/save"
+      redirect={redirect}
+    />
+  </div>
+</form>

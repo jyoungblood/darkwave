@@ -1,0 +1,90 @@
+---
+// DW - Form input text component
+
+import validator from 'validator';
+
+interface Props {
+  label: string;
+  sublabel?: string;
+  name: string;
+  required?: boolean;
+  value?: string;
+  placeholder?: string;
+  class?: string;
+  validation?: {
+    types?: string[]; // Simple string-based validation types
+    rules?: Array<{
+      type: string;
+      min?: number;
+      max?: number;
+      pattern?: string;
+      errorMessage?: string;
+      options?: Record<string, any>;
+      locale?: string;
+      version?: string;
+      countryCode?: string;
+    }>;
+    success?: boolean | { message: string };
+    showSuccessUI?: boolean;
+    unique?: {
+      collection: string;
+      field: string;
+      errorMessage: string;
+      exempt?: {
+        [key: string]: string;
+      };
+    };
+  };
+  htmlAttributes?: Record<string, string>;
+}
+
+const {
+  label,
+  sublabel,
+  name,
+  required = false,
+  value = "",
+  placeholder = "",
+  class: customClass = "",
+  validation,
+  htmlAttributes = {},
+} = Astro.props;
+
+const defaultClass = "input";
+const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
+
+// Only include validation attributes if validation is configured
+const validationAttributes = validation ? {
+  'data-validation-types': validation.types ? JSON.stringify(validation.types) : '',
+  'data-validation-rules': validation.rules ? JSON.stringify(validation.rules) : '',
+  'data-unique-check': validation.unique ? JSON.stringify(validation.unique) : '',
+  'data-success': typeof validation.success === 'object' ? JSON.stringify(validation.success) : validation.success,
+  'data-validation-config': JSON.stringify(validation),
+  'data-input-name': name,
+} : {};
+---
+
+<div class="flex flex-col" id={`input-container-${name}`}>
+  {sublabel ? (
+    <label for={`input-${name}`} class="label label-text flex justify-between items-center">
+      <span>{label}</span>
+      <span class="text-sm text-gray-500" set:html={sublabel} />
+    </label>
+  ) : (
+    <label for={`input-${name}`} class="label label-text">{label}</label>
+  )}
+  <input
+    type={validation?.rules?.find(rule => rule.type === 'number') ? 'number' : 'text'}
+    id={`input-${name}`}
+    name={name}
+    required={required}
+    class={className}
+    value={value}
+    placeholder={placeholder}
+    autocomplete="off"
+    onblur={validation ? "validateOnBlur(event)" : undefined}
+    {...validationAttributes}
+    {...htmlAttributes}
+  />
+  <span class="validation-feedback text-sm mt-1 hidden"></span>
+</div>

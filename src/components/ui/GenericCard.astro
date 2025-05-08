@@ -1,0 +1,34 @@
+---
+interface Props {
+  link: string;
+  image: string | null | undefined;
+  title: string | null;
+  imageParameters?: string | null | undefined;
+}
+
+const { link, image, title, imageParameters } = Astro.props;
+
+const placeholderImage = "/images/horse-placeholder.png";
+const photoUrl = image 
+  ? imageParameters 
+    ? `${image}?${imageParameters}`
+    : image
+  : placeholderImage;
+const displayTitle = title ?? '';
+---
+
+<div class="card sm:max-w-sm hover:opacity-90 transition-opacity duration-100">
+  <a href={link} data-astro-prefetch>
+    <figure class="aspect-[4/3] w-full">
+      <img
+        src={photoUrl}
+        alt={`Photo of ${displayTitle}`}
+        class="w-full h-full object-cover rounded-t-md"
+      />
+    </figure>
+  </a>
+  <div class="card-body">
+    <h5 class="card-title mb-2.5">{displayTitle}</h5>
+    <p class="mb-4"><slot /></p>
+  </div>
+</div>

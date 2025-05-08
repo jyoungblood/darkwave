@@ -1,0 +1,1601 @@
+---
+// DW - Photo upload component - gallery
+
+import { db } from "@/lib/db";
+import PhotoCropper from "./PhotoCropper.astro";
+
+interface Props {
+  related_id: string;
+  related_table: string;
+  upload_path: string;
+  gallery_type: string;
+  file_limit_quantity?: number;
+  file_limit_size?: number;
+  file_formats?: string;
+  dz_icon?: string;
+}
+
+interface GalleryPhoto {
+  uuid: string;
+  photo_url: string;
+  title: string | null;
+  display_order: number;
+  description?: string;
+  photo_url_parameters?: string | null;
+}
+
+const { 
+  related_id, 
+  related_table, 
+  upload_path, 
+  gallery_type, 
+  file_limit_quantity = 20, 
+  file_limit_size = 10, 
+  file_formats = "image/jpeg,image/png,image/webp",
+  dz_icon = "tabler--plus"
+} = Astro.props;
+
+// Normalize the upload path by removing optional leading/trailing slashes
+const normalizedUploadPath = upload_path.replace(/^\/+|\/+$/g, '');
+
+// Load existing gallery photos from database
+let photos;
+let photosError;
+
+try {
+  photos = await db
+    .selectFrom('gallery_content')
+    .selectAll()
+    .where('related_id', '=', related_id)
+    .where('related_table', '=', related_table)
+    .where('gallery_type', '=', gallery_type)
+    .orderBy('display_order')
+    .execute();
+} catch (error) {
+  console.error("Error fetching gallery photos:", error);
+  photosError = error;
+}
+---
+
+<div class="gallery-upload-container pb-16" data-path={normalizedUploadPath} data-photos={JSON.stringify(photos)}>
+  <input type="hidden" name="component_gallery_upload_dz_icon" value={dz_icon} />
+  <input type="hidden" name="component_gallery_upload_related_id" value={related_id} />
+  <input type="hidden" name="component_gallery_upload_related_table" value={related_table} />
+  <input type="hidden" name="component_gallery_upload_gallery_type" value={gallery_type} />
+  <input type="hidden" name="component_gallery_upload_maxFiles" value={file_limit_quantity} />
+  <input type="hidden" name="component_gallery_upload_maxFilesize" value={file_limit_size} />
+  <input type="hidden" name="component_gallery_upload_acceptedFiles" value={file_formats} />
+
+  <!-- Photo Editor Modal -->
+  <div
+    class="photo-editor-modal fixed inset-0 z-[100] hidden"
+    role="dialog"
+    tabindex="-1"
+  >
+    <!-- Modal backdrop -->
+    <div
+      class="modal-backdrop fixed inset-0 bg-black/50 transition-opacity duration-300"
+    >
+    </div>
+
+    <!-- Modal container -->
+    <div
+      class="modal-container fixed inset-0 z-[101] overflow-y-auto"
+      data-modal-container
+    >
+      <div class="flex min-h-full items-center justify-center p-4">
+        <div
+          class="modal-content w-full max-w-2xl bg-base-100 rounded-lg shadow-xl max-h-[90vh] flex flex-col"
+        >
+          <div class="modal-header flex-none">
+            <button
+              type="button"
+              class="btn btn-text btn-circle btn-sm absolute end-3 top-3"
+              aria-label="Close"
+              data-close-modal
+            >
+              <span class="icon-[tabler--x] size-4"></span>
+            </button>
+          </div>
+
+          <div class="photo-editor-form overflow-y-auto">
+            <input type="hidden" class="photo-uuid" name="photo-uuid" />
+            <div class="modal-body pt-0">
+              <!-- rounded-md overflow-hidden -->
+              <div data-cropper-container class="mb-4">
+                <PhotoCropper photo_url="" url_parameters="" />
+              </div>
+
+              <!-- Title Field -->
+              <div class="mb-4">
+                <label class="label label-text" for="photo-title">Title</label>
+                <input
+                  type="text"
+                  class="photo-title input w-full"
+                  name="photo-title"
+                  placeholder="Enter photo title"
+                />
+              </div>
+
+              <!-- Description Field -->
+              <div class="mb-4">
+                <label class="label label-text" for="photo-description"
+                  >Description</label
+                >
+                <textarea
+                  class="photo-description textarea w-full h-24"
+                  name="photo-description"
+                  placeholder="Enter photo description"></textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer flex justify-between">
+              <!-- Left side buttons -->
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  class="save-photo-btn btn btn-primary flex items-center justify-center"
+                  aria-busy="false"
+                >
+                  <svg
+                    class="hidden w-5 h-5 mr-3 animate-spin"
+                    data-save-spinner
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                      fill="none"></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span data-save-text>Save Photo</span>
+                </button>
+                <span data-save-error class="text-red-500 text-sm ml-4 hidden"></span>
+
+              </div>
+
+              <!-- Right side buttons -->
+              <div class="flex gap-2">
+                <!-- Delete button -->
+                <div class="tooltip">
+                  <button
+                    type="button"
+                    class="tooltip-toggle btn btn-sm btn-secondary btn-square"
+                    data-delete-photo
+                  >
+                    <span class="icon-[tabler--trash] size-4"></span>
+                  </button>
+                  <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                    <span class="tooltip-body tooltip-secondary rounded-md">Remove</span>
+                  </span>
+                </div>
+
+                <!-- Full size button -->
+                <div class="tooltip [--placement:top-end]">
+                  <a
+                    href="#"
+                    class="tooltip-toggle btn btn-sm btn-secondary btn-square full-size-photo-btn"
+                    title="View full size"
+                    target="_blank"
+                  >
+                    <span class="icon-[tabler--maximize] size-4"></span>
+                  </a>
+                  <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
+                    <span class="tooltip-body tooltip-secondary rounded-md -mr-2">Full size</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    if (!window.Dropzone) {
+      window.Dropzone = {
+        autoDiscover: false,
+        prototype: {},
+      };
+    }
+
+    // Add HSOverlay type declaration for TypeScript
+    if (typeof window.HSOverlay === "undefined") {
+      window.HSOverlay = {
+        open: function (selector) {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.classList.remove("hidden");
+          }
+        },
+      };
+    }
+  </script>
+
+  <script>
+    import "dropzone/dist/dropzone-min.js";
+    import "@/components/ui/scripts/alert.js";
+    import Sortable from "sortablejs";
+    import type { SortableEvent } from "sortablejs";
+
+    // Add interface for photo data
+    interface GalleryPhoto {
+      uuid: string;
+      photo_url: string;
+      title: string | null;
+      display_order: number;
+      description?: string;
+      photo_url_parameters?: string | null;
+    }
+
+    // Add Sortable to window object
+    window.Sortable = Sortable;
+
+    // Add SortableJS type declarations
+    interface SortableOptions {
+      animation?: number;
+      ghostClass?: string;
+      onEnd?: (event: SortableEvent) => void;
+    }
+
+    // Add Dropzone type definitions
+    interface DropzoneFile {
+      name: string;
+      size: number;
+      type: string;
+      status?: string;
+      previewElement?: HTMLElement;
+    }
+
+    interface DropzoneOptions {
+      maxFilesize: number;
+      acceptedFiles: string;
+      removeFile: (file: DropzoneFile) => void;
+      maxFiles: number;
+    }
+
+    interface DropzoneInstance {
+      options: DropzoneOptions;
+      files: DropzoneFile[];
+      on: (
+        event: string,
+        callback: (file: DropzoneFile, ...args: any[]) => void
+      ) => void;
+      removeFile: (file: DropzoneFile) => void;
+      processQueue: () => void;
+      enqueueFiles: (files: DropzoneFile[]) => void;
+    }
+
+    // Extend Window interface
+    declare global {
+      interface Window {
+        Dropzone: {
+          new (element: HTMLElement, options: any): DropzoneInstance;
+        };
+        Sortable: typeof Sortable;
+        HSOverlay: {
+          open: (selector: string) => void;
+        };
+      }
+    }
+
+    async function updatePhotoOrder(
+      photos: { uuid: string; display_order: number }[],
+      related_id: string,
+      related_table: string,
+      gallery_type: string,
+    ) {
+      try {
+        const response = await fetch("/api/gallery/update-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ photos, related_id, related_table, gallery_type }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update photo order");
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error updating photo order:", error);
+        throw error;
+      }
+    }
+
+    function initializePhotoEditor(
+      container: HTMLElement,
+      sharedPhotos: GalleryPhoto[],
+      updateUploadTriggerVisibility: () => void
+    ) {
+      // Find elements within this container
+      const modal = container.querySelector(
+        ".photo-editor-modal"
+      ) as HTMLElement;
+      const form = container.querySelector(".photo-editor-form") as HTMLElement;
+      const cropperContainer = modal.querySelector("[data-cropper-container]") as HTMLElement;
+      const photoTitle = container.querySelector(
+        ".photo-title"
+      ) as HTMLInputElement;
+      const photoUuid = container.querySelector(
+        ".photo-uuid"
+      ) as HTMLInputElement;
+      const fullSizeBtn = container.querySelector(
+        ".full-size-photo-btn"
+      ) as HTMLAnchorElement;
+
+      // Get the gallery container for dataset updates
+      const galleryContainer = container.closest('.gallery-upload-container') as HTMLElement;
+
+      if (
+        !modal ||
+        !form ||
+        !cropperContainer ||
+        !photoTitle ||
+        !photoUuid ||
+        !fullSizeBtn ||
+        !galleryContainer
+      ) {
+        console.error("Required elements not found for photo editor");
+        return;
+      }
+
+      let isDragging = false;
+      let mouseDownTarget: EventTarget | null = null;
+
+      // Function to close modal
+      const closeModal = () => {
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+        // Remove event listeners when modal closes
+        document.removeEventListener("keydown", handleEsc);
+        document.removeEventListener("mousedown", handleMouseDown);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      // Function to initialize click handlers for a photo element
+      function initializePhotoClickHandler(photoEl: HTMLElement) {
+        photoEl.addEventListener("click", () => {
+          // Get the data attributes from either the clicked element or its parent
+          const uuid = photoEl.dataset.photoUuid || photoEl.closest('[data-photo-uuid]')?.getAttribute('data-photo-uuid');
+          const url = photoEl.dataset.photoUrl || photoEl.closest('[data-photo-uuid]')?.querySelector('img')?.getAttribute('src');
+          const title = photoEl.dataset.photoTitle || photoEl.closest('[data-photo-uuid]')?.querySelector('img')?.getAttribute('data-photo-title') || '';
+          const description = photoEl.dataset.photoDescription || photoEl.closest('[data-photo-uuid]')?.querySelector('img')?.getAttribute('data-photo-description') || '';
+          
+          // Find the photo data from the photos array using the UUID
+          const photo = sharedPhotos.find((p: GalleryPhoto) => p.uuid === uuid);
+          const savedParams = photo?.photo_url_parameters || '';
+
+          // Update the PhotoCropper component's props
+          const cropperComponent = cropperContainer.querySelector(".photo-cropper-component") as HTMLElement;
+          if (cropperComponent) {
+            cropperComponent.dataset.photoUrl = url?.split('?')[0] || ""; // Use base URL without parameters
+            cropperComponent.dataset.urlParameters = savedParams; // Use saved parameters from database
+            
+            // Force re-initialization of the cropper
+            const event = new CustomEvent('reinitialize-cropper', {
+              detail: { 
+                photoUrl: url?.split('?')[0] || "", 
+                urlParameters: savedParams 
+              }
+            });
+            cropperComponent.dispatchEvent(event);
+          }
+
+          // Update other modal fields
+          photoUuid.value = uuid || "";
+          photoTitle.value = title || "";
+          fullSizeBtn.href = url || "#";
+
+          // Set description
+          const descriptionEl = form.querySelector(".photo-description") as HTMLTextAreaElement;
+          if (descriptionEl) {
+            descriptionEl.value = description || "";
+          }
+
+          // Open the modal
+          modal.classList.remove("hidden");
+          void modal.offsetHeight;
+          document.body.style.overflow = "hidden";
+
+          // Add event listeners when modal opens
+          document.addEventListener("keydown", handleEsc);
+          document.addEventListener("mousedown", handleMouseDown);
+          document.addEventListener("mouseup", handleMouseUp);
+        });
+      }
+
+      // Track mousedown target
+      const handleMouseDown = (e: MouseEvent) => {
+        mouseDownTarget = e.target;
+      };
+
+      // Handle mouseup and determine if we should close
+      const handleMouseUp = (e: MouseEvent) => {
+        if (isDragging) {
+          isDragging = false;
+          return;
+        }
+
+        // Only close if both mousedown and mouseup were on the backdrop
+        const modalContent = modal.querySelector(".modal-content");
+        const clickedOutside = modalContent && !modalContent.contains(e.target as Node);
+        const startedOutside = modalContent && !modalContent.contains(mouseDownTarget as Node);
+        
+        if (clickedOutside && startedOutside) {
+          closeModal();
+        }
+        mouseDownTarget = null;
+      };
+
+      // Handle drag events from PhotoCropper
+      cropperContainer.addEventListener('cropperDragStart', () => {
+        isDragging = true;
+      });
+
+      cropperContainer.addEventListener('cropperDragEnd', () => {
+        // Use setTimeout to ensure this runs after mouseup
+        setTimeout(() => {
+          isDragging = false;
+        }, 100);
+      });
+
+      // ESC key handler
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && !isDragging) {
+          // Only close the modal if there are no alerts visible
+          // This prevents the ESC key from closing both the alert and the modal
+          if (document.querySelectorAll('.alert').length === 0) {
+            closeModal();
+          }
+        }
+      };
+
+      // Initialize click handlers for existing photos
+      container.querySelectorAll("[data-photo-trigger], img[data-photo-trigger]").forEach((photo) => {
+        initializePhotoClickHandler(photo as HTMLElement);
+      });
+
+      // Handle close button
+      const closeBtn = modal.querySelector("[data-close-modal]");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", closeModal);
+      }
+
+      // Close on background click - using event delegation
+      modal.addEventListener("click", (e) => {
+        const modalContent = modal.querySelector(".modal-content");
+        if (modalContent && !modalContent.contains(e.target as Node)) {
+          closeModal();
+        }
+      });
+
+      // Handle save button
+      const saveBtn = container.querySelector(".save-photo-btn") as HTMLButtonElement;
+      if (saveBtn) {
+        saveBtn.addEventListener("click", async () => {
+          try {
+            // Set loading state
+            saveBtn.disabled = true;
+            saveBtn.setAttribute("aria-busy", "true");
+            const saveText = saveBtn.querySelector("[data-save-text]");
+            const saveSpinner = saveBtn.querySelector("[data-save-spinner]");
+            const saveIcon = saveBtn.querySelector("[data-save-icon]");
+            const saveError = container.querySelector("[data-save-error]");
+
+            if (saveText) saveText.textContent = "Saving...";
+            if (saveSpinner) saveSpinner.classList.remove("hidden");
+            if (saveIcon) saveIcon.classList.add("hidden");
+            if (saveError) {
+              saveError.textContent = "";
+              saveError.classList.add("hidden");
+            }
+
+            // Get crop data from the cropper
+            const cropperComponent = cropperContainer.querySelector(".photo-cropper-component") as HTMLElement;
+            const cropper = (cropperComponent as any).cropper;
+            let photo_url_parameters = "";
+            
+            if (cropper) {
+              const croppedData = cropper.getData();
+              photo_url_parameters = `crop=${Math.round(croppedData.width)},${Math.round(croppedData.height)},${Math.round(croppedData.x)},${Math.round(croppedData.y)}`;
+            }
+
+            const photoData = {
+              photo_uuid: photoUuid.value,
+              photo_title: photoTitle.value,
+              photo_description: (form.querySelector(".photo-description") as HTMLTextAreaElement)?.value,
+              photo_url_parameters,
+              related_id: (container.querySelector('input[name="component_gallery_upload_related_id"]') as HTMLInputElement)?.value || '',
+              related_table: (container.querySelector('input[name="component_gallery_upload_related_table"]') as HTMLInputElement)?.value || '',
+              gallery_type: (container.querySelector('input[name="component_gallery_upload_gallery_type"]') as HTMLInputElement)?.value || '',
+            };
+
+            // Find the photo in the DOM to update its visual state immediately
+            const photoEl = container.querySelector(`[data-photo-uuid="${photoUuid.value}"]`);
+            const photoImg = photoEl?.querySelector('img');
+            
+            // Apply immediate visual feedback - fade the thumbnail to 50% opacity
+            if (photoImg) {
+              photoImg.style.opacity = '0.5';
+              photoImg.style.transition = 'opacity 0.2s ease-in-out';
+              
+              // If we have crop parameters, update the image source immediately
+              if (photo_url_parameters && photoData.photo_uuid) {
+                // Find the photo in our shared array
+                const photoIndex = sharedPhotos.findIndex(p => p.uuid === photoData.photo_uuid);
+                if (photoIndex !== -1) {
+                  const baseUrl = sharedPhotos[photoIndex].photo_url;
+                  // Update the image source with the new crop parameters
+                  photoImg.src = `${baseUrl}?${photo_url_parameters}`;
+                  
+                  // When the image loads, restore full opacity
+                  photoImg.onload = () => {
+                    photoImg.style.opacity = '1';
+                  };
+                }
+              }
+            }
+
+            const response = await fetch("/api/gallery/save", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(photoData),
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+              // Restore opacity if there was an error
+              if (photoImg) {
+                photoImg.style.opacity = '1';
+              }
+              throw new Error(responseData.error || "Failed to save photo details");
+            }
+
+            // Update both the local photos array and the DOM
+            const photoIndex = sharedPhotos.findIndex(p => p.uuid === photoUuid.value);
+            
+            if (photoIndex !== -1) {
+              // Get the updated photo data from the response
+              const updatedPhoto = responseData.photo;
+              
+              // Update our local array first
+              sharedPhotos[photoIndex] = updatedPhoto;
+              
+              // Update the container's dataset
+              galleryContainer.dataset.photos = JSON.stringify(sharedPhotos);
+
+              // Find the photos grid container
+              const gridContainer = container.querySelector('.grid');
+              if (gridContainer) {
+                // Find the old photo container
+                const oldPhotoContainer = gridContainer.querySelector(`[data-photo-uuid="${updatedPhoto.uuid}"]`);
+                if (oldPhotoContainer) {
+                  // Create new container that EXACTLY matches the Astro template structure
+                  const newPhotoContainer = document.createElement('div');
+                  newPhotoContainer.className = 'aspect-[4/3] w-full relative';
+                  newPhotoContainer.setAttribute('data-photo-uuid', updatedPhoto.uuid);
+
+                  // Create new image element that EXACTLY matches the Astro template structure
+                  const img = document.createElement('img');
+                  const photoUrl = updatedPhoto.photo_url_parameters 
+                    ? `${updatedPhoto.photo_url}?${updatedPhoto.photo_url_parameters}`
+                    : updatedPhoto.photo_url;
+                  
+                  img.src = photoUrl;
+                  img.alt = updatedPhoto.title || "Gallery photo";
+                  img.className = 'h-full w-full rounded-md object-cover cursor-pointer hover:opacity-90 transition-opacity duration-100';
+                  img.setAttribute('data-photo-trigger', '');
+                  img.setAttribute('data-photo-uuid', updatedPhoto.uuid);
+                  img.setAttribute('data-photo-url', updatedPhoto.photo_url);
+                  img.setAttribute('data-photo-title', updatedPhoto.title || '');
+                  img.setAttribute('data-photo-description', updatedPhoto.description || '');
+
+                  // Add the image to the container
+                  newPhotoContainer.appendChild(img);
+
+                  // Replace the old container with the new one
+                  oldPhotoContainer.parentNode?.replaceChild(newPhotoContainer, oldPhotoContainer);
+
+                  // Initialize click handler on the new container
+                  initializePhotoClickHandler(newPhotoContainer);
+                }
+              }
+            }
+
+            // Show success message
+            window.showAlert({
+              type: "success",
+              variant: "soft",
+              title: "Success",
+              text: "Photo details saved successfully",
+              icon: true,
+              duration: 3000
+            });
+
+            // Close the modal
+            closeModal();
+          } catch (error) {
+            console.error("Error saving photo details:", error);
+            const saveError = container.querySelector("[data-save-error]");
+            if (saveError) {
+              saveError.textContent =
+                error instanceof Error
+                  ? error.message
+                  : "Failed to save photo details. Please try again.";
+              saveError.classList.remove("hidden");
+            }
+          } finally {
+            // Reset button state
+            saveBtn.disabled = false;
+            saveBtn.setAttribute("aria-busy", "false");
+            const saveText = saveBtn.querySelector("[data-save-text]");
+            const saveSpinner = saveBtn.querySelector("[data-save-spinner]");
+            const saveIcon = saveBtn.querySelector("[data-save-icon]");
+
+            if (saveText) saveText.textContent = "Save";
+            if (saveSpinner) saveSpinner.classList.add("hidden");
+            if (saveIcon) saveIcon.classList.remove("hidden");
+          }
+        });
+      }
+
+      // Handle delete button
+      const deleteBtn = container.querySelector("[data-delete-photo]");
+      if (deleteBtn) {
+        deleteBtn.addEventListener("click", () => {
+          window.showAlert({
+            type: 'warning',
+            variant: 'soft',
+            title: 'Are you sure you want to remove this photo?',
+            text: "",
+            icon: true,
+            buttons: [
+              {
+                text: 'No',
+                variant: 'outline',
+                size: 'sm',
+                type: 'warning',
+              },
+              {
+                type: 'warning',
+                text: 'Yes',
+                variant: 'solid',
+                size: 'sm',
+                onClick: async () => {
+                  try {
+                    // Immediately set the thumbnail opacity to show it's being deleted
+                    const photoEl = container.querySelector(`[data-photo-uuid="${photoUuid.value}"]`) as HTMLElement;
+                    if (photoEl) {
+                      photoEl.style.opacity = '0.3';
+                      photoEl.style.transition = 'opacity 0.2s ease-in-out';
+                    }
+
+                    const response = await fetch("/api/gallery/delete", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        related_id: (container.querySelector('input[name="component_gallery_upload_related_id"]') as HTMLInputElement)?.value || '',
+                        related_table: (container.querySelector('input[name="component_gallery_upload_related_table"]') as HTMLInputElement)?.value || '',
+                        gallery_type: (container.querySelector('input[name="component_gallery_upload_gallery_type"]') as HTMLInputElement)?.value || '',
+                        photo_uuid: photoUuid.value,
+                      }),
+                    });
+
+                    if (!response.ok) {
+                      // Reset opacity if deletion fails
+                      if (photoEl) {
+                        photoEl.style.opacity = '1';
+                      }
+                      const error = await response.json();
+                      throw new Error(error.message || "Failed to delete photo");
+                    }
+
+                    // Find and remove the photo from both the DOM and shared array
+                    const photoIndex = sharedPhotos.findIndex(p => p.uuid === photoUuid.value);
+                    if (photoIndex !== -1) {
+                      // Remove from shared array
+                      sharedPhotos.splice(photoIndex, 1);
+                      // Update dataset
+                      galleryContainer.dataset.photos = JSON.stringify(sharedPhotos);
+                    }
+
+                    // Remove from DOM
+                    if (photoEl) {
+                      photoEl.remove();
+                      
+                      // If this was the last photo, add the upload trigger
+                      if (sharedPhotos.length === 0) {
+                        // Get the grid container
+                        const gridContainer = container.querySelector('.grid');
+                        const flexContainer = container.querySelector('.flex.flex-col');
+                        
+                        if (flexContainer) {
+                          // Create the upload trigger HTML exactly as it appears in the initial template
+                          const uploadTriggerHTML = `
+                            <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
+                              <span class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden" data-file-upload-pseudo-trigger="">
+                                <span class="icon-[${(container.querySelector('input[name="component_gallery_upload_dz_icon"]') as HTMLInputElement)?.value || 'tabler--plus'}] w-20 h-20"></span>
+                              </span>
+                            </div>
+                          `;
+                          
+                          // Insert the upload trigger after the grid
+                          if (gridContainer) {
+                            gridContainer.insertAdjacentHTML('afterend', uploadTriggerHTML);
+                          } else {
+                            flexContainer.insertAdjacentHTML('beforeend', uploadTriggerHTML);
+                          }
+                          
+                          // Force a redraw
+                          void document.body.offsetHeight;
+                          
+                          // Manually initialize Dropzone on the new element
+                          setTimeout(() => {
+                            const uploadTrigger = container.querySelector('[data-file-upload-pseudo-trigger]');
+                            if (uploadTrigger) {
+                              uploadTrigger.addEventListener('click', () => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.multiple = true;
+                                input.accept = (container.querySelector('input[name="component_gallery_upload_acceptedFiles"]') as HTMLInputElement)?.value || 'image/*';
+                                input.click();
+                                
+                                input.onchange = (e) => {
+                                  const files = (e.target as HTMLInputElement).files;
+                                  if (files && files.length) {
+                                    // Create a FormData object
+                                    const formData = new FormData();
+                                    
+                                    // Add each file to the form data
+                                    for (let i = 0; i < files.length; i++) {
+                                      formData.append('file', files[i]);
+                                    }
+                                    
+                                    // Add the other parameters
+                                    formData.append('path', container.dataset.path || '');
+                                    formData.append('related_id', (container.querySelector('input[name="component_gallery_upload_related_id"]') as HTMLInputElement)?.value || '');
+                                    formData.append('related_table', (container.querySelector('input[name="component_gallery_upload_related_table"]') as HTMLInputElement)?.value || '');
+                                    formData.append('gallery_type', (container.querySelector('input[name="component_gallery_upload_gallery_type"]') as HTMLInputElement)?.value || '');
+                                    
+                                    // Upload the files manually
+                                    fetch('/api/gallery/create', {
+                                      method: 'POST',
+                                      body: formData
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                      if (data.files) {
+                                        // Remove the upload trigger
+                                        const trigger = container.querySelector('[data-file-upload-pseudo-trigger]')?.closest('div');
+                                        if (trigger) trigger.remove();
+                                        
+                                        // Process each uploaded file
+                                        data.files.forEach((file: { uuid: string; url: string; name?: string }) => {
+                                          // Create a new photo element
+                                          const photoEl = document.createElement('div');
+                                          photoEl.className = 'aspect-[4/3] w-full relative';
+                                          photoEl.setAttribute('data-photo-uuid', file.uuid);
+                                          
+                                          // Create the image
+                                          const img = document.createElement('img');
+                                          img.src = file.url;
+                                          img.alt = 'Gallery photo';
+                                          img.className = 'h-full w-full rounded-md object-cover cursor-pointer hover:opacity-90 transition-opacity duration-100';
+                                          img.setAttribute('data-photo-trigger', '');
+                                          img.setAttribute('data-photo-uuid', file.uuid);
+                                          img.setAttribute('data-photo-url', file.url);
+                                          
+                                          // Add the image to the photo element
+                                          photoEl.appendChild(img);
+                                          
+                                          // Add the photo to the grid
+                                          if (gridContainer) {
+                                            gridContainer.appendChild(photoEl);
+                                          }
+                                          
+                                          // Add to the shared photos array
+                                          sharedPhotos.push({
+                                            uuid: file.uuid,
+                                            photo_url: file.url,
+                                            title: null,
+                                            display_order: sharedPhotos.length,
+                                            description: '',
+                                            photo_url_parameters: null
+                                          });
+                                          
+                                          // Update the dataset
+                                          galleryContainer.dataset.photos = JSON.stringify(sharedPhotos);
+                                          
+                                          // Initialize click handler
+                                          initializePhotoClickHandler(photoEl);
+                                        });
+                                      }
+                                    })
+                                    .catch(error => {
+                                      console.error('Error uploading files:', error);
+                                      window.showAlert({
+                                        type: 'error',
+                                        variant: 'soft',
+                                        title: 'Upload Error',
+                                        text: 'Failed to upload files. Please try again.',
+                                        icon: true,
+                                        buttons: [
+                                          {
+                                            type: 'error',
+                                            text: 'OK',
+                                            variant: 'solid',
+                                          }
+                                        ]
+                                      });
+                                    });
+                                  }
+                                };
+                              });
+                            }
+                          }, 0);
+                        }
+                      }
+                    }
+
+                    // Show success message
+                    window.showAlert({
+                      type: "success",
+                      variant: "soft",
+                      title: "Success",
+                      text: "Photo deleted successfully",
+                      icon: true,
+                      duration: 3000
+                    });
+
+                    // Close the modal
+                    closeModal();
+                  } catch (error) {
+                    console.error("Error deleting photo:", error);
+                    window.showAlert({
+                      type: "error",
+                      variant: "soft",
+                      title: "Error",
+                      text: error instanceof Error ? error.message : "Failed to delete photo",
+                      icon: true,
+                      buttons: [
+                        {
+                          type: "error",
+                          text: "OK",
+                          variant: "solid",
+                        }
+                      ]
+                    });
+                  }
+                },
+              },
+            ],
+          });
+        });
+      }
+
+      // Return the initializePhotoClickHandler function so it can be used by Dropzone
+      return initializePhotoClickHandler;
+    }
+
+    async function initializeGallery(container: HTMLElement) {
+      try {
+        // Get the photos data from the container's dataset
+        const galleryContainer = container.closest('.gallery-upload-container') as HTMLElement;
+        const photosData = galleryContainer?.dataset.photos;
+        // Create a shared photos array that will be used by both the gallery and editor
+        const sharedPhotos: GalleryPhoto[] = photosData ? JSON.parse(photosData) : [];
+
+        // Initialize photo editor with the shared photos array
+        const initializePhotoClickHandler = initializePhotoEditor(container, sharedPhotos, updateUploadTriggerVisibility);
+        if (!initializePhotoClickHandler) {
+          console.error("Failed to initialize photo editor");
+          return;
+        }
+
+        // Get upload configuration from inputs
+        const uploadConfig = {
+          acceptedFiles: (
+            container.querySelector(
+              'input[name="component_gallery_upload_acceptedFiles"]'
+            ) as HTMLInputElement
+          ).value,
+          maxFiles: parseInt(
+            (
+              container.querySelector(
+                'input[name="component_gallery_upload_maxFiles"]'
+              ) as HTMLInputElement
+            ).value,
+            10
+          ),
+          maxFilesize: parseInt(
+            (
+              container.querySelector(
+                'input[name="component_gallery_upload_maxFilesize"]'
+              ) as HTMLInputElement
+            ).value,
+            10
+          ),
+        };
+
+        // Create human-readable formats for error messages
+        const acceptedFileTypes = uploadConfig.acceptedFiles
+          .split(",")
+          .map(type => type.replace("image/", ""))
+          .join(", ")
+          .toUpperCase();
+
+        // Flag to prevent multiple alerts
+        let maxFilesAlertShown = false;
+        let currentBatchSize = 0;
+
+        // Track total number of photos (existing + uploaded) for this specific gallery instance
+        const getGalleryPhotoCount = () => {
+          const previewsContainer = container.querySelector('[data-file-upload-previews]');
+          if (!previewsContainer) return 0;
+          
+          // Only count photos that have been fully uploaded (have UUID)
+          return Array.from(previewsContainer.children).filter(
+            child => child.hasAttribute('data-photo-uuid')
+          ).length;
+        };
+
+        // Function to manage upload trigger visibility
+        function updateUploadTriggerVisibility() {
+          const previewsContainer = container.querySelector(
+            "[data-file-upload-previews]"
+          ) as HTMLElement;
+          
+          if (!previewsContainer) {
+            return;
+          }
+
+          // Count both uploaded photos and preview elements within this specific container
+          const photoCount = Array.from(previewsContainer.children).filter(
+            child => child.hasAttribute('data-photo-uuid') || child.classList.contains('dz-preview')
+          ).length;
+          
+          // Find the upload trigger container - it's the div that contains the upload trigger span
+          const uploadTriggerContainer = container.querySelector('[data-file-upload-pseudo-trigger]')?.closest('div');
+          
+          // If there are no photos, ensure the upload trigger is visible
+          if (photoCount === 0) {
+            // Check if we need to add the upload trigger
+            if (!uploadTriggerContainer) {
+              // Get the template content directly from the DOM
+              const templateContent = container.querySelector('[data-file-upload-trigger]')?.innerHTML;
+              
+              if (templateContent) {
+                // Create a temporary div to hold the template content
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = templateContent.trim();
+                
+                // Get the first child (which should be our upload trigger div)
+                const newContainer = tempDiv.firstElementChild as HTMLElement;
+                
+                if (newContainer) {
+                  // Find the correct parent element to append to
+                  const flexContainer = container.querySelector('.flex.flex-col');
+                  if (flexContainer) {
+                    flexContainer.appendChild(newContainer);
+                    
+                    // Add a direct click handler to the upload trigger
+                    const triggerElement = newContainer.querySelector('[data-file-upload-pseudo-trigger]');
+                    if (triggerElement) {
+                      triggerElement.addEventListener('click', () => {
+                        // Create a file input element
+                        const fileInput = document.createElement('input');
+                        fileInput.type = 'file';
+                        fileInput.multiple = true;
+                        fileInput.accept = (container.querySelector('input[name="component_gallery_upload_acceptedFiles"]') as HTMLInputElement)?.value || 'image/*';
+                        
+                        // Trigger a click on the file input
+                        fileInput.click();
+                        
+                        // Handle file selection
+                        fileInput.addEventListener('change', (event) => {
+                          const files = (event.target as HTMLInputElement).files;
+                          if (files && files.length > 0) {
+                            // Find the Dropzone instance
+                            const dropzoneObj = window.Dropzone as any;
+                            for (const key in dropzoneObj) {
+                              if (Object.prototype.hasOwnProperty.call(dropzoneObj, key)) {
+                                const instance = dropzoneObj[key];
+                                if (instance && typeof instance === 'object' && instance.element === container) {
+                                  // Add files to Dropzone
+                                  instance.addFiles(files);
+                                  break;
+                                }
+                              }
+                            }
+                          }
+                        });
+                      });
+                    }
+                  }
+                }
+              } else {
+                // Fallback to creating the element manually
+                const newContainer = document.createElement('div');
+                newContainer.className = 'group w-full';
+                newContainer.setAttribute('data-file-upload-previews', '');
+                newContainer.setAttribute('data-file-upload-pseudo-trigger', '');
+                newContainer.innerHTML = `
+                  <span class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden" data-file-upload-pseudo-trigger="">
+                    <span class="icon-[${(container.querySelector('input[name="component_gallery_upload_dz_icon"]') as HTMLInputElement)?.value || 'tabler--plus'}] w-20 h-20"></span>
+                  </span>
+                `;
+                
+                const flexContainer = container.querySelector('.flex.flex-col');
+                if (flexContainer) {
+                  flexContainer.appendChild(newContainer);
+                } else {
+                  container.appendChild(newContainer);
+                }
+              }
+            }
+          } else {
+            // If there are photos, remove the upload trigger if it exists
+            if (uploadTriggerContainer) {
+              uploadTriggerContainer.remove();
+            }
+          }
+        }
+
+        // Create dropzone instance
+        const dropzone = new window.Dropzone(container, {
+          url: "/api/gallery/create",
+          headers: {},
+          acceptedFiles: uploadConfig.acceptedFiles,
+          maxFiles: uploadConfig.maxFiles,
+          maxFilesize: uploadConfig.maxFilesize,
+          addRemoveLinks: false,
+          previewTemplate:
+            container.querySelector("[data-file-upload-preview]")?.innerHTML ||
+            "",
+          previewsContainer: container.querySelector(
+            "[data-file-upload-previews]"
+          ),
+          clickable: container.querySelector(
+            "[data-file-upload-pseudo-trigger]"
+          ),
+          method: "POST",
+          params: function () {
+            return {
+              path: container.dataset.path,
+              related_id: (
+                container.querySelector(
+                  'input[name="component_gallery_upload_related_id"]'
+                ) as HTMLInputElement
+              )?.value,
+              related_table: (
+                container.querySelector(
+                  'input[name="component_gallery_upload_related_table"]'
+                ) as HTMLInputElement
+              )?.value,
+              gallery_type: (
+                container.querySelector(
+                  'input[name="component_gallery_upload_gallery_type"]'
+                ) as HTMLInputElement
+              )?.value,
+            };
+          },
+          autoQueue: true,
+          autoProcessQueue: true,
+          createImageThumbnails: true,
+          thumbnailWidth: 120,
+          thumbnailHeight: 120,
+          capture: null,
+          paramName: "file",
+          timeout: 180000,
+          parallelUploads: 3,
+          uploadMultiple: false,
+          forceFallback: false,
+          chunking: false,
+          dictDefaultMessage: "Drop files here or click to upload",
+          dictFileTooBig:
+            `File is too large ({{filesize}}MB). Maximum size is ${uploadConfig.maxFilesize}MB.`,
+          dictInvalidFileType: `Invalid file type. Please upload a ${acceptedFileTypes} image.`,
+          dictResponseError: "Server responded with {{statusCode}} code.",
+          dictCancelUpload: "Cancel upload",
+          dictUploadCanceled: "Upload canceled.",
+          dictRemoveFile: "Remove file",
+          dictMaxFilesExceeded: `Maximum ${uploadConfig.maxFiles} photos allowed.`,
+          init: function (this: DropzoneInstance) {
+            // Handle files before they get added to the queue
+            this.on("addedfiles", function(this: DropzoneInstance, files: any) {
+              const filesArray = Array.isArray(files) ? files : [files];
+              const currentPhotoCount = getGalleryPhotoCount();
+              const totalAfterBatch = currentPhotoCount + filesArray.length;
+              
+              if (totalAfterBatch > uploadConfig.maxFiles) {
+                window.showAlert({
+                  type: "error",
+                  variant: "soft",
+                  title: "Upload Limit Exceeded",
+                  text: `Maximum ${uploadConfig.maxFiles} photos allowed.`,
+                  icon: true,
+                  buttons: [
+                    {
+                      type: "error",
+                      text: "OK",
+                      variant: "solid",
+                    }
+                  ]
+                });
+                
+                filesArray.forEach(f => {
+                  if (f.previewElement && f.previewElement.parentNode) {
+                    f.previewElement.parentNode.removeChild(f.previewElement);
+                  }
+                });
+                
+                return false;
+              }
+            });
+
+            this.on("addedfile", function(this: DropzoneInstance, file: DropzoneFile) {
+              const currentPhotoCount = getGalleryPhotoCount();
+              
+              if (currentPhotoCount >= uploadConfig.maxFiles) {
+                this.removeFile(file);
+                return false;
+              }
+
+              uploadErrors.delete(file.name);
+
+              const thumbnail = file.previewElement?.querySelector('[data-dz-thumbnail]');
+              if (thumbnail) {
+                (thumbnail as HTMLElement).style.filter = 'grayscale(1) blur(6px)';
+                (thumbnail as HTMLElement).style.objectFit = 'cover';
+                (thumbnail as HTMLElement).style.width = '100%';
+                (thumbnail as HTMLElement).style.height = '100%';
+                (thumbnail as HTMLElement).style.position = 'absolute';
+                (thumbnail as HTMLElement).style.inset = '0';
+              }
+
+              setTimeout(updateUploadTriggerVisibility, 0);
+            });
+
+            this.on("queuecomplete", function() {
+              maxFilesAlertShown = false;
+              currentBatchSize = 0;
+            });
+
+            this.on("error", function (this: DropzoneInstance, file: DropzoneFile) {
+              currentBatchSize = Math.max(0, currentBatchSize - 1);
+              setTimeout(updateUploadTriggerVisibility, 0);
+            });
+
+            this.on("removedfile", function (this: DropzoneInstance, file: DropzoneFile) {
+              currentBatchSize = Math.max(0, currentBatchSize - 1);
+              setTimeout(updateUploadTriggerVisibility, 0);
+            });
+          },
+          accept: function(this: DropzoneInstance, file: DropzoneFile, done: (error?: string | Error) => void) {
+            done();
+          },
+        }) as DropzoneInstance;
+
+        // Keep track of uploaded files and errors
+        const uploadedFiles = new Map<string, { uuid: string; url: string }>();
+        const uploadErrors = new Map<string, string>();
+        const totalFiles = new Set<string>();
+
+        // Handle progress
+        dropzone.on(
+          "uploadprogress",
+          function (file: DropzoneFile, progress: number) {
+            const previewEl = file.previewElement;
+            if (!previewEl) return;
+
+            const overlay = previewEl.querySelector(
+              "[data-upload-overlay]"
+            ) as HTMLElement;
+            const progressBar = previewEl.querySelector(
+              "[data-progress-bar]"
+            ) as HTMLElement;
+
+            if (overlay) overlay.classList.remove("opacity-0");
+            if (progressBar) (progressBar as HTMLElement).style.width = `${Math.round(progress)}%`;
+          }
+        );
+
+        // Handle success
+        dropzone.on("success", function (file: DropzoneFile, response: any) {
+          const responseData =
+            typeof response === "string" ? JSON.parse(response) : response;
+          const previewEl = file.previewElement;
+
+          if (previewEl) {
+            const overlay = previewEl.querySelector(
+              "[data-upload-overlay]"
+            ) as HTMLElement;
+            const thumbnail = previewEl.querySelector(
+              "[data-dz-thumbnail]"
+            ) as HTMLImageElement;
+
+            if (overlay) overlay.classList.add("opacity-0");
+            
+            if (responseData.files && Array.isArray(responseData.files)) {
+              responseData.files.forEach((f: { uuid: string; url: string; name?: string }) => {
+                if (thumbnail) {
+                  // Create a new image element to preload the final photo
+                  const tempImage = new Image();
+                  tempImage.onload = () => {
+                    // Add transition class for smooth fade
+                    thumbnail.style.transition = 'filter 0.2s ease-out';
+                    // Remove grayscale and blur with transition
+                    thumbnail.style.filter = 'none';
+                    // Update the source after transition
+                    setTimeout(() => {
+                      thumbnail.src = f.url;
+                    }, 300);
+                  };
+                  tempImage.src = f.url;
+                }
+
+                // Add the photo to shared photos array
+                const photoData = {
+                  uuid: f.uuid,
+                  photo_url: f.url,
+                  title: null,
+                  display_order: sharedPhotos.length,
+                  description: '',
+                  photo_url_parameters: null
+                };
+                sharedPhotos.push(photoData);
+
+                // Update the container's dataset
+                galleryContainer.dataset.photos = JSON.stringify(sharedPhotos);
+
+                // Add photo UUID to the preview element
+                previewEl.setAttribute('data-photo-uuid', f.uuid);
+                previewEl.setAttribute('data-photo-url', f.url);
+
+                // Initialize click handler for the new photo
+                initializePhotoClickHandler(previewEl);
+              });
+            } else if (responseData.uuid) {
+              if (thumbnail) {
+                // Create a new image element to preload the final photo
+                const tempImage = new Image();
+                tempImage.onload = () => {
+                  // Add transition class for smooth fade
+                  thumbnail.style.transition = 'filter 0.3s ease-out';
+                  // Remove grayscale and blur with transition
+                  thumbnail.style.filter = 'none';
+                  // Update the source after transition
+                  setTimeout(() => {
+                    thumbnail.src = responseData.url;
+                  }, 300);
+                };
+                tempImage.src = responseData.url;
+              }
+
+              // Add the photo to shared photos array
+              const photoData = {
+                uuid: responseData.uuid,
+                photo_url: responseData.url,
+                title: null,
+                display_order: sharedPhotos.length,
+                description: '',
+                photo_url_parameters: null
+              };
+              sharedPhotos.push(photoData);
+
+              // Update the container's dataset
+              galleryContainer.dataset.photos = JSON.stringify(sharedPhotos);
+
+              // Add photo UUID to the preview element
+              previewEl.setAttribute('data-photo-uuid', responseData.uuid);
+              previewEl.setAttribute('data-photo-url', responseData.url);
+
+              // Initialize click handler for the new photo
+              initializePhotoClickHandler(previewEl);
+            }
+          }
+
+          setTimeout(updateUploadTriggerVisibility, 0);
+        });
+
+        // Handle error
+        dropzone.on(
+          "error",
+          function (this: DropzoneInstance, file: DropzoneFile, errorMessage: string) {
+            let message = errorMessage;
+            let errorTitle = "Upload Error";
+
+            if (errorMessage.includes("Maximum number of files exceeded") || 
+                errorMessage.includes("Maximum of") ||
+                errorMessage.includes("Upload Limit Exceeded")) {
+              if (!maxFilesAlertShown) {
+                window.showAlert({
+                  type: "error",
+                  variant: "soft",
+                  title: "Upload Limit Exceeded",
+                  text: `Maximum of ${uploadConfig.maxFiles} photos allowed.`,
+                  icon: true,
+                  buttons: [
+                    {
+                      type: "error",
+                      text: "OK",
+                      variant: "solid",
+                    }
+                  ]
+                });
+                maxFilesAlertShown = true;
+              }
+              this.removeFile(file);
+              return;
+            }
+
+            if (file.size > uploadConfig.maxFilesize * 1024 * 1024) {
+              message = `Maximum size is ${uploadConfig.maxFilesize}MB`;
+              errorTitle = "File Size Error";
+            } else if (
+              !uploadConfig.acceptedFiles.split(",").includes(file.type)
+            ) {
+              message = `Please upload a ${acceptedFileTypes} image.`;
+              errorTitle = "Invalid File Type";
+            } else if (errorMessage.includes("403") || errorMessage.includes("Forbidden")) {
+              message = "You don't have permission to add photos to this gallery.";
+              errorTitle = "Permission Denied";
+            }
+
+            uploadErrors.set(file.name, message);
+            const previewEl = file.previewElement;
+            if (previewEl) {
+              const overlay = previewEl.querySelector(
+                "[data-upload-overlay]"
+              ) as HTMLElement;
+              const thumbnail = previewEl.querySelector(
+                "[data-dz-thumbnail]"
+              ) as HTMLElement;
+              if (overlay) overlay.classList.add("opacity-0");
+              if (thumbnail) thumbnail.style.filter = 'none';
+            }
+
+            window.showAlert({
+              type: "error",
+              variant: "soft",
+              title: errorTitle,
+              text: message,
+              icon: true,
+              buttons: [
+                {
+                  type: "error",
+                  text: "OK",
+                  variant: "solid",
+                }
+              ]
+            });
+
+            this.removeFile(file);
+          }
+        );
+
+        // Handle removedfile
+        dropzone.on("removedfile", function (file: DropzoneFile) {
+          const photoUuid = file.previewElement?.getAttribute("data-photo-uuid");
+          if (photoUuid) {
+            // TODO: Call API to delete photo from database
+          }
+          setTimeout(updateUploadTriggerVisibility, 0);
+        });
+
+        // Handle queue complete
+        dropzone.on("queuecomplete", function () {
+          if (uploadErrors.size > 1) {
+            window.showAlert({
+              type: "error",
+              variant: "soft",
+              title: "Multiple Upload Errors",
+              text: `${uploadErrors.size} files failed to upload.`,
+              icon: true,
+              buttons: [
+                {
+                  type: "error",
+                  text: "OK",
+                  variant: "solid",
+                }
+              ]
+            });
+          }
+        });
+
+        // Handle total upload progress
+        dropzone.on(
+          "totaluploadprogress",
+          function (file: DropzoneFile, progress: number) {
+            // Progress is handled by the UI, no need for logging
+          }
+        );
+
+        // Initial visibility check
+        updateUploadTriggerVisibility();
+
+        // Initialize Sortable for the photo grid
+        const previewsContainer = container.querySelector('[data-file-upload-previews]') as HTMLElement;
+        const related_id = (container.querySelector('input[name="component_gallery_upload_related_id"]') as HTMLInputElement)?.value || '';
+        const related_table = (container.querySelector('input[name="component_gallery_upload_related_table"]') as HTMLInputElement)?.value || '';
+        const gallery_type = (container.querySelector('input[name="component_gallery_upload_gallery_type"]') as HTMLInputElement)?.value || '';
+
+        if (previewsContainer) {
+          const sortable = new Sortable(previewsContainer, {
+            animation: 150,
+            ghostClass: 'opacity-50',
+            onEnd: async (event: SortableEvent) => {
+              try {
+                // Get all photos in their new order
+                const photos = Array.from(previewsContainer.children)
+                  .filter(el => el.hasAttribute('data-photo-uuid'))
+                  .map((el, index) => ({
+                    uuid: el.getAttribute('data-photo-uuid') || '',
+                    display_order: index
+                  }));
+
+                // Update the order in the database
+                await updatePhotoOrder(photos, related_id, related_table, gallery_type);
+              } catch (error) {
+                console.error('Error updating photo order:', error);
+                window.showAlert({
+                  type: "error",
+                  variant: "soft",
+                  title: "Error",
+                  text: "Failed to update photo order. Please try again.",
+                  icon: true,
+                  buttons: [
+                    {
+                      type: "error",
+                      text: "OK",
+                      variant: "solid",
+                    }
+                  ]
+                });
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error initializing gallery:", error);
+      }
+    }
+
+    // Initialize all gallery containers
+    function initializeAllGalleries() {
+      // Add a small delay to ensure DOM is fully parsed
+      setTimeout(() => {
+        document
+          .querySelectorAll(".gallery-upload-container")
+          .forEach((container) => {
+            initializeGallery(container as HTMLElement);
+          });
+      }, 0);
+    }
+
+    // Initialize after DOM is ready
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initializeAllGalleries);
+    } else {
+      initializeAllGalleries();
+    }
+  </script>
+
+  <template data-file-upload-preview="">
+    <div
+      class="aspect-[4/3] w-full relative dz-preview dz-file-preview dz-processing dz-image-preview hover:opacity-90 transition-opacity duration-100 overflow-hidden rounded-md"
+    >
+      <img
+        class="h-full w-full object-cover cursor-pointer transition-all duration-300"
+        data-dz-thumbnail=""
+      />
+      <!-- Progress overlay -->
+      <div
+        class="absolute inset-0 bg-black/50 transition-opacity duration-300 opacity-0 cursor-pointer"
+        data-upload-overlay
+      >
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="w-3/4 h-2 bg-white/20 rounded-full overflow-hidden">
+            <div
+              class="h-full bg-white transition-all duration-300 rounded-full"
+              data-progress-bar
+              style="width: 0%"
+            >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hidden elements that Dropzone expects -->
+      <div class="dz-details" hidden>
+        <div class="dz-filename"><span data-dz-name></span></div>
+        <div class="dz-size" data-dz-size></div>
+      </div>
+      <div class="dz-progress" hidden>
+        <span class="dz-upload" data-dz-uploadprogress></span>
+      </div>
+      <div class="dz-error-message" hidden>
+        <span data-dz-errormessage></span>
+      </div>
+      <div class="dz-success-mark" hidden><span>✔</span></div>
+      <div class="dz-error-mark" hidden><span>✘</span></div>
+    </div>
+  </template>
+
+  <template data-file-upload-trigger="">
+    <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
+      <span
+        class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden"
+        data-file-upload-pseudo-trigger=""
+      >
+        <span class={`icon-[${dz_icon}] w-20 h-20`} />
+      </span>
+    </div>
+  </template>
+
+  <div class="flex flex-col">
+    <div
+      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2"
+      data-file-upload-previews=""
+    >
+      {
+        photos?.map((photo: any) => {
+          // Construct the full URL with parameters if they exist
+          const photoUrl = photo.photo_url_parameters 
+            ? `${photo.photo_url}?${photo.photo_url_parameters}`
+            : photo.photo_url;
+
+          return (
+            <div
+              class="aspect-[4/3] w-full relative"
+              data-photo-uuid={photo.uuid}
+            >
+              <img
+                src={photoUrl}
+                alt={photo.title || "Gallery photo"}
+                class="h-full w-full rounded-md object-cover cursor-pointer hover:opacity-90 transition-opacity duration-100"
+                data-photo-trigger
+                data-photo-uuid={photo.uuid}
+                data-photo-url={photo.photo_url}
+                data-photo-title={photo.title || ""}
+                data-photo-description={photo.description || ""}
+              />
+            </div>
+          );
+        })
+      }
+    </div>
+    {
+      (!photos || photos.length === 0) && (
+        <!-- IMPORTANT: This template must match the one in updateUploadTriggerVisibility() -->
+        <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
+          <span
+            class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden"
+            data-file-upload-pseudo-trigger=""
+          >
+            <span class={`icon-[${dz_icon}] w-20 h-20`} />
+          </span>
+        </div>
+      )
+    }
+  </div>
+</div>
+

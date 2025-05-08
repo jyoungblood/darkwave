@@ -1,0 +1,15 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+
+return Astro.redirect("/");
+---
+
+<Layout title="Dashboard Demo">
+  <div class="">
+    THIS IS THE DASHBOARD. NOTHING HERE NOW.<br /><br />
+    <ButtonLink href="/horses/new" text="New Horse" />
+    <br /><br />
+    <a href="/">&larr; index</a>
+  </div>
+</Layout>

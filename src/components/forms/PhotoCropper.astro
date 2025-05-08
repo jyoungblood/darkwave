@@ -1,0 +1,755 @@
+---
+// DW - Photo cropper component
+
+interface Props {
+  photo_url: string;
+  url_parameters?: string;
+  aspect_ratio?: number;
+}
+
+const {
+  photo_url = "",
+  url_parameters = "",
+  aspect_ratio = 4 / 3,
+} = Astro.props;
+---
+
+<link rel="stylesheet" href="/css/lib/cropper.min.css" />
+
+<style is:global>
+  /* Base styles for handles */
+  html body .photo-editor-modal .cropper-point {
+    --handle-size: 9px;
+    --handle-margin: calc(var(--handle-size) / -2);
+    width: var(--handle-size) !important;
+    height: var(--handle-size) !important;
+    border-radius: 2px !important;
+    background-color: white !important;
+    opacity: 1 !important;
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Handle positioning */
+  html body .photo-editor-modal .cropper-point.point-e {
+    right: var(--handle-margin) !important;
+    top: 50% !important;
+    margin-top: var(--handle-margin) !important;
+  }
+
+  html body .photo-editor-modal .cropper-point.point-n {
+    top: var(--handle-margin) !important;
+    left: 50% !important;
+    margin-left: var(--handle-margin) !important;
+  }
+
+  html body .photo-editor-modal .cropper-point.point-w {
+    left: var(--handle-margin) !important;
+    top: 50% !important;
+    margin-top: var(--handle-margin) !important;
+  }
+
+  html body .photo-editor-modal .cropper-point.point-s {
+    bottom: var(--handle-margin) !important;
+    left: 50% !important;
+    margin-left: var(--handle-margin) !important;
+  }
+
+  html body .photo-editor-modal .cropper-point.point-ne {
+    top: var(--handle-margin) !important;
+    right: var(--handle-margin) !important;
+  }
+
+  html body .photo-editor-modal .cropper-point.point-nw {
+    top: var(--handle-margin) !important;
+    left: var(--handle-margin) !important;
+  }
+
+  html body .photo-editor-modal .cropper-point.point-sw {
+    bottom: var(--handle-margin) !important;
+    left: var(--handle-margin) !important;
+  }
+
+  html body .photo-editor-modal .cropper-point.point-se {
+    bottom: var(--handle-margin) !important;
+    right: var(--handle-margin) !important;
+    width: var(--handle-size) !important;
+    height: var(--handle-size) !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Remove default styling */
+  html body .photo-editor-modal .cropper-point::before,
+  html body .photo-editor-modal .cropper-point::after {
+    display: none !important;
+  }
+
+  /* Keep the dark modal background */
+  html body .photo-editor-modal .cropper-modal {
+    opacity: 0.65 !important;
+    background-color: black !important;
+  }
+
+  /* Fix the edge artifacts */
+  html body .photo-editor-modal .cropper-view-box {
+    outline: none !important;
+    border: none !important;
+  }
+
+  /* Show rule of thirds grid */
+  html body .photo-editor-modal .cropper-dashed {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    opacity: 1 !important;
+  }
+
+  html body .photo-editor-modal .cropper-dashed.dashed-h {
+    border-bottom-width: 1px !important;
+    border-bottom-style: dashed !important;
+    border-top-width: 1px !important;
+    border-top-style: dashed !important;
+  }
+
+  html body .photo-editor-modal .cropper-dashed.dashed-v {
+    border-right-width: 1px !important;
+    border-right-style: dashed !important;
+    border-left-width: 1px !important;
+    border-left-style: dashed !important;
+  }
+
+  /* Hide other elements that might cause artifacts */
+  html body .photo-editor-modal .cropper-face {
+    opacity: 0 !important;
+  }
+
+  html body .photo-editor-modal .cropper-line {
+    display: none !important;
+  }
+
+  /* Clean up any potential artifacts */
+  html body .photo-editor-modal .cropper-view-box,
+  html body .photo-editor-modal .cropper-face,
+  html body .photo-editor-modal .cropper-line,
+  html body .photo-editor-modal .cropper-point {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Loading state styles */
+  .photo-cropper-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.3s ease-out,
+      visibility 0s linear 0s;
+  }
+
+  .photo-cropper-loading.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease-out,
+      visibility 0s linear 0.3s;
+  }
+
+  .photo-cropper-loading img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(1) blur(3px);
+    opacity: 0.4;
+  }
+
+  .photo-cropper-loading::after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.15);
+    border-radius: 50%;
+    border-top-color: black;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+    animation: spin 1s linear infinite;
+    z-index: 1;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Container needs relative positioning for absolute loading state */
+  .photo-cropper-component {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ensure preview container takes up space */
+  .photo-cropper-component .mb-4 {
+    min-height: 200px;
+    margin-bottom: 0;
+  }
+
+  /* Remove rounded corners from preview image */
+  .photo-cropper-component .modal-preview-image {
+    border-radius: 0;
+  }
+
+  /* Ensure cropper container has the same dimensions as the loading state */
+  .cropper-container {
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+  }
+
+  /* Add fade-in for cropper when it's ready */
+  .cropper-container-ready {
+    opacity: 1;
+  }
+
+  /* Zoom controls */
+  .cropper-zoom-controls {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+    pointer-events: none;
+  }
+
+  .cropper-zoom-controls button {
+    pointer-events: auto;
+  }
+
+  .photo-cropper-component.cropper-ready .cropper-zoom-controls {
+    opacity: 1;
+  }
+
+  .cropper-zoom-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--rounded-btn, 0.375rem);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  }
+
+  .cropper-zoom-btn:hover {
+    background-color: rgba(245, 245, 245, 1);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+  }
+
+  .cropper-zoom-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .cropper-zoom-btn span {
+    font-size: 20px;
+    line-height: 1;
+    color: #333;
+  }
+</style>
+
+<script src="/js/lib/cropper.min.js" is:inline></script>
+
+<div
+  class="photo-cropper-component"
+  data-photo-url={photo_url}
+  data-url-parameters={url_parameters}
+>
+  <!-- Loading State -->
+  <div class="photo-cropper-loading">
+    <img class="loading-preview-image" src={photo_url} alt="Loading photo..." />
+  </div>
+
+  <!-- Cropper Preview Image -->
+  <div class="mb-4 cropper-wrapper">
+    <img
+      class="modal-preview-image w-full h-auto max-h-[75vh] object-contain"
+      src={photo_url}
+      alt="Photo to crop"
+    />
+  </div>
+
+  <!-- Zoom Controls -->
+  <div class="cropper-zoom-controls">
+    <button
+      type="button"
+      class="cropper-zoom-btn"
+      data-zoom="in"
+      aria-label="Zoom in"
+    >
+      <span class="icon-[tabler--plus]"></span>
+    </button>
+    <button
+      type="button"
+      class="cropper-zoom-btn"
+      data-zoom="out"
+      aria-label="Zoom out"
+    >
+      <span class="icon-[tabler--minus]"></span>
+    </button>
+  </div>
+</div>
+
+<script>
+  // Add Cropper type definitions
+  interface CropperInstance {
+    destroy: () => void;
+    getData: () => {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      rotate: number;
+      scaleX: number;
+      scaleY: number;
+    };
+    getImageData: () => {
+      naturalWidth: number;
+      naturalHeight: number;
+      width: number;
+      height: number;
+      aspectRatio: number;
+      left: number;
+      top: number;
+    };
+    setData: (data: {
+      width: number;
+      height: number;
+      x: number;
+      y: number;
+    }) => void;
+    getCropBoxData: () => {
+      left: number;
+      top: number;
+      width: number;
+      height: number;
+    };
+    getCroppedCanvas: (options?: {
+      width?: number;
+      height?: number;
+      imageSmoothingEnabled?: boolean;
+      imageSmoothingQuality?: "low" | "medium" | "high";
+    }) => HTMLCanvasElement;
+    zoom: (ratio: number) => void;
+    setCropBoxData: (data: {
+      left: number;
+      top: number;
+      width: number;
+      height: number;
+    }) => void;
+  }
+
+  interface CropperOptions {
+    aspectRatio?: number;
+    viewMode?: 0 | 1 | 2 | 3;
+    dragMode?: "crop" | "move" | "none";
+    autoCropArea?: number;
+    restore?: boolean;
+    guides?: boolean;
+    center?: boolean;
+    highlight?: boolean;
+    cropBoxMovable?: boolean;
+    cropBoxResizable?: boolean;
+    toggleDragModeOnDblclick?: boolean;
+    zoomOnWheel?: boolean;
+    ready?: () => void;
+  }
+
+  interface CropperEvent {
+    type: string;
+    detail: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      rotate: number;
+      scaleX: number;
+      scaleY: number;
+    };
+    preventDefault(): void;
+  }
+
+  declare global {
+    interface Window {
+      Cropper: {
+        new (
+          element: HTMLImageElement,
+          options?: CropperOptions
+        ): CropperInstance;
+      };
+    }
+  }
+
+  // Debounce function to limit how often a function can be called
+  function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+    let timeout: number | null = null;
+    return function(this: any, ...args: Parameters<T>): void {
+      const context = this;
+      if (timeout) {
+        window.clearTimeout(timeout);
+      }
+      timeout = window.setTimeout(() => {
+        func.apply(context, args);
+        timeout = null;
+      }, wait);
+    };
+  }
+
+  function initializeCropper(container: HTMLElement) {
+    // Cache DOM queries - store references to frequently accessed elements
+    const previewImage = container.querySelector(
+      ".modal-preview-image"
+    ) as HTMLImageElement;
+    const loadingContainer = container.querySelector(
+      ".photo-cropper-loading"
+    ) as HTMLElement;
+    const zoomInBtn = container.querySelector(
+      '.cropper-zoom-btn[data-zoom="in"]'
+    ) as HTMLButtonElement;
+    const zoomOutBtn = container.querySelector(
+      '.cropper-zoom-btn[data-zoom="out"]'
+    ) as HTMLButtonElement;
+
+    if (!previewImage || !loadingContainer) {
+      console.error("Required elements not found");
+      return;
+    }
+
+    let cropper: CropperInstance | null = null;
+    let isDragging = false;
+    // Store event listeners for proper cleanup
+    const eventListeners: { element: Element | Document, type: string, listener: EventListener, options?: any }[] = [];
+
+    // Helper function to add event listeners and track them for cleanup
+    const addTrackedEventListener = (
+      element: Element | Document, 
+      type: string, 
+      listener: EventListener, 
+      options?: any
+    ) => {
+      element.addEventListener(type, listener, options);
+      eventListeners.push({ element, type, listener, options });
+    };
+
+    // Function to initialize cropper
+    const initializeCropperInstance = () => {
+      if (cropper) {
+        cropper.destroy();
+      }
+
+      // Get existing parameters from the container
+      const existingParams = container.dataset.urlParameters;
+      let initialCropData = null;
+      let isInitializing = true;
+
+      if (existingParams) {
+        const match = existingParams.match(/crop=(\d+),(\d+),(\d+),(\d+)/);
+        if (match) {
+          // Convert Bunny.net format (width,height,x,y) to Cropper.js format
+          // Ensure we're using the exact values from the URL
+          initialCropData = {
+            width: parseInt(match[1], 10),
+            height: parseInt(match[2], 10),
+            x: parseInt(match[3], 10),
+            y: parseInt(match[4], 10)
+          };
+          // console.log('Initial crop data from URL:', JSON.stringify(initialCropData, null, 2));
+        }
+      }
+
+      // Calculate aspect ratio from initial crop data if available, otherwise use 4:3
+      const calculatedAspectRatio = initialCropData 
+        ? initialCropData.width / initialCropData.height 
+        : 4 / 3;
+
+      // Initialize cropper with existing parameters if present
+      cropper = new window.Cropper(previewImage, {
+        aspectRatio: calculatedAspectRatio,
+        viewMode: 2,
+        dragMode: "crop",
+        autoCropArea: 1,
+        restore: false,
+        guides: true,
+        center: true,
+        highlight: false,
+        cropBoxMovable: true,
+        cropBoxResizable: true,
+        toggleDragModeOnDblclick: false,
+        zoomOnWheel: false,
+        ready: () => {
+          if (!cropper) return;
+          
+          if (initialCropData) {
+            // Log initial state
+            // console.log('Initial crop data from URL:', JSON.stringify(initialCropData, null, 2));
+            
+            // Wait for container to stabilize
+            setTimeout(() => {
+              if (!cropper) return;
+              
+              // Get the image data after container has stabilized
+              const imageData = cropper.getImageData();
+              // console.log('Image data after stabilization:', JSON.stringify(imageData, null, 2));
+              
+              // Set the crop data using original coordinates
+              cropper.setData(initialCropData);
+              
+              // Log what was actually set
+              // console.log('Final crop data:', JSON.stringify(cropper.getData(), null, 2));
+              
+              // Show the cropper after setting the data
+              const cropperContainer = container.querySelector(".cropper-container");
+              if (cropperContainer) {
+                cropperContainer.classList.add("cropper-container-ready");
+                container.classList.add("cropper-ready");
+              }
+              
+              // Hide loading state
+              loadingContainer.classList.add("hidden");
+              
+              // Mark initialization as complete
+              setTimeout(() => {
+                isInitializing = false;
+              }, 100);
+            }, 500); // Wait longer for container to stabilize
+            
+            return;
+          }
+          
+          // If no initial crop data, just show the cropper
+          const cropperContainer = container.querySelector(".cropper-container");
+          if (cropperContainer) {
+            cropperContainer.classList.add("cropper-container-ready");
+            container.classList.add("cropper-ready");
+          }
+          
+          // Hide loading state
+          loadingContainer.classList.add("hidden");
+          
+          // Mark initialization as complete
+          setTimeout(() => {
+            isInitializing = false;
+          }, 100);
+        },
+      });
+
+      // Store cropper instance on container
+      (container as any).cropper = cropper;
+
+      // Set up zoom buttons
+      if (zoomInBtn) {
+        const zoomInHandler = (e: Event) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (cropper) {
+            cropper.zoom(0.05);
+          }
+        };
+        addTrackedEventListener(zoomInBtn, "click", zoomInHandler);
+      }
+
+      if (zoomOutBtn) {
+        const zoomOutHandler = (e: Event) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (cropper) {
+            cropper.zoom(-0.05);
+          }
+        };
+        addTrackedEventListener(zoomOutBtn, "click", zoomOutHandler);
+      }
+
+      // Handle drag events
+      const cropStartHandler = () => {
+        isDragging = true;
+        container.dispatchEvent(new CustomEvent("cropperDragStart"));
+      };
+      addTrackedEventListener(previewImage, "cropstart", cropStartHandler);
+
+      const cropEndHandler = () => {
+        setTimeout(() => {
+          isDragging = false;
+          container.dispatchEvent(new CustomEvent("cropperDragEnd"));
+        }, 100);
+      };
+      addTrackedEventListener(previewImage, "cropend", cropEndHandler);
+
+      const cropHandler = (e: Event) => {
+        if (!cropper || isInitializing) return;
+        
+        // Get the crop data directly in image coordinates
+        const cropData = cropper.getData();
+        
+        // Only dispatch if the values have changed significantly
+        const lastData = (container as any).lastCropData;
+        if (!lastData || 
+            Math.abs(lastData.width - cropData.width) > 1 ||
+            Math.abs(lastData.height - cropData.height) > 1 ||
+            Math.abs(lastData.x - cropData.x) > 1 ||
+            Math.abs(lastData.y - cropData.y) > 1) {
+          
+          // Store the current data for comparison
+          (container as any).lastCropData = cropData;
+          
+          // Log the values for debugging
+          // console.log('Crop Data:', JSON.stringify(cropData, null, 2));
+          
+          container.dispatchEvent(
+            new CustomEvent("cropperDataUpdate", {
+              detail: cropData,
+            })
+          );
+        }
+      };
+
+      // Create a debounced version of the crop handler with a longer delay
+      const debouncedCropHandler = debounce(cropHandler, 100);
+      addTrackedEventListener(previewImage, "crop", debouncedCropHandler);
+
+      // Add a global mouseup handler to ensure we catch the end of drag even outside the modal
+      const handleGlobalMouseUp = () => {
+        if (isDragging) {
+          setTimeout(() => {
+            isDragging = false;
+            container.dispatchEvent(new CustomEvent("cropperDragEnd"));
+          }, 100);
+        }
+      };
+      addTrackedEventListener(document, "mouseup", handleGlobalMouseUp);
+
+      // Clean up the global event listener when the cropper is destroyed
+      const originalDestroy = cropper.destroy;
+      cropper.destroy = function () {
+        // Clean up all tracked event listeners
+        eventListeners.forEach(({ element, type, listener, options }) => {
+          element.removeEventListener(type, listener, options);
+        });
+        // Clear the event listeners array
+        eventListeners.length = 0;
+
+        // Reset the cropper container opacity
+        const cropperContainer = container.querySelector(".cropper-container");
+        if (cropperContainer) {
+          cropperContainer.classList.remove("cropper-container-ready");
+        }
+
+        // Remove ready class from main container
+        container.classList.remove("cropper-ready");
+
+        // Show loading state
+        loadingContainer.classList.remove("hidden");
+
+        originalDestroy.call(this);
+      };
+    };
+
+    // Initialize on load
+    if (previewImage.complete) {
+      initializeCropperInstance();
+    } else {
+      const loadHandler = () => {
+        initializeCropperInstance();
+        previewImage.removeEventListener("load", loadHandler);
+      };
+      previewImage.addEventListener("load", loadHandler);
+    }
+
+    // Handle reinitialize event
+    const reinitializeHandler = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail) {
+        const { photoUrl, urlParameters } = customEvent.detail;
+        container.dataset.photoUrl = photoUrl;
+        container.dataset.urlParameters = urlParameters;
+
+        // Update both images
+        const loadingImage = loadingContainer.querySelector(
+          "img"
+        ) as HTMLImageElement;
+        if (loadingImage) {
+          loadingImage.src = photoUrl;
+        }
+        previewImage.src = photoUrl;
+
+        // Reset the cropper container opacity if it exists
+        const cropperContainer = container.querySelector(".cropper-container");
+        if (cropperContainer) {
+          cropperContainer.classList.remove("cropper-container-ready");
+        }
+
+        // Remove ready class from main container
+        container.classList.remove("cropper-ready");
+
+        // Show loading state
+        loadingContainer.classList.remove("hidden");
+
+        // Wait for the image to load before reinitializing
+        if (previewImage.complete) {
+          initializeCropperInstance();
+        } else {
+          const loadHandler = () => {
+            initializeCropperInstance();
+            previewImage.removeEventListener("load", loadHandler);
+          };
+          previewImage.addEventListener("load", loadHandler);
+        }
+      }
+    };
+    container.addEventListener("reinitialize-cropper", reinitializeHandler);
+
+    // Add cleanup for the reinitialize event when the component is removed
+    return () => {
+      container.removeEventListener("reinitialize-cropper", reinitializeHandler);
+      if (cropper) {
+        cropper.destroy();
+      }
+    };
+  }
+
+  // Initialize all croppers
+  function initializeAllCroppers() {
+    const cleanupFunctions: Array<() => void> = [];
+    document
+      .querySelectorAll(".photo-cropper-component")
+      .forEach((container) => {
+        const cleanup = initializeCropper(container as HTMLElement);
+        if (cleanup) {
+          cleanupFunctions.push(cleanup);
+        }
+      });
+      
+    // Add a cleanup function for when the page is unloaded
+    window.addEventListener('beforeunload', () => {
+      cleanupFunctions.forEach(cleanup => cleanup());
+    });
+  }
+
+  // Initialize after DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeAllCroppers);
+  } else {
+    initializeAllCroppers();
+  }
+</script>
+

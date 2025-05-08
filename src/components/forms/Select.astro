@@ -1,0 +1,44 @@
+---
+// DW - Form select dropdown component
+
+interface Props {
+  label: string;
+  name: string;
+  required?: boolean;
+  value?: string;
+  class?: string;
+  options: { label: string; value: string }[];
+  selected?: string;
+}
+
+// const defaultClass = "p-2 border border-gray-400 rounded-md";
+const defaultClass = "select select-bordered";
+const {
+  label,
+  name,
+  required = false,
+  value = "",
+  options,
+  class: customClass = "",
+  selected = "",
+} = Astro.props;
+const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
+---
+
+<!-- mb-2 text-sm font-semibold -->
+<label for={`input-${name}`} class="label label-text">{label}</label>
+<select
+  id={`input-${name}`}
+  name={name}
+  required={required}
+  class={className}
+  value={value}
+>
+  {
+    options.map((option) => (
+      <option value={option.value} selected={option.value === selected}>
+        {option.label}
+      </option>
+    ))
+  }
+</select>

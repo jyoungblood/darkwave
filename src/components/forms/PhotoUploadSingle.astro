@@ -1,0 +1,1177 @@
+---
+// DW - Photo upload component - single photo
+
+interface Props {
+  related_id: string;
+  related_table: string;
+  related_column: string;
+  url?: string;
+  url_parameters?: string;
+  upload_path?: string;
+  file_limit_size?: number;
+  file_formats?: string;
+  dz_icon?: string;
+}
+
+const {
+  related_id,
+  related_table,
+  related_column,
+  url = "",
+  url_parameters = "",
+  upload_path = "",
+  file_limit_size = 10,
+  file_formats = "image/jpeg,image/png,image/webp",
+  dz_icon = "tabler--plus",
+} = Astro.props;
+
+// Normalize the upload path by removing optional leading/trailing slashes
+const normalizedUploadPath = upload_path.replace(/^\/+|\/+$/g, "");
+
+import PhotoCropper from "./PhotoCropper.astro";
+---
+
+<div
+  class="photo-upload-container pb-16"
+  data-path={normalizedUploadPath}
+  data-initial-value={url}
+  data-parameters={url_parameters}
+>
+  <input
+    type="hidden"
+    name="component_photo_upload_related_id"
+    value={related_id}
+  />
+  <input
+    type="hidden"
+    name="component_photo_upload_related_table"
+    value={related_table}
+  />
+  <input
+    type="hidden"
+    name="component_photo_upload_related_column"
+    value={related_column}
+  />
+  <input
+    type="hidden"
+    name="component_photo_upload_maxFilesize"
+    value={file_limit_size}
+  />
+  <input
+    type="hidden"
+    name="component_photo_upload_acceptedFiles"
+    value={file_formats}
+  />
+
+  <!-- Photo Editor Modal -->
+  <div
+    class="photo-editor-modal fixed inset-0 z-[100] hidden"
+    role="dialog"
+    tabindex="-1"
+  >
+    <!-- Modal backdrop -->
+    <div
+      class="modal-backdrop fixed inset-0 bg-black/50 transition-opacity duration-300"
+    >
+    </div>
+
+    <!-- Modal container -->
+    <div
+      class="modal-container fixed inset-0 z-[101] overflow-y-auto"
+      data-modal-container
+    >
+      <div class="flex min-h-full items-center justify-center p-4">
+        <div
+          class="modal-content w-full max-w-2xl bg-base-100 rounded-lg shadow-xl max-h-[90vh] flex flex-col"
+        >
+          <div class="modal-header flex-none">
+            <button
+              type="button"
+              class="btn btn-text btn-circle btn-sm absolute end-3 top-3"
+              aria-label="Close"
+              data-close-modal
+            >
+              <span class="icon-[tabler--x] size-4"></span>
+            </button>
+          </div>
+
+          <div class="photo-editor-form overflow-y-auto">
+            <div class="modal-body pt-0">
+              <!-- rounded-md overflow-hidden -->
+              <div data-cropper-container>
+                <PhotoCropper photo_url={url} url_parameters={url_parameters} />
+              </div>
+            </div>
+
+            <div class="modal-footer flex justify-between">
+              <!-- Left side buttons -->
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  class="save-photo-btn btn btn-primary flex items-center justify-center"
+                  aria-busy="false"
+                  data-save-crop
+                >
+                  <svg
+                    class="hidden w-5 h-5 mr-3 animate-spin"
+                    data-save-spinner
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                      fill="none"></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span data-save-text>Save Crop</span>
+                </button>
+                <span data-save-error class="text-red-500 text-sm ml-4 hidden"
+                ></span>
+              </div>
+
+              <!-- Right side buttons - placeholder for future buttons -->
+              <div class="flex gap-2">
+                <!-- Placeholder for future buttons -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    if (!window.Dropzone) {
+      window.Dropzone = {
+        autoDiscover: false,
+        prototype: {},
+      };
+    }
+  </script>
+
+  <script>
+    import "dropzone/dist/dropzone-min.js";
+    import "@/components/ui/scripts/alert.js";
+
+    // Add Dropzone type definitions
+    interface DropzoneFile {
+      name: string;
+      size: number;
+      type: string;
+      previewElement?: HTMLElement;
+    }
+
+    interface DropzoneOptions {
+      maxFilesize: number;
+      acceptedFiles: string;
+      removeFile: (file: DropzoneFile) => void;
+      maxFiles: number;
+    }
+
+    interface DropzoneInstance {
+      options: DropzoneOptions;
+      files: DropzoneFile[];
+      on: (
+        event: string,
+        callback: (file: DropzoneFile, ...args: any[]) => void
+      ) => void;
+      removeFile: (file: DropzoneFile) => void;
+      emit: (event: string, file: DropzoneFile, ...args: any[]) => void;
+    }
+
+    // NOT NEEDED BUT LEAVING FOR REFERENCE FOR NOW
+
+    // interface DropzoneConstructor {
+    //   new (element: HTMLElement, options: any): DropzoneInstance;
+    //   autoDiscover: boolean;
+    // }
+
+    // NOTE: There is a known TypeScript linter error in this file:
+    // Window interface Dropzone type conflict (complex type definition issue with third-party library)
+    // This is purely a TypeScript type-checking issue and doesn't affect runtime functionality.
+    // The component works correctly despite this linter warning.
+
+    // DO NOT TRY TO FIX THIS ERROR UNDER ANY CIRCUMSTANCES
+    // declare global {
+    //   interface Window {
+    //     Dropzone: DropzoneConstructor;
+    //   }
+    // }
+
+    // Debounce function to limit how often a function can be called
+    function debounce<T extends (...args: any[]) => any>(
+      func: T,
+      wait: number
+    ): (...args: Parameters<T>) => void {
+      let timeout: number | null = null;
+      return function (this: any, ...args: Parameters<T>): void {
+        const context = this;
+        if (timeout) {
+          window.clearTimeout(timeout);
+        }
+        timeout = window.setTimeout(() => {
+          func.apply(context, args);
+          timeout = null;
+        }, wait);
+      };
+    }
+
+    function initializeDropzone(container: HTMLElement) {
+      try {
+        // Cache DOM elements - store references to frequently accessed elements
+        const related_column =
+          (
+            container.querySelector(
+              'input[name="component_photo_upload_related_column"]'
+            ) as HTMLInputElement
+          )?.value || "photo_url";
+        const uploadConfigElements = {
+          acceptedFiles: container.querySelector(
+            'input[name="component_photo_upload_acceptedFiles"]'
+          ) as HTMLInputElement,
+          maxFilesize: container.querySelector(
+            'input[name="component_photo_upload_maxFilesize"]'
+          ) as HTMLInputElement,
+          relatedId: container.querySelector(
+            'input[name="component_photo_upload_related_id"]'
+          ) as HTMLInputElement,
+          relatedTable: container.querySelector(
+            'input[name="component_photo_upload_related_table"]'
+          ) as HTMLInputElement,
+          relatedColumn: container.querySelector(
+            'input[name="component_photo_upload_related_column"]'
+          ) as HTMLInputElement,
+        };
+
+        const previewsContainer = container.querySelector(
+          "[data-file-upload-previews]"
+        );
+        const pseudoTrigger = container.querySelector(
+          "[data-file-upload-pseudo-trigger]"
+        );
+
+        // Store event listeners for proper cleanup
+        const eventListeners: {
+          element: Element;
+          type: string;
+          listener: EventListener;
+          options?: any;
+        }[] = [];
+
+        // Helper function to add event listeners and track them for cleanup
+        const addTrackedEventListener = (
+          element: Element,
+          type: string,
+          listener: EventListener,
+          options?: any
+        ) => {
+          element.addEventListener(type, listener, options);
+          eventListeners.push({ element, type, listener, options });
+        };
+
+        // Initialize photo editor first
+        const openPhotoEditor = initializePhotoEditor(container);
+        if (!openPhotoEditor) {
+          console.error("Failed to initialize photo editor");
+          return;
+        }
+
+        // Store the openPhotoEditor function on the container
+        (container as any).openPhotoEditor = openPhotoEditor;
+
+        // Get upload configuration from inputs
+        const uploadConfig = {
+          acceptedFiles: uploadConfigElements.acceptedFiles.value,
+          maxFiles: 1, // Single photo upload always has maxFiles of 1
+          maxFilesize: parseInt(uploadConfigElements.maxFilesize.value, 10),
+        };
+
+        // Create human-readable formats for error messages
+        const acceptedFileTypes = uploadConfig.acceptedFiles
+          .split(",")
+          .map((type) => type.replace("image/", ""))
+          .join(", ")
+          .toUpperCase();
+
+        // Create debounced functions for UI updates
+        const debouncedUpdateThumbnail = debounce(
+          (
+            thumbnail: HTMLElement,
+            filter: string,
+            objectFit: string,
+            width: string,
+            height: string,
+            position: string,
+            inset: string
+          ) => {
+            thumbnail.style.filter = filter;
+            thumbnail.style.objectFit = objectFit;
+            thumbnail.style.width = width;
+            thumbnail.style.height = height;
+            thumbnail.style.position = position;
+            thumbnail.style.inset = inset;
+          },
+          10
+        );
+
+        // Create dropzone instance using the container element directly
+        const dropzone = new window.Dropzone(container, {
+          url: "/api/photo/save",
+          headers: {},
+          acceptedFiles: uploadConfig.acceptedFiles,
+          maxFiles: uploadConfig.maxFiles,
+          maxFilesize: uploadConfig.maxFilesize,
+          addRemoveLinks: false,
+          previewTemplate:
+            container.querySelector("[data-file-upload-preview]")?.innerHTML ||
+            "",
+          previewsContainer: previewsContainer,
+          clickable: pseudoTrigger,
+          method: "POST",
+          params: function () {
+            return {
+              path: container.dataset.path,
+              related_id: uploadConfigElements.relatedId.value || "",
+              related_table: uploadConfigElements.relatedTable.value || "",
+              related_column: uploadConfigElements.relatedColumn.value || "",
+            };
+          },
+          autoQueue: true,
+          autoProcessQueue: true,
+          createImageThumbnails: true,
+          thumbnailWidth: 120,
+          thumbnailHeight: 120,
+          capture: null,
+          paramName: "file",
+          timeout: 180000,
+          parallelUploads: 1,
+          uploadMultiple: false,
+          chunking: true,
+          dictDefaultMessage: "Drop files here or click to upload",
+          dictFileTooBig: `File is too large ({{filesize}}MB). Maximum size is ${uploadConfig.maxFilesize}MB.`,
+          dictInvalidFileType: `Invalid file type. Please upload a ${acceptedFileTypes} image.`,
+          dictResponseError: "Server responded with {{statusCode}} code.",
+          dictCancelUpload: "Cancel upload",
+          dictUploadCanceled: "Upload canceled.",
+          dictRemoveFile: "Remove file",
+          dictMaxFilesExceeded: "You can only upload one file at a time.",
+          init: function (this: DropzoneInstance) {
+            // Store the dropzone instance on the container
+            (container as any).dropzone = this;
+
+            // Initialize with existing photo if provided
+            const value = container.dataset.initialValue;
+            if (value && value.startsWith("http")) {
+              const mockFile: DropzoneFile = {
+                name: "Current Photo",
+                size: 0,
+                type: "image/jpeg",
+              };
+              this.emit("addedfile", mockFile);
+
+              // Apply parameters to the URL if they exist
+              const parameters = container.dataset.parameters;
+              const photoUrl = parameters ? `${value}?${parameters}` : value;
+
+              this.emit("thumbnail", mockFile, photoUrl);
+              this.emit("complete", mockFile);
+              this.files = [mockFile];
+            }
+          },
+        });
+
+        // Handle file addition
+        dropzone.on(
+          "addedfile",
+          function (this: DropzoneInstance, file: DropzoneFile) {
+            const existingFiles = [...this.files];
+            existingFiles.forEach((existingFile) => {
+              if (existingFile !== file) {
+                this.removeFile(existingFile);
+              }
+            });
+
+            // Add more specific styling for consistent aspect ratio
+            const thumbnail = file.previewElement?.querySelector(
+              "[data-dz-thumbnail]"
+            ) as HTMLImageElement;
+            if (thumbnail) {
+              debouncedUpdateThumbnail(
+                thumbnail,
+                "grayscale(1) blur(6px)",
+                "cover",
+                "100%",
+                "100%",
+                "absolute",
+                "0"
+              );
+            }
+          }
+        );
+
+        // Handle removedfile
+        dropzone.on("removedfile", async function (file: DropzoneFile) {
+          try {
+            const photoUrl = file.previewElement
+              ?.querySelector("img")
+              ?.getAttribute("src");
+            const relatedId = uploadConfigElements.relatedId?.value;
+            const relatedTable = uploadConfigElements.relatedTable?.value;
+            const relatedColumn = uploadConfigElements.relatedColumn?.value;
+
+            // Only attempt deletion if this is a user-initiated action (not a page reload)
+            // and if we have a valid URL and related data
+            if (
+              photoUrl &&
+              photoUrl.startsWith("http") &&
+              relatedId &&
+              relatedTable &&
+              relatedColumn
+            ) {
+              // Check if this is a programmatic removal during page reload/navigation
+              // by checking if the document is currently unloading
+              if (
+                document.visibilityState === "hidden" ||
+                (window as any).__isUnloading
+              ) {
+                // console.log("Skipping deletion during page unload");
+                return;
+              }
+
+              // Strip query parameters from URL for CDN deletion
+              const cdnUrl = photoUrl.split("?")[0];
+              const response = await fetch("/api/photo/delete", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  photo_url: cdnUrl,
+                  related_id: relatedId,
+                  related_table: relatedTable,
+                  related_column: relatedColumn,
+                }),
+              });
+
+              if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Failed to delete photo");
+              }
+            }
+          } catch (error) {
+            console.error("Error deleting photo:", error);
+            // Only show alert if this isn't during page unload
+            if (document.visibilityState !== "hidden") {
+              window.showAlert({
+                type: "error",
+                variant: "soft",
+                title: "Delete Error",
+                text:
+                  error instanceof Error
+                    ? error.message
+                    : "Failed to delete photo",
+                icon: true,
+                buttons: [
+                  {
+                    type: "error",
+                    text: "OK",
+                    variant: "solid",
+                  },
+                ],
+              });
+            }
+          }
+        });
+
+        // Handle progress
+        dropzone.on(
+          "uploadprogress",
+          function (file: DropzoneFile, progress: number) {
+            const previewEl = file.previewElement;
+            if (!previewEl) return;
+
+            const overlay = previewEl.querySelector(
+              "[data-upload-overlay]"
+            ) as HTMLElement;
+            const progressBar = previewEl.querySelector(
+              "[data-progress-bar]"
+            ) as HTMLElement;
+
+            // Show overlay and update progress
+            if (overlay) overlay.classList.remove("opacity-0");
+            if (progressBar)
+              progressBar.style.width = `${Math.round(progress)}%`;
+          }
+        );
+
+        // Update success handler to use data-initial-value instead of hidden input
+        dropzone.on(
+          "success",
+          function (this: DropzoneInstance, file: DropzoneFile, response: any) {
+            const responseData =
+              typeof response === "string" ? JSON.parse(response) : response;
+
+            const previewEl = file.previewElement;
+            if (previewEl) {
+              const overlay = previewEl.querySelector(
+                "[data-upload-overlay]"
+              ) as HTMLElement;
+              const thumbnail = previewEl.querySelector(
+                "[data-dz-thumbnail]"
+              ) as HTMLImageElement;
+
+              if (overlay) overlay.classList.add("opacity-0");
+              if (thumbnail) {
+                debouncedUpdateThumbnail(
+                  thumbnail,
+                  "none",
+                  "cover",
+                  "100%",
+                  "100%",
+                  "absolute",
+                  "0"
+                );
+              }
+
+              // Update the container's data attribute with the new URL
+              if (responseData.url) {
+                container.dataset.initialValue = responseData.url;
+                if (thumbnail) {
+                  thumbnail.src = responseData.url;
+                }
+              }
+            }
+          }
+        );
+
+        // Also remove effects on error
+        dropzone.on(
+          "error",
+          function (
+            this: DropzoneInstance,
+            file: DropzoneFile,
+            errorMessage: string
+          ) {
+            let message = errorMessage;
+            let errorTitle = "Upload Error";
+
+            if (file.size > uploadConfig.maxFilesize * 1024 * 1024) {
+              message = `Maximum size is ${uploadConfig.maxFilesize}MB`;
+              errorTitle = "File Size Error";
+            } else if (
+              !uploadConfig.acceptedFiles.split(",").includes(file.type)
+            ) {
+              message = `Please upload a ${acceptedFileTypes} image.`;
+              errorTitle = "Invalid File Type";
+            }
+
+            // Show error alert with appropriate title based on error type
+            window.showAlert({
+              type: "error",
+              variant: "soft",
+              title: errorTitle,
+              text: message,
+              icon: true,
+              buttons: [
+                {
+                  type: "error",
+                  text: "OK",
+                  variant: "solid",
+                },
+              ],
+            });
+
+            console.error("Upload error:", message);
+            const previewEl = file.previewElement;
+            if (previewEl) {
+              const overlay = previewEl.querySelector(
+                "[data-upload-overlay]"
+              ) as HTMLElement;
+              const thumbnail = previewEl.querySelector(
+                "[data-dz-thumbnail]"
+              ) as HTMLImageElement;
+
+              if (overlay) overlay.classList.add("opacity-0");
+              if (thumbnail) thumbnail.style.filter = "none";
+            }
+            this.removeFile(file);
+          }
+        );
+
+        // Update the crop button click handler
+        const cropBtn = container.querySelector(".crop-photo-btn");
+        if (cropBtn) {
+          const cropBtnHandler = (e: Event) => {
+            e.stopPropagation();
+            const input = container.querySelector(
+              "input[type=hidden]"
+            ) as HTMLInputElement;
+            if (input?.value) {
+              openPhotoEditor(input.value);
+            }
+          };
+          addTrackedEventListener(cropBtn, "click", cropBtnHandler);
+        }
+
+        // Add cleanup function to the container
+        (container as any).cleanup = () => {
+          // Set unloading flag FIRST to prevent deletion during cleanup
+          (window as any).__isUnloading = true;
+
+          // Clean up all tracked event listeners
+          eventListeners.forEach(({ element, type, listener, options }) => {
+            element.removeEventListener(type, listener, options);
+          });
+
+          // Clean up dropzone if it exists
+          if ((container as any).dropzone) {
+            // During page unload, we want to prevent both API calls AND visual changes
+            // So we'll completely replace the removeFile method with a no-op function
+            // that preserves the files array and doesn't touch the DOM
+            const originalRemoveFile = (container as any).dropzone.removeFile;
+            if (originalRemoveFile) {
+              (container as any).dropzone.removeFile = function (file: any) {
+                // During page unload/navigation, do nothing - keep files and DOM intact
+                // This preserves the visual state during page transitions
+                // console.log("Preventing file removal during page unload");
+                return;
+              };
+            }
+
+            try {
+              // Now destroy the dropzone with our safe removeFile method
+              // Use try/catch because sometimes destroy can fail during unload
+              (container as any).dropzone.destroy();
+            } catch (e) {
+              console.error("Error during dropzone cleanup:", e);
+            }
+          }
+        };
+      } catch (error) {
+        console.error("Error initializing dropzone:", error);
+      }
+    }
+
+    // Initialize all photo upload containers
+    function initializeAllDropzones() {
+      const containers = document.querySelectorAll(".photo-upload-container");
+      containers.forEach((container) => {
+        initializeDropzone(container as HTMLElement);
+      });
+
+      // Add cleanup on page unload
+      window.addEventListener("beforeunload", () => {
+        // Set a flag to indicate we're unloading the page
+        (window as any).__isUnloading = true;
+
+        containers.forEach((container) => {
+          if ((container as any).cleanup) {
+            (container as any).cleanup();
+          }
+        });
+      });
+    }
+
+    // Initialize after DOM is ready and Dropzone is loaded
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initializeAllDropzones);
+    } else {
+      initializeAllDropzones();
+    }
+
+    function initializePhotoEditor(container: HTMLElement) {
+      // Find elements within this container
+      const modal = container.querySelector(
+        ".photo-editor-modal"
+      ) as HTMLElement;
+      const cropperContainer = modal.querySelector(
+        "[data-cropper-container]"
+      ) as HTMLElement;
+      const closeBtn = container.querySelector("[data-close-modal]");
+      const saveBtn = container.querySelector(
+        "[data-save-crop]"
+      ) as HTMLButtonElement;
+
+      // Store event listeners for proper cleanup
+      const eventListeners: {
+        element: Element;
+        type: string;
+        listener: EventListener;
+        options?: any;
+      }[] = [];
+
+      // Helper function to add event listeners and track them for cleanup
+      const addTrackedEventListener = (
+        element: Element,
+        type: string,
+        listener: EventListener,
+        options?: any
+      ) => {
+        element.addEventListener(type, listener, options);
+        eventListeners.push({ element, type, listener, options });
+      };
+
+      if (!modal || !cropperContainer || !closeBtn || !saveBtn) {
+        console.error("Required elements not found for photo editor");
+        return;
+      }
+
+      let isDragging = false;
+      let mouseDownTarget: EventTarget | null = null;
+
+      // Function to close modal
+      const closeModal = () => {
+        // Reset button state
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.setAttribute("aria-busy", "false");
+          const saveText = saveBtn.querySelector("[data-save-text]");
+          const saveSpinner = saveBtn.querySelector("[data-save-spinner]");
+          if (saveText) saveText.textContent = "Save";
+          if (saveSpinner) saveSpinner.classList.add("hidden");
+        }
+
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+        // Remove event listeners when modal closes
+        document.removeEventListener("keydown", handleEsc);
+        document.removeEventListener("mousedown", handleMouseDown);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      // Function to open modal
+      const openModal = (imageUrl: string) => {
+        // Update the PhotoCropper component's props
+        const cropperComponent = cropperContainer.querySelector(
+          ".photo-cropper-component"
+        ) as HTMLElement;
+        if (cropperComponent) {
+          cropperComponent.dataset.photoUrl = imageUrl;
+          cropperComponent.dataset.urlParameters =
+            container.dataset.parameters || "";
+
+          // Force re-initialization of the cropper
+          const event = new CustomEvent("reinitialize-cropper", {
+            detail: {
+              photoUrl: imageUrl,
+              urlParameters: container.dataset.parameters || "",
+            },
+          });
+          cropperComponent.dispatchEvent(event);
+        }
+
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+
+        // Add event listeners when modal opens
+        document.addEventListener("keydown", handleEsc);
+        document.addEventListener("mousedown", handleMouseDown);
+        document.addEventListener("mouseup", handleMouseUp);
+      };
+
+      // Track mousedown target
+      const handleMouseDown = (e: MouseEvent) => {
+        mouseDownTarget = e.target;
+      };
+
+      // Handle mouseup and determine if we should close
+      const handleMouseUp = (e: MouseEvent) => {
+        if (isDragging) {
+          isDragging = false;
+          return;
+        }
+
+        // Only close if both mousedown and mouseup were on the backdrop
+        const modalContent = modal.querySelector(".modal-content");
+        const clickedOutside =
+          modalContent && !modalContent.contains(e.target as Node);
+        const startedOutside =
+          modalContent && !modalContent.contains(mouseDownTarget as Node);
+
+        if (clickedOutside && startedOutside) {
+          closeModal();
+        }
+        mouseDownTarget = null;
+      };
+
+      // Handle drag events from PhotoCropper
+      addTrackedEventListener(cropperContainer, "cropperDragStart", () => {
+        isDragging = true;
+      });
+
+      addTrackedEventListener(cropperContainer, "cropperDragEnd", () => {
+        // Use setTimeout to ensure this runs after mouseup
+        setTimeout(() => {
+          isDragging = false;
+        }, 100);
+      });
+
+      // ESC key handler
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && !isDragging) {
+          closeModal();
+        }
+      };
+
+      // Handle close button
+      addTrackedEventListener(closeBtn, "click", closeModal);
+
+      // Create debounced save function
+      const debouncedSave = debounce(
+        async (
+          cropParams: string,
+          relatedId: string,
+          relatedTable: string,
+          relatedColumn: string,
+          originalUrl: string | undefined
+        ) => {
+          try {
+            if (!originalUrl) {
+              throw new Error("Original URL is missing");
+            }
+
+            // Update the preview image URL in the container IMMEDIATELY (before API call)
+            container.dataset.initialValue = originalUrl; // Keep the original URL in the container
+            container.dataset.parameters = cropParams; // Store crop params separately
+
+            // Update the preview image in the dropzone if it exists (IMMEDIATELY)
+            const dropzone = (container as any).dropzone;
+            if (dropzone?.files?.[0]?.previewElement) {
+              const thumbnail = dropzone.files[0].previewElement.querySelector(
+                "[data-dz-thumbnail]"
+              ) as HTMLImageElement;
+              if (thumbnail) {
+                // Fade the thumbnail to 50% opacity to indicate processing
+                thumbnail.style.opacity = "0.5";
+                thumbnail.style.transition = "opacity 0.2s ease-in-out";
+
+                // Apply the crop parameters immediately for instant feedback
+                thumbnail.src = `${originalUrl}?${cropParams}`; // Use the cropped URL for display
+
+                // When the image loads, restore full opacity
+                thumbnail.onload = () => {
+                  thumbnail.style.opacity = "1";
+                };
+              }
+            }
+
+            // Make API call to save crop parameters
+            const response = await fetch("/api/photo/crop", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                related_id: relatedId,
+                related_table: relatedTable,
+                related_column: relatedColumn,
+                parameters: cropParams,
+              }),
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(
+                error.message || "Failed to save crop parameters"
+              );
+            }
+
+            // Show success message
+            window.showAlert({
+              type: "success",
+              variant: "soft",
+              title: "Success",
+              text: "Photo updated successfully",
+              icon: true,
+              duration: 3000,
+            });
+          } catch (error) {
+            console.error("Error saving crop:", error);
+
+            // If there was an error, ensure we restore the thumbnail opacity
+            const dropzone = (container as any).dropzone;
+            if (dropzone?.files?.[0]?.previewElement) {
+              const thumbnail = dropzone.files[0].previewElement.querySelector(
+                "[data-dz-thumbnail]"
+              ) as HTMLImageElement;
+              if (thumbnail) {
+                thumbnail.style.opacity = "1";
+              }
+            }
+
+            window.showAlert({
+              type: "error",
+              variant: "soft",
+              title: "Error",
+              text:
+                error instanceof Error ? error.message : "Failed to save crop",
+              icon: true,
+              buttons: [
+                {
+                  type: "error",
+                  text: "OK",
+                  variant: "solid",
+                },
+              ],
+            });
+          }
+        },
+        100
+      );
+
+      // Handle save button
+      addTrackedEventListener(saveBtn, "click", async () => {
+        // Find the PhotoCropper component and get its cropper instance
+        const cropperComponent = cropperContainer.querySelector(
+          ".photo-cropper-component"
+        ) as HTMLElement;
+        const cropper = (cropperComponent as any).cropper;
+
+        if (cropper) {
+          // Set loading state
+          saveBtn.disabled = true;
+          saveBtn.setAttribute("aria-busy", "true");
+          const saveText = saveBtn.querySelector("[data-save-text]");
+          const saveSpinner = saveBtn.querySelector("[data-save-spinner]");
+          if (saveText) saveText.textContent = "Saving...";
+          if (saveSpinner) saveSpinner.classList.remove("hidden");
+
+          const croppedData = cropper.getData();
+
+          // Construct Bunny.net crop URL
+          const originalUrl = container.dataset.initialValue?.split("?")[0]; // Remove any existing params
+          const cropParams = `crop=${Math.round(croppedData.width)},${Math.round(croppedData.height)},${Math.round(croppedData.x)},${Math.round(croppedData.y)}`;
+
+          // Get the container and its data
+          const relatedId = (
+            container.querySelector(
+              'input[name="component_photo_upload_related_id"]'
+            ) as HTMLInputElement
+          )?.value;
+          const relatedTable = (
+            container.querySelector(
+              'input[name="component_photo_upload_related_table"]'
+            ) as HTMLInputElement
+          )?.value;
+          const relatedColumn = (
+            container.querySelector(
+              'input[name="component_photo_upload_related_column"]'
+            ) as HTMLInputElement
+          )?.value;
+
+          // Use debounced save function
+          debouncedSave(
+            cropParams,
+            relatedId,
+            relatedTable,
+            relatedColumn,
+            originalUrl
+          );
+
+          // Add a small delay before closing the modal to show the loading state
+          setTimeout(() => {
+            closeModal();
+          }, 500);
+        } else {
+          closeModal();
+        }
+      });
+
+      // Add cleanup function
+      const cleanup = () => {
+        // Clean up all tracked event listeners
+        eventListeners.forEach(({ element, type, listener, options }) => {
+          element.removeEventListener(type, listener, options);
+        });
+
+        // Remove document event listeners
+        document.removeEventListener("keydown", handleEsc);
+        document.removeEventListener("mousedown", handleMouseDown);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      // Store cleanup function on container
+      (container as any).photoEditorCleanup = cleanup;
+
+      return openModal;
+    }
+  </script>
+
+  <template data-file-upload-preview="">
+    <div
+      class="aspect-[4/3] w-full relative dz-preview dz-file-preview dz-processing dz-image-preview hover:opacity-90 transition-opacity duration-100 overflow-hidden rounded-md"
+    >
+      <img
+        class="h-full w-full object-cover cursor-pointer transition-all duration-300"
+        data-dz-thumbnail=""
+      />
+      <!-- Progress overlay -->
+      <div
+        class="absolute inset-0 bg-black/50 transition-opacity duration-300 opacity-0 cursor-pointer"
+        data-upload-overlay
+      >
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="w-3/4 h-2 bg-white/20 rounded-full overflow-hidden">
+            <div
+              class="h-full bg-white transition-all duration-300 rounded-full"
+              data-progress-bar
+              style="width: 0%"
+            >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- hide buttons and reveal on parent hover -->
+      <!-- opacity-0 transition-opacity duration-200 group-hover:opacity-100 -->
+      <div class="absolute bottom-2 right-2 flex gap-2">
+        <div class="tooltip">
+          <a
+            class="tooltip-toggle btn btn-sm btn-secondary btn-square"
+            href="javascript:undefined;"
+            onclick="(function(e){ 
+              e.preventDefault();
+              e.stopPropagation();
+              window.showAlert({
+                type: 'warning',
+                variant: 'soft',
+                title: 'Are you sure you want to remove this photo?',
+                text: false,
+                icon: true,
+                buttons: [
+                  {
+                    text: 'No',
+                    variant: 'outline',
+                    size: 'sm',
+                    type: 'warning',
+                  },
+                  {
+                    type: 'warning',
+                    text: 'Yes',
+                    variant: 'solid',
+                    size: 'sm',
+                    onClick: () => {
+                      const container = e.target.closest('.photo-upload-container');
+                      if (container.dropzone) {
+                        container.dropzone.removeFile(container.dropzone.files[0]);
+                      }
+                    },
+                  },
+                ],
+              });
+            })(arguments[0])"
+          >
+            <span class="icon-[tabler--trash] size-4"></span>
+          </a>
+          <span
+            class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible"
+            role="tooltip"
+          >
+            <span class="tooltip-body tooltip-secondary rounded-md">Remove</span
+            >
+          </span>
+        </div>
+
+        <div class="tooltip">
+          <a
+            class="tooltip-toggle btn btn-sm btn-secondary btn-square"
+            href="javascript:undefined;"
+            onclick="(function(e){ 
+              e.stopPropagation(); 
+              const container = e.target.closest('.photo-upload-container');
+              const photoUrl = container.dataset.initialValue?.split('?')[0];
+              if (photoUrl && container.openPhotoEditor) {
+                container.openPhotoEditor(photoUrl);
+              }
+            })(arguments[0])"
+          >
+            <span class="icon-[tabler--crop] size-4"></span>
+          </a>
+          <span
+            class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible"
+            role="tooltip"
+          >
+            <span class="tooltip-body tooltip-secondary rounded-md">Crop</span>
+          </span>
+        </div>
+
+        <div class="tooltip [--strategy:absolute]">
+          <a
+            class="tooltip-toggle btn btn-sm btn-secondary btn-square"
+            href="javascript:undefined;"
+            onclick="(function(e){ 
+              e.stopPropagation(); 
+              const container = e.target.closest('.photo-upload-container');
+              const photoUrl = container.dataset.initialValue;
+              if (photoUrl) {
+                window.open(photoUrl, '_blank');
+              }
+            })(arguments[0])"
+          >
+            <span class="icon-[tabler--maximize] size-4"></span>
+          </a>
+          <span
+            class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible"
+            role="tooltip"
+          >
+            <span class="tooltip-body tooltip-secondary rounded-md"
+              >Full size</span
+            >
+          </span>
+        </div>
+      </div>
+
+      <!-- Hidden elements that Dropzone expects -->
+      <div class="dz-details" hidden>
+        <div class="dz-filename"><span data-dz-name></span></div>
+        <div class="dz-size" data-dz-size></div>
+      </div>
+      <div class="dz-progress" hidden>
+        <span class="dz-upload" data-dz-uploadprogress></span>
+      </div>
+      <div class="dz-error-message" hidden>
+        <span data-dz-errormessage></span>
+      </div>
+      <div class="dz-success-mark" hidden><span>✔</span></div>
+      <div class="dz-error-mark" hidden><span>✘</span></div>
+    </div>
+  </template>
+
+  <div class="flex flex-wrap items-center gap-3 sm:gap-5">
+    <div
+      class="group w-full"
+      data-file-upload-previews=""
+      data-file-upload-pseudo-trigger=""
+    >
+      <span
+        class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden"
+      >
+        <span class={`icon-[${dz_icon}] w-20 h-20`}></span>
+      </span>
+    </div>
+    <div class="grow">
+      <div class="flex items-center gap-x-2">
+        <button
+          type="button"
+          class="btn btn-primary hidden"
+          data-file-upload-trigger=""
+        >
+          Upload photo
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline btn-secondary hidden"
+          data-file-upload-clear="">Delete</button
+        >
+      </div>
+    </div>
+  </div>
+</div>

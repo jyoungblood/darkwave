@@ -1,0 +1,54 @@
+---
+// DW - Form checkbox group component
+
+interface Props {
+  label: string;
+  name: string;
+  required?: boolean;
+  class?: string;
+  options: { label: string; value: string }[];
+  selected?: string[];
+  columns?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+}
+
+const defaultClass = "flex items-center gap-1";
+const {
+  label,
+  name,
+  required = false,
+  options,
+  class: customClass = "",
+  selected = [],
+  columns,
+} = Astro.props;
+const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
+
+// Determine the container class based on columns prop
+const containerClass = columns
+  ? `grid gap-x-4 gap-y-2 grid-cols-${columns}`
+  : "flex flex-wrap gap-4";
+---
+
+<div class="form-control">
+  <label class="label label-text">{label}</label>
+  <div class={containerClass}>
+    {
+      options.map((option) => (
+        <div class={className}>
+          <input
+            type="checkbox"
+            name={name}
+            value={option.value}
+            class="checkbox checkbox-primary"
+            required={required}
+            checked={selected.includes(option.value)}
+            id={`${name}-${option.value}`}
+          />
+          <label class="label-text text-base" for={`${name}-${option.value}`}>
+            {option.label}
+          </label>
+        </div>
+      ))
+    }
+  </div>
+</div>

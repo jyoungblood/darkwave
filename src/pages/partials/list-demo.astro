@@ -1,0 +1,35 @@
+---
+export const partial = true;
+import { db } from "@/lib/db";
+
+let horses;
+
+try {
+  horses = await db
+    .selectFrom('horses')
+    .selectAll()
+    .where('deleted_at', 'is', null)
+    .orderBy('created_at')
+    .execute();
+} catch (error) {
+  console.error("Error fetching horses:", error);
+}
+
+{
+  horses && (
+    <div class="mt-8">
+      <h2 class="text-lg font-semibold mb-3">Partial Horses</h2>
+      {horses.length === 0 ? (
+        <p class="text-gray-500">No horses found</p>
+      ) : (
+        <ul class="list-disc pl-5">
+          {horses?.map((horse) => (
+            <li class="text-sm mb-1 underline hover:no-underline">
+              <a href={`/horses/profile/${horse.slug}`}>{horse.name}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}

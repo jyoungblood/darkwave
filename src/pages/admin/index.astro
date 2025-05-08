@@ -1,0 +1,39 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+---
+
+<AdminLayout>
+  <div class="w-full">
+    <div class="grid grid-cols-2 gap-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title mb-6">Site Content</h2>
+          <a class="btn btn-outline btn-primary mb-3" href="/admin/horses">Horses</a>
+          <a class="btn btn-outline btn-primary mb-3" href="/admin/links">Links</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title mb-6">Internal Utilities</h2>
+          <a class="btn btn-outline btn-primary mb-3" href="/admin/email-preview"
+            >Email Preview</a
+          >
+          <a class="btn btn-outline btn-primary mb-3" href="/admin/users"
+            >Users</a
+          >
+          <h2 class="card-title mt-4 mb-6">Demos</h2>
+          <a class="btn btn-outline btn-primary mb-3" href="/admin/demo/dw"
+            >DW Components</a
+          >
+          <a class="btn btn-outline btn-primary mb-3" href="/admin/demo/flyon"
+            >Flyon UI</a
+          >
+          <a class="btn btn-outline btn-primary mb-3" href="/admin/demo/htmx"
+            >HTMX</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

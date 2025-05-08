@@ -1,0 +1,38 @@
+@import "tailwindcss";
+/* @plugin is valid in Tailwind v4 */
+@plugin "flyonui" {
+  themes: corporate, shadcn;
+}
+@plugin "@iconify/tailwind4";
+@import "flyonui/variants.css";
+
+
+/* DW */
+
+.validation-error {
+  * {
+    color: var(--color-error);
+  }
+  .input, .textarea, .select, .checkbox, .radio, .button {
+    border-color: var(--color-error);
+  }
+}
+.validation-success {
+  * {
+    color: var(--color-success);
+  }
+
+  .input,
+  .textarea,
+  .select,
+  .checkbox,
+  .radio,
+  .button {
+    border-color: var(--color-success);
+  }
+}
+
+
+
+
+

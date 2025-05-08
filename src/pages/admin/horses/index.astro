@@ -1,0 +1,96 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import TableDatalist from "@/components/admin/TableDatalist.astro";
+import { formatDate } from "@/lib/dw";
+import { db } from "@/lib/db";
+
+let horses;
+
+try {
+  horses = await db
+    .selectFrom('horses')
+    .selectAll()
+    .where('deleted_at', 'is', null)
+    .orderBy('created_at')
+    .execute();
+} catch (error) {
+  console.error("Error fetching horses:", error);
+}
+
+// DW
+// Quick check using JWT claims stored in locals
+if (Astro.locals.authRoles?.includes("admin")) {
+  // Show admin UI elements
+}
+---
+
+<AdminLayout title="All Horses">
+  <div class="w-full">
+    <TableDatalist
+      data={horses ?? []}
+      columns={[
+        {
+          header: "Name",
+          cell: {
+            content: (horse: any) =>
+              `<a href="/horses/profile/${horse.slug}">${horse.name}</a>`,
+          },
+        },
+        {
+          header: "Sex",
+          cell: {
+            content: (horse: any) => horse.sex,
+          },
+        },
+        {
+          header: "Breed",
+          cell: {
+            content: (horse: any) => horse.breed,
+          },
+        },
+        {
+          header: "Created At",
+          cell: {
+            content: (horse: any) => formatDate(horse.created_at),
+          },
+        },
+        {
+          header: "Updated At",
+          cell: {
+            content: (horse: any) =>
+              horse.updated_at ? formatDate(horse.updated_at) : "",
+          },
+        },
+        {
+          header: "Actions",
+          cell: {
+            class: "text-right",
+            content: (horse: any) => `
+            <a href="/admin/horses/edit?uuid=${horse.uuid}" 
+              class="btn btn-circle btn-text btn-sm" 
+              aria-label="Edit" 
+              data-astro-prefetch>
+              <span class="icon-[tabler--pencil] size-5"></span>
+            </a>
+            <a href="/horses/profile/${horse.slug}" 
+              target="_blank" 
+              class="btn btn-circle btn-text btn-sm" 
+              aria-label="View" 
+              data-astro-prefetch>
+              <span class="icon-[tabler--external-link] size-5"></span>
+            </a>`,
+          },
+        },
+      ]}
+      title="All Horses"
+      newItemLink={{
+        href: "/admin/horses/new",
+        text: "New Horse",
+      }}
+      publicLink={{
+        href: "/horses",
+        text: "Public Horses",
+      }}
+    />
+  </div>
+</AdminLayout>

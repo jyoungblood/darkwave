@@ -1,0 +1,26 @@
+---
+// DW - Form textarea component
+
+interface Props {
+  label: string;
+  name: string;
+  required?: boolean;
+  value?: string;
+  placeholder?: string;
+  class?: string;
+}
+
+const defaultClass = 'textarea max-w-full';
+// const defaultClass = 'p-2 border border-gray-400 rounded-md';
+const { label, name, required = false, value = '', placeholder = '', class: customClass = '' } = Astro.props;
+const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
+---
+<!-- mb-2 text-sm font-semibold -->
+<label for={`textarea-${name}`} class="label label-text">{label}</label>
+<textarea
+  id={`textarea-${name}`}
+  name={name}
+  required={required}
+  class={className}
+  placeholder={placeholder}
+>{value}</textarea>

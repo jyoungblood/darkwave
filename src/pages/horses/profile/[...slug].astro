@@ -1,0 +1,348 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { db } from "@/lib/db";
+import { canEdit } from "@/lib/auth/permissions";
+
+// Run horse query first to get the UUID
+let horse: any = null;
+
+try {
+  // First, get the basic horse data
+  const horseData = await db
+    .selectFrom('horses')
+    .selectAll()
+    .where('slug', '=', Astro.params.slug as string)
+    .where('deleted_at', 'is', null)
+    .executeTakeFirst();
+  horse = horseData;
+} catch (error) {
+  console.error("Error fetching horse:", error);
+}
+
+if (!horse) {
+  return new Response(null, {
+    status: 404,
+  });
+}
+
+// Fetch gallery content in parallel
+const [slideshowPhotos, galleryPhotos, pedigree] = await Promise.all([
+  db
+    .selectFrom('gallery_content')
+    .select(['uuid', 'photo_url', 'photo_url_parameters', 'title', 'display_order', 'related_id', 'description'])
+    .where('related_table', '=', 'horses')
+    .where('gallery_type', '=', 'horse-slideshow')
+    .where('related_id', '=', horse.uuid)
+    .orderBy('display_order')
+    .execute(),
+  db
+    .selectFrom('gallery_content')
+    .select(['uuid', 'photo_url', 'photo_url_parameters', 'title', 'display_order', 'related_id', 'description'])
+    .where('related_table', '=', 'horses')
+    .where('gallery_type', '=', 'horse-gallery')
+    .where('related_id', '=', horse.uuid)
+    .orderBy('display_order')
+    .execute(),
+  db
+    .selectFrom('rel_horses_pedigrees')
+    .selectAll()
+    .where('horse_id', '=', horse.uuid)
+    .executeTakeFirst()
+]);
+
+const can_edit = await canEdit({ locals: Astro.locals, resourceType: "horses", uuid: horse.uuid });
+
+const placeholderImage = "/images/horse-placeholder.png";
+
+// Handle URL parameters for images
+const primaryPhotoUrl = horse.photo_url 
+  ? horse.photo_url_parameters 
+    ? `${horse.photo_url}?${horse.photo_url_parameters}`
+    : horse.photo_url
+  : placeholderImage;
+
+const altPhotoUrl = horse.alt_photo_url 
+  ? horse.alt_photo_url_parameters 
+    ? `${horse.alt_photo_url}?${horse.alt_photo_url_parameters}`
+    : horse.alt_photo_url
+  : null;
+
+
+---
+
+<Layout title={horse.name}>
+  <div class="w-full">
+    {
+      horse && (
+        <div class="mt-8 w-full">
+          <div class="flex mb-16 w-full gap-4">
+            <div class="w-1/2">
+              <figure>
+                <img src={primaryPhotoUrl} alt={horse.name} class="w-full rounded-lg" />
+              </figure>
+
+              {altPhotoUrl && (
+                <div class="mt-8">
+                  <figure>
+                    <img src={altPhotoUrl} alt={horse.name} class="w-full rounded-lg" />
+                  </figure>
+                </div>
+              )}
+            </div>
+
+            <div class="w-1/2">
+              <h2 class="text-lg font-semibold mb-3">
+                {horse.name}{" "}
+                {can_edit && (
+                  <a
+                    href={`/horses/edit/${horse.uuid}`}
+                    class="text-blue-500 text-xs ml-2"
+                  >
+                    [Edit]
+                  </a>
+                )}
+              </h2>
+              {horse.breed && <div>Breed: {horse.breed}</div>}
+              {horse.color && <div>Color: {horse.color}</div>}
+              {horse.foal_year && <div>Foal Year: {horse.foal_year}</div>}
+              {horse.sex && <div>Sex: {horse.sex}</div>}
+              {horse.url_website && <div>Website: <a href={horse.url_website} target="_blank">{horse.url_website}</a></div>}
+              {horse.url_video && <div>Video: <a href={horse.url_video} target="_blank">{horse.url_video}</a></div>}
+            </div>
+          </div>
+
+          {/* Photo Gallery */}
+          {galleryPhotos && galleryPhotos.length > 0 && (
+            <div class="mt-8">
+              <h2 class="text-lg font-semibold mb-3">Photo Gallery</h2>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {galleryPhotos.map((photo: any) => (
+                  <div class="aspect-[4/3] w-full relative rounded-md overflow-hidden">
+                    <a href={photo.photo_url_parameters ? `${photo.photo_url}?${photo.photo_url_parameters}` : photo.photo_url} target="_blank">
+                      <img 
+                        src={photo.photo_url_parameters ? `${photo.photo_url}?${photo.photo_url_parameters}` : photo.photo_url}
+                        alt={photo.title || 'Gallery photo'} 
+                        class="h-full w-full object-cover cursor-pointer transition-all duration-300 hover:opacity-90"
+                      />
+                    </a>
+                    {photo.title || photo.description && (
+                      <div class="absolute bottom-0 left-0 right-0 bg-black/50 p-4 text-gray-100 text-center">
+                        {photo.title && <h3 class="text-lg font-semibold">{photo.title}</h3>}
+                        {photo.description && <p class="text-sm">{photo.description}</p>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {slideshowPhotos && slideshowPhotos.length > 0 && (
+            <div class="mt-8">
+              <h2 class="text-lg font-semibold mb-3">Slideshow Gallery</h2>
+              <div
+                id="image"
+                data-carousel='{ "loadingClasses": "opacity-0", "isDraggable": true, "isInfiniteLoop": true, "isAutoPlay": true, "speed": 5000 }'
+                class="relative w-full aspect-[4/3] hover:opacity-90 transition-opacity duration-100"
+              >
+                <div class="carousel h-full overflow-hidden rounded-md">
+                  <div class="carousel-body h-full opacity-0">
+                    {slideshowPhotos.map((photo: any) => (
+                      <div class="carousel-slide h-full">
+                        <a href={photo.photo_url_parameters ? `${photo.photo_url}?${photo.photo_url_parameters}` : photo.photo_url} target="_blank" data-astro-prefetch class="h-full">
+                        <div class="h-full relative">
+                          <img
+                            src={photo.photo_url_parameters ? `${photo.photo_url}?${photo.photo_url_parameters}` : photo.photo_url || placeholderImage}
+                            class="w-full h-full object-cover"
+                            alt={`Photo of ${horse.name}`}
+                          />
+                          {photo.title || photo.description && (
+                            <div class="absolute bottom-0 left-0 right-0 bg-black/50 p-4 text-gray-100 text-center">
+                              {photo.title && <h3 class="text-lg font-semibold">{photo.title}</h3>}
+                              {photo.description && <p class="text-sm">{photo.description}</p>}
+                            </div>
+                          )}
+                        </div>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <!-- Previous Slide -->
+                <button type="button" class="carousel-prev">
+                  <span
+                    class="size-9.5 bg-base-100 flex items-center justify-center rounded-md shadow"
+                  >
+                    <span
+                      class="icon-[tabler--chevron-left] size-5 cursor-pointer rtl:rotate-180"
+                    ></span>
+                  </span>
+                  <span class="sr-only">Previous</span>
+                </button>
+                <!-- Next Slide -->
+                <button type="button" class="carousel-next">
+                  <span class="sr-only">Next</span>
+                  <span
+                    class="size-9.5 bg-base-100 flex items-center justify-center rounded-md shadow"
+                  >
+                    <span
+                      class="icon-[tabler--chevron-right] size-5 cursor-pointer rtl:rotate-180"
+                    ></span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {horse.description && 
+            <div class="mt-8">
+              <h2 class="text-lg font-semibold mb-3">Description</h2>
+              <div set:html={horse.description?.replace(/\n/g, "<br />")} />
+            </div>
+          }
+          {horse.performance_record && 
+            <div class="mt-8">
+              <h2 class="text-lg font-semibold mb-3">Performance Record</h2>
+              <div set:html={horse.performance_record?.replace(/\n/g, "<br />")} />
+            </div>
+          }
+
+          {(pedigree?.sire_1_name || pedigree?.dam_1_name) && (
+            <div class="mt-8">
+              <h2 class="text-lg font-semibold mb-3">Pedigree</h2>
+              <table class="ad-pedigree">
+                <!-- 1 -->	
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td class="sire"><div class="ph1">{pedigree?.sire_4_name}</div></td>
+                </tr>
+
+                <!-- 2 -->	
+                <tr>
+                  <td></td>
+                  <td class="sire v"><div class="ph1">{pedigree?.sire_2_name}</div></td>
+                  <td></td>
+                </tr>
+
+                <!-- 3 -->	
+                <tr>
+                  <td class="v"></td>
+                  <td class="v"></td>
+                  <td class="dam"><div class="ph1">{pedigree?.dam_4_name}</div></td>
+                </tr>
+
+                <!-- 4 -->	
+                <tr>
+                  <td class="sire v"><div class="ph1">{pedigree?.sire_1_name}</div></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+
+                <!-- 5 -->	
+                <tr>
+                  <td class="v"></td>
+                  <td></td>
+                  <td class="sire"><div class="ph1">{pedigree?.sire_5_name}</div></td>
+                </tr>
+
+                <!-- 6 -->	
+                <tr>
+                  <td class="v"></td>
+                  <td class="dam v"><div class="ph1">{pedigree?.dam_2_name}</div></td>
+                  <td></td>
+                </tr>
+
+                <!-- 7 -->	
+                <tr>
+                  <td></td>
+                  <td class="v"></td>
+                  <td class="dam"><div class="ph1">{pedigree?.dam_5_name}</div></td>
+                </tr>
+
+                <!-- 8 -->	
+                <tr>
+                  <td colspan="2">&nbsp;</td>
+                </tr>
+
+                <!-- 9 -->	
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td class="sire"><div class="ph1">{pedigree?.sire_6_name}</div></td>
+                </tr>
+
+                <!-- 10 -->	
+                <tr>
+                  <td></td>
+                  <td class="sire v"><div class="ph1">{pedigree?.sire_3_name}</div></td>
+                  <td></td>
+                </tr>
+
+                <!-- 11 -->	
+                <tr>
+                  <td class="v"></td>
+                  <td class="v"></td>
+                  <td class="dam"><div class="ph1">{pedigree?.dam_6_name}</div></td>
+                </tr>
+
+                <!-- 12 -->	
+                <tr>
+                  <td class="dam v"><div class="ph1">{pedigree?.dam_1_name}</div></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+
+                <!-- 13 -->	
+                <tr>
+                  <td class="v"></td>
+                  <td></td>
+                  <td class="sire"><div class="ph1">{pedigree?.sire_7_name}</div></td>
+                </tr>
+
+                <!-- 14 -->	
+                <tr>
+                  <td class="v"></td>
+                  <td class="dam v"><div class="ph1">{pedigree?.dam_3_name}</div></td>
+                  <td></td>
+                </tr>
+
+                <!-- 15 -->	
+                <tr>
+                  <td></td>
+                  <td class="v"></td>
+                  <td class="dam"><div class="ph1">{pedigree?.dam_7_name}</div></td>
+                </tr>
+              </table>
+            </div>
+          )}
+        </div>
+      )
+    }
+  </div>
+</Layout>
+
+<style>
+.ad-pedigree{
+    border-collapse:collapse;
+	  width:100%;
+}
+
+.ad-pedigree td.v {
+  border-right: 1px solid #dfdfdf;
+}
+
+.ad-pedigree a, #pedigree a:hover, #pedigree a:visited {
+    color:#666;
+    text-decoration:none;
+}
+
+.sire {
+  border-bottom: 1px solid #dfdfdf;
+}
+
+.dam {
+  border-bottom: 1px solid #dfdfdf;
+}
+</style>	

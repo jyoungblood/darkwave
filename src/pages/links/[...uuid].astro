@@ -1,0 +1,71 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { db } from "@/lib/db";
+import { canEdit } from "@/lib/auth/permissions";
+const uuid = Astro.params.uuid;
+
+if (!uuid) {
+  return Astro.redirect("/links");
+}
+
+let link;
+
+try {
+  link = await db
+    .selectFrom('links')
+    .selectAll()
+    .where('uuid', '=', uuid)
+    .where('deleted_at', 'is', null)
+    .executeTakeFirst();
+} catch (error) {
+  console.error("Error fetching link:", error);
+}
+
+if (!link) {
+  return new Response(null, {
+    status: 404,
+  });
+}
+
+const can_edit = await canEdit({ locals: Astro.locals, resourceType: "links", uuid, ownerId: link?.user_id });
+
+
+const placeholderImage = "/images/horse-placeholder.png";
+---
+
+<Layout title={link.title}>
+  <div class="w-full">
+    {
+      link && (
+        <div class="mt-8 w-full">
+          <div class="flex mb-16 w-full gap-4">
+            <div class="w-1/2">
+              <figure>
+                <img
+                  src={link.photo_url || placeholderImage}
+                  alt={link.title}
+                  class="w-full rounded-lg"
+                />
+              </figure>
+            </div>
+
+            <div class="w-1/2">
+              <h2 class="text-lg font-semibold mb-3">
+                {link.title}{" "}
+                {can_edit && (
+                  <a
+                    href={`/admin/links/edit?uuid=${link.uuid}`}
+                    class="text-blue-500 text-xs ml-2"
+                  >
+                    [Edit]
+                  </a>
+                )}
+              </h2>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  </div>
+</Layout>
+

@@ -1,0 +1,34 @@
+---
+import Layout from "@/layouts/Layout.astro";
+const { title } = Astro.props;
+const currentPath = Astro.url.pathname;
+const pageTitle = title
+  ? `${title} | Admin`
+  : `Admin`;
+---
+
+<Layout title={pageTitle}>
+  <div class="flex flex-col w-full mb-8">
+    <div class="subnav bg-gray-200 rounded-md mb-8 px-2 py-1">
+      <div class="subnav-item inline-block">
+        <a
+          class={`text-gray-700 p-3 text-xs font-semibold inline-block hover:underline ${currentPath === "/admin" ? "underline" : "no-underline"}`}
+          href="/admin">Admin</a
+        >
+      </div>
+      <div class="subnav-item inline-block">
+        <a
+          class={`text-gray-700 p-3 text-xs font-semibold inline-block hover:underline ${Astro.url.pathname.includes("/admin/horses") ? "underline" : "no-underline"}`}
+          href="/admin/horses">Horses</a
+        >
+      </div>
+      <div class="subnav-item inline-block">
+        <a
+          class={`text-gray-700 p-3 text-xs font-semibold inline-block hover:underline ${Astro.url.pathname.includes("/admin/links") ? "underline" : "no-underline"}`}
+          href="/admin/links">Links</a
+        >
+      </div>      
+    </div>
+    <slot />
+  </div>
+</Layout>

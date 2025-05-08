@@ -1,0 +1,45 @@
+{
+  "name": "darkwave",
+  "version": "0.7.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.2.1",
+    "@tailwindcss/vite": "^4.1.1",
+    "@uppy/core": "^4.4.1",
+    "@uppy/dashboard": "^4.3.1",
+    "@uppy/drag-drop": "^4.1.1",
+    "@uppy/image-editor": "^3.3.1",
+    "@uppy/status-bar": "^4.1.1",
+    "@uppy/xhr-upload": "^4.3.2",
+    "astro": "^5.7.11",
+    "better-auth": "^1.2.4",
+    "cropperjs": "^2.0.0",
+    "dropzone": "^6.0.0-beta.2",
+    "kysely": "^0.27.6",
+    "mjml": "^4.15.3",
+    "mysql2": "^3.14.0",
+    "nodemailer": "^6.10.0",
+    "preline": "^2.7.0",
+    "sortablejs": "^1.15.6",
+    "tailwindcss": "^4.1.1",
+    "uuid": "^11.1.0",
+    "validator": "^13.15.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@iconify-json/tabler": "^1.2.17",
+    "@iconify/tailwind4": "^1.0.6",
+    "@types/mjml": "^4.7.4",
+    "@types/nodemailer": "^6.4.17",
+    "@types/sortablejs": "^1.15.8",
+    "@types/uuid": "^10.0.0",
+    "@types/validator": "^13.12.3",
+    "flyonui": "^2.1.0"
+  }
+}

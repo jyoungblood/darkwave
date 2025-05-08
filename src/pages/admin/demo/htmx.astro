@@ -1,0 +1,31 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="HTMX Demo">
+  <div class="w-full">
+
+    <div class="flex mb-16">
+      <div class="w-1/2">
+        <div class="text-2xl font-bold">HTMX Demo</div>
+      </div>
+      <div class="w-1/2 text-right">
+        <button
+          class="btn btn-outline"
+          hx-get="/partials/list-demo"
+          hx-target="#moreHorses"
+          hx-swap="beforeend"
+        >
+          More Horses!
+        </button>
+      </div>
+    </div>
+
+    <div id="moreHorses"></div>
+
+    <br /><br />
+
+    <div hx-get="/partials/list-demo" hx-trigger="load"></div>
+
+  </div>
+</AdminLayout>
