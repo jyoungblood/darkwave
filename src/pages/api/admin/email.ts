@@ -113,7 +113,7 @@ export const GET: APIRoute = async ({ request }) => {
   //   cc: ['icarus@dvst.cc', 'jy@hxgf.io'],
   //   bcc: 'jonathan@oceandev.com',
   //   from: `${import.meta.env.SITE_TITLE} <${import.meta.env.SMTP_USER}>`,
-  //   replyTo: 'equipost@hxgf.io',
+  //   replyTo: 'jy@hxgf.io',
   //   subject: 'DIFFERENT ANOTHER DEMO EMAIL - demo CC & BCC & replyto',
   //   message: {
   //     html: `<h1>👯‍♂️ HEY MAN 🤗</h1><p>nice shot</p> <p>from your friends at ${import.meta.env.SITE_TITLE}</p>`,
