@@ -2,76 +2,6 @@
 
 export interface Database {
 
-  horses: {
-    id: number;
-    uuid: string;
-    created_at: Date;
-    updated_at: Date | null;
-    name: string | null;
-    admin_notes: string | null;
-    photo_url: string | null;
-    foal_year: number | null;
-    color: string | null;
-    breed: string | null;
-    horse_type: string | null;
-    sex: string | null;
-    height: number | null;
-    slug: string | null;
-    visible_public: boolean | null;
-    visible_seo: boolean | null;
-    url_website: string | null;
-    url_video: string | null;
-    description: string | null;
-    performance_record: string | null;
-    deleted_at: Date | null;
-    is_deleted: boolean | null;
-    alt_photo_url: string | null;
-    is_visible: boolean | null;
-    photo_url_parameters: string | null;
-    alt_photo_url_parameters: string | null;
-  };
-
-  rel_horses_pedigrees: {
-    id: number;
-    created_at: Date;
-    horse_id: string | null;
-    sire_1_id: string | null;
-    sire_2_id: string | null;
-    sire_3_id: string | null;
-    sire_4_id: string | null;
-    sire_5_id: string | null;
-    sire_6_id: string | null;
-    sire_7_id: string | null;
-    dam_1_id: string | null;
-    dam_2_id: string | null;
-    dam_3_id: string | null;
-    dam_4_id: string | null;
-    dam_5_id: string | null;
-    dam_6_id: string | null;
-    dam_7_id: string | null;
-    sire_1_name: string | null;
-    sire_2_name: string | null;
-    sire_3_name: string | null;
-    sire_4_name: string | null;
-    sire_5_name: string | null;
-    sire_6_name: string | null;
-    sire_7_name: string | null;
-    dam_1_name: string | null;
-    dam_2_name: string | null;
-    dam_3_name: string | null;
-    dam_4_name: string | null;
-    dam_5_name: string | null;
-    dam_6_name: string | null;
-    dam_7_name: string | null;
-  };
-
-  rel_horses_users: {
-    id: number;
-    created_at: Date;
-    user_id: string | null;
-    horse_id: string | null;
-    role: string | null;
-  };
 
   rel_users_roles: {
     user_id: string;
@@ -105,6 +35,7 @@ export interface Database {
     title: string | null;
     url: string | null;
     description: string | null;
+    type: string | null;
     deleted_at: Date | null;
     photo_url: string | null;
     slug: string | null;

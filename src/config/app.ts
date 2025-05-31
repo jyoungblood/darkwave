@@ -2,7 +2,7 @@
 
 // Route Configuration
 export const managedRoutes = {
-  protected: ['/dashboard', '/horses/edit/*', '/horses/new'],
+  protected: ['/dashboard', '/links/edit/*', '/links/new'],
   admin: ['/admin', '/admin/*'],
   redirect: ['/login', '/register'],
 } as const;

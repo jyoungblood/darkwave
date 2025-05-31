@@ -16,12 +16,12 @@ import InputText from "@/components/forms/InputText.astro";
           <div class="flex flex-col mb-4">
             <label class="label label-text">Alternate Photo</label>
             <PhotoUploadSingle
-              related_id={horse?.uuid}
-              related_table="horses"            
+              related_id={link?.uuid}
+              related_table="links"            
               related_column="alt_photo_url"
-              url={horse?.alt_photo_url}
-              url_parameters={horse?.alt_photo_url_parameters}
-              upload_path="/horses/alt"
+              url={link?.alt_photo_url}
+              url_parameters={link?.alt_photo_url_parameters}
+              upload_path="/links/alt"
               file_limit_size={1}
               file_formats="image/jpeg"
               dz_icon="tabler--cloud-upload"
@@ -48,73 +48,26 @@ import InputText from "@/components/forms/InputText.astro";
           })" />
  -->
 
-    <!-- SME version -->
-    <!-- 
-                <div class="mb-3 form-group" data-validate="name">
-                  <label class="form-label">Registered Name</label>
-                  <input type="text" class="form-control" name="name" autocomplete="off" value="{{data.name}}" autocomplete="off"
-                    x-on:blur="dw.validate_input({
-                      input: 'name',
-                      element: $event.target,
-                      required: true,
-                      unique: {
-                        collection: 'horses',
-                        field: 'name',
-                        error_message: 'This name is already in use',
-                        exempt_id: '{{data._id}}'
-                      }
-                    })" 
-                  />
-                  <div class="invalid-feedback"></div>
-                </div>
- -->
+
+    <!-- DW version of validation rules on input component -->
 
     <!-- 
-                <div class="mb-3 form-group" data-validate="breed">
-                  <label class="form-label">Breed</label>
-                  <input type="text" class="form-control" name="breed" value="{{data.breed}}" autocomplete="off"
-                    x-on:blur="dw.validate_input({
-                      input: 'breed',
-                      element: $event.target,
-                      required: true
-                    })"
-                  />
-                  <div class="invalid-feedback"></div>
-                </div>
- -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- DW version of validation rules on input component -->
-
-
-<!-- 
     <div class="flex flex-col mb-4">
       <InputText
         label="Registered Name"
         sublabel="<span class='text-red-500 text-xs font-bold'>* Required</span>"
         name="name"
-        value={horse?.name}
+        value={link?.name}
         required
         validation={{
           types: ["alphanumericWithSpaces"],
           unique: {
-            collection: "horses",
+            collection: "links",
             field: "name",
             errorMessage: "This name is already registered",
-            exempt: horse
+            exempt: link
               ? {
-                  uuid: horse.uuid,
+                  uuid: link.uuid,
                 }
               : undefined,
           },

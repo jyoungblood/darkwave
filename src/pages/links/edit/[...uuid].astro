@@ -1,0 +1,56 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import LinkForm from "@/components/LinkForm.astro";
+import { db } from "@/lib/db";
+import { canEdit } from "@/lib/auth/permissions";
+
+const uuid = Astro.params.uuid as string;
+
+// Variables to store our query results
+let link: any = null;
+
+try {
+  // Fetch all data in parallel
+  const [linkResult] = await Promise.all([
+    (async () => {
+      const linkData = await db
+        .selectFrom("links")
+        .selectAll()
+        .where("uuid", "=", uuid)
+        .where("deleted_at", "is", null)
+        .executeTakeFirst();
+      return linkData;
+    })(),
+  ]);
+
+  // Assign the results
+  link = linkResult;
+} catch (error) {
+  console.error("Error fetching link:", error);
+}
+
+if (!link) {
+  return new Response(null, {
+    status: 404,
+  });
+}
+
+const can_edit = await canEdit({
+  locals: Astro.locals,
+  resourceType: "links",
+  uuid
+});
+
+if (!can_edit) {
+  return Astro.redirect(`/links/${link.uuid}`);
+}
+---
+
+<Layout title={`${link.title} | Edit Link`}>
+  <div class="w-full">
+    <LinkForm
+      link={link}
+      redirect="/links/$uuid"
+    />
+  </div>
+</Layout>

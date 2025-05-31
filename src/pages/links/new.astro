@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import LinkForm from "@/components/LinkForm.astro";
+---
+
+<Layout title="New Link">
+  <div class="w-full">
+    <LinkForm redirect="/links/$uuid" />
+  </div>
+</Layout>
