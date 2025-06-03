@@ -1,9 +1,9 @@
 ---
-import AdminLayout from "@/layouts/AdminLayout.astro";
+import Layout from "@/layouts/Layout.astro";
 import InputText from "@/components/forms/InputText.astro";
 ---
 
-<AdminLayout title="DW Components Demo">
+<Layout title="DW Components Demo">
   <div class="w-full">
     <script>
       import "@/components/ui/scripts/alert.js";
@@ -32,7 +32,7 @@ import InputText from "@/components/forms/InputText.astro";
 
  -->
 
-    <!-- dw version -->
+    <!-- dw 0.6 version -->
     <!-- 
 
           <input name="email" type="email" class="form-control" placeholder="you@email.com" autocomplete="off" x-on:blur="dw.validate_input({
@@ -49,7 +49,7 @@ import InputText from "@/components/forms/InputText.astro";
  -->
 
 
-    <!-- DW version of validation rules on input component -->
+    <!-- DW 0.6 version of validation rules on input component -->
 
     <!-- 
     <div class="flex flex-col mb-4">
@@ -407,4 +407,4 @@ validation={{
       }
     </script>
   </div>
-</AdminLayout>
+</Layout>

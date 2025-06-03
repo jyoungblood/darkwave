@@ -1,8 +1,8 @@
 ---
-import AdminLayout from "@/layouts/AdminLayout.astro";
+import Layout from "@/layouts/Layout.astro";
 ---
 
-<AdminLayout title="HTMX Demo">
+<Layout title="HTMX Demo">
   <div class="w-full">
 
     <div class="flex mb-16">
@@ -28,4 +28,4 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
     <div hx-get="/partials/list-demo" hx-trigger="load"></div>
 
   </div>
-</AdminLayout>
+</Layout>

@@ -88,3 +88,9 @@ const validationAttributes = validation ? {
   />
   <span class="validation-feedback text-sm mt-1 hidden"></span>
 </div>
+
+<script>
+  import { validateOnBlur } from '@/components/ui/scripts/validate-input.js';
+  // @ts-ignore
+  window.validateOnBlur = validateOnBlur;
+</script>

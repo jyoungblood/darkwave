@@ -1,32 +1,10 @@
 ---
-import AdminLayout from "@/layouts/AdminLayout.astro";
+import Layout from "@/layouts/Layout.astro";
 ---
 
-<AdminLayout title="Flyon UI Demo">
+<Layout title="Flyon UI Demo">
   <div class="w-full">
-    <div class="flex mb-16">
-      <div class="w-1/2">
-        <div class="text-2xl font-bold">Flyon UI</div>
-      </div>
-      <div class="w-1/2 text-right">
-        <a
-          class="btn btn-outline"
-          href="https://flyonui.com/components/"
-          target="_blank">Flyon UI</a
-        > &nbsp;
-        <a
-          class="btn btn-outline"
-          href="https://preline.co/docs/index.html"
-          target="_blank">Preline</a
-        > &nbsp;
 
-        <a
-          class="btn btn-outline"
-          href="https://icon-sets.iconify.design/tabler/"
-          target="_blank">Tabler Icons</a
-        >
-      </div>
-    </div>
 
     <div class="accordion divide-neutral/20 divide-y">
       <div class="accordion-item active" id="payment-basic">
@@ -758,4 +736,4 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
       <label class="label-text text-base" for="switchError2"> Error </label>
     </div>
   </div>
-</AdminLayout>
+</Layout>

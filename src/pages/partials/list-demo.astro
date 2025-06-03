@@ -14,22 +14,21 @@ try {
 } catch (error) {
   console.error("Error fetching links:", error);
 }
+---
 
-{
-  links && (
-    <div class="mt-8">
-      <h2 class="text-lg font-semibold mb-3">Partial Links</h2>
-      {links.length === 0 ? (
-        <p class="text-gray-500">No links found</p>
-      ) : (
-        <ul class="list-disc pl-5">
-          {links?.map((link) => (
-            <li class="text-sm mb-1 underline hover:no-underline">
-              <a href={`/links/${link.uuid}`}>{link.title}</a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
-}
+{links && (
+  <div class="mt-8">
+    <h2 class="text-lg font-semibold mb-3">Partial Links</h2>
+    {links.length === 0 ? (
+      <p class="text-gray-500">No links found</p>
+    ) : (
+      <ul class="list-disc pl-5">
+        {links?.map((link) => (
+          <li class="text-sm mb-1 underline hover:no-underline">
+            <a href={`/links/${link.uuid}`}>{link.title}</a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)}
