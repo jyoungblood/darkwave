@@ -1,28 +1,58 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
+import { formatDate } from "@/lib/dw";
+import { db } from "@/lib/db";
+
+let links;
+let users;
+
+try {
+  // Fetch all data in parallel
+  const [linksResult, usersResult] = await Promise.all([
+    (async () => {
+      return await db.selectFrom('links').selectAll().where('deleted_at', 'is', null).execute();
+    })(),
+    (async () => {
+      return await db.selectFrom('user').selectAll().execute();
+    })()
+  ]);
+
+  // Assign the results
+  links = linksResult;
+  users = usersResult;
+} catch (error) {
+  console.error("Error fetching data:", error);
+}
 ---
 
 <AdminLayout>
   <div class="w-full">
+    <h2 class="text-2xl font-bold mb-6">Admin Dashboard</h2>
+
     <div class="grid grid-cols-2 gap-6">
-      <div class="card">
-        <div class="card-body">
-          <h2 class="card-title mb-6">Site Content</h2>
-          <a class="btn btn-outline btn-primary mb-3" href="/admin/links">Links</a>
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Links</h3>
+            <div class="card-text flex items-center justify-between gap-2 mb-2">
+              <div>Total Links: {links ? links.length : 0}</div>
+              <div>Last updated: {links?.[0]?.updated_at ? formatDate(links[0].updated_at.toString()) : 'N/A'}</div>
+            </div>
+            <a href="/admin/links" class="btn btn-primary">Manage Links</a>
+          </div>
         </div>
+
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Users</h3>
+            <div class="card-text flex items-center justify-between gap-2 mb-2">
+              <div>Total Users: {users ? users.length : 0}</div>
+              <div>Last updated: {users?.[0]?.updatedAt ? formatDate(users[0].updatedAt.toString()) : 'N/A'}</div>
+            </div>
+            <a href="/admin/users" class="btn btn-primary">Manage Users</a>
+          </div>
+        </div>
+
       </div>
 
-      <div class="card">
-        <div class="card-body">
-          <h2 class="card-title mb-6">Internal Utilities</h2>
-          <a class="btn btn-outline btn-primary mb-3" href="/admin/email-preview"
-            >Email Preview</a
-          >
-          <a class="btn btn-outline btn-primary mb-3" href="/admin/users"
-            >Users</a
-          >
-        </div>
-      </div>
-    </div>
   </div>
 </AdminLayout>

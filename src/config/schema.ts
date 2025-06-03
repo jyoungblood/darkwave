@@ -2,30 +2,6 @@
 
 export interface Database {
 
-
-  rel_users_roles: {
-    user_id: string;
-    role_id: number;
-    created_at: Date;
-  };
-
-
-  gallery_content: {
-    id: number;
-    uuid: string;
-    created_at: Date;
-    updated_at: Date | null;
-    photo_url: string | null;
-    gallery_type: string | null;
-    display_order: number | null;
-    title: string | null;
-    description: string | null;
-    related_id: string | null;
-    related_table: string | null;
-    user_id: string | null;
-    photo_url_parameters: string | null;
-  };
-
   links: {
     id: number;
     uuid: string;
@@ -43,6 +19,21 @@ export interface Database {
     photo_url_parameters: string | null;
   };
 
+  gallery_content: {
+    id: number;
+    uuid: string;
+    created_at: Date;
+    updated_at: Date | null;
+    photo_url: string | null;
+    gallery_type: string | null;
+    display_order: number | null;
+    title: string | null;
+    description: string | null;
+    related_id: string | null;
+    related_table: string | null;
+    user_id: string | null;
+    photo_url_parameters: string | null;
+  };
 
   // Auth tables
   account: {
@@ -65,6 +56,12 @@ export interface Database {
     id: number;
     name: string;
     description: string | null;
+    created_at: Date;
+  };
+
+  rel_users_roles: {
+    user_id: string;
+    role_id: number;
     created_at: Date;
   };
 

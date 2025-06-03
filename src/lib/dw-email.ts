@@ -1,7 +1,7 @@
 // DW - Email utility
 
 import nodemailer from 'nodemailer';
-import mjml2html from 'mjml';
+// import mjml2html from 'mjml';
 import { emailConfig } from '@/config/app';
 import { htmlToPlainText } from '@/lib/dw';
 // Singleton transport instance
@@ -26,7 +26,7 @@ interface EmailData {
     text?: string;
     html?: string;
     data?: Record<string, any>;
-    mjml?: boolean;
+    // mjml?: boolean;
   };
 }
 
@@ -64,11 +64,11 @@ export async function sendEmail(data: EmailData) {
       const templateModule = await import(/* @vite-ignore */ templatePath);
       html = await templateModule.render(data.message.data || {});
 
-      // If MJML is enabled, compile the template output
-      if (data.message.mjml && html) {
-        const { html: mjmlHtml } = mjml2html(html);
-        html = mjmlHtml;
-      }
+      // // If MJML is enabled, compile the template output
+      // if (data.message.mjml && html) {
+      //   const { html: mjmlHtml } = mjml2html(html);
+      //   html = mjmlHtml;
+      // }
     } else if (data.message.html) {
       html = data.message.html;
     }

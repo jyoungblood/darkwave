@@ -1,15 +1,47 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { db } from "@/lib/db";
 
-return Astro.redirect("/");
+let user;
+
+try {
+  user = await db
+    .selectFrom("user")
+    .selectAll()
+    .where("id", "=", Astro.locals.userId!)
+    .executeTakeFirst();
+} catch (error) {
+  console.error("Error fetching user:", error);
+}
+
+// Redirect to the home page instead?
+// return Astro.redirect("/");
 ---
 
 <Layout title="Dashboard Demo">
-  <div class="">
-    THIS IS THE DASHBOARD. NOTHING HERE NOW.<br /><br />
-    <ButtonLink href="/links/new" text="New Link" />
-    <br /><br />
-    <a href="/">&larr; index</a>
+  <div class="w-auto">
+    <div class="mt-6 card">
+      <div class="card-body">
+        <h2 class="text-2xl font-bold mb-2">Welcome, {user?.name}!</h2>
+        <div class="">
+          <p class="mb-2">This is where the user dashboard content goes.</p>
+          <p class="mb-2">
+            Nothing here by default, but you can use your imagination and build
+            something cool 😎
+          </p>
+          <div class="mt-6">
+            <a href="/account/edit" class="btn btn-primary mr-2">
+              <span class="icon-[tabler--user-circle]"></span>
+              Edit Account
+            </a>
+
+            <a href="/links/new" class="btn btn-primary">
+              <span class="icon-[tabler--link]"></span>
+              New Link
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </Layout>

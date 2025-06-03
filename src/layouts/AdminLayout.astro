@@ -2,9 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 const { title } = Astro.props;
 const currentPath = Astro.url.pathname;
-const pageTitle = title
-  ? `${title} | Admin`
-  : `Admin`;
+const pageTitle = title ? `${title} | Admin` : `Admin`;
 ---
 
 <Layout title={pageTitle}>
@@ -21,7 +19,13 @@ const pageTitle = title
           class={`text-gray-700 p-3 text-xs font-semibold inline-block hover:underline ${Astro.url.pathname.includes("/admin/links") ? "underline" : "no-underline"}`}
           href="/admin/links">Links</a
         >
-      </div>      
+      </div>
+      <div class="subnav-item inline-block">
+        <a
+          class={`text-gray-700 p-3 text-xs font-semibold inline-block hover:underline ${Astro.url.pathname.includes("/admin/users") ? "underline" : "no-underline"}`}
+          href="/admin/users">Users</a
+        >
+      </div>
     </div>
     <slot />
   </div>

@@ -26,9 +26,7 @@ This assembly leverages proven patterns and workflows, helping developers focus 
 - [Dropzone](https://www.dropzone.dev/) - Drag & drop file uploads
 - [SortableJS](https://sortablejs.github.io/Sortable/) - Drag & drop sorting library
 - [Validator.js](https://github.com/validatorjs/validator.js) - String validation
-- [Zod](https://zod.dev/) - Schema validation
 - [Iconify](https://iconify.design/) - Icon framework with Tabler icons set
-- [MJML](https://mjml.io/) for email templates
 
 
 
@@ -65,7 +63,7 @@ This assembly leverages proven patterns and workflows, helping developers focus 
 - Secure cookie handling
 - Role-based authorization system
 - CSRF protection middleware
-- Email notifications with MJML templating
+- Email notifications TSX components
 - File upload handling with image processing (integrated with bunny.net cdn & image processor)
 - Configurable environment variables
 - Database schema management

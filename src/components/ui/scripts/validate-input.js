@@ -343,7 +343,7 @@ async function validateInput(input) {
   // Check uniqueness if configured
   if (validationConfig.unique) {
     try {
-      const response = await fetch("/api/apex/validate-unique", {
+      const response = await fetch("/api/dw/validate-unique", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

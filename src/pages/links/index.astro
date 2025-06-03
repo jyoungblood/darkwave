@@ -3,41 +3,59 @@ import Layout from "@/layouts/Layout.astro";
 import GenericCard from "@/components/ui/GenericCard.astro";
 import { db } from "@/lib/db";
 
-let link;
+let links;
 
 try {
-  link = await db
-    .selectFrom('links')
+  links = await db
+    .selectFrom("links")
     .selectAll()
-    .where('deleted_at', 'is', null)
-    .orderBy('created_at')
+    .where("deleted_at", "is", null)
+    .orderBy("created_at")
     .execute();
 } catch (error) {
   console.error("Error fetching link:", error);
 }
-
 ---
 
 <Layout title="Links">
   <div class="w-full">
     <div class="mt-8">
-      <h2 class="text-lg font-semibold mb-3">Links</h2>
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-lg font-semibold mb-3">Links</h2>
+        </div>
+        <div>
+          <a href="/links/new" class="btn btn-primary">
+            <span
+              class="icon-[tabler--link]"
+            ></span>
+            New Link
+          </a>
+        </div>
+      </div>
     </div>
 
     {
-      link && (
+      links && (
         <div class="">
-          {link.length === 0 ? (
-            <p class="text-gray-500">No links found</p>
+          {links.length === 0 ? (
+            <p class="text-gray-500">No links found...</p>
           ) : (
             <div class="grid grid-cols-4 gap-4">
-              {link.map((link) => (
-                <GenericCard link={`/links/${link.uuid}`} image={link.photo_url} title={link.title}>[details]</GenericCard>
+              {links.map((link) => (
+                <GenericCard
+                  link={`/links/${link.uuid}`}
+                  image={link.photo_url}
+                  title={link.title}
+                >
+                  [details]
+                </GenericCard>
               ))}
             </div>
           )}
         </div>
       )
     }
+
   </div>
 </Layout>

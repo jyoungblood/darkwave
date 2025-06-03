@@ -1,0 +1,167 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { db } from "@/lib/db";
+import InputText from "@/components/forms/InputText.astro";
+import ButtonSubmit from "@/components/forms/ButtonSubmit.astro";
+
+if (!Astro.locals.userId) {
+  return Astro.redirect("/login");
+}
+
+let user;
+let account;
+
+try {
+  user = await db
+    .selectFrom("user")
+    .selectAll()
+    .where("id", "=", Astro.locals.userId!)
+    .executeTakeFirst();
+  account = await db
+    .selectFrom("account")
+    .selectAll()
+    .where("userId", "=", Astro.locals.userId!)
+    .executeTakeFirst();
+} catch (error) {
+  console.error("Error fetching user:", error);
+}
+
+if (!user) {
+  return new Response(null, {
+    status: 404,
+  });
+}
+
+let hasCredentials = account?.providerId === "credential" ? true : false;
+let oauthGoogle = account?.providerId === "google" ? true : false;
+---
+
+<Layout title={`${user?.email} | Edit Account`}>
+  <div class="w-full">
+    <h2 class="mt-6 text-2xl font-bold mb-2">Edit Account</h2>
+    <form class="" data-form aria-label="Account form">
+      <input
+        type="hidden"
+        name="csrf"
+        value={Astro.cookies.get("csrf")?.value}
+      />
+      <div class="grid grid-cols-2 gap-8 mb-4">
+        <div class="flex flex-col">
+          {
+            hasCredentials ? (
+              <div class="mb-4">
+                <InputText
+                  label="Email"
+                  name="email"
+                  value={user?.email}
+                  required
+                  validation={{
+                    types: ["email"],
+                    unique: {
+                      collection: "user",
+                      field: "email",
+                      errorMessage: "This email is already registered",
+                      exempt: user
+                        ? {
+                            id: user.id,
+                          }
+                        : undefined,
+                    },
+                    // success: { message: '✅ Name looks good!' }
+                    // success: true
+                  }}
+                />
+              </div>
+            ) : oauthGoogle ? (
+              <div class="mt-2 mb-4">
+                <div class="text-sm text-gray-500 bg-gray-100 p-4 rounded-md text-center italic">
+                  Authorized with Google: {user?.email}
+                </div>
+              </div>
+            ) : (
+              ""
+            )
+          }
+
+          <div class="mb-4">
+            <InputText label="Name" name="name" value={user?.name} required />
+          </div>
+
+          {
+            hasCredentials ? (
+              <div class="my-4">
+                <button
+                  type="button"
+                  class="collapse-toggle btn btn-secondary text-xs"
+                  id="basic-collapse"
+                  aria-expanded="false"
+                  aria-controls="basic-collapse-heading"
+                  data-collapse="#basic-collapse-heading"
+                >
+                  <span class="icon-[tabler--lock]" />
+                  Change Password
+                  <span class="icon-[tabler--chevron-down] collapse-open:rotate-180 size-4" />
+                </button>
+                <div
+                  id="basic-collapse-heading"
+                  class="collapse hidden w-full overflow-hidden transition-[height] duration-300"
+                  aria-labelledby="basic-collapse"
+                >
+                  <div class="border-base-content/0 my-3 p-1">
+                    <div class="card">
+                      <div class="card-body">
+                        <div
+                          class="flex flex-col"
+                          id="input-container-password"
+                        >
+                          <label
+                            for="input-current-password"
+                            class="label label-text mb-2"
+                          >
+                            Current Password
+                          </label>
+                          <input
+                            type="password"
+                            id="input-current-password"
+                            name="currentPassword"
+                            class="input input-bordered mb-4"
+                            autocomplete="current-password"
+                          />
+                          <label
+                            for="input-new-password"
+                            class="label label-text"
+                          >
+                            New Password
+                          </label>
+                          <input
+                            type="password"
+                            id="input-new-password"
+                            name="newPassword"
+                            class="input input-bordered"
+                            autocomplete="new-password"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              ""
+            )
+          }
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <ButtonSubmit
+          text="Save Account "
+          workingText="Saving..."
+          form="[data-form]"
+          endpoint="/api/user/update-account"
+          redirect="/dashboard"
+        />
+      </div>
+    </form>
+  </div>
+</Layout>
