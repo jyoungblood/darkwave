@@ -14,8 +14,8 @@ const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
-    <script is:inline src="/js/alpine.min.js" defer></script>
-    <script is:inline src="/js/htmx.min.js" defer></script>
+    <script is:inline src="/js/lib/alpine.min.js" defer></script>
+    <script is:inline src="/js/lib/htmx.min.js" defer></script>
   </head>
   <body data-theme="shadcn">
     <div class="parent h-screen flex flex-col max-w-7xl mx-auto">
