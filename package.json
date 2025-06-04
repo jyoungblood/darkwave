@@ -11,12 +11,6 @@
   "dependencies": {
     "@astrojs/node": "^9.2.1",
     "@tailwindcss/vite": "^4.1.1",
-    "@uppy/core": "^4.4.1",
-    "@uppy/dashboard": "^4.3.1",
-    "@uppy/drag-drop": "^4.1.1",
-    "@uppy/image-editor": "^3.3.1",
-    "@uppy/status-bar": "^4.1.1",
-    "@uppy/xhr-upload": "^4.3.2",
     "astro": "^5.7.11",
     "better-auth": "^1.2.4",
     "cropperjs": "^2.0.0",
