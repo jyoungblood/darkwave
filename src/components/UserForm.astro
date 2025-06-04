@@ -20,10 +20,7 @@ try {
   // Fetch all roles and user's roles in parallel
   const [allRolesResult, userRolesResult] = await Promise.all([
     // Get all available roles
-    db
-      .selectFrom("auth_roles")
-      .select(["id", "name", "description"])
-      .execute(),
+    db.selectFrom("auth_roles").select(["id", "name", "description"]).execute(),
 
     // Get roles for this user if we have a user
     user?.id
@@ -31,19 +28,23 @@ try {
           .selectFrom("rel_users_roles")
           .innerJoin("auth_roles", "auth_roles.id", "rel_users_roles.role_id")
           .where("rel_users_roles.user_id", "=", user.id)
-          .select(["auth_roles.id", "auth_roles.name", "auth_roles.description"])
+          .select([
+            "auth_roles.id",
+            "auth_roles.name",
+            "auth_roles.description",
+          ])
           .execute()
       : Promise.resolve([]),
   ]);
 
   // Format roles for the checkbox group
-  allRoles = allRolesResult.map(role => ({
+  allRoles = allRolesResult.map((role) => ({
     label: role.name.charAt(0).toUpperCase() + role.name.slice(1),
-    value: role.id.toString()
+    value: role.id.toString(),
   }));
 
   // Get just the role IDs for the selected values
-  userRoles = userRolesResult.map(role => role.id.toString());
+  userRoles = userRolesResult.map((role) => role.id.toString());
 } catch (error) {
   console.error("Error fetching roles:", error);
 }
@@ -53,13 +54,13 @@ try {
   <input type="hidden" name="csrf" value={Astro.cookies.get("csrf")?.value} />
   <div class="grid grid-cols-2 gap-4 mb-4">
     <div class="flex flex-col">
-      <div class="flex flex-col mb-4">
+      <div class="mb-4">
         <InputText label="Email" name="email" value={user?.email} required />
       </div>
-      <div class="flex flex-col mb-4">
+      <div class="mb-4">
         <InputText label="Name" name="name" value={user?.name} required />
       </div>
-      <div class="flex flex-col mb-4">
+      <div class="mb-4">
         <CheckboxGroup
           label="Roles"
           name="roles"
