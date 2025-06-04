@@ -1,9 +1,17 @@
-<svg stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <path d="M12.5 1.25a.75.75 0 0 0-1.5 0v8.69L6.447 5.385a.75.75 0 1 0-1.061 1.06L9.94 11H1.25a.75.75 0 0 0 0 1.5h8.69l-4.554 4.553a.75.75 0 0 0 1.06 1.061L11 13.561v8.689a.75.75 0 0 0 1.5 0v-8.69l4.553 4.554a.75.75 0 0 0 1.061-1.06L13.561 12.5h8.689a.75.75 0 0 0 0-1.5h-8.69l4.554-4.553a.75.75 0 1 0-1.06-1.061L12.5 9.939V1.25Z"></path>
-  <style>
-      path { fill: #000; }
-      @media (prefers-color-scheme: dark) {
-          path { fill: #FFF; }
-      }
-  </style>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="412" height="412" viewBox="0 0 412 412" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linejoin="round">
+        <g id="Group" transform="translate(27.000000, 119.000000)" fill="currentColor" stroke="currentColor" stroke-width="35">
+            <polygon id="Triangle" points="87 0 174 174 0 174"></polygon>
+            <polygon id="Triangle-Copy" transform="translate(272.000000, 87.000000) rotate(-180.000000) translate(-272.000000, -87.000000) " points="272 0 359 174 185 174"></polygon>
+        </g>
+    </g>
+        <style>
+path { fill: #000; stroke: #000; }
+@media (prefers-color-scheme: dark) {
+path { fill: #FFF; stroke: #FFF; }
+}
+</style>
 </svg>
+
+
