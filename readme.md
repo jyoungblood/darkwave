@@ -2,11 +2,11 @@
 
 ### Web application development kit
 
-Darkwave is a "batteries-included" tool kit for quickly developing data-driven web applications with Astro. 
+Darkwave is a "batteries-included" tool kit for building data-driven web applications with Astro. 
 
-We've curated a selection of reliable and approachable tools to create a professional-grade full-stack boilerplate with pre-wired functionality for common SaaS and CRUD features.
+We've curated a selection of reliable and approachable tools to create a professional-grade full-stack boilerplate with pre-wired functionality and components for common SaaS and CRUD features.
 
-DW facilitates a hyper-productive development workflow, helping developers focus on business logic instead of rebuilding foundational infrastructure. 
+DW facilitates a hyper-productive development workflow, helping developers focus on delivering real value with ease.
 
 
 
