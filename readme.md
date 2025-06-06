@@ -2,9 +2,11 @@
 
 ### Web application development kit
 
-DW is a "batteries-included" tool kit for quickly developing data-driven web applications with Astro. We've carefully assembled a collection of reliable and approachable tools to create a professional-grade, full-stack boilerplate that provides pre-wired functionality for CRUD and SaaS features. 
+Darkwave is a "batteries-included" tool kit for quickly developing data-driven web applications with Astro. 
 
-This assembly leverages proven patterns and workflows, helping developers focus on their unique business logic instead of rebuilding foundational infrastructure. 
+We've carefully assembled a collection of reliable and approachable tools to create a professional-grade, full-stack boilerplate that provides pre-wired functionality for CRUD and SaaS features. 
+
+DW facilitates a hyper-productive development workflow, helping developers focus on business logic instead of rebuilding foundational infrastructure. 
 
 
 
@@ -23,7 +25,7 @@ This assembly leverages proven patterns and workflows, helping developers focus 
 - [Alpine.js](https://alpinejs.dev/) - JavaScript framework for enhanced interactivity
 - [HTMX](https://htmx.org/) - Modern approach to dynamic content without writing JavaScript
 - [Cropper.js](https://fengyuanchen.github.io/cropperjs/) - Image cropping library
-- [Dropzone](https://www.dropzone.dev/) - Drag & drop file uploads
+- [Dropzone](https://www.dropzone.dev/) - Drag & drop file upload interface
 - [SortableJS](https://sortablejs.github.io/Sortable/) - Drag & drop sorting library
 - [Validator.js](https://github.com/validatorjs/validator.js) - String validation
 - [Iconify](https://iconify.design/) - Icon framework with Tabler icons set
@@ -82,7 +84,7 @@ This assembly leverages proven patterns and workflows, helping developers focus 
 
 1. Clone the repository
 ```bash
-git clone https://github.com/jyoungblood/darkwave.git my-project
+npx degit jyoungblood/darkwave my-project
 cd my-project
 ```
 
@@ -116,6 +118,7 @@ npm run dev
 ```
 src/
 ├── components/        # Reusable UI components
+│   ├── admin/         # Admin components
 │   ├── forms/         # Form-related components
 │   └── ui/            # General UI components
 ├── config/            # Application configuration
@@ -123,7 +126,8 @@ src/
 ├── layouts/           # Page layouts
 ├── lib/               # Shared utilities and helpers
 ├── middleware/        # Request middleware
-├── pages/             # Application routes
+├── pages/             # Application routes & templates
+├── styles/            # Tailwind & FlyonUI integration, base component styles
 ```
 
 ## Core Philosophy
