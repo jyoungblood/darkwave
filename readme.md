@@ -94,31 +94,34 @@ Read the full documentation and user guide at [darkwave.ltd](https://darkwave.lt
 
 ## Getting Started
 
-1. Clone the repository
+Clone the repository
 ```bash
 npx degit jyoungblood/darkwave my-project
 cd my-project
 ```
 
-2. Install dependencies
+Install dependencies
 ```bash
 npm install
 ```
 
-3. Configure environment variables
+Configure environment variables (add your database, mail server, etc)
 ```bash
 mv .env.example .env
 ```
 
-4. Initialize the database 
+Initialize the database 
 ```bash
 npx @better-auth/cli migrate
 ```
 
-5. Start development server
+Start development server
 ```bash
 npm run dev
 ```
+
+Refer to the [documentation](https://darkwave.ltd/) for next steps.
+
 
 ## Project Structure
 
