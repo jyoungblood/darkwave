@@ -2,6 +2,8 @@
 
 export interface Database {
 
+  // DW default tables
+
   links: {
     id: number;
     uuid: string;
@@ -35,7 +37,22 @@ export interface Database {
     photo_url_parameters: string | null;
   };
 
-  // Auth tables
+  auth_roles: {
+    id: number;
+    name: string;
+    description: string | null;
+    created_at: Date;
+  };
+
+  rel_users_roles: {
+    user_id: string;
+    role_id: number;
+    created_at: Date;
+  };
+
+
+  // Better-auth default tables
+  
   account: {
     id: string;
     accountId: string;
@@ -50,19 +67,6 @@ export interface Database {
     password: string | null;
     createdAt: Date;
     updatedAt: Date;
-  };
-
-  auth_roles: {
-    id: number;
-    name: string;
-    description: string | null;
-    created_at: Date;
-  };
-
-  rel_users_roles: {
-    user_id: string;
-    role_id: number;
-    created_at: Date;
   };
 
   session: {

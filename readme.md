@@ -9,6 +9,8 @@ We've curated a selection of reliable and approachable tools to create a profess
 DW facilitates a hyper-productive development workflow, helping developers focus on delivering real value with ease.
 
 
+Read the full documentation and user guide at [darkwave.ltd](https://darkwave.ltd/)
+
 
 ## What's Included?
 
@@ -108,12 +110,8 @@ npm install
 mv .env.example .env
 ```
 
-4. Initialize the database
+4. Initialize the database 
 ```bash
-# Generate the database schema
-npx @better-auth/cli generate
-
-# Apply the migrations
 npx @better-auth/cli migrate
 ```
 
