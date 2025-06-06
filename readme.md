@@ -4,7 +4,7 @@
 
 Darkwave is a "batteries-included" tool kit for quickly developing data-driven web applications with Astro. 
 
-We've carefully assembled a collection of reliable and approachable tools to create a professional-grade, full-stack boilerplate that provides pre-wired functionality for CRUD and SaaS features. 
+We've curated a selection of reliable and approachable tools to create a professional-grade full-stack boilerplate with pre-wired functionality for common SaaS and CRUD features.
 
 DW facilitates a hyper-productive development workflow, helping developers focus on business logic instead of rebuilding foundational infrastructure. 
 
@@ -54,7 +54,7 @@ DW facilitates a hyper-productive development workflow, helping developers focus
 
 ### UI Components
 
-- Configuratble alert system
+- Configurable alert system
 - Modal dialogs
 - Button links
 
