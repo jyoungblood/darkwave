@@ -32,6 +32,16 @@ DW facilitates a hyper-productive development workflow, helping developers focus
 
 
 
+## Core Philosophy
+
+- Security and performance as top priorities
+- Professional, maintainable solutions without unnecessary complexity
+- Code that is easy to understand and maintain over clever solutions
+- Proven, stable patterns over bleeding-edge features
+- Long-term maintainability and reliability
+- Pragmatic solutions using "boring" techniques
+
+
 ## Features
 
 ### Infrastructure
@@ -95,9 +105,8 @@ npm install
 
 3. Configure environment variables
 ```bash
-cp .env.example .env
+mv .env.example .env
 ```
-Edit `.env` with your configuration values.
 
 4. Initialize the database
 ```bash
@@ -130,14 +139,6 @@ src/
 ├── styles/            # Tailwind & FlyonUI integration, base component styles
 ```
 
-## Core Philosophy
-
-- Security and performance as top priorities
-- Professional, maintainable solutions without unnecessary complexity
-- Code that is easy to understand and maintain over clever solutions
-- Proven, stable patterns over bleeding-edge features
-- Long-term maintainability and reliability
-- Pragmatic solutions using "boring" techniques
 
 
 ## License
