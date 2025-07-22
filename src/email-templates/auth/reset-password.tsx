@@ -6,7 +6,7 @@ export function render(data: any) {
       <h2>Reset Your Password</h2>
       <p>You're receiving this email because a password reset was requested for your account at ${data.siteName}.</p>
       <p>Click the button below to reset your password:</p>
-      <div style="text-align: center; margin: 30px 0;">
+      <div style="margin: 30px 0;">
         <a href="${data.url}" style="background-color: #000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
           Reset Password
         </a>

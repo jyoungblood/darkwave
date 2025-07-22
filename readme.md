@@ -20,7 +20,7 @@ Read the full documentation and user guide at [darkwave.ltd](https://darkwave.lt
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/) with [FlyonUI](https://flyonui.com/)
 - [Better-Auth](https://www.better-auth.com/) for authentication
-- [MySQL](https://www.mysql.com/) (8.0) with [Kysely](https://kysely.dev/) query builder
+- [MySQL](https://www.mysql.com/) (8.0) with [Kysely](https://kysely.dev/) query builder & cli
 
 ### Additional Utilities
 
@@ -105,14 +105,21 @@ Install dependencies
 npm install
 ```
 
+Initialize your database and SMTP account, have the credentials ready to add to your new .env file.
+
 Configure environment variables (add your database, mail server, etc)
 ```bash
 mv .env.example .env
 ```
 
-Initialize the database 
+Generate [Better-Auth secret](https://www.better-auth.com/docs/installation) (save this to your .env file)
 ```bash
-npx @better-auth/cli migrate
+openssl rand -base64 32
+```
+
+Create the core database tables
+```bash
+npx @better-auth/cli migrate --config src/lib/auth/better.ts && npx kysely migrate:latest
 ```
 
 Start development server

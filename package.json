@@ -1,6 +1,6 @@
 {
   "name": "darkwave",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
@@ -23,7 +23,8 @@
     "tailwindcss": "^4.1.1",
     "uuid": "^11.1.0",
     "validator": "^13.15.0",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "kysely-ctl": "^0.14.0"
   },
   "devDependencies": {
     "@iconify-json/tabler": "^1.2.17",

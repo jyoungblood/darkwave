@@ -31,12 +31,12 @@ export const auth = betterAuth({
       }
     },
   },
-  socialProviders: {
+  socialProviders: import.meta.env.GOOGLE_CLIENT_ID && import.meta.env.GOOGLE_CLIENT_SECRET ? {
     google: { 
       clientId: import.meta.env.GOOGLE_CLIENT_ID,
       clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET,
     },
-  },
+  } : {},
   // Define the OAuth callback configuration
   callbackURLs: {
     default: "/dashboard", // Where to redirect after successful OAuth sign-in
@@ -45,7 +45,6 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    defaultCallbackURL: "/auth/verify-email",
     paths: {
       verifyEmail: "/auth/verify-email",
       emailVerifiedRedirect: "/auth/verify-email",
@@ -72,59 +71,5 @@ export const auth = betterAuth({
       }
     },
   },
-  database: pool,
-  // Add schema configuration for custom tables
-  schema: {
-    // Custom tables
-    links: {
-      fields: {
-        id: { type: 'number', required: true },
-        uuid: { type: 'string', required: true },
-        created_at: { type: 'date', required: true },
-        approved_at: { type: 'date' },
-        user_id: { type: 'string', reference: { model: 'user', field: 'id' } },
-        title: { type: 'string' },
-        url: { type: 'string' },
-        description: { type: 'string' },
-        type: { type: 'string' },
-        deleted_at: { type: 'date' },
-        photo_url: { type: 'string' },
-        slug: { type: 'string' },
-        updated_at: { type: 'date' },
-        photo_url_parameters: { type: 'string' }
-      }
-    },
-    gallery_content: {
-      fields: {
-        id: { type: 'number', required: true },
-        uuid: { type: 'string', required: true },
-        created_at: { type: 'date', required: true },
-        updated_at: { type: 'date' },
-        photo_url: { type: 'string' },
-        gallery_type: { type: 'string' },
-        display_order: { type: 'number' },
-        title: { type: 'string' },
-        description: { type: 'string' },
-        related_id: { type: 'string' },
-        related_table: { type: 'string' },
-        user_id: { type: 'string', reference: { model: 'user', field: 'id' } },
-        photo_url_parameters: { type: 'string' }
-      }
-    },
-    auth_roles: {
-      fields: {
-        id: { type: 'number', required: true },
-        name: { type: 'string', required: true },
-        description: { type: 'string' },
-        created_at: { type: 'date', required: true }
-      }
-    },
-    rel_users_roles: {
-      fields: {
-        user_id: { type: 'string', required: true, reference: { model: 'user', field: 'id' } },
-        role_id: { type: 'number', required: true, reference: { model: 'auth_roles', field: 'id' } },
-        created_at: { type: 'date', required: true }
-      }
-    }
-  }
+  database: pool
 });
