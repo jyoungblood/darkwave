@@ -17,7 +17,7 @@ export const auth = betterAuth({
         const siteName = import.meta.env.SITE_TITLE;
         await sendEmail({
           to: user.email,
-          from: `"${siteName}" <${import.meta.env.SMTP_USER}>`,
+          from: `"${siteName}" <${import.meta.env.NOTIFICATIONS_EMAIL}>`,
           subject: `Reset your password for ${siteName}`,
           message: {
             template: '@/email-templates/auth/reset-password',
@@ -57,7 +57,7 @@ export const auth = betterAuth({
         const siteName = import.meta.env.SITE_TITLE;
         await sendEmail({
           to: user.email,
-          from: `"${siteName}" <${import.meta.env.SMTP_USER}>`,
+          from: `"${siteName}" <${import.meta.env.NOTIFICATIONS_EMAIL}>`,
           subject: `Verify your email for ${siteName}`,
           message: {
             template: '@/email-templates/auth/verify-email',

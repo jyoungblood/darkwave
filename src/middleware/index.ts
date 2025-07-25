@@ -50,6 +50,7 @@ const setUserData = (locals: App.Locals, data: any) => {
   locals.isAuthenticated = true;
   locals.email = data.user?.email!;
   locals.userId = data.user?.id!;
+  locals.name = data.user?.name!;
   
   // Ensure authRoles is an array
   const roles = Array.isArray(data.authRoles) ? [...data.authRoles] : [];

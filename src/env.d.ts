@@ -5,6 +5,7 @@ declare namespace App {
     email?: string;
     userId?: string;
     // DW
+    name?: string;
     authRoles: string[];
     rolesVersion: number;
   }

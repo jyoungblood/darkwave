@@ -1,0 +1,195 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { ensureCsrfToken } from "@/lib/csrf";
+ensureCsrfToken(Astro.cookies);
+
+const { url } = Astro;
+
+const error = url.searchParams.get("error");
+---
+
+<Layout title="Contact Us">
+  <div class="flex flex-col items-center justify-center flex-1">
+    <h1 class="text-2xl font-bold mb-6 text-center" data-contact-title>
+      Contact Us
+    </h1>
+    <div class="w-full max-w-lg" role="region" aria-label="Contact form">
+      <form
+        class="border border-gray-200 p-8 rounded-md mb-4"
+        data-contact-form
+        aria-label="Contact form"
+      >
+        <input
+          type="hidden"
+          name="csrf"
+          value={Astro.cookies.get("csrf")?.value}
+        />
+
+        <div class="flex flex-col mb-4">
+          <label for="name" class="mb-2 text-sm font-semibold">Your Name</label>
+          <input
+            type="text"
+            name="name"
+            value={Astro.locals.name}
+            id="name"
+            required
+            class="p-2 border border-gray-400 rounded-md mb-4"
+            aria-required="true"
+          />
+        </div>
+
+        <div class="flex flex-col mb-4">
+          <label for="email" class="mb-2 text-sm font-semibold"
+            >Your Email</label
+          >
+          <input
+            type="email"
+            name="email"
+            value={Astro.locals.email}
+            id="email"
+            required
+            class="p-2 border border-gray-400 rounded-md mb-4"
+            aria-required="true"
+          />
+        </div>
+
+        <div class="flex flex-col mb-4">
+          <label for="subject" class="mb-2 text-sm font-semibold">Subject</label
+          >
+          <input
+            type="text"
+            name="subject"
+            id="subject"
+            required
+            class="p-2 border border-gray-400 rounded-md mb-4"
+            aria-required="true"
+          />
+        </div>
+        <div class="flex flex-col mb-4">
+          <label for="message" class="mb-2 text-sm font-semibold">Message</label
+          >
+          <textarea
+            name="message"
+            id="message"
+            required
+            class="p-2 border border-gray-400 rounded-md mb-4 h-30"
+            aria-required="true"></textarea>
+        </div>
+        <button
+          type="submit"
+          data-contact-submit
+          class="bg-black text-white p-3 text-sm font-semibold rounded-md hover:bg-gray-800 cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          aria-busy="false"
+        >
+          <svg
+            data-contact-spinner
+            class="hidden w-5 h-5 mr-3 animate-spin"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+              fill="none"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span data-contact-text>Send</span>
+        </button>
+
+        {
+          error && (
+            <div
+              class="mt-6 text-sm p-2 bg-red-100 border border-red-300 text-red-700 rounded-md text-center w-full max-w-sm"
+              role="alert"
+              aria-live="assertive"
+            >
+              <p class="font-semibold">{decodeURIComponent(error)}</p>
+            </div>
+          )
+        }
+      </form>
+
+      <div class="hidden" data-contact-success>
+        <div
+          class="mb-6 p-4 bg-green-100 border border-green-300 text-green-700 rounded-md text-center w-full max-w-lg"
+          role="status"
+          aria-live="polite"
+        >
+          <h2 class="text-2xl font-bold mb-2 text-center">Message Sent</h2>
+          <p class="text-md text-center">
+            Thanks for getting in touch.<br /> We'll get back to you as soon as we
+            can.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const form = document.querySelector("[data-contact-form]") as HTMLFormElement;
+  const submitButton = document.querySelector(
+    "[data-contact-submit]"
+  ) as HTMLButtonElement;
+  const buttonText = document.querySelector(
+    "[data-contact-text]"
+  ) as HTMLSpanElement;
+  const loadingSpinner = document.querySelector(
+    "[data-contact-spinner]"
+  ) as HTMLElement;
+  const successContainer = document.querySelector(
+    "[data-contact-success]"
+  ) as HTMLElement;
+
+  form.addEventListener("submit", async (event: SubmitEvent) => {
+    // console.log("Form submit event triggered");
+    event.preventDefault();
+
+    // Set loading state
+    submitButton.disabled = true;
+    submitButton.setAttribute("aria-busy", "true");
+    buttonText.textContent = "Sending...";
+    loadingSpinner.classList.remove("hidden");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        body: new FormData(event.target as HTMLFormElement),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Reset loading state only for errors
+        submitButton.disabled = false;
+        submitButton.setAttribute("aria-busy", "false");
+        buttonText.textContent = "Send";
+        loadingSpinner.classList.add("hidden");
+
+        window.location.href = `/contact?error=${encodeURIComponent(data.error)}`;
+      } else {
+        document.querySelector("[data-contact-title]")?.classList.add("hidden");
+        form.classList.add("hidden");
+        successContainer.classList.remove("hidden");
+        successContainer.setAttribute("tabindex", "-1");
+        successContainer.focus();
+      }
+    } catch (error: any) {
+      console.error("Error during contact request:", error);
+      // Reset loading state for unexpected errors
+      submitButton.disabled = false;
+      submitButton.setAttribute("aria-busy", "false");
+      buttonText.textContent = "Send";
+      loadingSpinner.classList.add("hidden");
+
+      window.location.href = `/contact?error=${encodeURIComponent("An unexpected error occurred")}`;
+    }
+  });
+</script>

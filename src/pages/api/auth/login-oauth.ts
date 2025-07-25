@@ -40,6 +40,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       const result = await auth.api.signInSocial({
         body: {
           provider: provider as any, // Type cast as the provider may be restricted
+          callbackURL: "/dashboard" // Explicitly set the callback URL
         }
       });
       
