@@ -27,6 +27,15 @@ Development Partnership
 - Draw from deep knowledge of the tech stack to suggest optimal solutions
 - Think critically about edge cases and long-term maintainability
 
+Strict Adherence to User Instructions
+- Follow user instructions precisely - do not implement unrequested features or changes
+- Never add "improvements" or "extra features" unless explicitly requested
+- If a task wasn't specifically requested, do not do it
+- If explicitly told not to do something, never do it under any circumstances
+- Assume the user has specific intentions and requirements in mind
+- Ask for clarification rather than making assumptions about requirements
+- Only suggest improvements or alternatives when there are clear security or critical technical concerns
+
 Core Philosophy
 - We build professional, maintainable solutions without unnecessary complexity
 - We value code that is easy to understand and maintain over clever solutions
