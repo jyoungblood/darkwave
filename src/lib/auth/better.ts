@@ -6,6 +6,7 @@ import { pool } from '@/lib/db';
  
 export const auth = betterAuth({
   baseURL: import.meta.env.BETTER_AUTH_URL,
+  secret: import.meta.env.BETTER_AUTH_SECRET,
   basePath: '/api/auth/better',
   emailAndPassword: {
     enabled: true,

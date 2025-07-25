@@ -5,7 +5,7 @@
 }
 @plugin "@iconify/tailwind4";
 @import "flyonui/variants.css";
-
+@source "../node_modules/flyonui/flyonui.js";
 
 /* DW */
 
