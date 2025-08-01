@@ -117,9 +117,9 @@ Generate [Better-Auth secret](https://www.better-auth.com/docs/installation) (sa
 openssl rand -base64 32
 ```
 
-Create the core database tables
+Initialize the database (and optionally create admin user)
 ```bash
-npx @better-auth/cli migrate --config src/lib/auth/better.ts && npx kysely migrate:latest
+npm run init
 ```
 
 Start development server
