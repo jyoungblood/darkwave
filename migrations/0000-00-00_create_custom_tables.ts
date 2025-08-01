@@ -57,7 +57,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       { id: 4, name: 'banned', description: 'Banned user' }
     ])
     .execute();
-    
+
   // Create rel_users_roles table
   await db.schema
     .createTable('rel_users_roles')
@@ -85,6 +85,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     .on('rel_users_roles')
     .columns(['user_id', 'role_id'])
     .execute();
+
+
+
+
+    
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
