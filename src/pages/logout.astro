@@ -1,0 +1,11 @@
+---
+// DW - Auth - Logout page
+// This page redirects to the logout API endpoint and supports custom redirect destinations
+
+export const prerender = false;
+
+// Get redirect destination from query params, default to '/'
+const redirectTo = Astro.url.searchParams.get('redirect') || '/';
+
+return Astro.redirect(`/api/auth/logout?redirect=${encodeURIComponent(redirectTo)}`);
+---

@@ -47,6 +47,17 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('created_at', 'timestamp', (col: ColumnDefinitionBuilder) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
     .execute();
 
+  // Insert default roles from SQL
+  await db
+    .insertInto('auth_roles')
+    .values([
+      { id: 1, name: 'admin', description: 'Full system access' },
+      { id: 2, name: 'moderator', description: 'Can moderate content' },
+      { id: 3, name: 'contributor', description: 'Can contribute content' },
+      { id: 4, name: 'banned', description: 'Banned user' }
+    ])
+    .execute();
+    
   // Create rel_users_roles table
   await db.schema
     .createTable('rel_users_roles')

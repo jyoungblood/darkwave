@@ -60,6 +60,13 @@ try {
       <div class="mb-4">
         <InputText label="Name" name="name" value={user?.name} required />
       </div>
+
+      {!user && (
+        <div class="mb-4">
+          <InputText label="Password" name="password" required />
+        </div>
+      )}
+      
       <div class="mb-4">
         <CheckboxGroup
           label="Roles"

@@ -8,9 +8,9 @@ let users;
 
 try {
   users = await db
-    .selectFrom('user')
+    .selectFrom("user")
     .selectAll()
-    .orderBy('createdAt')
+    .orderBy("createdAt")
     .execute();
 } catch (error) {
   console.error("Error fetching users:", error);
@@ -50,7 +50,8 @@ if (Astro.locals.authRoles?.includes("admin")) {
         {
           header: "Updated At",
           cell: {
-            content: (user: any) => user.updatedAt ? formatDate(user.updatedAt) : "",
+            content: (user: any) =>
+              user.updatedAt ? formatDate(user.updatedAt) : "",
           },
         },
         {
@@ -69,6 +70,10 @@ if (Astro.locals.authRoles?.includes("admin")) {
         },
       ]}
       title="All Users"
+      newItemLink={{
+        href: "/admin/users/new",
+        text: "New User",
+      }}
     />
   </div>
 </AdminLayout>

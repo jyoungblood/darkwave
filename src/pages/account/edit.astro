@@ -87,25 +87,23 @@ let oauthGoogle = account?.providerId === "google" ? true : false;
             <InputText label="Name" name="name" value={user?.name} required />
           </div>
 
+
           {
             hasCredentials ? (
-              <div class="my-4">
+              <div class="my-4" x-data="{ open: false }">
                 <button
                   type="button"
-                  class="collapse-toggle btn btn-secondary text-xs"
-                  id="basic-collapse"
-                  aria-expanded="false"
-                  aria-controls="basic-collapse-heading"
-                  data-collapse="#basic-collapse-heading"
+                  class="btn btn-secondary text-xs"
+                  @click="open = !open"
+                  :aria-expanded="open"
                 >
                   <span class="icon-[tabler--lock]" />
                   Change Password
-                  <span class="icon-[tabler--chevron-down] collapse-open:rotate-180 size-4" />
+                  <span class="icon-[tabler--chevron-down]" :class="{ 'rotate-180': open }" class="size-4 transition-transform duration-200" />
                 </button>
                 <div
-                  id="basic-collapse-heading"
-                  class="collapse hidden w-full overflow-hidden transition-[height] duration-300"
-                  aria-labelledby="basic-collapse"
+                  x-show="open"
+                  class="w-full overflow-hidden"
                 >
                   <div class="border-base-content/0 my-3 p-1">
                     <div class="card">

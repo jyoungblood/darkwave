@@ -3,7 +3,56 @@
 import { betterAuth } from 'better-auth';
 import { sendEmail } from '@/lib/dw-email'
 import { pool } from '@/lib/db';
- 
+
+// Store flags that need to persist across requests
+const skipVerificationFlags = new Map<string, boolean>();
+
+// Constants for cleanup
+const CLEANUP_INTERVAL = 5000; // 5 seconds
+const MAX_FLAGS = 1000; // Maximum number of flags to prevent memory issues
+const MAX_AGE = 30000; // Maximum age of 30 seconds as a safety net
+
+// Cleanup function that returns number of items cleaned
+const cleanupFlags = () => {
+  const now = Date.now();
+  const fiveSecondsAgo = now - 5000;
+  const maxAge = now - MAX_AGE;
+  let cleaned = 0;
+
+  // Safety check - if we somehow have too many flags, clear them all
+  if (skipVerificationFlags.size > MAX_FLAGS) {
+    const size = skipVerificationFlags.size;
+    skipVerificationFlags.clear();
+    console.warn(`Memory safety: Cleared ${size} verification flags due to exceeding limit of ${MAX_FLAGS}`);
+    return size;
+  }
+
+  // Normal cleanup of expired flags
+  for (const [key] of skipVerificationFlags.entries()) {
+    const timestamp = parseInt(key.split('-')[1]);
+    // Clean if it's expired or if it's too old (safety net)
+    if (timestamp < fiveSecondsAgo || timestamp < maxAge) {
+      skipVerificationFlags.delete(key);
+      cleaned++;
+    }
+  }
+
+  return cleaned;
+};
+
+// Start the cleanup interval
+const cleanupInterval = setInterval(() => {
+  cleanupFlags();
+}, CLEANUP_INTERVAL);
+
+// Clean up the interval if the module is reloaded
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    clearInterval(cleanupInterval);
+    skipVerificationFlags.clear();
+  });
+}
+
 export const auth = betterAuth({
   baseURL: import.meta.env.BETTER_AUTH_URL,
   secret: import.meta.env.BETTER_AUTH_SECRET,
@@ -43,14 +92,23 @@ export const auth = betterAuth({
     default: "/dashboard", // Where to redirect after successful OAuth sign-in
     error: "/login?error=auth-failed", // Where to redirect on error
   },
+
   emailVerification: {
-    sendOnSignUp: true,
+    sendOnSignUp: true,  // Keep email verification enabled
     autoSignInAfterVerification: true,
-    paths: {
-      verifyEmail: "/auth/verify-email",
-      emailVerifiedRedirect: "/auth/verify-email",
-    },
     sendVerificationEmail: async ({ user, url, token }, request) => {
+      // Check if this is an admin-created user
+      // Look for any flags for this email in the last 5 seconds
+      const now = Date.now();
+      const fiveSecondsAgo = now - 5000;
+      const possibleKeys = Array.from(skipVerificationFlags.keys())
+        .filter(key => key.startsWith(user.email + '-') && 
+                parseInt(key.split('-')[1]) > fiveSecondsAgo);
+      
+      const isAdminCreation = possibleKeys.length > 0;
+      if (isAdminCreation) {
+        return;
+      }
       try {
         // Create our custom verification URL with the correct path
         const customVerificationUrl = `${import.meta.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}`;        
@@ -72,5 +130,21 @@ export const auth = betterAuth({
       }
     },
   },
-  database: pool
+  database: pool,
+  plugins: [],
+
+  hooks: {
+    before: async (ctx: any) => {
+      // Check if this is a signup request by path
+      if (ctx.path === '/sign-up/email' && ctx.body?.metadata?.isAdminCreation) {
+        // Generate a unique key for this request
+        const key = `${ctx.body.email}-${Date.now()}`;
+        skipVerificationFlags.set(key, true);
+      }
+      return ctx;
+    },
+    after: async (ctx: any) => {
+      return ctx;
+    }
+  }
 });

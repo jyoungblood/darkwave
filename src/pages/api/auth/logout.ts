@@ -12,8 +12,12 @@ export const GET: APIRoute = async ({ request, redirect }) => {
       headers: request.headers
     });
     
-    // Redirect to home page after sign out
-    return redirect("/");
+    // Get redirect URL from query params, default to '/'
+    const url = new URL(request.url);
+    const redirectTo = url.searchParams.get('redirect') || '/';
+    
+    // Redirect to specified page after sign out
+    return redirect(redirectTo);
   } catch (error) {
     console.error("Logout error:", error);
     return redirect("/?error=logout-failed");

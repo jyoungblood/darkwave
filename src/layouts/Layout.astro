@@ -70,8 +70,8 @@ const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
                 <>
                   <span class="">
                     <a
-                      class={`text-xs hover:underline ${currentPath === "/dashboard" ? "underline" : "no-underline"}`}
-                      href="/dashboard"
+                      class={`text-xs hover:underline ${currentPath === "/account/edit" ? "underline" : "no-underline"}`}
+                      href="/account/edit"
                     >
                       {Astro.locals.email}
                     </a>
@@ -122,10 +122,8 @@ const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
           {siteTitle}. All rights reserved.
         </div>
         <div class="">
-          <a
-            class="no-underline hover:underline"
-            href="/contact">Contact</a
-          > &nbsp; | &nbsp;
+          <a class="no-underline hover:underline" href="/contact">Contact</a> &nbsp;
+          | &nbsp;
           <a
             class="no-underline hover:underline"
             href="https://jyoungblood.github.io"
@@ -134,7 +132,6 @@ const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
         </div>
       </footer>
     </div>
-
   </body>
 </html>
 
