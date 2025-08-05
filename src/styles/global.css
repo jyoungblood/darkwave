@@ -1,10 +1,11 @@
 @import "tailwindcss";
 /* @plugin is valid in Tailwind v4 */
 
-@plugin "@iconify/tailwind4";
-@plugin "daisyui" {
-  themes: light --default, dark --prefersdark, cupcake, corporate, lofi;
+@plugin "flyonui" {
+  themes: corporate, shadcn;
 }
+@import "flyonui/variants.css";
+@source "../node_modules/flyonui/flyonui.js";
 
 
 /* DW */
