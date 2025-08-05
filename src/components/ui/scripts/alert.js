@@ -3,7 +3,6 @@
 // Map types to Tailwind classes
 const typeClasses = {
   default: '',
-  primary: 'alert-primary',
   info: 'alert-info',
   success: 'alert-success',
   warning: 'alert-warning',
