@@ -3,7 +3,7 @@
 import nodemailer from 'nodemailer';
 // import mjml2html from 'mjml';
 import { emailConfig } from '@/config/app';
-import { htmlToPlainText } from '@/lib/dw';
+import { htmlToPlainText } from '@/lib/dw/helpers';
 // Singleton transport instance
 let mailTransporter: nodemailer.Transporter | null = null;
 

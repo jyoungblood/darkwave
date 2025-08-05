@@ -2,7 +2,7 @@
 
 import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
-import { dwBunny } from '@/lib/dw-bunny';
+import { dwBunny } from '@/lib/dw/bunny';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
 
 export const POST: APIRoute = async ({ request, locals }) => {

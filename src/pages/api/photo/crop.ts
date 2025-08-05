@@ -2,7 +2,7 @@
 
 import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
-import { formatMySQLDateTime } from '@/lib/dw';
+import { formatMySQLDateTime } from '@/lib/dw/helpers';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
 
 export const POST: APIRoute = async ({ request, locals }) => {

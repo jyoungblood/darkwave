@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/better";
 import { defineMiddleware } from "astro/middleware";
 import type { AstroCookies } from "astro";
 import { managedRoutes } from "@/config/app";
-import { verifyUserRoles } from "@/lib/dw-auth-roles";
+import { verifyUserRoles } from "@/lib/dw/auth-roles";
 
 // Helper function to check if path matches any pattern in the array
 function matchesAny(path: string, routes: readonly string[]): boolean {

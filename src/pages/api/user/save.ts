@@ -1,7 +1,7 @@
 // DW - Create or update user
 
 import { db } from '@/lib/db';
-import { clearRoleCache } from '@/lib/dw-auth-roles';
+import { clearRoleCache } from '@/lib/dw/auth-roles';
 import { auth } from '@/lib/auth/better';
 
 import type { APIRoute } from "astro";

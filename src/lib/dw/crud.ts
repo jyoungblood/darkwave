@@ -1,9 +1,9 @@
 import type { AstroCookies } from 'astro';
 import { validateCsrf } from "@/lib/csrf";
-import { handlePhotoUpdates } from '@/lib/dw-bunny';
+import { handlePhotoUpdates } from '@/lib/dw/bunny';
 import { db } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
-import { formatMySQLDateTime } from '@/lib/dw';
+import { formatMySQLDateTime } from '@/lib/dw/helpers';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
 
 interface PhotoData {

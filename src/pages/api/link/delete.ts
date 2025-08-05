@@ -1,4 +1,4 @@
-import { handleSoftDelete } from '@/lib/dw-crud';
+import { handleSoftDelete } from '@/lib/dw/crud';
 import type { APIRoute } from "astro";
 
 // API endpoint for email/password login

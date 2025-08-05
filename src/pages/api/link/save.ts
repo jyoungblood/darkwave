@@ -1,6 +1,6 @@
-import { handleSave } from '@/lib/dw-crud';
+import { handleSave } from '@/lib/dw/crud';
 import type { APIRoute } from "astro";
-import { formatMySQLDateTime, formatSlug, formatString } from '@/lib/dw';
+import { formatMySQLDateTime, formatSlug, formatString } from '@/lib/dw/helpers';
 
 export const POST: APIRoute = async ({ request, cookies, locals }) => {
   if (!locals.userId || !locals.authRoles) {

@@ -1,4 +1,4 @@
-import { sendEmail } from "@/lib/dw-email";
+import { sendEmail } from "@/lib/dw/email";
 
 import { validateCsrf } from "@/lib/csrf";
 import type { APIRoute } from "astro";

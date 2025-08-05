@@ -2,7 +2,7 @@
 
 import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
-import { dwBunny } from '@/lib/dw-bunny';
+import { dwBunny } from '@/lib/dw/bunny';
 import { v4 as uuidv4 } from 'uuid';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
 

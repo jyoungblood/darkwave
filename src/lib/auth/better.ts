@@ -1,7 +1,7 @@
 // DW - Auth - Better-auth config
 
 import { betterAuth } from 'better-auth';
-import { sendEmail } from '@/lib/dw-email'
+import { sendEmail } from '@/lib/dw/email'
 import { pool } from '@/lib/db';
 
 // Store flags that need to persist across requests
