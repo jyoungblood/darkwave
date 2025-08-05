@@ -52,11 +52,11 @@ const can_edit = await canEdit({
                 </figure>
               ) : (
                 <figure class="aspect-[4/3] w-full">
-                  <div class="w-full h-full bg-gray-100 rounded-t-md flex items-center justify-center">
+                  <div class="w-full h-full bg-neutral-100 rounded-t-md flex items-center justify-center">
                     {/* smiley face */}
                     {/* <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-20 h-20 text-gray-400"
+              class="w-20 h-20 text-neutral-400"
               viewBox="0 0 256 256"
             >
               <path
@@ -67,7 +67,7 @@ const can_edit = await canEdit({
                     {/* globe */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      class="w-20 h-20 text-gray-300"
+                      class="w-20 h-20 text-neutral-300"
                       viewBox="0 0 16 16"
                     >
                       <path
@@ -94,7 +94,7 @@ const can_edit = await canEdit({
               </h2>
 
               <div class="mb-4">
-                <p class="text-sm text-gray-500 mb-4">{link.description}</p>
+                <p class="text-sm text-neutral-500 mb-4">{link.description}</p>
               </div>
 
               <div class="mb-4">
@@ -106,7 +106,7 @@ const can_edit = await canEdit({
                   {link.url}
                 </a>{" "}
                 {link.type && (
-                  <span class="text-xs text-gray-500">({link.type})</span>
+                  <span class="text-xs text-neutral-500">({link.type})</span>
                 )}
               </div>
             </div>

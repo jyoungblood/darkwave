@@ -46,14 +46,14 @@ const { data, columns, title, newItemLink, publicLink } = Astro.props;
       {'error' in data ? (
         <p class="text-red-500">Error loading data</p>
       ) : data.length === 0 ? (
-        <p class="text-gray-500">No items found</p>
+        <p class="text-neutral-500">No items found</p>
       ) : (
         <div class="border-base-content/25 w-full overflow-x-auto border">
           <table class="table table-md">
             <thead>
-              <tr class="bg-gray-100">
+              <tr class="bg-neutral-100">
                 {columns.map((column) => (
-                  <th class="font-bold text-xs text-gray-500">
+                  <th class="font-bold text-xs text-neutral-500">
                     {column.header}
                   </th>
                 ))}

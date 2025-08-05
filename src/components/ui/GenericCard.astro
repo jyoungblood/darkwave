@@ -16,7 +16,7 @@ const photoUrl = image
 const displayTitle = title ?? "";
 ---
 
-<div class="card sm:max-w-sm hover:opacity-90 transition-opacity duration-100">
+<div class="card sm:max-w-sm hover:opacity-90 transition-opacity duration-100 bg-base-100 shadow-sm">
   <a href={link} data-astro-prefetch>
     <figure class="aspect-[4/3] w-full">
       {
@@ -27,11 +27,11 @@ const displayTitle = title ?? "";
             class="w-full h-full object-cover rounded-t-md"
           />
         ) : (
-          <div class="w-full h-full bg-gray-100 rounded-t-md flex items-center justify-center">
+          <div class="w-full h-full bg-neutral-100 rounded-t-md flex items-center justify-center">
             {/* smiley face */}
             {/* <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-20 h-20 text-gray-400"
+              class="w-20 h-20 text-neutral-400"
               viewBox="0 0 256 256"
             >
               <path
@@ -42,7 +42,7 @@ const displayTitle = title ?? "";
             {/* globe */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-20 h-20 text-gray-300"
+              class="w-20 h-20 text-neutral-300"
               viewBox="0 0 16 16"
             >
               <path

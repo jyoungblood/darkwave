@@ -68,7 +68,7 @@ const validationAttributes = validation ? {
   {sublabel ? (
     <label for={`input-${name}`} class="label label-text flex justify-between items-center">
       <span>{label}</span>
-      <span class="text-sm text-gray-500" set:html={sublabel} />
+      <span class="text-sm text-neutral-500" set:html={sublabel} />
     </label>
   ) : (
     <label for={`input-${name}`} class="label label-text">{label}</label>

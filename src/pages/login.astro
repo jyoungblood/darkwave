@@ -42,7 +42,7 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
     </p>
     <div class="w-full max-w-sm" role="region" aria-label="Login form">
       <form
-        class="border border-gray-200 p-8 rounded-md mb-4"
+        class="border border-neutral-200 p-8 rounded-md mb-4"
         data-login-form
         aria-label="Email login form"
       >
@@ -58,7 +58,7 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
             name="email"
             id="email"
             required
-            class="p-2 border border-gray-400 rounded-md mb-4"
+            class="p-2 border border-neutral-400 rounded-md mb-4"
             aria-required="true"
           />
         </div>
@@ -71,14 +71,14 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
             name="password"
             id="password"
             required
-            class="p-2 border border-gray-400 rounded-md mb-4"
+            class="p-2 border border-neutral-400 rounded-md mb-4"
           />
         </div>
         <input type="hidden" name="provider" value="email" />
         <button
           type="submit"
           data-login-submit
-          class="bg-black text-white p-3 text-sm font-semibold rounded-md hover:bg-gray-800 cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          class="bg-black text-white p-3 text-sm font-semibold rounded-md hover:bg-neutral-800 cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           aria-busy="false"
         >
           <svg
@@ -123,8 +123,8 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
 
       {hasSocialProviders && (
         <>
-          <hr class="h-0 border-t mt-8 border-gray-300" />
-          <p class="-mt-2 text-xs text-center text-gray-500">
+          <hr class="h-0 border-t mt-8 border-neutral-300" />
+          <p class="-mt-2 text-xs text-center text-neutral-500">
             <span class="bg-white px-2">OR</span>
           </p>
 
@@ -142,7 +142,7 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
               <button
                 value="google"
                 name="provider"
-                class="w-full p-3 border border-gray-300 hover:bg-gray-50 flex justify-center items-center gap-2 rounded-md mt-2 text-gray-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="w-full p-3 border border-neutral-300 hover:bg-neutral-50 flex justify-center items-center gap-2 rounded-md mt-2 text-neutral-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 type="submit"
               >
                 <svg
