@@ -4,6 +4,7 @@
   themes: corporate, shadcn;
 }
 @import "flyonui/variants.css";
+@source "../../node_modules/flyonui/flyonui.js";
 
 
 /* DW */
