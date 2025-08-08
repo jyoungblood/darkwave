@@ -2,7 +2,7 @@
 
 import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
-import { dwBunny } from '@/lib/dw/bunny';
+import { dwStorage } from '@/lib/dw/storage';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -83,7 +83,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Delete the file from CDN
-    const deleteSuccess = photo.photo_url ? await dwBunny.deleteFile(photo.photo_url) : true;
+    const deleteSuccess = photo.photo_url ? await dwStorage.deleteFile(photo.photo_url) : true;
     if (!deleteSuccess) {
       throw new Error('Failed to delete file from CDN');
     }

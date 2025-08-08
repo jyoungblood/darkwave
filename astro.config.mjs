@@ -9,12 +9,14 @@ export default defineConfig({
   prefetch: true,
   output: "server",
   integrations: [],
+  site: `https://${import.meta.env.SITE_DOMAIN}`,
 
   adapter: node({
     mode: "standalone",
   }),
 
   server: {
+    host: true, // Allow connections from all IPs
     headers: import.meta.env.PROD
       ? {
           "Content-Security-Policy": `
@@ -25,11 +27,15 @@ export default defineConfig({
         style-src 'self' 'unsafe-inline' *.${import.meta.env.SITE_DOMAIN};
         img-src 'self' data: https: blob: *.${
           import.meta.env.SITE_DOMAIN
-        } *.google.com *.googleapis.com *.bunnycdn.com ${
-            import.meta.env.BUNNY_STORAGE_REGION
-          }.storage.bunnycdn.com ${
-            import.meta.env.BUNNY_STORAGE_NAME
-          }.b-cdn.net;
+        } *.google.com *.googleapis.com ${
+          import.meta.env.BUNNY_STORAGE_REGION && import.meta.env.BUNNY_STORAGE_NAME
+            ? `*.bunnycdn.com ${import.meta.env.BUNNY_STORAGE_REGION}.storage.bunnycdn.com ${import.meta.env.BUNNY_STORAGE_NAME}.b-cdn.net`
+            : ''
+        } ${
+          import.meta.env.S3_DOMAIN
+            ? import.meta.env.S3_DOMAIN
+            : ''
+        };
         font-src 'self' https://fonts.googleapis.com data: *.${
           import.meta.env.SITE_DOMAIN
         };

@@ -78,7 +78,8 @@ Read the full documentation and user guide at [darkwave.ltd](https://darkwave.lt
 - Role-based authorization system
 - CSRF protection middleware
 - Email notifications TSX components
-- File upload handling with image processing (integrated with bunny.net cdn & image processor)
+- File upload handling with storage providers for S3/R2, Bunny.net, and, local filesystem
+- Image processing handlers (optimization, cropping)
 - Configurable environment variables
 - Database schema management
 

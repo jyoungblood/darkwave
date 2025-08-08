@@ -2,7 +2,7 @@
 
 import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
-import { dwBunny } from '@/lib/dw/bunny';
+import { dwStorage } from '@/lib/dw/storage';
 import { v4 as uuidv4 } from 'uuid';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
 
@@ -101,7 +101,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
         const filename = `${timestamp}.${extension}`;
         
-        const url = await dwBunny.uploadFile(file, path);
+        const url = await dwStorage.uploadFile(file, path);
         
         if (!url) {
           throw new Error(`Upload failed for file: ${file.name}`);

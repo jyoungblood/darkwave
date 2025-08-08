@@ -1,7 +1,7 @@
 // DW - Photo save API route
 
 import type { APIRoute } from 'astro';
-import { dwBunny } from '@/lib/dw/bunny';
+import { dwStorage } from '@/lib/dw/storage';
 import { db } from '@/lib/db';
 import { formatMySQLDateTime } from '@/lib/dw/helpers';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
@@ -62,7 +62,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Upload file to CDN
-    const url = await dwBunny.uploadFile(file, path);
+    const url = await dwStorage.uploadFile(file, path);
     if (!url) {
       throw new Error('Upload failed');
     }

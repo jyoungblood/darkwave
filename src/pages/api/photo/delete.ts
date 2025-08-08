@@ -1,7 +1,7 @@
 // DW - Photo delete API route
 
 import type { APIRoute } from 'astro';
-import { dwBunny } from '@/lib/dw/bunny';
+import { dwStorage } from '@/lib/dw/storage';
 import { db } from '@/lib/db';
 import { formatMySQLDateTime } from '@/lib/dw/helpers';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Delete from CDN if photo_url is provided
     if (photo_url) {
       try {
-        await dwBunny.deleteFile(photo_url);
+        await dwStorage.deleteFile(photo_url);
       } catch (error) {
         console.error('Error deleting file from CDN:', error);
         // Continue with database update even if CDN deletion fails

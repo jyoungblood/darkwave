@@ -1,14 +1,12 @@
+// DW - CRUD helper for saving data from a form to a specific db table
+
 import type { AstroCookies } from 'astro';
 import { validateCsrf } from "@/lib/csrf";
-import { handlePhotoUpdates } from '@/lib/dw/bunny';
 import { db } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 import { formatMySQLDateTime } from '@/lib/dw/helpers';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
 
-interface PhotoData {
-  [key: string]: string | null;
-}
 
 interface GenericRecord {
   [key: string]: any;
@@ -43,6 +41,12 @@ interface DeleteOptions {
     uuid: string
   }) => Promise<void>;
 }
+
+
+
+
+
+
 
 async function checkAuthorization(
   table: string,
@@ -109,6 +113,8 @@ export async function handleSave(
         );
       }
     }
+
+
 
     // Prepare the data to be saved
     const dataToSave = { ...options.recordData };
@@ -256,6 +262,58 @@ export async function handleSoftDelete(
       JSON.stringify({ 
         success: true,
         message: "Record successfully deleted"
+      }), 
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return new Response(
+      JSON.stringify({ error: "An unexpected error occurred" }), 
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}
+
+export async function handleHardDelete(
+  request: Request,
+  cookies: AstroCookies,
+  locals: App.Locals,
+  options: DeleteOptions
+) {
+  try {
+    const { uuid } = await request.json();
+
+    if (!uuid) {
+      console.error("Validation failed - UUID is missing");
+      return new Response(
+        JSON.stringify({ error: "UUID is required" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check authorization using locals
+    const authCheck = await checkAuthorization(options.table, uuid, locals);
+    if (authCheck) return authCheck;
+    
+    // Permanently delete the record using Kysely's query builder
+    await db
+      .deleteFrom(options.table as any)
+      .where('uuid', '=', uuid)
+      .execute();
+
+    // Execute afterDelete callback if provided
+    if (options.afterDelete) {
+      await options.afterDelete({
+        db,
+        uuid
+      });
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        success: true,
+        message: "Record permanently deleted"
       }), 
       { status: 200, headers: { "Content-Type": "application/json" } }
     );

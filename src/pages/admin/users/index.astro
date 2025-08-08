@@ -17,9 +17,9 @@ try {
 }
 
 // DW
-// Quick check using JWT claims stored in locals
-if (Astro.locals.authRoles?.includes("admin")) {
-  // Show admin UI elements
+const can_edit = Astro.locals.authRoles?.includes("admin");
+if (!can_edit) {
+  return Astro.redirect(`/admin/users/`);
 }
 ---
 
