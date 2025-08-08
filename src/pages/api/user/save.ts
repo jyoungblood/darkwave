@@ -3,6 +3,7 @@
 import { db } from '@/lib/db';
 import { clearRoleCache } from '@/lib/dw/auth-roles';
 import { auth } from '@/lib/auth/better';
+import { validateCsrf } from "@/lib/csrf";
 
 import type { APIRoute } from "astro";
 
@@ -16,14 +17,24 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
 
   try {
     const formData = await request.formData();
+    await validateCsrf({ formData, cookies });
     const id = formData.get("id")?.toString();
     const email = formData.get("email")?.toString();
     const name = formData.get("name")?.toString();
     const password = formData.get("password")?.toString();
 
-    if (!email || !name) {
+
+    if (!locals.authRoles?.includes("admin")) {
+      return new Response(JSON.stringify({ error: 'You are not authorized to manage users' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    
+    if (!email) {
       return new Response(
-        JSON.stringify({ error: 'Email and name are required' }),
+        JSON.stringify({ error: 'Email is required' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
@@ -157,6 +168,13 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
     );
 
   } catch (error) {
+    if (error instanceof Error && error.message === 'Invalid CSRF token') {
+      return new Response(JSON.stringify({
+        error: 'Invalid request token. Please refresh the page and try again.'
+      }), {
+        status: 403
+      });
+    }
     console.error("Error:", error);
     return new Response(
       JSON.stringify({ error: "An unexpected error occurred" }),

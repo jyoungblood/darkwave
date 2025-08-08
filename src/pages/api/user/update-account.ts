@@ -1,8 +1,9 @@
-// DW - Update user
+// DW - Update user (user updating their own account)
 
 import { db } from '@/lib/db';
 import type { APIRoute } from "astro";
 import { auth } from "@/lib/auth/better";
+import { validateCsrf } from "@/lib/csrf";
 
 export const POST: APIRoute = async ({ request, cookies, locals }) => {
   if (!locals.userId || !locals.authRoles) {
@@ -14,6 +15,7 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
 
   try {
     const formData = await request.formData();
+    await validateCsrf({ formData, cookies });
     const id = locals.userId;
     const email = formData.get("email")?.toString();
     const newPassword = formData.get("newPassword")?.toString();
@@ -23,6 +25,13 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
     if (!id) {
       return new Response(
         JSON.stringify({ error: 'ID is required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!email) {
+      return new Response(
+        JSON.stringify({ error: 'Email is required' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
@@ -86,6 +95,13 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
     );
 
   } catch (error) {
+    if (error instanceof Error && error.message === 'Invalid CSRF token') {
+      return new Response(JSON.stringify({
+        error: 'Invalid request token. Please refresh the page and try again.'
+      }), {
+        status: 403
+      });
+    }    
     console.error("Error:", error);
     return new Response(
       JSON.stringify({ error: "An unexpected error occurred" }),
