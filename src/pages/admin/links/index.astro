@@ -49,35 +49,37 @@ if (Astro.locals.authRoles?.includes("admin")) {
           },
         },
         {
-          header: "Actions",
+          header: "",
+          align: "right",
           cell: {
-            class: "text-right",
             content: (link: any) => `
             <a href="/admin/links/edit?uuid=${link.uuid}" 
-              class="btn btn-circle btn-text btn-sm" 
+              class="btn btn-sm border-0 bg-primary text-neutral-100 mr-2" 
               aria-label="Edit" 
               data-astro-prefetch>
               <span class="icon-[tabler--pencil] size-5"></span>
             </a>
             <a href="/links/${link.uuid}" 
               target="_blank" 
-              class="btn btn-circle btn-text btn-sm" 
+              class="btn btn-sm border-0 bg-primary text-neutral-100" 
               aria-label="View" 
               data-astro-prefetch>
-              <span class="icon-[tabler--external-link] size-5"></span>
+              <span class="icon-[tabler--link] size-5"></span>
             </a>`,
           },
         },
       ]}
       title="All Links"
-      newItemLink={{
-        href: "/admin/links/new",
-        text: "New Link",
-      }}
-      publicLink={{
-        href: "/links",
-        text: "Public Links",
-      }}
+      buttonLinks={[
+        {
+          href: "/admin/links/new",
+          text: "New Link",
+        },
+        {
+          href: "/links",
+          text: "Public Links",
+        },
+      ]}
     />
   </div>
 </AdminLayout>

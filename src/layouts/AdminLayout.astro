@@ -7,26 +7,28 @@ const pageTitle = title ? `${title} | Admin` : `Admin`;
 
 <Layout title={pageTitle}>
   <div class="flex flex-col w-full mb-8">
-    <div class="subnav bg-neutral-200 rounded-md mb-8 px-2 py-1">
-      <div class="subnav-item inline-block">
-        <a
-          class={`text-neutral-700 p-3 text-xs font-semibold inline-block hover:underline ${currentPath === "/admin" ? "underline" : "no-underline"}`}
-          href="/admin">Admin</a
-        >
-      </div>
-      <div class="subnav-item inline-block">
-        <a
-          class={`text-neutral-700 p-3 text-xs font-semibold inline-block hover:underline ${Astro.url.pathname.includes("/admin/links") ? "underline" : "no-underline"}`}
-          href="/admin/links">Links</a
-        >
-      </div>
-      <div class="subnav-item inline-block">
-        <a
-          class={`text-neutral-700 p-3 text-xs font-semibold inline-block hover:underline ${Astro.url.pathname.includes("/admin/users") ? "underline" : "no-underline"}`}
-          href="/admin/users">Users</a
-        >
+    <div class="subnav bg-neutral-800 p-4 rounded-md">
+      <div class="flex justify-between items-center max-w-7xl mx-auto">
+        <div class="flex items-center gap-4">
+          <a
+            class={`rounded-md px-2 py-1 text-xs font-semibold ${currentPath === "/admin" ? "bg-white text-neutral-800" : "text-white hover:bg-neutral-500/30"}`}
+            href="/admin">Admin</a
+          >
+
+          <a
+            class={`rounded-md px-2 py-1 text-xs font-semibold ${Astro.url.pathname.includes("/admin/links") ? "bg-white text-neutral-800" : "text-white hover:bg-neutral-500/30"}`}
+            href="/admin/links">Links</a
+          >
+          <a
+            class={`rounded-md px-2 py-1 text-xs font-semibold ${Astro.url.pathname.includes("/admin/users") ? "bg-white text-neutral-800" : "text-white hover:bg-neutral-500/30"}`}
+            href="/admin/users">Users</a
+          >
+        </div>
       </div>
     </div>
-    <slot />
+
+    <div class="w-full max-w-7xl mx-auto py-8">
+      <slot />
+    </div>
   </div>
 </Layout>

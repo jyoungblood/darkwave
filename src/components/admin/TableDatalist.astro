@@ -1,5 +1,6 @@
 ---
 interface Column {
+  align?: "left" | "right" | "center";
   header: string;
   cell: {
     class?: string;
@@ -11,32 +12,25 @@ interface Props {
   data: any[] | { error: string };
   columns: Column[];
   title?: string;
-  newItemLink?: {
+  buttonLinks?: {
     href: string;
     text: string;
-  };
-  publicLink?: {
-    href: string;
-    text: string;
-  };
+  }[];
 }
 
 import ButtonLink from "@/components/ui/ButtonLink.astro";
 
-const { data, columns, title, newItemLink, publicLink } = Astro.props;
+const { data, columns, title, buttonLinks } = Astro.props;
 ---
 
 <div class="flex gap-8 w-full items-center justify-between mb-8">
   <div class="">
     <h2 class="text-xl font-semibold">{title}</h2>
   </div>
-  <div class="">
-    {publicLink && <><ButtonLink href={publicLink.href} text={publicLink.text} /> &nbsp;</>}
-    {
-      newItemLink && (
-        <ButtonLink href={newItemLink.href} text={newItemLink.text} />
-      )
-    }
+  <div class="flex gap-4">
+    {buttonLinks?.map((buttonLink) => (
+      <ButtonLink href={buttonLink.href} text={buttonLink.text} />
+    ))}
   </div>
 </div>
 
@@ -53,7 +47,7 @@ const { data, columns, title, newItemLink, publicLink } = Astro.props;
             <thead>
               <tr class="bg-neutral-100">
                 {columns.map((column) => (
-                  <th class="font-bold text-xs text-neutral-500">
+                  <th class={`font-bold text-xs text-neutral-500 ${column.align === "right" ? "text-right" : column.align === "center" ? "text-center" : "text-left"}`}>
                     {column.header}
                   </th>
                 ))}
@@ -64,7 +58,7 @@ const { data, columns, title, newItemLink, publicLink } = Astro.props;
                 <tr class="row-hover">
                   {columns.map((column) => (
                     <td
-                      class="text-nowrap {column.cell.class}"
+                      class={`text-nowrap ${column.cell.class} ${column.align === "right" ? "text-right" : column.align === "center" ? "text-center" : "text-left"}`}
                       set:html={column.cell.content(item)}
                     />
                   ))}

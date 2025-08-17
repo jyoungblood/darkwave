@@ -55,12 +55,12 @@ if (!can_edit) {
           },
         },
         {
-          header: "Actions",
+          header: "",
+          align: "right",
           cell: {
-            class: "text-right",
             content: (user: any) => `
             <a href="/admin/users/edit?id=${user.id}" 
-              class="btn btn-circle btn-text btn-sm" 
+              class="btn btn-sm border-0 bg-primary text-neutral-100" 
               aria-label="Edit" 
               data-astro-prefetch>
               <span class="icon-[tabler--pencil] size-5"></span>
@@ -70,10 +70,12 @@ if (!can_edit) {
         },
       ]}
       title="All Users"
-      newItemLink={{
-        href: "/admin/users/new",
-        text: "New User",
-      }}
+      buttonLinks={[
+        {
+          href: "/admin/users/new",
+          text: "New User",
+        },
+      ]}
     />
   </div>
 </AdminLayout>
