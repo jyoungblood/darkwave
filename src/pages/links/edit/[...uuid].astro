@@ -1,6 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import LinkForm from "@/components/LinkForm.astro";
+import LinkForm from "@/components/forms/LinkForm.astro";
 import { db } from "@/lib/db";
 import { canEdit } from "@/lib/auth/permissions";
 
@@ -38,7 +38,7 @@ if (!link) {
 const can_edit = await canEdit({
   locals: Astro.locals,
   resourceType: "links",
-  uuid
+  uuid,
 });
 
 if (!can_edit) {
@@ -48,9 +48,6 @@ if (!can_edit) {
 
 <Layout title={`${link.title} | Edit Link`}>
   <div class="w-full">
-    <LinkForm
-      link={link}
-      redirect="/links/$uuid"
-    />
+    <LinkForm link={link} redirect="/links/$uuid" />
   </div>
 </Layout>

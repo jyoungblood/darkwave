@@ -1,8 +1,8 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { db } from "@/lib/db";
-import InputText from "@/components/forms/InputText.astro";
-import ButtonSubmit from "@/components/forms/ButtonSubmit.astro";
+import InputText from "@/components/ui/form/InputText.astro";
+import ButtonSubmit from "@/components/ui/form/ButtonSubmit.astro";
 
 if (!Astro.locals.userId) {
   return Astro.redirect("/login");

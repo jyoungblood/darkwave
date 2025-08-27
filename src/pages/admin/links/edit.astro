@@ -1,6 +1,6 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
-import LinkForm from "@/components/LinkForm.astro";
+import LinkForm from "@/components/forms/LinkForm.astro";
 import { db } from "@/lib/db";
 import { canEdit } from "@/lib/auth/permissions";
 const uuid = Astro.url.searchParams.get("uuid");

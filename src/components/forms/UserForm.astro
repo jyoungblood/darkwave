@@ -6,11 +6,11 @@ interface Props {
 
 const { user, redirect = "" } = Astro.props;
 
-import InputText from "@/components/forms/InputText.astro";
-import ButtonSubmit from "@/components/forms/ButtonSubmit.astro";
+import InputText from "@/components/ui/form/InputText.astro";
+import ButtonSubmit from "@/components/ui/form/ButtonSubmit.astro";
 import { ensureCsrfToken } from "@/lib/csrf";
 import { db } from "@/lib/db";
-import CheckboxGroup from "@/components/forms/CheckboxGroup.astro";
+import CheckboxGroup from "@/components/ui/form/CheckboxGroup.astro";
 ensureCsrfToken(Astro.cookies);
 
 let allRoles: { label: string; value: string }[] = [];

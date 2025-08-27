@@ -1,6 +1,6 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
-import UserForm from "@/components/UserForm.astro";
+import UserForm from "@/components/forms/UserForm.astro";
 import { db } from "@/lib/db";
 import { canEdit } from "@/lib/auth/permissions";
 const id = Astro.url.searchParams.get("id");

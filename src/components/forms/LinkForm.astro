@@ -6,13 +6,13 @@ interface Props {
 
 const { link, redirect = "" } = Astro.props;
 
-import InputText from "@/components/forms/InputText.astro";
-import Textarea from "@/components/forms/Textarea.astro";
-import Select from "@/components/forms/Select.astro";
-import ButtonSubmit from "@/components/forms/ButtonSubmit.astro";
-import ButtonDelete from "@/components/forms/ButtonDelete.astro";
-import PhotoUploadSingle from "@/components/forms/PhotoUploadSingle.astro";
-import PhotoUploadGallery from "@/components/forms/PhotoUploadGallery.astro";
+import InputText from "@/components/ui/form/InputText.astro";
+import Textarea from "@/components/ui/form/Textarea.astro";
+import Select from "@/components/ui/form/Select.astro";
+import ButtonSubmit from "@/components/ui/form/ButtonSubmit.astro";
+import ButtonDelete from "@/components/ui/form/ButtonDelete.astro";
+import PhotoUploadSingle from "@/components/ui/form/PhotoUploadSingle.astro";
+import PhotoUploadGallery from "@/components/ui/form/PhotoUploadGallery.astro";
 
 import { ensureCsrfToken } from "@/lib/csrf";
 ensureCsrfToken(Astro.cookies);
