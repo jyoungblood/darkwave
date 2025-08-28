@@ -38,12 +38,14 @@ if (Astro.locals.authRoles?.includes("admin")) {
         },
         {
           header: "Created At",
+          align: "center",
           cell: {
             content: (link: any) => formatDate(link.created_at),
           },
         },
         {
           header: "Updated At",
+          align: "center",
           cell: {
             content: (link: any) =>
               link.updated_at ? formatDate(link.updated_at) : "",
@@ -55,17 +57,17 @@ if (Astro.locals.authRoles?.includes("admin")) {
           cell: {
             content: (link: any) => `
             <a href="/admin/links/edit?uuid=${link.uuid}" 
-              class="btn btn-sm border-0 bg-primary text-neutral-100 mr-2" 
+              class="btn btn-circle btn-text btn-sm" 
               aria-label="Edit" 
               data-astro-prefetch>
               <span class="icon-[tabler--pencil] size-5"></span>
             </a>
             <a href="/links/${link.uuid}" 
               target="_blank" 
-              class="btn btn-sm border-0 bg-primary text-neutral-100" 
+              class="btn btn-circle btn-text btn-sm" 
               aria-label="View" 
               data-astro-prefetch>
-              <span class="icon-[tabler--link] size-5"></span>
+              <span class="icon-[tabler--external-link] size-5"></span>
             </a>`,
           },
         },

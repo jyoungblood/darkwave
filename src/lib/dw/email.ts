@@ -49,7 +49,8 @@ export async function sendEmail(data: EmailData) {
       
       // Handle @/ alias
       if (templatePath.startsWith('@/')) {
-        templatePath = templatePath.replace('@/', '../');
+        // just use '@' to mean 'src' and reference two levels up from this file
+        templatePath = templatePath.replace('@/', '../../');
       }
       // Handle paths starting with ./src/ or src/
       else if (templatePath.startsWith('./src/') || templatePath.startsWith('src/')) {

@@ -8,7 +8,6 @@ interface Props {
   value?: string;
   class?: string;
   options: { label: string; value: string }[];
-  selected?: string;
 }
 
 // const defaultClass = "p-2 border border-neutral-400 rounded-md";
@@ -20,7 +19,6 @@ const {
   value = "",
   options,
   class: customClass = "",
-  selected = "",
 } = Astro.props;
 const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 ---
@@ -32,11 +30,10 @@ const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
   name={name}
   required={required}
   class={className}
-  value={value}
 >
   {
     options.map((option) => (
-      <option value={option.value} selected={option.value === selected}>
+      <option value={option.value} selected={option.value === value}>
         {option.label}
       </option>
     ))

@@ -30,8 +30,6 @@ pnpm-debug.log*
 public/uploads/*
 !public/uploads/.gitkeep
 
-public/media/*
-!public/media/.gitkeep
 
 logs/*
 !logs/.gitkeep

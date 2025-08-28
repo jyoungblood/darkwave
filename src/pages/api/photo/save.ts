@@ -27,6 +27,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const related_id = formData.get('related_id') as string;
     const related_table = formData.get('related_table') as string;
     const related_column = formData.get('related_column') as string;
+    const preserveFileName = formData.get('preserveFileName') as string;
     
     if (!file) {
       return new Response(JSON.stringify({ error: 'No file provided' }), { 
@@ -61,8 +62,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // Upload file to CDN
-    const url = await dwStorage.uploadFile(file, path);
+    // Upload file to CDN with optional filename preservation
+    const url = preserveFileName === 'true' 
+      ? await dwStorage.uploadFile(file, path, file.name)
+      : await dwStorage.uploadFile(file, path);
+      
     if (!url) {
       throw new Error('Upload failed');
     }

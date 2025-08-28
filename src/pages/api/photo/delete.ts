@@ -51,7 +51,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Delete from CDN if photo_url is provided
     if (photo_url) {
       try {
+        // Extract the relative path from the full URL for cleanup
+        const url = new URL(photo_url);
+        const relativePath = url.pathname.replace(/^\/+/, '');
+        
+        // console.log(`🗑️  Deleting original photo: ${relativePath}`);
+        
+        // Delete the original file
         await dwStorage.deleteFile(photo_url);
+        
+        // Clean up all transformed versions (if cleanup is supported)
+        try {
+          const cleanupResult = await dwStorage.deleteTransformedVersions(relativePath);
+          if (cleanupResult !== null) {
+            // console.log(`🧹 Cleanup completed: ${cleanupResult} transformed versions deleted`);
+          } else {
+            console.error(`Error: Cleanup not supported by current storage provider`);
+          }
+        } catch (cleanupError) {
+          console.error('Error during transformed version cleanup:', cleanupError);
+          // Continue even if cleanup fails - original file is already deleted
+        }
+        
       } catch (error) {
         console.error('Error deleting file from CDN:', error);
         // Continue with database update even if CDN deletion fails

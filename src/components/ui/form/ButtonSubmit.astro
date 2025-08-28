@@ -1,13 +1,17 @@
 ---
 // DW - Form submit button
 
+import FullscreenSpinner from "@/components/ui/FullscreenSpinner.astro";
+
 interface Props {
   text: string;
   class?: string;
   form: string;
   endpoint: string;
-  redirect: string;
-  workingText: string;
+  redirect?: string;
+  workingText?: string;
+  successMessage?: string;
+  showFullscreenSpinner?: boolean;
 }
 
 const {
@@ -16,9 +20,13 @@ const {
   form,
   endpoint,
   redirect,
-  workingText,
+  workingText = "Saving...",
+  successMessage = "Changes saved successfully.",
+  showFullscreenSpinner = false,
 } = Astro.props;
 ---
+
+<FullscreenSpinner id="button-submit-spinner" />
 
 <!-- class="bg-black text-white p-3 text-sm font-semibold rounded-md
 hover:bg-neutral-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
@@ -60,13 +68,30 @@ flex items-center justify-center" -->
   import { validateForm } from "@/components/ui/scripts/validate-form.js";
 </script>
 
-<script define:vars={{ form, endpoint, redirect, workingText, buttonText }}>
+<script
+  define:vars={{
+    form,
+    endpoint,
+    redirect,
+    workingText,
+    buttonText,
+    successMessage,
+    showFullscreenSpinner,
+  }}
+>
   const formElement = document.querySelector(form);
   const submitButton = document.querySelector("[data-button-submit]");
   const buttonTextValue = document.querySelector("[data-button-text]");
   const loadingSpinner = document.querySelector("[data-button-spinner]");
+  const fullscreenSpinner = document.querySelector("#button-submit-spinner");
 
-  if (!formElement || !submitButton || !buttonTextValue || !loadingSpinner)
+  if (
+    !formElement ||
+    !submitButton ||
+    !buttonTextValue ||
+    !loadingSpinner ||
+    !fullscreenSpinner
+  )
     return;
 
   formElement.addEventListener("submit", async (event) => {
@@ -82,10 +107,19 @@ flex items-center justify-center" -->
 
     // ----------- FORM SUBMISSION PROCESSING ------------
 
+    // Show fullscreen spinner immediately if enabled
+    if (showFullscreenSpinner) {
+      fullscreenSpinner.classList.remove("hidden");
+    } else {
+      formElement.classList.add("opacity-50");
+      formElement.classList.add("cursor-not-allowed");
+    }
+
     document.querySelector("[data-button-submit-error]").textContent = "";
     document
       .querySelector("[data-button-submit-error]")
       .classList.add("hidden");
+
     // Set loading state
     submitButton.disabled = true;
     submitButton.setAttribute("aria-busy", "true");
@@ -106,6 +140,9 @@ flex items-center justify-center" -->
         submitButton.setAttribute("aria-busy", "false");
         buttonTextValue.textContent = buttonText;
         loadingSpinner.classList.add("hidden");
+        if (showFullscreenSpinner) {
+          fullscreenSpinner.classList.add("hidden");
+        }
 
         console.error("Error:", data.error);
 
@@ -115,6 +152,11 @@ flex items-center justify-center" -->
           title: "Error",
           text: data.error || "An error occurred while saving the data.",
           icon: true,
+          overlay: true,
+          position: {
+            vertical: "middle-third",
+            horizontal: "center",
+          },
           buttons: [
             {
               type: "error",
@@ -124,16 +166,54 @@ flex items-center justify-center" -->
           ],
         });
       } else {
-        // Process the redirect string with response data
-        const processedRedirect = redirect.replace(
-          /\$([a-zA-Z_][a-zA-Z0-9_]*)/g,
-          (match, key) => {
-            // Remove the $ prefix to get the actual key
-            return data[key] ?? match;
+        if (redirect) {
+          if (redirect === "reload") {
+            window.location.reload();
+          } else {
+            // Process the redirect string with response data
+            const processedRedirect = redirect.replace(
+              /\$([a-zA-Z_][a-zA-Z0-9_]*)/g,
+              (match, key) => {
+                // Remove the $ prefix to get the actual key
+                return data[key] ?? match;
+              }
+            );
+            window.location.href = processedRedirect;
           }
-        );
+        } else {
+          // Reset button state
+          submitButton.disabled = false;
+          submitButton.setAttribute("aria-busy", "false");
+          buttonTextValue.textContent = buttonText;
+          loadingSpinner.classList.add("hidden");
+          if (showFullscreenSpinner) {
+            fullscreenSpinner.classList.add("hidden");
+          }
 
-        window.location.href = processedRedirect;
+          // Show success alert
+          window.showAlert({
+            type: "success",
+            variant: "soft",
+            title: "Success",
+            text: successMessage,
+            icon: true,
+            overlay: true,
+            position: {
+              vertical: "middle-third",
+              horizontal: "center",
+            },
+            buttonLayout: {
+              newLine: true,
+            },
+            buttons: [
+              {
+                type: "success",
+                text: "OK",
+                variant: "solid",
+              },
+            ],
+          });
+        }
       }
     } catch (error) {
       // Reset loading state for unexpected errors
@@ -141,6 +221,9 @@ flex items-center justify-center" -->
       submitButton.setAttribute("aria-busy", "false");
       buttonTextValue.textContent = buttonText;
       loadingSpinner.classList.add("hidden");
+      if (showFullscreenSpinner) {
+        fullscreenSpinner.classList.add("hidden");
+      }
 
       console.error("Error:", error);
       const errorMessage =
@@ -152,6 +235,14 @@ flex items-center justify-center" -->
         title: "Error",
         text: errorMessage,
         icon: true,
+        overlay: true,
+        position: {
+          vertical: "middle-third",
+          horizontal: "center",
+        },
+        buttonLayout: {
+          newLine: true,
+        },
         buttons: [
           {
             type: "error",

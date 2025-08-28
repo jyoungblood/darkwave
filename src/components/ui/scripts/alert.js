@@ -34,6 +34,7 @@ class AlertManager {
     this.timeouts = new Map();
     this.alertOrder = []; // Track order of alerts
     this.alertSources = new Map(); // Track where alerts came from
+    this.overlays = new Map(); // Track overlays for alerts
 
     // Add ESC key listener with capture phase to intercept events before they reach other components
     document.addEventListener('keydown', (event) => {
@@ -72,6 +73,9 @@ class AlertManager {
         break;
       case 'middle':
         classes.push('top-1/2', '-translate-y-1/2');
+        break;
+      case 'middle-third':
+        classes.push('top-1/3', '-translate-y-1/3');
         break;
       case 'bottom':
         classes.push('bottom-0');
@@ -149,6 +153,7 @@ class AlertManager {
   createAlertElement(options) {
     const type = options.type || 'default';
     const variant = options.variant || 'solid';
+    const textAlign = options.textAlign || 'left';
     const alertClass = typeClasses[type];
     const variantClass = variantClasses[variant];
     
@@ -157,7 +162,7 @@ class AlertManager {
     const alertId = 'alert-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     alertContainer.id = alertId;
     // Add w-fit to make alert only as wide as its content
-    alertContainer.className = `w-fit pointer-events-auto bg-white shadow-md rounded-md overflow-hidden transition-all duration-300 ease-in-out opacity-0 translate-y-[-1rem] ${options.classes || ''}`;
+    alertContainer.className = `w-fit pointer-events-auto bg-white shadow-md rounded-md overflow-hidden transition-all duration-200 ease-in-out opacity-0 translate-y-[-1rem] ${options.classes || ''}`;
     alertContainer.setAttribute('role', 'alertdialog');
     alertContainer.setAttribute('aria-modal', 'true');
     alertContainer.setAttribute('aria-labelledby', `${alertId}-title`);
@@ -165,7 +170,7 @@ class AlertManager {
     // Create the alert content
     const alertContent = document.createElement('div');
     // Add min/max width constraints
-    alertContent.className = `alert ${variantClass} ${alertClass} flex items-center justify-between gap-4 min-w-[320px] max-w-2xl`;
+    alertContent.className = `alert ${variantClass} ${alertClass} flex items-start gap-4 min-w-[320px] max-w-2xl`;
 
     // Create left content wrapper for icon and text
     const leftContent = document.createElement('div');
@@ -181,7 +186,23 @@ class AlertManager {
 
     // Create the text wrapper
     const textWrapper = document.createElement('p');
-    textWrapper.className = 'flex-grow min-w-0';
+    let textClasses = 'flex-grow min-w-0';
+    
+    // Add text alignment classes
+    switch (textAlign) {
+      case 'center':
+        textClasses += ' text-center';
+        break;
+      case 'right':
+        textClasses += ' text-right';
+        break;
+      case 'left':
+      default:
+        textClasses += ' text-left';
+        break;
+    }
+    
+    textWrapper.className = textClasses;
 
     // Add title if specified
     if (options.title) {
@@ -210,7 +231,58 @@ class AlertManager {
     // Add buttons if specified
     if (options.buttons && options.buttons.length > 0) {
       const buttonContainer = document.createElement('div');
-      buttonContainer.className = 'flex items-center gap-2 shrink-0';
+      
+      // Build button container classes
+      const buttonClasses = ['gap-2', 'shrink-0'];
+      
+      // Handle button layout options
+      const buttonLayout = options.buttonLayout || {};
+      
+      // Determine if buttons should be on new line
+      if (buttonLayout.newLine) {
+        alertContent.className += ' flex-col items-stretch';
+      } else {
+        buttonClasses.push('items-center');
+        alertContent.className += ' items-center justify-between';
+      }
+      
+      // Add custom vertical spacing if specified
+      if (buttonLayout.spacing) {
+        buttonClasses.push(buttonLayout.spacing);
+      }
+      
+      // Handle alignment
+      const alignment = buttonLayout.align || 'center';
+      switch (alignment) {
+        case 'left':
+          buttonClasses.push('justify-start');
+          break;
+        case 'center':
+          buttonClasses.push('justify-center');
+          break;
+        case 'right':
+          buttonClasses.push('justify-end');
+          break;
+        case 'between':
+          buttonClasses.push('justify-between');
+          break;
+        case 'around':
+          buttonClasses.push('justify-around');
+          break;
+        case 'evenly':
+          buttonClasses.push('justify-evenly');
+          break;
+      }
+      
+      // Add custom flex layout class if provided
+      if (buttonLayout.flexClass) {
+        buttonClasses.push(buttonLayout.flexClass);
+      }
+      
+      // Always keep flex display
+      buttonClasses.unshift('flex');
+      
+      buttonContainer.className = buttonClasses.join(' ');
       buttonContainer.setAttribute('role', 'group');
       buttonContainer.setAttribute('aria-label', 'Alert actions');
 
@@ -270,6 +342,20 @@ class AlertManager {
     const container = this.getContainer(position);
     const alertElement = this.createAlertElement(options);
     const alertId = alertElement.id;
+
+    // Create overlay if requested
+    if (options.overlay) {
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 bg-black/40 backdrop-blur-xs z-[199] transition-opacity duration-200 opacity-0';
+      overlay.onclick = () => this.hide(alertId);
+      document.body.appendChild(overlay);
+      this.overlays.set(alertId, overlay);
+      
+      // Animate overlay in
+      requestAnimationFrame(() => {
+        overlay.classList.remove('opacity-0');
+      });
+    }
 
     // Track the source element that triggered this alert (if we can determine it)
     // This helps us handle ESC key events more intelligently
@@ -332,6 +418,12 @@ class AlertManager {
     // Get the source element that triggered this alert
     const sourceElement = this.alertSources.get(alertId);
     
+    // Handle overlay if it exists
+    const overlay = this.overlays.get(alertId);
+    if (overlay) {
+      overlay.classList.add('opacity-0');
+    }
+    
     // Animate out
     alert.classList.add('opacity-0', 'translate-y-[-1rem]');
     
@@ -342,6 +434,13 @@ class AlertManager {
       
       // Clean up source tracking
       this.alertSources.delete(alertId);
+      
+      // Clean up overlay if it exists
+      const overlay = this.overlays.get(alertId);
+      if (overlay) {
+        overlay.remove();
+        this.overlays.delete(alertId);
+      }
       
       // Remove from order tracking
       const index = this.alertOrder.indexOf(alertId);

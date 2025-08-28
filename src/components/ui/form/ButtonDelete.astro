@@ -1,6 +1,8 @@
 ---
 // DW - Form delete button
 
+import FullscreenSpinner from "@/components/ui/FullscreenSpinner.astro";
+
 interface Props {
   text: string;
   type: string;
@@ -8,6 +10,7 @@ interface Props {
   endpoint: string;
   redirect: string;
   uuid: string;
+  showFullscreenSpinner?: boolean;
 }
 
 const {
@@ -17,47 +20,106 @@ const {
   endpoint,
   redirect,
   uuid,
+  showFullscreenSpinner = false,
 } = Astro.props;
 ---
 
 <!-- class="bg-black text-white p-3 text-sm font-semibold rounded-md
 hover:bg-neutral-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
 flex items-center justify-center" -->
+<FullscreenSpinner id="button-delete-spinner" />
+
 <div class="relative">
   <button
     type="button"
     data-delete-trigger
     class="btn btn-text btn-error flex items-center justify-center"
+    aria-busy="false"
   >
-    <span>{buttonText}</span>
+    <svg
+      data-delete-spinner
+      class="hidden w-5 h-5 mr-3 animate-spin"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+        fill="none"></circle>
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      ></path>
+    </svg>
+    <span data-delete-text>{buttonText}</span>
   </button>
 </div>
 
-<script define:vars={{ endpoint, redirect, type, uuid }}>
+<script
+  define:vars={{
+    endpoint,
+    redirect,
+    type,
+    uuid,
+    showFullscreenSpinner,
+    buttonText,
+  }}
+>
   const deleteTrigger = document.querySelector("[data-delete-trigger]");
+  const deleteText = document.querySelector("[data-delete-text]");
+  const deleteSpinner = document.querySelector("[data-delete-spinner]");
+  const fullscreenSpinner = document.querySelector("#button-delete-spinner");
 
-  if (!deleteTrigger) return;
+  if (!deleteTrigger || !deleteText || !deleteSpinner || !fullscreenSpinner)
+    return;
 
   deleteTrigger.addEventListener("click", () => {
     window.showAlert({
       type: "warning",
       variant: "soft",
       title: `Are you sure you want to delete this ${type}?`,
+      position: {
+        vertical: "middle-third",
+        horizontal: "center",
+      },
+      overlay: true,
       text: "",
       icon: true,
+      buttonLayout: {
+        newLine: true,
+        flexClass: "gap-3",
+      },
       buttons: [
-        {
-          text: "No",
-          variant: "outline",
-          size: "sm",
-          type: "warning",
-        },
         {
           type: "warning",
           text: "Yes",
           variant: "solid",
           size: "sm",
           onClick: async () => {
+            // Find the closest form element to apply opacity changes
+            const formElement = deleteTrigger.closest("form");
+
+            // Show fullscreen spinner immediately if enabled
+            if (showFullscreenSpinner) {
+              fullscreenSpinner.classList.remove("hidden");
+            } else {
+              // Apply form opacity if form exists and not using fullscreen spinner
+              if (formElement) {
+                formElement.classList.add("opacity-50");
+                formElement.classList.add("cursor-not-allowed");
+              }
+            }
+
+            // Set working state
+            deleteTrigger.disabled = true;
+            deleteTrigger.setAttribute("aria-busy", "true");
+            deleteText.textContent = "Deleting...";
+            deleteSpinner.classList.remove("hidden");
+
             try {
               const response = await fetch(endpoint, {
                 method: "POST",
@@ -71,21 +133,59 @@ flex items-center justify-center" -->
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
 
-              // Show success message
-              window.showAlert({
-                type: "success",
-                variant: "soft",
-                title: "Success",
-                text: `${type} deleted successfully`,
-                icon: true,
-                duration: 3000,
-              });
+              // Reset working state on success
+              deleteTrigger.disabled = false;
+              deleteTrigger.setAttribute("aria-busy", "false");
+              deleteText.textContent = buttonText;
+              deleteSpinner.classList.add("hidden");
 
-              // Redirect after a short delay to allow the success message to be seen
-              setTimeout(() => {
-                window.location.href = redirect;
-              }, 1000);
+              // Hide fullscreen spinner or reset form opacity
+              if (showFullscreenSpinner) {
+                fullscreenSpinner.classList.add("hidden");
+              } else {
+                if (formElement) {
+                  formElement.classList.remove("opacity-50");
+                  formElement.classList.remove("cursor-not-allowed");
+                }
+              }
+
+              // // Show success message
+              // window.showAlert({
+              //   type: "success",
+              //   variant: "soft",
+              //   title: "Success",
+              //   text: `${type} deleted successfully`,
+              //   icon: true,
+              //   duration: 3000,
+              //   overlay: true,
+              //   position: {
+              //     vertical: "middle-third",
+              //     horizontal: "center",
+              //   },
+              // });
+
+              // // Redirect after a short delay to allow the success message to be seen
+              // setTimeout(() => {
+              //   window.location.href = redirect;
+              // }, 1000);
+              window.location.href = redirect;
             } catch (error) {
+              // Reset working state on error
+              deleteTrigger.disabled = false;
+              deleteTrigger.setAttribute("aria-busy", "false");
+              deleteText.textContent = buttonText;
+              deleteSpinner.classList.add("hidden");
+
+              // Hide fullscreen spinner or reset form opacity
+              if (showFullscreenSpinner) {
+                fullscreenSpinner.classList.add("hidden");
+              } else {
+                if (formElement) {
+                  formElement.classList.remove("opacity-50");
+                  formElement.classList.remove("cursor-not-allowed");
+                }
+              }
+
               console.error("Error:", error);
               window.showAlert({
                 type: "error",
@@ -94,6 +194,14 @@ flex items-center justify-center" -->
                 text:
                   error instanceof Error ? error.message : "Failed to delete",
                 icon: true,
+                overlay: true,
+                position: {
+                  vertical: "middle-third",
+                  horizontal: "center",
+                },
+                buttonLayout: {
+                  newLine: true,
+                },
                 buttons: [
                   {
                     type: "error",
@@ -104,6 +212,12 @@ flex items-center justify-center" -->
               });
             }
           },
+        },
+        {
+          text: "No",
+          variant: "outline",
+          size: "sm",
+          type: "warning",
         },
       ],
     });

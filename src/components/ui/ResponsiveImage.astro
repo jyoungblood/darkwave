@@ -1,0 +1,70 @@
+---
+import { generateResponsiveImageAttrs, generateImageUrl } from '@/lib/dw/images';
+
+interface Props {
+  /** Path to the image (without /media/ prefix) */
+  src: string;
+  /** Alt text for the image */
+  alt: string;
+  /** Width of the image in pixels */
+  width?: number;
+  /** Height of the image in pixels */
+  height?: number;
+  /** CSS classes to apply */
+  class?: string;
+  /** Image format (defaults to webp) */
+  format?: 'webp' | 'avif' | 'jpeg' | 'png';
+  /** Fit mode for resizing */
+  fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+  /** Quality setting (1-100) */
+  quality?: number;
+  /** Position for crop/fit operations */
+  position?: 'top' | 'right top' | 'right' | 'right bottom' | 'bottom' | 'left bottom' | 'left' | 'left top' | 'center';
+  /** Custom breakpoints for sizes attribute */
+  breakpoints?: Array<{ minWidth: number; width: string }>;
+  /** Default size when no breakpoints match */
+  defaultSize?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  class: className,
+  format = 'webp',
+  fit = 'cover',
+  quality = 80,
+  position = 'center',
+  breakpoints,
+  defaultSize
+} = Astro.props;
+
+// Generate responsive attributes
+const { srcset, sizes } = generateResponsiveImageAttrs(
+  { path: src, format, fit, quality, position },
+  { breakpoints, defaultWidth: defaultSize }
+);
+
+// Generate fallback src with specified dimensions
+const fallbackSrc = generateImageUrl(src, {
+  w: width,
+  h: height,
+  f: format,
+  fit,
+  q: quality,
+  position
+});
+---
+
+<img
+  src={fallbackSrc}
+  srcset={srcset}
+  sizes={sizes}
+  alt={alt}
+  width={width}
+  height={height}
+  class={className}
+  loading="lazy"
+  decoding="async"
+/>

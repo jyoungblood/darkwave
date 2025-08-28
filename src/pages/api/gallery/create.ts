@@ -39,9 +39,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const path = (formData.get('path') as string) || '';
-    const related_id = formData.get('related_id') as string;
-    const related_table = formData.get('related_table') as string;
-    const gallery_type = formData.get('gallery_type') as string;
+    const related_id = (formData.get('related_id') as string) || '';
+    const related_table = (formData.get('related_table') as string) || '';
+    const gallery_type = (formData.get('gallery_type') as string) || '';
+    const preserveFileName = (formData.get('preserveFileName') as string) || 'false';
     
     if (files.length === 0) {
       return new Response(JSON.stringify({ 
@@ -97,11 +98,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
           throw new Error(`File too large: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
         }
 
-        const timestamp = new Date().getTime() + Math.random().toString(36).substring(2, 8);
-        const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-        const filename = `${timestamp}.${extension}`;
-        
-        const url = await dwStorage.uploadFile(file, path);
+        // Upload file with optional filename preservation
+        const url = preserveFileName === 'true' 
+          ? await dwStorage.uploadFile(file, path, file.name)
+          : await dwStorage.uploadFile(file, path);
         
         if (!url) {
           throw new Error(`Upload failed for file: ${file.name}`);
@@ -155,7 +155,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         uploadResults.push({
           url,
           uuid: photo.uuid,
-          filename,
+          filename: file.name, // Use original filename for display
           name: file.name,
           size: file.size,
           type: file.type,

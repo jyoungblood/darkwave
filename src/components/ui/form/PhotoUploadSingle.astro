@@ -11,6 +11,8 @@ interface Props {
   file_limit_size?: number;
   file_formats?: string;
   dz_icon?: string;
+  cropper?: boolean;
+  preserveFileName?: boolean;
 }
 
 const {
@@ -23,6 +25,8 @@ const {
   file_limit_size = 10,
   file_formats = "image/jpeg,image/png,image/webp",
   dz_icon = "tabler--plus",
+  cropper = false,
+  preserveFileName = false,
 } = Astro.props;
 
 // Normalize the upload path by removing optional leading/trailing slashes
@@ -32,7 +36,7 @@ import PhotoCropper from "./PhotoCropper.astro";
 ---
 
 <div
-  class="photo-upload-container pb-16"
+  class="photo-upload-container"
   data-path={normalizedUploadPath}
   data-initial-value={url}
   data-parameters={url_parameters}
@@ -61,6 +65,11 @@ import PhotoCropper from "./PhotoCropper.astro";
     type="hidden"
     name="component_photo_upload_acceptedFiles"
     value={file_formats}
+  />
+  <input
+    type="hidden"
+    name="component_photo_upload_preserveFileName"
+    value={preserveFileName.toString()}
   />
 
   <!-- Photo Editor Modal -->
@@ -249,6 +258,9 @@ import PhotoCropper from "./PhotoCropper.astro";
           relatedColumn: container.querySelector(
             'input[name="component_photo_upload_related_column"]'
           ) as HTMLInputElement,
+          preserveFileName: container.querySelector(
+            'input[name="component_photo_upload_preserveFileName"]'
+          ) as HTMLInputElement,
         };
 
         const previewsContainer = container.querySelector(
@@ -342,6 +354,8 @@ import PhotoCropper from "./PhotoCropper.astro";
               related_id: uploadConfigElements.relatedId.value || "",
               related_table: uploadConfigElements.relatedTable.value || "",
               related_column: uploadConfigElements.relatedColumn.value || "",
+              preserveFileName:
+                uploadConfigElements.preserveFileName.value || "false",
             };
           },
           autoQueue: true,
@@ -479,6 +493,14 @@ import PhotoCropper from "./PhotoCropper.astro";
                     ? error.message
                     : "Failed to delete photo",
                 icon: true,
+                overlay: true,
+                position: {
+                  vertical: "middle-third",
+                  horizontal: "center",
+                },
+                buttonLayout: {
+                  newLine: true,
+                },
                 buttons: [
                   {
                     type: "error",
@@ -486,7 +508,7 @@ import PhotoCropper from "./PhotoCropper.astro";
                     variant: "solid",
                   },
                 ],
-              });
+              } as any);
             }
           }
         });
@@ -580,6 +602,14 @@ import PhotoCropper from "./PhotoCropper.astro";
               title: errorTitle,
               text: message,
               icon: true,
+              overlay: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttonLayout: {
+                newLine: true,
+              },
               buttons: [
                 {
                   type: "error",
@@ -587,7 +617,7 @@ import PhotoCropper from "./PhotoCropper.astro";
                   variant: "solid",
                 },
               ],
-            });
+            } as any);
 
             console.error("Upload error:", message);
             const previewEl = file.previewElement;
@@ -891,8 +921,13 @@ import PhotoCropper from "./PhotoCropper.astro";
               title: "Success",
               text: "Photo updated successfully",
               icon: true,
+              overlay: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
               duration: 3000,
-            });
+            } as any);
           } catch (error) {
             console.error("Error saving crop:", error);
 
@@ -914,6 +949,14 @@ import PhotoCropper from "./PhotoCropper.astro";
               text:
                 error instanceof Error ? error.message : "Failed to save crop",
               icon: true,
+              overlay: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttonLayout: {
+                newLine: true,
+              },
               buttons: [
                 {
                   type: "error",
@@ -921,7 +964,7 @@ import PhotoCropper from "./PhotoCropper.astro";
                   variant: "solid",
                 },
               ],
-            });
+            } as any);
           }
         },
         100
@@ -1046,13 +1089,16 @@ import PhotoCropper from "./PhotoCropper.astro";
                 title: 'Are you sure you want to remove this photo?',
                 text: false,
                 icon: true,
+                overlay: true,
+                position: {
+                  vertical: 'middle-third',
+                  horizontal: 'center',
+                },
+                buttonLayout: {
+                  newLine: true,
+                  flexClass: 'gap-3',
+                },
                 buttons: [
-                  {
-                    text: 'No',
-                    variant: 'outline',
-                    size: 'sm',
-                    type: 'warning',
-                  },
                   {
                     type: 'warning',
                     text: 'Yes',
@@ -1064,6 +1110,12 @@ import PhotoCropper from "./PhotoCropper.astro";
                         container.dropzone.removeFile(container.dropzone.files[0]);
                       }
                     },
+                  },
+                  {
+                    text: 'No',
+                    variant: 'outline',
+                    size: 'sm',
+                    type: 'warning',
                   },
                 ],
               });
@@ -1080,11 +1132,13 @@ import PhotoCropper from "./PhotoCropper.astro";
           </span>
         </div>
 
-        <div class="tooltip">
-          <a
-            class="tooltip-toggle btn btn-sm btn-secondary btn-square"
-            href="javascript:undefined;"
-            onclick="(function(e){ 
+        {
+          cropper && (
+            <div class="tooltip">
+              <a
+                class="tooltip-toggle btn btn-sm btn-secondary btn-square"
+                href="javascript:undefined;"
+                onclick="(function(e){ 
               e.stopPropagation(); 
               const container = e.target.closest('.photo-upload-container');
               const photoUrl = container.dataset.initialValue?.split('?')[0];
@@ -1092,16 +1146,20 @@ import PhotoCropper from "./PhotoCropper.astro";
                 container.openPhotoEditor(photoUrl);
               }
             })(arguments[0])"
-          >
-            <span class="icon-[tabler--crop] size-4"></span>
-          </a>
-          <span
-            class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible"
-            role="tooltip"
-          >
-            <span class="tooltip-body tooltip-secondary rounded-md">Crop</span>
-          </span>
-        </div>
+              >
+                <span class="icon-[tabler--crop] size-4" />
+              </a>
+              <span
+                class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible"
+                role="tooltip"
+              >
+                <span class="tooltip-body tooltip-secondary rounded-md">
+                  Crop
+                </span>
+              </span>
+            </div>
+          )
+        }
 
         <div class="tooltip [--strategy:absolute]">
           <a
@@ -1116,7 +1174,7 @@ import PhotoCropper from "./PhotoCropper.astro";
               }
             })(arguments[0])"
           >
-            <span class="icon-[tabler--maximize] size-4"></span>
+            <span class="icon-[tabler--link] size-4"></span>
           </a>
           <span
             class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible"

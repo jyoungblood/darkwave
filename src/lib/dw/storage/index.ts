@@ -71,12 +71,27 @@ class StorageFactory {
   }
 
   /**
+   * Get the current provider's domain for URL construction
+   */
+  public async getProviderDomain(): Promise<string | null> {
+    await this.initializeProvider();
+    if (!this.provider) {
+      return null;
+    }
+
+    // Access the provider's config to get the domain
+    const provider = this.provider as any;
+    return provider.config?.domain || null;
+  }
+
+  /**
    * Upload a file using the configured storage provider
    * @param file The file to upload
    * @param directory Optional subdirectory path (no leading/trailing slashes)
+   * @param preserveFileName Optional filename to use instead of generating a unique one
    * @returns Promise resolving to the file's public URL or null if upload failed
    */
-  public async uploadFile(file: File, directory?: string): Promise<string | null> {
+  public async uploadFile(file: File, directory?: string, preserveFileName?: string): Promise<string | null> {
     await this.initializeProvider();
     if (!this.provider) {
       throw new StorageError(
@@ -84,7 +99,7 @@ class StorageFactory {
         StorageErrorCode.INVALID_CONFIG
       );
     }
-    return this.provider.uploadFile(file, directory);
+    return this.provider.uploadFile(file, directory, preserveFileName);
   }
 
   /**
@@ -102,6 +117,43 @@ class StorageFactory {
     }
     return this.provider.deleteFile(url);
   }
+
+  /**
+   * Delete all transformed versions of an original image
+   * @param originalPath The original image path (e.g., "images/blog/photo.jpg")
+   * @returns Promise resolving to number of files deleted, or null if cleanup not supported
+   */
+  public async deleteTransformedVersions(originalPath: string): Promise<number | null> {
+    await this.initializeProvider();
+    if (!this.provider) {
+      throw new StorageError(
+        'No storage provider available',
+        StorageErrorCode.INVALID_CONFIG
+      );
+    }
+
+    // Check if provider supports cleanup
+    const enhancedProvider = this.provider as any;
+    if (!enhancedProvider.supportsCleanup || !enhancedProvider.supportsCleanup()) {
+      return null; // Cleanup not supported by this provider
+    }
+
+    return enhancedProvider.deleteTransformedVersions(originalPath);
+  }
+
+  /**
+   * Check if the current provider supports cleanup operations
+   * @returns true if cleanup is supported, false otherwise
+   */
+  public async supportsCleanup(): Promise<boolean> {
+    await this.initializeProvider();
+    if (!this.provider) {
+      return false;
+    }
+
+    const enhancedProvider = this.provider as any;
+    return enhancedProvider.supportsCleanup ? enhancedProvider.supportsCleanup() : false;
+  }
 }
 
 // Export a singleton instance
@@ -109,7 +161,7 @@ export const dwStorage = StorageFactory.getInstance();
 
 // For backward compatibility with existing code
 export const dwBunny = {
-  uploadFile: (file: File, directory?: string) => dwStorage.uploadFile(file, directory),
+  uploadFile: (file: File, directory?: string, preserveFileName?: string) => dwStorage.uploadFile(file, directory, preserveFileName),
   deleteFile: (url: string) => dwStorage.deleteFile(url),
 };
 

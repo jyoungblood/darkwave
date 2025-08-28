@@ -1,0 +1,171 @@
+---
+// DW - Form datepicker component using Flatpickr
+
+interface Props {
+  label: string;
+  sublabel?: string;
+  name: string;
+  required?: boolean;
+  value?: string;
+  placeholder?: string;
+  class?: string;
+  // Flatpickr specific options
+  mode?: 'single' | 'multiple' | 'range' | 'time';
+  enableTime?: boolean;
+  noCalendar?: boolean;
+  dateFormat?: string;
+  altInput?: boolean;
+  altFormat?: string;
+  inline?: boolean;
+  weekNumbers?: boolean;
+  minDate?: string;
+  maxDate?: string;
+  disable?: Array<string | { from: string; to: string }>;
+  locale?: string;
+  // Standard validation config
+  validation?: {
+    types?: string[];
+    rules?: Array<{
+      type: string;
+      min?: number;
+      max?: number;
+      pattern?: string;
+      errorMessage?: string;
+      options?: Record<string, any>;
+      locale?: string;
+      version?: string;
+      countryCode?: string;
+    }>;
+    success?: boolean | { message: string };
+    showSuccessUI?: boolean;
+    unique?: {
+      collection: string;
+      field: string;
+      errorMessage: string;
+      exempt?: {
+        [key: string]: string;
+      };
+    };
+  };
+  htmlAttributes?: Record<string, string>;
+}
+
+const {
+  label,
+  sublabel,
+  name,
+  required = false,
+  value = "",
+  placeholder = "",
+  class: customClass = "",
+  // Flatpickr defaults
+  mode = 'single',
+  enableTime = false,
+  noCalendar = false,
+  dateFormat = 'Y-m-d',
+  altInput = false,
+  altFormat = 'F j, Y',
+  inline = false,
+  weekNumbers = false,
+  minDate,
+  maxDate,
+  disable = [],
+  locale = 'default',
+  // Standard props
+  validation,
+  htmlAttributes = {},
+} = Astro.props;
+
+const defaultClass = "input";
+const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
+
+// Only include validation attributes if validation is configured
+const validationAttributes = validation ? {
+  'data-validation-types': validation.types ? JSON.stringify(validation.types) : '',
+  'data-validation-rules': validation.rules ? JSON.stringify(validation.rules) : '',
+  'data-unique-check': validation.unique ? JSON.stringify(validation.unique) : '',
+  'data-success': typeof validation.success === 'object' ? JSON.stringify(validation.success) : validation.success,
+  'data-validation-config': JSON.stringify(validation),
+  'data-input-name': name,
+} : {};
+---
+
+<div class="flex flex-col" id={`input-container-${name}`}>
+  {sublabel ? (
+    <label for={`input-${name}`} class="label label-text flex justify-between items-center">
+      <span>{label}</span>
+      <span class="text-sm text-neutral-500" set:html={sublabel} />
+    </label>
+  ) : (
+    <label for={`input-${name}`} class="label label-text">{label}</label>
+  )}
+  <input
+    type="text"
+    id={`input-${name}`}
+    name={name}
+    required={required}
+    class={className}
+    value={value}
+    placeholder={placeholder}
+    autocomplete="off"
+    onblur={validation ? "validateOnBlur(event)" : undefined}
+    data-flatpickr
+    data-flatpickr-config={JSON.stringify({
+      mode,
+      enableTime,
+      noCalendar,
+      dateFormat: dateFormat || "Y-m-d",
+      altInput,
+      altFormat,
+      inline,
+      weekNumbers,
+      minDate,
+      maxDate,
+      disable,
+      locale,
+      defaultDate: value || undefined,
+      monthSelectorType: "static",
+      allowInput: true,
+    })}
+    {...validationAttributes}
+    {...htmlAttributes}
+  />
+  <span class="validation-feedback text-sm mt-1 hidden"></span>
+</div>
+
+<script>
+  import { validateOnBlur } from '@/components/ui/scripts/validate-input.js';
+  // @ts-ignore
+  window.validateOnBlur = validateOnBlur;
+</script>
+
+<!-- Import Flatpickr CSS -->
+<link rel="stylesheet" href="/css/lib/flatpickr.min.css" />
+
+<script>
+  import flatpickr from "flatpickr";
+
+  // Initialize all datepickers
+  function initializeDatepickers() {
+    const datepickers = document.querySelectorAll('[data-flatpickr]');
+    datepickers.forEach((element) => {
+      const input = element as HTMLInputElement;
+      const configStr = input.dataset.flatpickrConfig;
+      if (!configStr) return;
+
+      try {
+        const config = JSON.parse(configStr);
+        flatpickr(input, config);
+      } catch (error) {
+        console.error('Error initializing flatpickr:', error);
+      }
+    });
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDatepickers);
+  } else {
+    initializeDatepickers();
+  }
+</script>

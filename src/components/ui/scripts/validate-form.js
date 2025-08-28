@@ -130,17 +130,31 @@ function validateForm(formElement) {
       firstErrorField.focus();
     }
 
+    let title = "Error Saving Data";
+    if (window.requiredErrors.length > 0) {
+      title = "Error";
+    }
+
     // Show error alert
     window.showAlert({
       type: "error",
       variant: "soft",
-      title: "Error Saving Data",
+      title: title,
       duration: 3000,
       text:
         window.requiredErrors.length > 0
           ? "Required fields are missing."
           : "Please check the form for errors and try again.",
-      icon: true,
+      textAlign: "center",
+      // icon: true,
+      position: {
+        vertical: "middle-third",
+        horizontal: "center",
+      },
+      overlay: true,
+      buttonLayout: {
+        newLine: true,
+      },
       buttons: [
         {
           type: "error",

@@ -19,121 +19,136 @@ ensureCsrfToken(Astro.cookies);
 ---
 
 <script>
-  import { validateOnBlur } from '@/components/ui/scripts/validate-input.js';
+  import { validateOnBlur } from "@/components/ui/scripts/validate-input.js";
   // @ts-ignore
   window.validateOnBlur = validateOnBlur;
 </script>
 
 <form class="" data-form aria-label="Link form" novalidate>
   <input type="hidden" name="csrf" value={Astro.cookies.get("csrf")?.value} />
-  <div class="grid grid-cols-2 gap-4 mb-4">
-    <div class="flex flex-col">
-      <div class="mb-4">
-        <InputText label="Title" name="title" value={link?.title} required />
-      </div>
-      <div class="mb-4">
-        <InputText label="URL" name="url" value={link?.url} required />
-      </div>
 
-      <div class="mb-4">
-        <Select
-          label="Type"
-          name="type"
-          options={[
-            { label: "", value: "" },
-            { label: "Website", value: "website" },
-            { label: "Social Media", value: "social-media" },
-            { label: "Other", value: "other" },
-          ]}
-          selected={link?.type}
-          required
-        />
-      </div>
+  {
+    link && link.uuid ? (
+      // normal edit form
+      <>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="flex flex-col">
+            <div class="mb-4">
+              <InputText
+                label="Title"
+                name="title"
+                value={link?.title}
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <InputText label="URL" name="url" value={link?.url} required />
+            </div>
 
-      <div class="mb-4">
-        <Textarea
-          label="Description"
-          name="description"
-          value={link?.description}
-        />
-      </div>
+            <div class="mb-4">
+              <Select
+                label="Type"
+                name="type"
+                options={[
+                  { label: "", value: "" },
+                  { label: "Website", value: "website" },
+                  { label: "Social Media", value: "social-media" },
+                  { label: "Other", value: "other" },
+                ]}
+                value={link?.type}
+                required
+              />
+            </div>
 
-    </div>
-
-    <div class="flex flex-col">
-
-
-
-{ link && (
-
-          <div class="mb-4">
-            <label class="label label-text">Primary Photo</label>
-            <PhotoUploadSingle
-              related_id={link?.uuid}
-              related_table="links"
-              related_column="photo_url"
-              url={link?.photo_url}
-              url_parameters={link?.photo_url_parameters}
-              upload_path="/links"
-
-            />
+            <div class="mb-4">
+              <Textarea
+                label="Description"
+                name="description"
+                value={link?.description}
+              />
+            </div>
           </div>
 
+          <div class="flex flex-col">
+            <div class="mb-4">
+              <label class="label label-text">Primary Photo</label>
+              <PhotoUploadSingle
+                related_id={link?.uuid}
+                related_table="links"
+                related_column="photo_url"
+                url={link?.photo_url}
+                url_parameters={link?.photo_url_parameters}
+                upload_path="/links"
+              />
+            </div>
 
+            <div class="mb-4">
+              <label class="label label-text">Gallery Photos</label>
+              <PhotoUploadGallery
+                related_id={link?.uuid}
+                related_table="links"
+                gallery_type="link-gallery"
+                upload_path="/links/gallery"
+              />
+            </div>
 
-
-          <div class="mb-4">
-            <label class="label label-text">Gallery Photos</label>
-            <PhotoUploadGallery
-              related_id={link?.uuid}
-              related_table="links"
-              gallery_type="link-gallery"
-              upload_path="/links/gallery"
-            />
+            <div class="mb-4">
+              <label class="label label-text">Slideshow Photos</label>
+              <PhotoUploadGallery
+                related_id={link?.uuid}
+                related_table="links"
+                gallery_type="link-slideshow"
+                upload_path="/links/slideshow"
+                file_limit_quantity={6}
+                file_limit_size={1}
+                file_formats="image/jpeg"
+              />
+            </div>
           </div>
+        </div>
 
+        <input name="uuid" value={link?.uuid} type="hidden" />
 
-          <div class="mb-4">
-            <label class="label label-text">Slideshow Photos</label>
-            <PhotoUploadGallery
-              related_id={link?.uuid}
-              related_table="links"
-              gallery_type="link-slideshow"
-              upload_path="/links/slideshow"
-              file_limit_quantity={6}
-              file_limit_size={1}
-              file_formats="image/jpeg"
-            />
+        <div class="flex gap-4">
+          <ButtonSubmit
+            text="Save Link"
+            workingText="Saving..."
+            form="[data-form]"
+            endpoint="/api/link/save"
+            redirect={redirect}
+          />
+
+          <ButtonDelete
+            text="Delete"
+            type="link"
+            uuid={link.uuid}
+            endpoint="/api/link/delete"
+            redirect={redirect}
+          />
+        </div>
+      </>
+    ) : (
+      // new link form
+
+      <>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="flex flex-col">
+            <div class="mb-4">
+              <InputText label="Title" name="title" required />
+            </div>
+
+            <div class="flex gap-4">
+              <ButtonSubmit
+                text="Create Link"
+                workingText="Creating..."
+                form="[data-form]"
+                endpoint="/api/link/save"
+                redirect="/admin/links/edit?uuid=$uuid"
+              />
+            </div>
           </div>
-
-)}
-
-
-    </div>
-
-  </div>
-
-  {link && <input name="uuid" value={link.uuid} type="hidden" />}
-
-  <div class="flex gap-4">
-    <ButtonSubmit
-      text={link ? "Save Link" : "Create Link"}
-      workingText="Saving..."
-      form="[data-form]"
-      endpoint="/api/link/save"
-      redirect={redirect}
-    />
-
-    {
-      link && (
-        <ButtonDelete
-          text="Delete"
-          type="link"
-          uuid={link.uuid}
-          endpoint="/api/link/delete"
-          redirect={redirect}
-        />
-      )
-    }
-  </div>
+        </div>
+      </>
+    )
+  }
 </form>

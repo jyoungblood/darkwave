@@ -5,6 +5,7 @@ export const managedRoutes = {
   protected: ['/dashboard', '/links/edit/*', '/links/new'],
   admin: ['/admin', '/admin/*'],
   redirect: ['/login', '/register'],
+  bypass: ['/feed/*'],
 } as const;
 
 // Database Configuration

@@ -31,7 +31,7 @@ const validateSession = async (
       return null;
     }
 
-    const { roles, version } = await verifyUserRoles(session.user.id);
+    const { roles, version } = await verifyUserRoles((session.user as any).id);
     
     return {
       user: session.user,
@@ -67,6 +67,11 @@ const setUserData = (locals: App.Locals, data: any) => {
 export const onRequest = defineMiddleware(
   async ({ locals, url, cookies, request, redirect }, next) => {
 
+    // Skip middleware entirely for bypass routes to preserve caching headers
+    if (matchesAny(url.pathname, managedRoutes.bypass)) {
+      return next();
+    }
+
     locals.isAuthenticated = false;
     
     // Try to validate session for all routes
@@ -74,7 +79,6 @@ export const onRequest = defineMiddleware(
     if (userData) {
       setUserData(locals, userData);
     }
-
     // Handle Admin routes
     if (matchesAny(url.pathname, managedRoutes.admin)) {
       if (!locals.authRoles?.includes("admin")) {
@@ -96,8 +100,8 @@ export const onRequest = defineMiddleware(
 
     // Get the response from next()
     const response = await next();
-
-    // Only add version check if we have a version number
+    
+    // Only add version check if we have a version number and it's not a feed response
     if (locals.rolesVersion) {
       const html = await response.text();
       

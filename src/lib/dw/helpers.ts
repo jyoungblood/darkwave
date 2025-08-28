@@ -74,3 +74,39 @@ export function htmlToPlainText(html: string): string {
     .replace(/^\s+|\s+$/g, '') // Trim whitespace
     .replace(/\n{3,}/g, '\n\n'); // Limit consecutive newlines to 2
 }
+
+/**
+ * Converts newlines to HTML <br> tags (equivalent to PHP's nl2br)
+ * @param text Text string with newlines
+ * @returns HTML string with <br> tags
+ */
+export function nl2br(text: string): string {
+  return text.replace(/\n/g, '<br>');
+}
+
+/**
+ * Extract YouTube video ID from various YouTube URL formats
+ * Supports: watch URLs, embed URLs, short URLs, and more
+ */
+export function extractYouTubeVideoId(url: string): string | null {
+  if (!url) return null;
+  
+  // Handle various YouTube URL formats
+  const patterns = [
+    // Standard watch URLs: https://www.youtube.com/watch?v=VIDEO_ID
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/watch\?.*&v=)([^&\n?#]+)/,
+    // YouTube Music URLs: https://music.youtube.com/watch?v=VIDEO_ID
+    /(?:music\.youtube\.com\/watch\?v=)([^&\n?#]+)/,
+    // YouTube Shorts: https://youtube.com/shorts/VIDEO_ID
+    /(?:youtube\.com\/shorts\/)([^&\n?#]+)/,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  return null;
+}

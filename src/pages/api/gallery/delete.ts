@@ -83,9 +83,37 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Delete the file from CDN
-    const deleteSuccess = photo.photo_url ? await dwStorage.deleteFile(photo.photo_url) : true;
-    if (!deleteSuccess) {
-      throw new Error('Failed to delete file from CDN');
+    if (photo.photo_url) {
+      try {
+        // Extract the relative path from the full URL for cleanup
+        const url = new URL(photo.photo_url);
+        const relativePath = url.pathname.replace(/^\/+/, '');
+        
+        // console.log(`🗑️  Deleting gallery photo: ${relativePath}`);
+        
+        // Delete the original file
+        const deleteSuccess = await dwStorage.deleteFile(photo.photo_url);
+        if (!deleteSuccess) {
+          throw new Error('Failed to delete file from CDN');
+        }
+        
+        // Clean up all transformed versions (if cleanup is supported)
+        try {
+          const cleanupResult = await dwStorage.deleteTransformedVersions(relativePath);
+          if (cleanupResult !== null) {
+            // console.log(`🧹 Cleanup completed: ${cleanupResult} transformed versions deleted`);
+          } else {
+            console.error(`Error: Cleanup not supported by current storage provider`);
+          }
+        } catch (cleanupError) {
+          console.error('Error during transformed version cleanup:', cleanupError);
+          // Continue even if cleanup fails - original file is already deleted
+        }
+        
+      } catch (error) {
+        console.error('Error deleting gallery photo:', error);
+        throw error;
+      }
     }
 
     // Delete the record from the database

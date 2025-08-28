@@ -13,6 +13,8 @@ interface Props {
   file_limit_size?: number;
   file_formats?: string;
   dz_icon?: string;
+  cropper?: boolean;
+  preserveFileName?: boolean;
 }
 
 interface GalleryPhoto {
@@ -32,7 +34,9 @@ const {
   file_limit_quantity = 20, 
   file_limit_size = 10, 
   file_formats = "image/jpeg,image/png,image/webp",
-  dz_icon = "tabler--plus"
+  dz_icon = "tabler--plus",
+  cropper = false,
+  preserveFileName = false
 } = Astro.props;
 
 // Normalize the upload path by removing optional leading/trailing slashes
@@ -57,7 +61,7 @@ try {
 }
 ---
 
-<div class="gallery-upload-container pb-16" data-path={normalizedUploadPath} data-photos={JSON.stringify(photos)}>
+<div class="gallery-upload-container" data-path={normalizedUploadPath} data-photos={JSON.stringify(photos)}>
   <input type="hidden" name="component_gallery_upload_dz_icon" value={dz_icon} />
   <input type="hidden" name="component_gallery_upload_related_id" value={related_id} />
   <input type="hidden" name="component_gallery_upload_related_table" value={related_table} />
@@ -65,6 +69,7 @@ try {
   <input type="hidden" name="component_gallery_upload_maxFiles" value={file_limit_quantity} />
   <input type="hidden" name="component_gallery_upload_maxFilesize" value={file_limit_size} />
   <input type="hidden" name="component_gallery_upload_acceptedFiles" value={file_formats} />
+  <input type="hidden" name="component_gallery_upload_preserveFileName" value={preserveFileName.toString()} />
 
   <!-- Photo Editor Modal -->
   <div
@@ -186,7 +191,7 @@ try {
                     title="View full size"
                     target="_blank"
                   >
-                    <span class="icon-[tabler--maximize] size-4"></span>
+                    <span class="icon-[tabler--link] size-4"></span>
                   </a>
                   <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
                     <span class="tooltip-body tooltip-secondary rounded-md -mr-2">Full size</span>
@@ -618,15 +623,20 @@ try {
               }
             }
 
-            // Show success message
-            window.showAlert({
-              type: "success",
-              variant: "soft",
-              title: "Success",
-              text: "Photo details saved successfully",
-              icon: true,
-              duration: 3000
-            });
+            // // Show success message
+            // window.showAlert({
+            //   type: "success",
+            //   variant: "soft",
+            //   title: "Success",
+            //   text: "Photo details saved successfully",
+            //   icon: true,
+            //   overlay: true,
+            //   position: {
+            //     vertical: "middle-third",
+            //     horizontal: "center",
+            //   },
+            //   duration: 3000
+            // } as any);
 
             // Close the modal
             closeModal();
@@ -665,13 +675,16 @@ try {
             title: 'Are you sure you want to remove this photo?',
             text: "",
             icon: true,
+            overlay: true,
+            position: {
+              vertical: "middle-third",
+              horizontal: "center",
+            },
+            buttonLayout: {
+              newLine: true,
+              flexClass: 'gap-3',
+            },
             buttons: [
-              {
-                text: 'No',
-                variant: 'outline',
-                size: 'sm',
-                type: 'warning',
-              },
               {
                 type: 'warning',
                 text: 'Yes',
@@ -837,6 +850,14 @@ try {
                                         title: 'Upload Error',
                                         text: 'Failed to upload files. Please try again.',
                                         icon: true,
+                                        overlay: true,
+                                        position: {
+                                          vertical: "middle-third",
+                                          horizontal: "center",
+                                        },
+                                        buttonLayout: {
+                                          newLine: true,
+                                        },
                                         buttons: [
                                           {
                                             type: 'error',
@@ -844,7 +865,7 @@ try {
                                             variant: 'solid',
                                           }
                                         ]
-                                      });
+                                      } as any);
                                     });
                                   }
                                 };
@@ -855,15 +876,20 @@ try {
                       }
                     }
 
-                    // Show success message
-                    window.showAlert({
-                      type: "success",
-                      variant: "soft",
-                      title: "Success",
-                      text: "Photo deleted successfully",
-                      icon: true,
-                      duration: 3000
-                    });
+                    // // Show success message
+                    // window.showAlert({
+                    //   type: "success",
+                    //   variant: "soft",
+                    //   title: "Success",
+                    //   text: "Photo deleted successfully",
+                    //   icon: true,
+                    //   overlay: true,
+                    //   position: {
+                    //     vertical: "middle-third",
+                    //     horizontal: "center",
+                    //   },
+                    //   duration: 3000
+                    // } as any);
 
                     // Close the modal
                     closeModal();
@@ -875,6 +901,14 @@ try {
                       title: "Error",
                       text: error instanceof Error ? error.message : "Failed to delete photo",
                       icon: true,
+                      overlay: true,
+                      position: {
+                        vertical: "middle-third",
+                        horizontal: "center",
+                      },
+                      buttonLayout: {
+                        newLine: true,
+                      },
                       buttons: [
                         {
                           type: "error",
@@ -882,12 +916,18 @@ try {
                           variant: "solid",
                         }
                       ]
-                    });
+                    } as any);
                   }
                 },
               },
+              {
+                text: 'No',
+                variant: 'outline',
+                size: 'sm',
+                type: 'warning',
+              },
             ],
-          });
+          } as any);
         });
       }
 
@@ -1095,6 +1135,11 @@ try {
                   'input[name="component_gallery_upload_gallery_type"]'
                 ) as HTMLInputElement
               )?.value,
+              preserveFileName: (
+                container.querySelector(
+                  'input[name="component_gallery_upload_preserveFileName"]'
+                ) as HTMLInputElement
+              )?.value || "false",
             };
           },
           autoQueue: true,
@@ -1132,6 +1177,14 @@ try {
                   title: "Upload Limit Exceeded",
                   text: `Maximum ${uploadConfig.maxFiles} photos allowed.`,
                   icon: true,
+                  overlay: true,
+                  position: {
+                    vertical: "middle-third",
+                    horizontal: "center",
+                  },
+                  buttonLayout: {
+                    newLine: true,
+                  },
                   buttons: [
                     {
                       type: "error",
@@ -1139,7 +1192,7 @@ try {
                       variant: "solid",
                     }
                   ]
-                });
+                } as any);
                 
                 filesArray.forEach(f => {
                   if (f.previewElement && f.previewElement.parentNode) {
@@ -1333,6 +1386,14 @@ try {
                   title: "Upload Limit Exceeded",
                   text: `Maximum of ${uploadConfig.maxFiles} photos allowed.`,
                   icon: true,
+                  overlay: true,
+                  position: {
+                    vertical: "middle-third",
+                    horizontal: "center",
+                  },
+                  buttonLayout: {
+                    newLine: true,
+                  },
                   buttons: [
                     {
                       type: "error",
@@ -1340,7 +1401,7 @@ try {
                       variant: "solid",
                     }
                   ]
-                });
+                } as any);
                 maxFilesAlertShown = true;
               }
               this.removeFile(file);
@@ -1379,6 +1440,14 @@ try {
               title: errorTitle,
               text: message,
               icon: true,
+              overlay: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttonLayout: {
+                newLine: true,
+              },
               buttons: [
                 {
                   type: "error",
@@ -1386,7 +1455,7 @@ try {
                   variant: "solid",
                 }
               ]
-            });
+            } as any);
 
             this.removeFile(file);
           }
@@ -1410,6 +1479,14 @@ try {
               title: "Multiple Upload Errors",
               text: `${uploadErrors.size} files failed to upload.`,
               icon: true,
+              overlay: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttonLayout: {
+                newLine: true,
+              },
               buttons: [
                 {
                   type: "error",
@@ -1417,7 +1494,7 @@ try {
                   variant: "solid",
                 }
               ]
-            });
+            } as any);
           }
         });
 
@@ -1462,6 +1539,14 @@ try {
                   title: "Error",
                   text: "Failed to update photo order. Please try again.",
                   icon: true,
+                  overlay: true,
+                  position: {
+                    vertical: "middle-third",
+                    horizontal: "center",
+                  },
+                  buttonLayout: {
+                    newLine: true,
+                  },
                   buttons: [
                     {
                       type: "error",
@@ -1469,7 +1554,7 @@ try {
                       variant: "solid",
                     }
                   ]
-                });
+                } as any);
               }
             }
           });

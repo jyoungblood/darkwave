@@ -1,12 +1,12 @@
 // DW - Bunny CDN implementation of StorageProvider
 
-import type { StorageProvider, BunnyConfig } from '../types';
+import type { StorageProvider, BunnyConfig, EnhancedStorageProvider } from '../types';
 import { StorageError, StorageErrorCode, StorageUtils } from '../types';
 
 /**
  * Bunny CDN implementation of StorageProvider
  */
-export class BunnyProvider implements StorageProvider {
+export class BunnyProvider implements StorageProvider, EnhancedStorageProvider {
   constructor(private readonly config: BunnyConfig) {
     this.validateConfig();
   }
@@ -37,20 +37,44 @@ export class BunnyProvider implements StorageProvider {
   /**
    * Upload a file to Bunny CDN storage
    */
-  async uploadFile(file: File, directory?: string): Promise<string | null> {
+  async uploadFile(file: File, directory?: string, preserveFileName?: string): Promise<string | null> {
     try {
-      const timestamp = new Date().getTime();
-      const extension = file.name.split('.').pop();
-      const safeFileName = StorageUtils.joinPath(
-        directory || '',
-        `${timestamp}.${extension}`
-      );
+      let safeFileName: string;
+      
+      if (preserveFileName) {
+        // Use the preserved filename with sanitization
+        const sanitizedFilename = StorageUtils.sanitizeFilename(preserveFileName);
+        const extension = file.name.split('.').pop();
+        
+        // Check if we need to add extension
+        const hasExtension = sanitizedFilename.includes('.');
+        if (!hasExtension && extension) {
+          safeFileName = StorageUtils.joinPath(
+            directory || '',
+            `${sanitizedFilename}.${extension}`
+          );
+        } else {
+          safeFileName = StorageUtils.joinPath(
+            directory || '',
+            sanitizedFilename
+          );
+        }
+      } else {
+        // Use existing timestamp-based naming
+        const timestamp = new Date().getTime();
+        const extension = file.name.split('.').pop();
+        safeFileName = StorageUtils.joinPath(
+          directory || '',
+          `${timestamp}.${extension}`
+        );
+      }
       
       const response = await fetch(`${this.config.storageUrl}/${safeFileName}`, {
         method: 'PUT',
         headers: {
           'AccessKey': this.config.storageKey,
           'Content-Type': file.type,
+          'Content-Disposition': StorageUtils.getContentDisposition(file),
         },
         body: file
       });
@@ -131,6 +155,38 @@ export class BunnyProvider implements StorageProvider {
       }
       return false;
     }
+  }
+
+  /**
+   * Find files matching a pattern (for cleanup operations)
+   * @param pattern Glob pattern to match files
+   * @returns Promise resolving to array of matching file paths
+   */
+  async findFilesByPattern(pattern: string): Promise<string[]> {
+    // Bunny CDN doesn't support listing files by pattern
+    // This is a limitation of their API
+    console.warn('Bunny CDN does not support file pattern matching for cleanup');
+    return [];
+  }
+
+  /**
+   * Delete all transformed versions of an original image
+   * @param originalPath The original image path
+   * @returns Promise resolving to number of files deleted
+   */
+  async deleteTransformedVersions(originalPath: string): Promise<number> {
+    // Bunny CDN doesn't support automatic cleanup of transformed versions
+    // Users would need to manually track and delete transformed files
+    console.warn('Bunny CDN does not support automatic cleanup of transformed versions');
+    return 0;
+  }
+
+  /**
+   * Check if provider supports cleanup operations
+   * @returns true if cleanup is supported, false otherwise
+   */
+  supportsCleanup(): boolean {
+    return false; // Bunny CDN doesn't support cleanup operations
   }
 }
 
