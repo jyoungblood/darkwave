@@ -1,73 +1,83 @@
 ---
-interface Column {
-  align?: "left" | "right" | "center";
-  header: string;
-  cell: {
-    class?: string;
-    content: (item: any) => string | Promise<string>;
-  };
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import TableDatalist from "@/components/ui/admin/TableDatalist.astro";
+import { formatDate } from "@/lib/dw/helpers";
+import { db } from "@/lib/db";
+
+let users;
+
+try {
+  users = await db
+    .selectFrom("user")
+    .selectAll()
+    .orderBy("createdAt")
+    .execute();
+} catch (error) {
+  console.error("Error fetching users:", error);
 }
 
-interface Props {
-  data: any[] | { error: string };
-  columns: Column[];
-  title?: string;
-  buttonLinks?: {
-    href: string;
-    text: string;
-  }[];
+// DW
+const can_edit = Astro.locals.authRoles?.includes("admin");
+if (!can_edit) {
+  return Astro.redirect(`/admin/users/`);
 }
-
-import ButtonLink from "@/components/ui/ButtonLink.astro";
-
-const { data, columns, title, buttonLinks } = Astro.props;
 ---
 
-<div class="flex gap-8 w-full items-center justify-between mb-8">
-  <div class="">
-    <h2 class="text-xl font-semibold">{title}</h2>
+<AdminLayout title="All Users">
+  <div class="w-full">
+    <TableDatalist
+      data={users ?? []}
+      columns={[
+        {
+          header: "Email",
+          cell: {
+            content: (user: any) =>
+              `<a href="/admin/users/edit?id=${user.id}">${user.email}</a>`,
+          },
+        },
+        {
+          header: "Name",
+          cell: {
+            content: (user: any) => user.name,
+          },
+        },
+        {
+          header: "Created At",
+          align: "center",
+          cell: {
+            content: (user: any) => formatDate(user.createdAt),
+          },
+        },
+        {
+          header: "Updated At",
+          align: "center",
+          cell: {
+            content: (user: any) =>
+              user.updatedAt ? formatDate(user.updatedAt) : "",
+          },
+        },
+        {
+          header: "",
+          align: "right",
+          cell: {
+            content: (user: any) => `
+            <a href="/admin/users/edit?id=${user.id}" 
+              class="btn btn-sm border-0 bg-lwoa-blue lwoa-black" 
+              aria-label="Edit" 
+              data-astro-prefetch>
+              <span class="icon-[tabler--pencil] size-5"></span>
+            </a>
+            `,
+          },
+        },
+      ]}
+      title="All Users"
+      buttonLinks={[
+        {
+          href: "/admin/users/new",
+          text: "New User",
+        },
+      ]}
+    />
   </div>
-  <div class="flex gap-4">
-    {buttonLinks?.map((buttonLink) => (
-      <ButtonLink href={buttonLink.href} text={buttonLink.text} />
-    ))}
-  </div>
-</div>
-
-{
-  data && (
-    <div>
-      {'error' in data ? (
-        <p class="text-red-500">Error loading data</p>
-      ) : data.length === 0 ? (
-        <p class="text-neutral-500">No items found</p>
-      ) : (
-        <div class="border-base-content/25 w-full overflow-x-auto border">
-          <table class="table table-md">
-            <thead>
-              <tr class="bg-neutral-100">
-                {columns.map((column) => (
-                  <th class={`font-bold text-xs text-neutral-500 ${column.align === "right" ? "text-right" : column.align === "center" ? "text-center" : "text-left"}`}>
-                    {column.header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <tr class="row-hover">
-                  {columns.map((column) => (
-                    <td
-                      class={`text-nowrap ${column.cell.class} ${column.align === "right" ? "text-right" : column.align === "center" ? "text-center" : "text-left"}`}
-                      set:html={column.cell.content(item)}
-                    />
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  )
-}
+</AdminLayout>
