@@ -9,7 +9,7 @@ We've curated a selection of reliable and approachable tools to create a profess
 DW facilitates a hyper-productive development workflow, helping developers focus on delivering real value with ease.
 
 
-Read the full documentation and user guide at [darkwave.ltd](https://darkwave.ltd/)
+Read the full documentation and user guide at [darkwavejs.com](https://darkwavejs.com/)
 
 
 ## What's Included?
@@ -128,7 +128,7 @@ Start development server
 npm run dev
 ```
 
-Refer to the [documentation](https://darkwave.ltd/) for next steps.
+Refer to the [documentation](https://darkwavejs.com/) for next steps.
 
 
 ## Project Structure
