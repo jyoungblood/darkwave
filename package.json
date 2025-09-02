@@ -1,6 +1,6 @@
 {
   "name": "darkwave",
-  "version": "0.7.1",
+  "version": "0.7.4",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
