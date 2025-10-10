@@ -32,64 +32,23 @@ Read the full documentation and user guide at [darkwavejs.com](https://darkwavej
 - [Validator.js](https://github.com/validatorjs/validator.js) - String validation
 - [Iconify](https://iconify.design/) - Icon framework with Tabler icons set
 
+### Application Boilerplate
+- Global middleware
+- Configuration management
+- DB schema & migrations
+- RBAC authentication rules
+- Authentication flows (register, login, fogot pw)
+- Extendable admin app with user management
 
+### Utilities
+- UI & form components
+- Full-stack photo upload solution!
+- CRUD abstractions, CSRF validation
+- Storage adapters for uploaded media
+- Programmatic email
+- Misc helper functions
+- CLI utilities
 
-## Core Philosophy
-
-- Security and performance as top priorities
-- Professional, maintainable solutions without unnecessary complexity
-- Code that is easy to understand and maintain over clever solutions
-- Proven, stable patterns over bleeding-edge features
-- Long-term maintainability and reliability
-- Pragmatic solutions using "boring" techniques
-
-
-## Features
-
-### Infrastructure
-
-- Server-side rendering with Astro and Node.js adapter
-- TypeScript support with enhanced type safety
-- Tailwind CSS with FlyonUI theme integration
-- Better-Auth authentication system with role-based access control and OAuth configured with Google login
-- MySQL database integration with Kysely query builder
-- Comprehensive security configurations (CSP, CSRF protection)
-
-### Form Components
-
-- Text input fields with validation
-- Single and gallery photo upload with cropping
-- Select dropdown
-- Checkbox group
-- Submit and delete buttons with form validation
-- Textarea inputs
-
-### UI Components
-
-- Configurable alert system
-- Modal dialogs
-- Button links
-
-
-### Backend Architecture
-
-- JWT-based authentication middleware
-- Secure cookie handling
-- Role-based authorization system
-- CSRF protection middleware
-- Email notifications TSX components
-- File upload handling with storage providers for S3/R2, Bunny.net, and, local filesystem
-- Image processing handlers (optimization, cropping)
-- Configurable environment variables
-- Database schema management
-
-### Developer Ergonomics
-
-- Alias imports (@/ path resolution)
-- Organized project structure
-- Type definitions for enhanced IDE support
-- Development mode conveniences (local cookie handling)
-- Clear coding standards and best practices
 
 
 
@@ -130,23 +89,6 @@ npm run dev
 
 Refer to the [documentation](https://darkwavejs.com/) for next steps.
 
-
-## Project Structure
-
-```
-src/
-├── components/        # Reusable UI components
-│   ├── admin/         # Admin components
-│   ├── forms/         # Form-related components
-│   └── ui/            # General UI components
-├── config/            # Application configuration
-├── email-templates/   # Email templates
-├── layouts/           # Page layouts
-├── lib/               # Shared utilities and helpers
-├── middleware/        # Request middleware
-├── pages/             # Application routes & templates
-├── styles/            # Tailwind & FlyonUI integration, base component styles
-```
 
 
 
