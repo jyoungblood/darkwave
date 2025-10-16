@@ -5,13 +5,13 @@ import mysql from 'mysql2';
 import { Kysely, MysqlDialect, type InsertObject, type UpdateObject } from 'kysely';
 
 import type { Database } from '../src/config/schema';
-import { exec } from 'child_process';
+import { exec, execSync, spawn, spawnSync } from 'child_process';
 import { promisify } from 'util';
 import 'dotenv/config';
 import * as readline from 'readline';
 
-// Create readline interface
-const rl = readline.createInterface({
+// Create readline interface (re-creatable)
+let rl: readline.Interface = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
@@ -23,12 +23,75 @@ const question = (query: string): Promise<string> => {
   });
 };
 
+// Ensure terminal is in cooked mode for line-based input
+function ensureCookedMode(): void {
+  try {
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(false);
+    }
+  } catch {}
+  process.stdin.resume();
+  rl.resume();
+}
+
+function resetTTY(): void {
+  try {
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(false);
+    }
+  } catch {}
+  try { process.stdin.removeAllListeners('data'); } catch {}
+  try { execSync('stty sane < /dev/tty'); } catch {}
+  process.stdin.resume();
+  rl.resume();
+}
+
+function recreateReadline(): void {
+  try { rl.close(); } catch {}
+  rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+}
+
+// Simple TTY input - works everywhere
+const questionTTY = (query: string): Promise<string> => {
+  return new Promise((resolve) => {
+    process.stdout.write(query);
+    process.stdin.setRawMode(false);
+    process.stdin.resume();
+    process.stdin.once('data', (data) => {
+      const input = data.toString().trim();
+      process.stdout.write('\n');
+      resolve(input);
+    });
+  });
+};
+
+// Silent input using shell's built-in read -s (robust masking via TTY)
+const questionSilent = (query: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const script = 'read -s -p "' + query.replace(/"/g, '\\"') + '" pw && >&2 echo && printf %s "$pw"';
+    // Use bash if available for -p to go to stderr; fall back to sh
+    const shellPath = '/bin/bash';
+    const result = spawnSync(shellPath, ['-lc', script], { stdio: ['inherit', 'pipe', 'inherit'] });
+    if (result.error) {
+      reject(result.error);
+      return;
+    }
+    if (result.status !== 0) {
+      reject(new Error('Password prompt failed'));
+      return;
+    }
+    resolve((result.stdout || Buffer.from('')).toString().trim());
+    resolve((result.stdout || Buffer.from('')).toString().trim());
+  });
+};
+
 // Simple toggle selector
 const toggle = async (prompt: string): Promise<boolean> => {
   let selected = true;
   let key = '';
 
   // Enter raw mode to get keypress events
+  rl.pause();
   process.stdin.setRawMode(true);
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
@@ -54,11 +117,12 @@ const toggle = async (prompt: string): Promise<boolean> => {
         if (key === '\u001b[C' || key === '\u001b[D') { // Left/Right arrows
           selected = !selected;
           render();
-        } else if (key === '\r') { // Enter
+        } else if (key === '\r' || key === '\n') { // Enter (CR or LF)
           process.stdin.removeListener('data', handleData);
           process.stdin.setRawMode(false);
           process.stdin.pause();
           process.stdout.write('\x1b[?25h\n'); // Show cursor and newline
+          rl.resume();
           resolve(selected);
         }
       };
@@ -102,6 +166,23 @@ const db = new Kysely<Database>({
 });
 
 const execAsync = promisify(exec);
+
+// Run a command with streaming stdio to avoid buffer limits/prompts
+function runCommand(command: string, args: string[], options: { cwd?: string; env?: NodeJS.ProcessEnv } = {}): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      stdio: 'inherit',
+      shell: false,
+      cwd: options.cwd || process.cwd(),
+      env: { ...process.env, CI: '1', ...options.env }
+    });
+    child.on('error', reject);
+    child.on('exit', (code) => {
+      if (code === 0) return resolve();
+      reject(new Error(`${command} ${args.join(' ')} exited with code ${code}`));
+    });
+  });
+}
 
 // Validate required environment variables
 const requiredEnvVars = {
@@ -229,33 +310,40 @@ async function promptForAdminCreation(): Promise<{ createAdmin: boolean; email?:
       return { createAdmin: false };
     }
 
+    let name: string;
     let email: string;
     let password: string;
-    let name: string;
 
-    // Keep asking for email until a valid one is provided
+    // 1) Name first (with default)
+    resetTTY();
+    name = await questionTTY('Enter admin name (press Enter for "Admin User"): ');
+    if (!name.trim()) {
+      name = 'Admin User';
+    }
+
+    // 2) Email (validated)
+    resetTTY();
     while (true) {
-      email = await question('Enter admin email: ');
+      email = await questionTTY('Enter admin email: ');
       if (isValidEmail(email)) {
         break;
       }
       console.error('❌ Invalid email format. Please try again.');
     }
 
-    // Keep asking for password until a valid one is provided
+    // 3) Password (silent + validated)
     while (true) {
-      password = await question('Enter admin password (minimum 8 characters): ');
+      password = await questionSilent('Enter admin password (minimum 8 characters): ');
       if (password.length >= 8) {
+        console.log('Password ok ✅');
         break;
       }
       console.error('❌ Password must be at least 8 characters long. Please try again.');
     }
 
-    name = await question('Enter admin name (press Enter for "Admin User"): ');
-    if (!name.trim()) {
-      name = 'Admin User';
-    }
-
+    // Finalize TTY state before returning
+    resetTTY();
+    try { rl.close(); } catch {}
     return {
       createAdmin: true,
       email,
@@ -263,13 +351,13 @@ async function promptForAdminCreation(): Promise<{ createAdmin: boolean; email?:
       name
     };
   } finally {
-    // Clean up readline interface
-    rl.close();
+    // intentionally no-op
   }
 }
 
 async function init() {
   const options = await promptForAdminCreation();
+  // console.log('\nInputs captured. Continuing setup...');
 
     try {
       // Check if Better-Auth is already initialized
@@ -280,8 +368,8 @@ async function init() {
 
       if (!(rows as any[]).length) {
         try {
-          // console.log('\nInitializing Better-Auth...');
-          await execAsync('npx @better-auth/cli migrate --config src/lib/auth/better.ts');
+          console.log('\nRunning Better-Auth migrations...');
+          await runCommand('npx', ['-y', '@better-auth/cli', 'migrate', '--config', 'src/lib/auth/better.ts']);
           console.log('✅ Better-Auth initialization completed');
         } catch (error) {
           console.error('Failed to run Better-Auth initialization:', error);
@@ -290,7 +378,8 @@ async function init() {
       }
 
       try {
-      await execAsync('npm run migrate');
+      console.log('\nRunning Kysely migrations...');
+      await runCommand('npm', ['run', 'migrate']);
       console.log('\n✅ Initial migrations completed');
     } catch (error) {
       console.error('Failed to run initial migrations:', error);
@@ -299,7 +388,7 @@ async function init() {
 
     if (options.createAdmin) {
       // Create admin user
-      // console.log('\nCreating admin user...');
+      console.log('\nCreating admin user...');
       // These values are guaranteed to be defined by our prompt function
       const result = await createAdminUser(
         options.email as string,
