@@ -2,8 +2,9 @@
 
 import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import { DeleteObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
-import type { StorageProvider, S3Config, EnhancedStorageProvider } from '../types';
+import { DeleteObjectCommand, ListObjectsV2Command, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import type { StorageProvider, S3Config, EnhancedStorageProvider, FileInfo } from '../types';
 import { StorageError, StorageErrorCode, StorageUtils } from '../types';
 
 /**
@@ -116,6 +117,52 @@ export class S3Provider implements StorageProvider, EnhancedStorageProvider {
   }
 
   /**
+   * Generate a presigned URL for direct client uploads
+   * @param key The S3 object key (file path)
+   * @param contentType The MIME type of the file
+   * @param expiresIn Expiration time in seconds (default 30 minutes)
+   * @returns Promise resolving to presigned URL and final public URL
+   */
+  async generatePresignedUploadUrl(
+    key: string, 
+    contentType: string, 
+    expiresIn: number = 1800
+  ): Promise<{ uploadUrl: string; finalUrl: string; fields: Record<string, string> }> {
+    try {
+      const command = new PutObjectCommand({
+        Bucket: this.config.bucket,
+        Key: key,
+        ContentType: contentType,
+        // Ensure files are publicly readable
+        ACL: 'public-read',
+      });
+
+      const uploadUrl = await getSignedUrl(this.client, command, { 
+        expiresIn,
+        // Use PUT for direct uploads (standard S3 presigned URL behavior)
+        signableHeaders: new Set(['content-type']),
+      });
+
+      const finalUrl = `${this.config.domain}/${key}`;
+
+      return {
+        uploadUrl,
+        finalUrl,
+        fields: {
+          key,
+          'Content-Type': contentType,
+        }
+      };
+    } catch (error) {
+      console.error('Error generating presigned URL:', error);
+      throw new StorageError(
+        'Failed to generate presigned upload URL',
+        StorageErrorCode.UPLOAD_FAILED
+      );
+    }
+  }
+
+  /**
    * Delete a file from S3-compatible storage
    */
   async deleteFile(url: string): Promise<boolean> {
@@ -128,15 +175,18 @@ export class S3Provider implements StorageProvider, EnhancedStorageProvider {
         );
       }
 
+      // Decode URL-encoded characters (e.g., %20 -> space)
+      const decodedPath = decodeURIComponent(relativePath);
+
       // Safety checks
-      if (relativePath.endsWith('/')) {
+      if (decodedPath.endsWith('/')) {
         throw new StorageError(
           'Cannot delete folders - file path must not end with "/"',
           StorageErrorCode.INVALID_URL
         );
       }
 
-      const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(relativePath);
+      const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(decodedPath);
       if (!hasFileExtension) {
         throw new StorageError(
           'Invalid file format - path must include a file extension',
@@ -146,7 +196,7 @@ export class S3Provider implements StorageProvider, EnhancedStorageProvider {
 
       const command = new DeleteObjectCommand({
         Bucket: this.config.bucket,
-        Key: relativePath,
+        Key: decodedPath,
       });
 
       await this.client.send(command);
@@ -211,6 +261,89 @@ export class S3Provider implements StorageProvider, EnhancedStorageProvider {
       console.error('Error finding files by pattern:', error);
       return [];
     }
+  }
+
+  /**
+   * List all files in a specific directory
+   * @param directory The directory path to list files from
+   * @returns Promise resolving to array of file information objects
+   */
+  async listFilesInDirectory(directory: string): Promise<FileInfo[]> {
+    try {
+      const normalizedDir = StorageUtils.normalizeDirectory(directory);
+      const prefix = normalizedDir ? `${normalizedDir}/` : '';
+      
+      const files: FileInfo[] = [];
+      let continuationToken: string | undefined;
+
+      do {
+        const command = new ListObjectsV2Command({
+          Bucket: this.config.bucket,
+          Prefix: prefix,
+          ContinuationToken: continuationToken,
+          MaxKeys: 1000, // AWS max
+        });
+
+        const response = await this.client.send(command);
+        
+        if (response.Contents) {
+          for (const object of response.Contents) {
+            if (object.Key && object.Key !== prefix) {
+              // Skip directory markers (keys ending with /)
+              if (object.Key.endsWith('/')) continue;
+              
+              // Extract filename from the key
+              const filename = object.Key.split('/').pop() || '';
+              
+              // Build the full URL
+              const url = `${this.config.domain}/${object.Key}`;
+              
+              files.push({
+                url,
+                name: filename,
+                size: object.Size || 0,
+                lastModified: object.LastModified || new Date(),
+                mimeType: this.getMimeTypeFromFilename(filename)
+              });
+            }
+          }
+        }
+
+        continuationToken = response.NextContinuationToken;
+      } while (continuationToken);
+
+      return files;
+    } catch (error) {
+      console.error('Error listing files in directory:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get MIME type from filename extension
+   * @param filename The filename to get MIME type for
+   * @returns MIME type string or undefined
+   */
+  private getMimeTypeFromFilename(filename: string): string | undefined {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    const mimeTypes: Record<string, string> = {
+      'mp3': 'audio/mpeg',
+      'wav': 'audio/wav',
+      'ogg': 'audio/ogg',
+      'm4a': 'audio/mp4',
+      'aac': 'audio/aac',
+      'flac': 'audio/flac',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+      'svg': 'image/svg+xml',
+      'pdf': 'application/pdf',
+      'txt': 'text/plain',
+      'json': 'application/json',
+    };
+    return mimeTypes[extension || ''];
   }
 
   /**

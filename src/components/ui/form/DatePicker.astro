@@ -1,16 +1,18 @@
 ---
 // DW - Form datepicker component using Flatpickr
 
+import Label from "@/components/ui/form/Label.astro";
+
 interface Props {
-  label: string;
-  sublabel?: string;
+  label?: string;
+  sublabel?: string | string[];
   name: string;
   required?: boolean;
   value?: string;
   placeholder?: string;
   class?: string;
   // Flatpickr specific options
-  mode?: 'single' | 'multiple' | 'range' | 'time';
+  mode?: "single" | "multiple" | "range" | "time";
   enableTime?: boolean;
   noCalendar?: boolean;
   dateFormat?: string;
@@ -59,18 +61,18 @@ const {
   placeholder = "",
   class: customClass = "",
   // Flatpickr defaults
-  mode = 'single',
+  mode = "single",
   enableTime = false,
   noCalendar = false,
-  dateFormat = 'Y-m-d',
+  dateFormat = "Y-m-d",
   altInput = false,
-  altFormat = 'F j, Y',
+  altFormat = "F j, Y",
   inline = false,
   weekNumbers = false,
   minDate,
   maxDate,
   disable = [],
-  locale = 'default',
+  locale = "default",
   // Standard props
   validation,
   htmlAttributes = {},
@@ -80,25 +82,29 @@ const defaultClass = "input";
 const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 
 // Only include validation attributes if validation is configured
-const validationAttributes = validation ? {
-  'data-validation-types': validation.types ? JSON.stringify(validation.types) : '',
-  'data-validation-rules': validation.rules ? JSON.stringify(validation.rules) : '',
-  'data-unique-check': validation.unique ? JSON.stringify(validation.unique) : '',
-  'data-success': typeof validation.success === 'object' ? JSON.stringify(validation.success) : validation.success,
-  'data-validation-config': JSON.stringify(validation),
-  'data-input-name': name,
-} : {};
+const validationAttributes = validation
+  ? {
+      "data-validation-types": validation.types
+        ? JSON.stringify(validation.types)
+        : "",
+      "data-validation-rules": validation.rules
+        ? JSON.stringify(validation.rules)
+        : "",
+      "data-unique-check": validation.unique
+        ? JSON.stringify(validation.unique)
+        : "",
+      "data-success":
+        typeof validation.success === "object"
+          ? JSON.stringify(validation.success)
+          : validation.success,
+      "data-validation-config": JSON.stringify(validation),
+      "data-input-name": name,
+    }
+  : {};
 ---
 
 <div class="flex flex-col" id={`input-container-${name}`}>
-  {sublabel ? (
-    <label for={`input-${name}`} class="label label-text flex justify-between items-center">
-      <span>{label}</span>
-      <span class="text-sm text-neutral-500" set:html={sublabel} />
-    </label>
-  ) : (
-    <label for={`input-${name}`} class="label label-text">{label}</label>
-  )}
+  {label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
   <input
     type="text"
     id={`input-${name}`}
@@ -134,7 +140,7 @@ const validationAttributes = validation ? {
 </div>
 
 <script>
-  import { validateOnBlur } from '@/components/ui/scripts/validate-input.js';
+  import { validateOnBlur } from "@/components/ui/scripts/validate-input.js";
   // @ts-ignore
   window.validateOnBlur = validateOnBlur;
 </script>
@@ -147,7 +153,7 @@ const validationAttributes = validation ? {
 
   // Initialize all datepickers
   function initializeDatepickers() {
-    const datepickers = document.querySelectorAll('[data-flatpickr]');
+    const datepickers = document.querySelectorAll("[data-flatpickr]");
     datepickers.forEach((element) => {
       const input = element as HTMLInputElement;
       const configStr = input.dataset.flatpickrConfig;
@@ -157,14 +163,14 @@ const validationAttributes = validation ? {
         const config = JSON.parse(configStr);
         flatpickr(input, config);
       } catch (error) {
-        console.error('Error initializing flatpickr:', error);
+        console.error("Error initializing flatpickr:", error);
       }
     });
   }
 
   // Initialize on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeDatepickers);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeDatepickers);
   } else {
     initializeDatepickers();
   }

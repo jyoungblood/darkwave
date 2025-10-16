@@ -103,6 +103,45 @@ class StorageFactory {
   }
 
   /**
+   * Generate a presigned URL for direct client uploads
+   * @param key The storage object key (file path)
+   * @param contentType The MIME type of the file
+   * @param expiresIn Expiration time in seconds (default 30 minutes)
+   * @returns Promise resolving to presigned URL and final public URL
+   */
+  public async generatePresignedUploadUrl(
+    key: string, 
+    contentType: string, 
+    expiresIn: number = 1800
+  ): Promise<{ uploadUrl: string; finalUrl: string; fields: Record<string, string> }> {
+    await this.initializeProvider();
+    if (!this.provider) {
+      throw new StorageError(
+        'No storage provider available',
+        StorageErrorCode.INVALID_CONFIG
+      );
+    }
+
+    // Only S3Provider supports presigned URLs currently
+    if (this.providerType !== 's3') {
+      throw new StorageError(
+        'Presigned URLs are only supported with S3-compatible storage',
+        StorageErrorCode.INVALID_CONFIG
+      );
+    }
+
+    const s3Provider = this.provider as any;
+    if (typeof s3Provider.generatePresignedUploadUrl !== 'function') {
+      throw new StorageError(
+        'Storage provider does not support presigned URLs',
+        StorageErrorCode.INVALID_CONFIG
+      );
+    }
+
+    return s3Provider.generatePresignedUploadUrl(key, contentType, expiresIn);
+  }
+
+  /**
    * Delete a file using the configured storage provider
    * @param url The file's public URL
    * @returns Promise resolving to true if delete was successful
@@ -153,6 +192,31 @@ class StorageFactory {
 
     const enhancedProvider = this.provider as any;
     return enhancedProvider.supportsCleanup ? enhancedProvider.supportsCleanup() : false;
+  }
+
+  /**
+   * List all files in a specific directory
+   * @param directory The directory path to list files from
+   * @returns Promise resolving to array of file information objects
+   */
+  public async listFilesInDirectory(directory: string): Promise<any[]> {
+    await this.initializeProvider();
+    if (!this.provider) {
+      throw new StorageError(
+        'No storage provider available',
+        StorageErrorCode.INVALID_CONFIG
+      );
+    }
+
+    const enhancedProvider = this.provider as any;
+    if (!enhancedProvider.listFilesInDirectory) {
+      throw new StorageError(
+        'Storage provider does not support listing files',
+        StorageErrorCode.INVALID_CONFIG
+      );
+    }
+
+    return enhancedProvider.listFilesInDirectory(directory);
   }
 }
 

@@ -1,11 +1,12 @@
 ---
 // DW - Form input text component
 
-import validator from 'validator';
+import validator from "validator";
+import Label from "@/components/ui/form/Label.astro";
 
 interface Props {
-  label: string;
-  sublabel?: string;
+  label?: string;
+  sublabel?: string | string[];
   name: string;
   required?: boolean;
   value?: string;
@@ -54,27 +55,33 @@ const defaultClass = "input";
 const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 
 // Only include validation attributes if validation is configured
-const validationAttributes = validation ? {
-  'data-validation-types': validation.types ? JSON.stringify(validation.types) : '',
-  'data-validation-rules': validation.rules ? JSON.stringify(validation.rules) : '',
-  'data-unique-check': validation.unique ? JSON.stringify(validation.unique) : '',
-  'data-success': typeof validation.success === 'object' ? JSON.stringify(validation.success) : validation.success,
-  'data-validation-config': JSON.stringify(validation),
-  'data-input-name': name,
-} : {};
+const validationAttributes = validation
+  ? {
+      "data-validation-types": validation.types
+        ? JSON.stringify(validation.types)
+        : "",
+      "data-validation-rules": validation.rules
+        ? JSON.stringify(validation.rules)
+        : "",
+      "data-unique-check": validation.unique
+        ? JSON.stringify(validation.unique)
+        : "",
+      "data-success":
+        typeof validation.success === "object"
+          ? JSON.stringify(validation.success)
+          : validation.success,
+      "data-validation-config": JSON.stringify(validation),
+      "data-input-name": name,
+    }
+  : {};
 ---
 
 <div class="flex flex-col" id={`input-container-${name}`}>
-  {sublabel ? (
-    <label for={`input-${name}`} class="label label-text flex justify-between items-center">
-      <span>{label}</span>
-      <span class="text-sm text-neutral-500" set:html={sublabel} />
-    </label>
-  ) : (
-    <label for={`input-${name}`} class="label label-text">{label}</label>
-  )}
+  {label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
   <input
-    type={validation?.rules?.find(rule => rule.type === 'number') ? 'number' : 'text'}
+    type={validation?.rules?.find((rule) => rule.type === "number")
+      ? "number"
+      : "text"}
     id={`input-${name}`}
     name={name}
     required={required}
@@ -90,7 +97,7 @@ const validationAttributes = validation ? {
 </div>
 
 <script>
-  import { validateOnBlur } from '@/components/ui/scripts/validate-input.js';
+  import { validateOnBlur } from "@/components/ui/scripts/validate-input.js";
   // @ts-ignore
   window.validateOnBlur = validateOnBlur;
 </script>

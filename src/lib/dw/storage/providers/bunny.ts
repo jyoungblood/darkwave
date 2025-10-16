@@ -1,6 +1,6 @@
 // DW - Bunny CDN implementation of StorageProvider
 
-import type { StorageProvider, BunnyConfig, EnhancedStorageProvider } from '../types';
+import type { StorageProvider, BunnyConfig, EnhancedStorageProvider, FileInfo } from '../types';
 import { StorageError, StorageErrorCode, StorageUtils } from '../types';
 
 /**
@@ -166,6 +166,18 @@ export class BunnyProvider implements StorageProvider, EnhancedStorageProvider {
     // Bunny CDN doesn't support listing files by pattern
     // This is a limitation of their API
     console.warn('Bunny CDN does not support file pattern matching for cleanup');
+    return [];
+  }
+
+  /**
+   * List all files in a specific directory
+   * @param directory The directory path to list files from
+   * @returns Promise resolving to array of file information objects
+   */
+  async listFilesInDirectory(directory: string): Promise<FileInfo[]> {
+    // Bunny CDN doesn't support listing files in directories
+    // This is a limitation of their API
+    console.warn('Bunny CDN does not support listing files in directories');
     return [];
   }
 

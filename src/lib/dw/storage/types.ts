@@ -84,6 +84,39 @@ export interface EnhancedStorageProvider extends StorageProvider {
    * @returns true if cleanup is supported, false otherwise
    */
   supportsCleanup(): boolean;
+
+  /**
+   * List all files in a specific directory
+   * @param directory The directory path to list files from
+   * @returns Promise resolving to array of file information objects
+   */
+  listFilesInDirectory(directory: string): Promise<FileInfo[]>;
+}
+
+/**
+ * File information returned by listFilesInDirectory
+ */
+export interface FileInfo {
+  /**
+   * The full URL of the file
+   */
+  url: string;
+  /**
+   * The filename (without path)
+   */
+  name: string;
+  /**
+   * The file size in bytes
+   */
+  size: number;
+  /**
+   * The last modified date
+   */
+  lastModified: Date;
+  /**
+   * The MIME type of the file
+   */
+  mimeType?: string;
 }
 
 /**

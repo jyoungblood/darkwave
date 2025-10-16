@@ -1,8 +1,11 @@
 ---
 // DW - Form select dropdown component
 
+import Label from "@/components/ui/form/Label.astro";
+
 interface Props {
-  label: string;
+  label?: string;
+  sublabel?: string | string[];
   name: string;
   required?: boolean;
   value?: string;
@@ -14,6 +17,7 @@ interface Props {
 const defaultClass = "select select-bordered";
 const {
   label,
+  sublabel,
   name,
   required = false,
   value = "",
@@ -24,13 +28,8 @@ const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 ---
 
 <!-- mb-2 text-sm font-semibold -->
-<label for={`input-${name}`} class="label label-text">{label}</label>
-<select
-  id={`input-${name}`}
-  name={name}
-  required={required}
-  class={className}
->
+{label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
+<select id={`input-${name}`} name={name} required={required} class={className}>
   {
     options.map((option) => (
       <option value={option.value} selected={option.value === value}>

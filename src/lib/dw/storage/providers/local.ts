@@ -2,7 +2,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { StorageProvider, LocalConfig, EnhancedStorageProvider } from '../types';
+import type { StorageProvider, LocalConfig, EnhancedStorageProvider, FileInfo } from '../types';
 import { StorageError, StorageErrorCode, StorageUtils } from '../types';
 
 /**
@@ -250,6 +250,81 @@ export class LocalProvider implements StorageProvider, EnhancedStorageProvider {
     } catch (error) {
       console.error(`Error reading directory: ${dirPath}`, error);
     }
+  }
+
+  /**
+   * List all files in a specific directory
+   * @param directory The directory path to list files from
+   * @returns Promise resolving to array of file information objects
+   */
+  async listFilesInDirectory(directory: string): Promise<FileInfo[]> {
+    try {
+      const normalizedDir = StorageUtils.normalizeDirectory(directory);
+      const fullDirPath = path.join(this.publicDir, normalizedDir);
+      
+      // Check if directory exists
+      try {
+        await fs.access(fullDirPath);
+      } catch {
+        return []; // Directory doesn't exist
+      }
+
+      const files: FileInfo[] = [];
+      const entries = await fs.readdir(fullDirPath, { withFileTypes: true });
+      
+      for (const entry of entries) {
+        if (entry.isFile()) {
+          const fullPath = path.join(fullDirPath, entry.name);
+          const relativePath = path.join(normalizedDir, entry.name);
+          const url = `${this.config.domain}/${relativePath.replace(/\\/g, '/')}`;
+          
+          try {
+            const stats = await fs.stat(fullPath);
+            files.push({
+              url,
+              name: entry.name,
+              size: stats.size,
+              lastModified: stats.mtime,
+              mimeType: this.getMimeTypeFromFilename(entry.name)
+            });
+          } catch (error) {
+            console.error(`Error getting stats for file ${entry.name}:`, error);
+          }
+        }
+      }
+
+      return files;
+    } catch (error) {
+      console.error('Error listing files in directory:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get MIME type from filename extension
+   * @param filename The filename to get MIME type for
+   * @returns MIME type string or undefined
+   */
+  private getMimeTypeFromFilename(filename: string): string | undefined {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    const mimeTypes: Record<string, string> = {
+      'mp3': 'audio/mpeg',
+      'wav': 'audio/wav',
+      'ogg': 'audio/ogg',
+      'm4a': 'audio/mp4',
+      'aac': 'audio/aac',
+      'flac': 'audio/flac',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+      'svg': 'image/svg+xml',
+      'pdf': 'application/pdf',
+      'txt': 'text/plain',
+      'json': 'application/json',
+    };
+    return mimeTypes[extension || ''];
   }
 
   /**

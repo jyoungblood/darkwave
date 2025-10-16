@@ -1,8 +1,11 @@
 ---
 // DW - Form checkbox group component
 
+import Label from "@/components/ui/form/Label.astro";
+
 interface Props {
-  label: string;
+  label?: string;
+  sublabel?: string | string[];
   name: string;
   required?: boolean;
   class?: string;
@@ -14,6 +17,7 @@ interface Props {
 const defaultClass = "flex items-center gap-1";
 const {
   label,
+  sublabel,
   name,
   required = false,
   options,
@@ -30,7 +34,7 @@ const containerClass = columns
 ---
 
 <div class="form-control">
-  <label class="label label-text">{label}</label>
+  {label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
   <div class={containerClass}>
     {
       options.map((option) => (

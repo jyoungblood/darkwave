@@ -1,8 +1,11 @@
 ---
 // DW - Form textarea component
 
+import Label from "@/components/ui/form/Label.astro";
+
 interface Props {
-  label: string;
+  label?: string;
+  sublabel?: string | string[];
   name: string;
   required?: boolean;
   value?: string;
@@ -10,17 +13,26 @@ interface Props {
   class?: string;
 }
 
-const defaultClass = 'textarea max-w-full';
+const defaultClass = "textarea max-w-full";
 // const defaultClass = 'p-2 border border-neutral-400 rounded-md';
-const { label, name, required = false, value = '', placeholder = '', class: customClass = '' } = Astro.props;
+const {
+  label,
+  sublabel,
+  name,
+  required = false,
+  value = "",
+  placeholder = "",
+  class: customClass = "",
+} = Astro.props;
 const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 ---
+
 <!-- mb-2 text-sm font-semibold -->
-<label for={`textarea-${name}`} class="label label-text">{label}</label>
+{label && <Label text={label} for={`textarea-${name}`} subtext={sublabel} />}
 <textarea
   id={`textarea-${name}`}
   name={name}
   required={required}
   class={className}
-  placeholder={placeholder}
->{value}</textarea>
+  placeholder={placeholder}>{value}</textarea
+>

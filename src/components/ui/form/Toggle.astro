@@ -1,8 +1,12 @@
 ---
 // DW - Form toggle component using FlyonUI switch styling
 
+import Label from "@/components/ui/form/Label.astro";
+
 interface Props {
-  label: string;
+  label?: string;
+  sublabel?: string | string[];
+  popoverIcon?: string;
   name: string;
   required?: boolean;
   class?: string;
@@ -23,6 +27,8 @@ interface Props {
 
 const {
   label,
+  sublabel,
+  popoverIcon,
   name,
   required = false,
   class: customClass = "",
@@ -59,16 +65,7 @@ const switchClasses = [
     checked={checked}
     disabled={disabled}
   />
-  <label class="label-text" for={name}>
-    {label}
-    {
-      helperText && (
-        <span class="block text-gray-500">
-          {helperText}
-        </span>
-      )
-    }
-  </label>
+  {label && <Label text={label} for={name} subtext={sublabel} popover={true} subtextInline={true} popoverIcon={popoverIcon} />}
 </div>
 
 <!-- alt version (looks more like toggle) -->

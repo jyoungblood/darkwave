@@ -1,0 +1,99 @@
+---
+// DW - Form input text component
+
+interface Props {
+  text?: string | boolean;
+  subtext?: string | string[] | boolean;
+  for?: string;
+  class?: string;
+  htmlAttributes?: Record<string, string>;
+  popover?: boolean;
+  subtextInline?: boolean;
+  subtextColor?: string;
+  popoverIcon?: string;
+}
+
+const {
+  text,
+  subtext,
+  for: forInput,
+  class: customClass = "",
+  htmlAttributes = {},
+  popover = false,
+  subtextInline = false,
+  subtextColor = "text-neutral-500",
+  popoverIcon = `icon-[tabler--info-circle] size-4 text-neutral-400`,
+} = Astro.props;
+
+const defaultClass = "label label-text";
+const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
+---
+
+<>
+  {
+    subtext ? (
+      <label
+        for={`input-${forInput}`}
+        class={`${className} flex items-center ${subtextInline ? "gap-2" : "justify-between"}`}
+        {...htmlAttributes}
+      >
+        <span>{text}</span>
+        {popover ? (
+          <div class="tooltip">
+            <span class="tooltip-toggle flex items-center">
+              <span class={popoverIcon} />
+            </span>
+            <div
+              class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible"
+              role="tooltip"
+            >
+              <div class="tooltip-body bg-base-100 max-w-xl rounded-lg px-4 py-3 text-start border border-neutral-200">
+                {Array.isArray(subtext) ? (
+                  <ul class={`text-sm ${subtextColor} list-disc list-inside`}>
+                    {subtext.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span class={`text-sm ${subtextColor}`} set:html={subtext} />
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {Array.isArray(subtext) ? (
+              <ul class={`text-sm ${subtextColor} list-disc list-inside`}>
+                {subtext.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            ) : (
+              <span class={`text-sm ${subtextColor}`} set:html={subtext} />
+            )}
+          </>
+        )}
+      </label>
+    ) : (
+      <label for={`input-${forInput}`} class={className} {...htmlAttributes}>
+        {text}
+      </label>
+    )
+  }
+</>
+
+{popover && (
+<script>
+  // @ts-ignore - FlyonUI has no type definitions
+  import HSTooltip from "flyonui/dist/tooltip.mjs";
+
+  // Initialize tooltips after DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      HSTooltip.autoInit();
+    });
+  } else {
+    HSTooltip.autoInit();
+  }
+</script>
+)}
