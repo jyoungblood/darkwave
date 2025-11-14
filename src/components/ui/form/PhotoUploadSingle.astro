@@ -1,6 +1,12 @@
 ---
 // DW - Photo upload component - single photo
 
+interface CompressionConfig {
+  format?: "webp" | "jpeg" | "jpg" | "png" | "avif" | "tiff" | "gif";
+  size?: number;
+  quality?: number;
+}
+
 interface Props {
   related_id: string;
   related_table: string;
@@ -13,6 +19,7 @@ interface Props {
   dz_icon?: string;
   cropper?: boolean;
   preserveFileName?: boolean;
+  compression?: CompressionConfig;
 }
 
 const {
@@ -27,6 +34,7 @@ const {
   dz_icon = "tabler--plus",
   cropper = false,
   preserveFileName = false,
+  compression,
 } = Astro.props;
 
 // Normalize the upload path by removing optional leading/trailing slashes
@@ -70,6 +78,11 @@ import PhotoCropper from "./PhotoCropper.astro";
     type="hidden"
     name="component_photo_upload_preserveFileName"
     value={preserveFileName.toString()}
+  />
+  <input
+    type="hidden"
+    name="component_photo_upload_compression"
+    value={compression ? JSON.stringify(compression) : ""}
   />
 
   <!-- Photo Editor Modal -->
@@ -215,6 +228,13 @@ import PhotoCropper from "./PhotoCropper.astro";
     //   }
     // }
 
+    // Extend Window interface for showAlert (client-side script needs this)
+    declare global {
+      interface Window {
+        showAlert: (options: Record<string, any>) => void;
+      }
+    }
+
     // Debounce function to limit how often a function can be called
     function debounce<T extends (...args: any[]) => any>(
       func: T,
@@ -260,6 +280,9 @@ import PhotoCropper from "./PhotoCropper.astro";
           ) as HTMLInputElement,
           preserveFileName: container.querySelector(
             'input[name="component_photo_upload_preserveFileName"]'
+          ) as HTMLInputElement,
+          compression: container.querySelector(
+            'input[name="component_photo_upload_compression"]'
           ) as HTMLInputElement,
         };
 
@@ -356,6 +379,7 @@ import PhotoCropper from "./PhotoCropper.astro";
               related_column: uploadConfigElements.relatedColumn.value || "",
               preserveFileName:
                 uploadConfigElements.preserveFileName.value || "false",
+              compression: uploadConfigElements.compression.value || "",
             };
           },
           autoQueue: true,
@@ -368,7 +392,7 @@ import PhotoCropper from "./PhotoCropper.astro";
           timeout: 180000,
           parallelUploads: 1,
           uploadMultiple: false,
-          chunking: true,
+          chunking: !uploadConfigElements.compression.value,
           dictDefaultMessage: "Drop files here or click to upload",
           dictFileTooBig: `File is too large ({{filesize}}MB). Maximum size is ${uploadConfig.maxFilesize}MB.`,
           dictInvalidFileType: `Invalid file type. Please upload a ${acceptedFileTypes} image.`,

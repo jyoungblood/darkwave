@@ -5,6 +5,7 @@ import { dwStorage } from '@/lib/dw/storage';
 import { db } from '@/lib/db';
 import { formatMySQLDateTime } from '@/lib/dw/helpers';
 import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
+import { compressImage, isImageFile } from '@/lib/dw/images';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -28,6 +29,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const related_table = formData.get('related_table') as string;
     const related_column = formData.get('related_column') as string;
     const preserveFileName = formData.get('preserveFileName') as string;
+    const compressionConfigStr = formData.get('compression') as string;
+    
+    // Parse compression config with defaults
+    let compressionConfig: { format?: string; size?: number; quality?: number } | null = null;
+    if (compressionConfigStr) {
+      try {
+        compressionConfig = JSON.parse(compressionConfigStr);
+      } catch (e) {
+        console.error('Failed to parse compression config:', e);
+      }
+    }
     
     if (!file) {
       return new Response(JSON.stringify({ error: 'No file provided' }), { 
@@ -62,10 +74,50 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
+    // Compress image if compression config is provided
+    let fileToUpload = file;
+    let finalFileName: string | undefined = preserveFileName === 'true' ? file.name : undefined;
+
+    // Check if file is an image (now checks both MIME type and extension)
+    const isImage = isImageFile(file);
+
+    if (compressionConfig && isImage) {
+      try {
+        // Use compression config values with defaults
+        const format = (compressionConfig.format || 'webp') as 'webp' | 'jpeg' | 'jpg' | 'png' | 'avif' | 'tiff' | 'gif';
+        const maxWidth = compressionConfig.size || 2048;
+        const quality = compressionConfig.quality || 85;
+        
+        const result = await compressImage(file, format, maxWidth, quality);
+        
+        if (result) {
+          // Replace file extension with the new format
+          const baseFileName = file.name.replace(/\.[^/.]+$/, '');
+          finalFileName = `${baseFileName}.${result.format}`;
+          
+          // Create a new File object from the compressed buffer
+          const mimeType = `image/${result.format}`;
+          const uint8Array = new Uint8Array(result.buffer);
+          const blob = new Blob([uint8Array], { type: mimeType });
+          
+          if (typeof File !== 'undefined') {
+            fileToUpload = new File([blob], finalFileName, { type: mimeType });
+          } else {
+            // Fallback for older Node.js versions (shouldn't happen in modern Node.js)
+            fileToUpload = file;
+            finalFileName = preserveFileName === 'true' ? file.name : undefined;
+          }
+        }
+      } catch (compressionError) {
+        console.error('Error during image compression:', compressionError);
+        // If compression fails, fall back to original file
+      }
+    }
+
     // Upload file to CDN with optional filename preservation
-    const url = preserveFileName === 'true' 
-      ? await dwStorage.uploadFile(file, path, file.name)
-      : await dwStorage.uploadFile(file, path);
+    const url = finalFileName
+      ? await dwStorage.uploadFile(fileToUpload, path, finalFileName)
+      : await dwStorage.uploadFile(fileToUpload, path);
       
     if (!url) {
       throw new Error('Upload failed');

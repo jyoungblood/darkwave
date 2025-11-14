@@ -4,6 +4,12 @@
 import { db } from "@/lib/db";
 import PhotoCropper from "./PhotoCropper.astro";
 
+interface CompressionConfig {
+  format?: 'webp' | 'jpeg' | 'jpg' | 'png' | 'avif' | 'tiff' | 'gif';
+  size?: number;
+  quality?: number;
+}
+
 interface Props {
   related_id: string;
   related_table: string;
@@ -15,6 +21,7 @@ interface Props {
   dz_icon?: string;
   cropper?: boolean;
   preserveFileName?: boolean;
+  compression?: CompressionConfig;
 }
 
 interface GalleryPhoto {
@@ -36,7 +43,8 @@ const {
   file_formats = "image/jpeg,image/png,image/webp",
   dz_icon = "tabler--plus",
   cropper = false,
-  preserveFileName = false
+  preserveFileName = false,
+  compression
 } = Astro.props;
 
 // Normalize the upload path by removing optional leading/trailing slashes
@@ -70,6 +78,7 @@ try {
   <input type="hidden" name="component_gallery_upload_maxFilesize" value={file_limit_size} />
   <input type="hidden" name="component_gallery_upload_acceptedFiles" value={file_formats} />
   <input type="hidden" name="component_gallery_upload_preserveFileName" value={preserveFileName.toString()} />
+  <input type="hidden" name="component_gallery_upload_compression" value={compression ? JSON.stringify(compression) : ''} />
 
   <!-- Photo Editor Modal -->
   <div
@@ -788,6 +797,7 @@ try {
                                     formData.append('related_id', (container.querySelector('input[name="component_gallery_upload_related_id"]') as HTMLInputElement)?.value || '');
                                     formData.append('related_table', (container.querySelector('input[name="component_gallery_upload_related_table"]') as HTMLInputElement)?.value || '');
                                     formData.append('gallery_type', (container.querySelector('input[name="component_gallery_upload_gallery_type"]') as HTMLInputElement)?.value || '');
+                                    formData.append('compression', (container.querySelector('input[name="component_gallery_upload_compression"]') as HTMLInputElement)?.value || '');
                                     
                                     // Upload the files manually
                                     fetch('/api/gallery/create', {
@@ -1141,6 +1151,11 @@ try {
                   'input[name="component_gallery_upload_preserveFileName"]'
                 ) as HTMLInputElement
               )?.value || "false",
+              compression: (
+                container.querySelector(
+                  'input[name="component_gallery_upload_compression"]'
+                ) as HTMLInputElement
+              )?.value || "",
             };
           },
           autoQueue: true,
@@ -1154,7 +1169,11 @@ try {
           parallelUploads: 3,
           uploadMultiple: false,
           forceFallback: false,
-          chunking: false,
+          chunking: !(
+            container.querySelector(
+              'input[name="component_gallery_upload_compression"]'
+            ) as HTMLInputElement
+          )?.value,
           dictDefaultMessage: "Drop files here or click to upload",
           dictFileTooBig:
             `File is too large ({{filesize}}MB). Maximum size is ${uploadConfig.maxFilesize}MB.`,

@@ -4,11 +4,19 @@ import { defineConfig } from "astro/config";
 import path from "path";
 import node from "@astrojs/node";
 import tailwindcss from "@tailwindcss/vite";
+import favicons from "astro-favicons";
 
 export default defineConfig({
   prefetch: true,
   output: "server",
-  integrations: [],
+  integrations: [favicons()],
+  //   favicons({
+  //     masterPicture: "./src/assets/favicon.svg",
+  //     emitAssets: true,
+  //     appDescription: import.meta.env.SITE_TITLE,
+  //     faviconsDarkMode: false,
+  //     start_url: "/",
+  //   }),
   site: `https://${import.meta.env.SITE_DOMAIN}`,
 
   adapter: node({
@@ -28,14 +36,15 @@ export default defineConfig({
         img-src 'self' data: https: blob: *.${
           import.meta.env.SITE_DOMAIN
         } *.google.com *.googleapis.com ${
-          import.meta.env.BUNNY_STORAGE_REGION && import.meta.env.BUNNY_STORAGE_NAME
-            ? `*.bunnycdn.com ${import.meta.env.BUNNY_STORAGE_REGION}.storage.bunnycdn.com ${import.meta.env.BUNNY_STORAGE_NAME}.b-cdn.net`
-            : ''
-        } ${
-          import.meta.env.S3_DOMAIN
-            ? import.meta.env.S3_DOMAIN
-            : ''
-        };
+            import.meta.env.BUNNY_STORAGE_REGION &&
+            import.meta.env.BUNNY_STORAGE_NAME
+              ? `*.bunnycdn.com ${
+                  import.meta.env.BUNNY_STORAGE_REGION
+                }.storage.bunnycdn.com ${
+                  import.meta.env.BUNNY_STORAGE_NAME
+                }.b-cdn.net`
+              : ""
+          } ${import.meta.env.S3_DOMAIN ? import.meta.env.S3_DOMAIN : ""};
         font-src 'self' https://fonts.googleapis.com data: *.${
           import.meta.env.SITE_DOMAIN
         };

@@ -1,3 +1,18 @@
+# ⚠️ CRITICAL DIRECTIVE - READ FIRST ⚠️
+
+## DO NOT JUMP INTO IMPLEMENTATION
+
+**WHEN THE USER ASKS A QUESTION, ESPECIALLY ABOUT CODE:**
+- **ANSWER THE QUESTION** - provide information, explanation, or analysis
+- **DO NOT START WRITING CODE** unless explicitly asked to implement something
+- **DO NOT ASSUME** that a question means you should immediately start coding
+- Questions are often exploratory - the user wants to understand before deciding what to do
+- Only implement code changes when the user explicitly requests implementation
+
+**This directive applies to ALL interactions - questions should be answered, not immediately acted upon.**
+
+---
+
 # PROJECT OVERVIEW
 
 What we're building

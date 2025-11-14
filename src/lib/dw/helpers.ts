@@ -31,12 +31,16 @@ export function formatMySQLDateTime(dateStr?: string | Date): string {
 }
 
 /**
- * Formats a string to a slug
- * @param text String to format
- * @returns Slugified string (e.g., "my-string")
+  * Formats a string to a slug
+  * @param text String to format
+  * @returns Slugified string (e.g., "my-string")
  */
 export function formatSlug(text?: string): string {
-  return text?.toLowerCase().replace(/\s+/g, '-') ?? '';
+  if (!text) return '';
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '') // Remove all non-alphanumeric characters (keep spaces)
+    .replace(/\s+/g, '-'); // Replace spaces with dashes
 }
 
 /**
@@ -80,8 +84,8 @@ export function htmlToPlainText(html: string): string {
  * @param text Text string with newlines
  * @returns HTML string with <br> tags
  */
-export function nl2br(text: string): string {
-  return text.replace(/\n/g, '<br>');
+export function nl2br(text: string | null | undefined): string {
+  return text?.replace(/\n/g, '<br>') || '';
 }
 
 /**
@@ -109,4 +113,83 @@ export function extractYouTubeVideoId(url: string): string | null {
   }
   
   return null;
+}
+
+
+
+
+
+
+
+
+
+/**
+ * Normalizes a URL string by ensuring it has a protocol scheme
+ * @param url URL string to normalize (may or may not include protocol)
+ * @param protocol Optional protocol to use ('http://' or 'https://'). Defaults to 'https://'
+ * @returns Normalized URL with protocol, or empty string if URL is invalid/empty or doesn't contain a dot
+ */
+export function normalizeUrl(url: string, protocol?: 'http://' | 'https://'): string {
+  if (!url || url === '' || url.indexOf('.') === -1) {
+    return '';
+  }
+
+  let normalized = url.trim();
+  const hasScheme = /^https?:\/\//i.test(normalized);
+  const desiredProtocol = protocol ?? 'https://';
+
+  if (!hasScheme) {
+    // Handle cases like //example.com to avoid duplicating slashes
+    if (normalized.indexOf('//') !== -1) {
+      const parts = normalized.split('//');
+      normalized = parts[1] ?? normalized;
+    }
+    return `${desiredProtocol}${normalized}`;
+  }
+
+  // Already has http/https; rewrite scheme if a specific protocol is requested
+  if (protocol) {
+    const parts = normalized.split('//');
+    const rest = parts[1] ?? '';
+    return `${desiredProtocol}${rest}`;
+  }
+
+  return normalized;
+}
+
+
+
+
+
+/**
+  * Cleans HTML text by removing tags and collapsing whitespace
+  * @param input String to clean
+  * @returns Cleaned string or null
+ */
+export function cleanHtmlText(input: string): string | null {
+  if (!input || typeof input !== "string") return null;
+  const withoutTags = input.replace(/<[^>]*>/g, " ");
+  const collapsedWhitespace = withoutTags.replace(/\s+/g, " ").trim();
+  return collapsedWhitespace;
+}
+
+
+
+
+
+
+
+/**
+ * Escapes XML special characters in a string
+ * @param unsafe The string to escape
+ * @returns The escaped string
+ */
+export function escapeXml(unsafe: string): string {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 }

@@ -1,5 +1,6 @@
 ---
 // DW - Form submit button
+// updated for LWOA
 
 import FullscreenSpinner from "@/components/ui/FullscreenSpinner.astro";
 
@@ -12,6 +13,9 @@ interface Props {
   workingText?: string;
   successMessage?: string;
   showFullscreenSpinner?: boolean;
+  showSuccessAlert?: boolean;
+  successButtonText?: string;
+  successButtonResetDelayMs?: number;
 }
 
 const {
@@ -23,7 +27,10 @@ const {
   workingText = "Saving...",
   successMessage = "Changes saved successfully.",
   showFullscreenSpinner = false,
-} = Astro.props;
+  showSuccessAlert = true,
+  successButtonText,
+  successButtonResetDelayMs = 2500,
+} = Astro.props as Props;
 ---
 
 <FullscreenSpinner id="button-submit-spinner" />
@@ -77,6 +84,9 @@ flex items-center justify-center" -->
     buttonText,
     successMessage,
     showFullscreenSpinner,
+    showSuccessAlert,
+    successButtonText,
+    successButtonResetDelayMs,
   }}
 >
   const formElement = document.querySelector(form);
@@ -84,6 +94,13 @@ flex items-center justify-center" -->
   const buttonTextValue = document.querySelector("[data-button-text]");
   const loadingSpinner = document.querySelector("[data-button-spinner]");
   const fullscreenSpinner = document.querySelector("#button-submit-spinner");
+  let successResetTimeoutId = null;
+  const resetFormInteraction = () => {
+    if (!showFullscreenSpinner) {
+      formElement.classList.remove("opacity-50");
+      formElement.classList.remove("cursor-not-allowed");
+    }
+  };
 
   if (
     !formElement ||
@@ -140,6 +157,7 @@ flex items-center justify-center" -->
         submitButton.setAttribute("aria-busy", "false");
         buttonTextValue.textContent = buttonText;
         loadingSpinner.classList.add("hidden");
+        resetFormInteraction();
         if (showFullscreenSpinner) {
           fullscreenSpinner.classList.add("hidden");
         }
@@ -184,35 +202,52 @@ flex items-center justify-center" -->
           // Reset button state
           submitButton.disabled = false;
           submitButton.setAttribute("aria-busy", "false");
-          buttonTextValue.textContent = buttonText;
           loadingSpinner.classList.add("hidden");
+          resetFormInteraction();
           if (showFullscreenSpinner) {
             fullscreenSpinner.classList.add("hidden");
           }
 
+          if (successResetTimeoutId !== null) {
+            window.clearTimeout(successResetTimeoutId);
+            successResetTimeoutId = null;
+          }
+
+          if (successButtonText) {
+            buttonTextValue.textContent = successButtonText;
+            successResetTimeoutId = window.setTimeout(() => {
+              buttonTextValue.textContent = buttonText;
+              successResetTimeoutId = null;
+            }, successButtonResetDelayMs);
+          } else {
+            buttonTextValue.textContent = buttonText;
+          }
+
           // Show success alert
-          window.showAlert({
-            type: "success",
-            variant: "soft",
-            title: "Success",
-            text: successMessage,
-            icon: true,
-            overlay: true,
-            position: {
-              vertical: "middle-third",
-              horizontal: "center",
-            },
-            buttonLayout: {
-              newLine: true,
-            },
-            buttons: [
-              {
-                type: "success",
-                text: "OK",
-                variant: "solid",
+          if (showSuccessAlert) {
+            window.showAlert({
+              type: "success",
+              variant: "soft",
+              title: "Success",
+              text: successMessage,
+              icon: true,
+              overlay: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
               },
-            ],
-          });
+              buttonLayout: {
+                newLine: true,
+              },
+              buttons: [
+                {
+                  type: "success",
+                  text: "OK",
+                  variant: "solid",
+                },
+              ],
+            });
+          }
         }
       }
     } catch (error) {
@@ -221,6 +256,7 @@ flex items-center justify-center" -->
       submitButton.setAttribute("aria-busy", "false");
       buttonTextValue.textContent = buttonText;
       loadingSpinner.classList.add("hidden");
+      resetFormInteraction();
       if (showFullscreenSpinner) {
         fullscreenSpinner.classList.add("hidden");
       }
