@@ -10,11 +10,17 @@ interface CompressionConfig {
   quality?: number;
 }
 
+interface ParametersColumnConfig {
+  name: string;
+  default?: string;
+}
+
 interface Props {
-  related_id: string;
+  related_id: string | Record<string, string>;
   related_table: string;
   upload_path: string;
   gallery_type: string;
+  parameters_column?: ParametersColumnConfig;
   file_limit_quantity?: number;
   file_limit_size?: number;
   file_formats?: string;
@@ -38,6 +44,7 @@ const {
   related_table, 
   upload_path, 
   gallery_type, 
+  parameters_column,
   file_limit_quantity = 20, 
   file_limit_size = 10, 
   file_formats = "image/jpeg,image/png,image/webp",
@@ -47,6 +54,20 @@ const {
   compression
 } = Astro.props;
 
+// Serialize related_id: if object, stringify it; if string, use as-is
+const serializedRelatedId = typeof related_id === 'object' 
+  ? JSON.stringify(related_id) 
+  : related_id;
+
+// Extract parameters_column values
+const parametersColumnName = parameters_column?.name || '';
+const parametersColumnDefault = parameters_column?.default || 'aspect_ratio=4:3';
+
+// Serialize parameters_column config
+const serializedParametersColumn = parameters_column
+  ? JSON.stringify(parameters_column)
+  : '';
+
 // Normalize the upload path by removing optional leading/trailing slashes
 const normalizedUploadPath = upload_path.replace(/^\/+|\/+$/g, '');
 
@@ -55,10 +76,15 @@ let photos;
 let photosError;
 
 try {
+  // Parse related_id to get the actual value for database query
+  const relatedIdValue = typeof related_id === 'object' 
+    ? Object.values(related_id)[0] 
+    : related_id;
+  
   photos = await db
     .selectFrom('gallery_content')
     .selectAll()
-    .where('related_id', '=', related_id)
+    .where('related_id', '=', relatedIdValue)
     .where('related_table', '=', related_table)
     .where('gallery_type', '=', gallery_type)
     .orderBy('display_order')
@@ -71,9 +97,11 @@ try {
 
 <div class="gallery-upload-container" data-path={normalizedUploadPath} data-photos={JSON.stringify(photos)}>
   <input type="hidden" name="component_gallery_upload_dz_icon" value={dz_icon} />
-  <input type="hidden" name="component_gallery_upload_related_id" value={related_id} />
+  <input type="hidden" name="component_gallery_upload_related_id" value={serializedRelatedId} />
   <input type="hidden" name="component_gallery_upload_related_table" value={related_table} />
   <input type="hidden" name="component_gallery_upload_gallery_type" value={gallery_type} />
+  <input type="hidden" name="component_gallery_upload_parameters_column" value={serializedParametersColumn} />
+  <input type="hidden" name="component_gallery_upload_parameters_column_default" value={parametersColumnDefault} />
   <input type="hidden" name="component_gallery_upload_maxFiles" value={file_limit_quantity} />
   <input type="hidden" name="component_gallery_upload_maxFilesize" value={file_limit_size} />
   <input type="hidden" name="component_gallery_upload_acceptedFiles" value={file_formats} />
@@ -1146,6 +1174,16 @@ try {
                   'input[name="component_gallery_upload_gallery_type"]'
                 ) as HTMLInputElement
               )?.value,
+              parameters_column: (
+                container.querySelector(
+                  'input[name="component_gallery_upload_parameters_column"]'
+                ) as HTMLInputElement
+              )?.value || "",
+              parameters_column_default: (
+                container.querySelector(
+                  'input[name="component_gallery_upload_parameters_column_default"]'
+                ) as HTMLInputElement
+              )?.value || "",
               preserveFileName: (
                 container.querySelector(
                   'input[name="component_gallery_upload_preserveFileName"]'

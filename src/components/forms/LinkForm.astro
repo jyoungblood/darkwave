@@ -13,6 +13,7 @@ import ButtonSubmit from "@/components/ui/form/ButtonSubmit.astro";
 import ButtonDelete from "@/components/ui/form/ButtonDelete.astro";
 import PhotoUploadSingle from "@/components/ui/form/PhotoUploadSingle.astro";
 import PhotoUploadGallery from "@/components/ui/form/PhotoUploadGallery.astro";
+import Label from "@/components/ui/form/Label.astro";
 
 import { ensureCsrfToken } from "@/lib/csrf";
 ensureCsrfToken(Astro.cookies);
@@ -71,37 +72,52 @@ ensureCsrfToken(Astro.cookies);
 
           <div class="flex flex-col">
             <div class="mb-4">
-              <label class="label label-text">Primary Photo</label>
+              <Label text="Primary Photo" />
               <PhotoUploadSingle
-                related_id={link?.uuid}
+                related_id={{ uuid: link?.uuid }}
                 related_table="links"
                 related_column="photo_url"
+                parameters_column={{
+                  name: "photo_url_parameters",
+                  default: "aspect_ratio=4:3",
+                }}
                 url={link?.photo_url}
                 url_parameters={link?.photo_url_parameters}
                 upload_path="/links"
+                compression={{ format: "webp", size: 1024, quality: 80 }}
               />
             </div>
 
             <div class="mb-4">
-              <label class="label label-text">Gallery Photos</label>
+              <Label text="Gallery Photos" />
               <PhotoUploadGallery
-                related_id={link?.uuid}
+                related_id={{ uuid: link?.uuid }}
                 related_table="links"
                 gallery_type="link-gallery"
                 upload_path="/links/gallery"
+                parameters_column={{
+                  name: "photo_url_parameters",
+                  default: "aspect_ratio=4:3",
+                }}
+                compression={{ format: "webp", size: 1024, quality: 80 }}
               />
             </div>
 
             <div class="mb-4">
-              <label class="label label-text">Slideshow Photos</label>
+              <Label text="Slideshow Photos" />
               <PhotoUploadGallery
-                related_id={link?.uuid}
+                related_id={{ uuid: link?.uuid }}
                 related_table="links"
                 gallery_type="link-slideshow"
                 upload_path="/links/slideshow"
+                parameters_column={{
+                  name: "photo_url_parameters",
+                  default: "aspect_ratio=4:3",
+                }}
                 file_limit_quantity={6}
                 file_limit_size={1}
                 file_formats="image/jpeg"
+                compression={{ format: "webp", size: 1024, quality: 80 }}
               />
             </div>
           </div>

@@ -2,8 +2,7 @@
 
 import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
-import { formatMySQLDateTime } from '@/lib/dw/helpers';
-import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
+import { checkAuthorizationWithOwnership, parseRelatedId } from '@/lib/auth/permissions';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -24,7 +23,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       photo_title, 
       photo_description, 
       photo_url_parameters,
-      related_id,
+      related_id: related_id_raw,
       related_table
     } = await request.json();
     
@@ -57,14 +56,27 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
+    // Parse related_id if provided, otherwise use the value from database (already parsed)
+    const effectiveRelatedId = related_id_raw 
+      ? parseRelatedId(related_id_raw).value 
+      : existingRecord.related_id;
+    const effectiveRelatedTable = related_table || existingRecord.related_table;
+    
+    // For authorization, we need to determine the ID column
+    // If related_id_raw was provided, parse it to get the column; otherwise assume 'uuid' (default)
+    const { column: idColumn } = related_id_raw 
+      ? parseRelatedId(related_id_raw)
+      : { column: 'uuid' };
+
     // Check authorization with ownership
     const authError = await checkAuthorizationWithOwnership(
       locals.userId,
       locals.authRoles,
-      related_id || existingRecord.related_id,
-      related_table || existingRecord.related_table,
+      effectiveRelatedId,
+      effectiveRelatedTable,
       true, // Require ownership for gallery updates
-      db
+      db,
+      idColumn
     );
 
     if (authError) {
@@ -78,8 +90,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const updateData: Record<string, string | null> = {
       title: photo_title || null,
       description: photo_description || null,
-      photo_url_parameters: photo_url_parameters || null,
-      updated_at: formatMySQLDateTime()
+      photo_url_parameters: photo_url_parameters || null
     };
 
     await db

@@ -3,7 +3,7 @@
 import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
 import { dwStorage } from '@/lib/dw/storage';
-import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
+import { checkAuthorizationWithOwnership, parseRelatedId } from '@/lib/auth/permissions';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Get the photo UUID and related data from the request
-    const { photo_uuid, related_id, related_table } = await request.json();
+    const { photo_uuid, related_id: related_id_raw, related_table } = await request.json();
     
     if (!photo_uuid) {
       return new Response(JSON.stringify({ 
@@ -50,8 +50,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // Use provided related_id/table or fall back to values from the database
-    const effectiveRelatedId = related_id || photo.related_id;
+    // Parse related_id if provided, otherwise use the value from database (already parsed)
+    const effectiveRelatedId = related_id_raw 
+      ? parseRelatedId(related_id_raw).value 
+      : photo.related_id;
     const effectiveRelatedTable = related_table || photo.related_table;
 
     if (!effectiveRelatedId || !effectiveRelatedTable) {
@@ -65,6 +67,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
+    // For authorization, we need to determine the ID column
+    // If related_id_raw was provided, parse it to get the column; otherwise assume 'uuid' (default)
+    const { column: idColumn } = related_id_raw 
+      ? parseRelatedId(related_id_raw)
+      : { column: 'uuid' };
+
     // Check authorization with ownership
     const authError = await checkAuthorizationWithOwnership(
       locals.userId,
@@ -72,7 +80,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       effectiveRelatedId,
       effectiveRelatedTable,
       true, // Require ownership for photo deletion
-      db
+      db,
+      idColumn
     );
 
     if (authError) {

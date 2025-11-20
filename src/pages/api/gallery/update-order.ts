@@ -2,7 +2,7 @@
 
 import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
-import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
+import { checkAuthorizationWithOwnership, parseRelatedId } from '@/lib/auth/permissions';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -18,7 +18,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Get the array of photos with their new order and related entity info
-    const { photos, related_id, related_table } = await request.json();
+    const { photos, related_id: related_id_raw, related_table } = await request.json();
     
     if (!Array.isArray(photos) || photos.length === 0) {
       return new Response(JSON.stringify({ 
@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    if (!related_id || !related_table) {
+    if (!related_id_raw || !related_table) {
       return new Response(JSON.stringify({ 
         error: 'Missing related entity information'
       }), { 
@@ -42,6 +42,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
+    // Parse related_id to get column and value
+    const { column: idColumn, value: related_id } = parseRelatedId(related_id_raw);
+
     // Check authorization with ownership
     const authError = await checkAuthorizationWithOwnership(
       locals.userId,
@@ -49,7 +52,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       related_id,
       related_table,
       true, // Require ownership for updating photo order
-      db
+      db,
+      idColumn
     );
 
     if (authError) {

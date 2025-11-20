@@ -33,6 +33,7 @@ export interface OwnershipConfig<T extends keyof Database = keyof Database> {
   relationshipTable?: keyof Database;
   relationshipField?: string;
   relationshipOwnerField?: string;
+  relationshipRole?: string; // Optional role check for relationship ownership
 }
 
 // Ownership configurations for different tables
@@ -43,6 +44,11 @@ export const OWNERSHIP_CONFIGS: {
   links: {
     type: 'direct',
     directField: 'user_id'
+  },
+  
+  user: {
+    type: 'direct',
+    directField: 'id'
   },
 
 };

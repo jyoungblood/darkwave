@@ -5,14 +5,14 @@ interface Props {
   text: string;
   href: string;
   class?: string;
-  [key: string]: any;
 }
 
-const { text, href, class: userClass = "", ...rest } = Astro.props;
-const classes = ["btn btn-primary", userClass].filter(Boolean).join(" ");
+const { text, href, class: customClass = "" } = Astro.props;
+
+const defaultClass = "btn btn-primary";
+const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 ---
 
-<!-- rounded-md bg-stone-200 text-stone-600 p-3 text-sm font-semibold hover:bg-stone-300 hover:text-stone-700 cursor-pointer -->
-<a href={href} class={classes} {...rest}>
+<a href={href} class={className}>
   {text}
 </a>

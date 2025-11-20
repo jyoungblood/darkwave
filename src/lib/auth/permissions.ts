@@ -42,12 +42,32 @@ export function hasPermission(authRoles: string[], permission: Permission): bool
   return hasPermission;
 }
 
+// Helper to parse related_id (string or JSON object) into column and value
+export function parseRelatedId(relatedId: string): { column: string; value: string } {
+  // Try to parse as JSON first
+  try {
+    const parsed = JSON.parse(relatedId);
+    // If it's an object with a single key-value pair
+    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+      const keys = Object.keys(parsed);
+      if (keys.length === 1) {
+        return { column: keys[0], value: String(parsed[keys[0]]) };
+      }
+    }
+  } catch {
+    // Not JSON, treat as string (default to 'uuid' column)
+  }
+  // Default behavior: treat as string and use 'uuid' column
+  return { column: 'uuid', value: relatedId };
+}
+
 // Helper to check if user owns a resource
 export async function checkOwnership(
   userId: string,
-  uuid: string,
+  idValue: string,
   table: keyof Database,
-  database: Kysely<Database>
+  database: Kysely<Database>,
+  idColumn: string = 'uuid'
 ): Promise<boolean> {
   const config = OWNERSHIP_CONFIGS[table];
   if (!config) {
@@ -59,18 +79,24 @@ export async function checkOwnership(
     const record = await database
       .selectFrom(table)
       .select(config.directField)
-      .where('uuid', '=', uuid)
+      .where(idColumn as any, '=', idValue)
       .executeTakeFirst();
 
     return record?.[config.directField] === userId;
   } else if (config.type === 'relationship' && config.relationshipTable && config.relationshipField && config.relationshipOwnerField) {
-    // Check relationship ownership (e.g., horses)
-    const record = await database
+    // Check relationship ownership (e.g., horses, organizations)
+    let query = database
       .selectFrom(config.relationshipTable)
       .select(config.relationshipOwnerField as keyof Database[typeof config.relationshipTable])
-      .where(config.relationshipField as any, '=', uuid)
-      .where(config.relationshipOwnerField as any, '=', userId)
-      .executeTakeFirst();
+      .where(config.relationshipField as any, '=', idValue)
+      .where(config.relationshipOwnerField as any, '=', userId);
+    
+    // If a role is specified, also check for that role
+    if (config.relationshipRole) {
+      query = query.where('role' as any, '=', config.relationshipRole) as any;
+    }
+    
+    const record = await query.executeTakeFirst();
 
     return !!record;
   }
@@ -82,14 +108,15 @@ export async function checkOwnership(
 export async function checkAuthorizationWithOwnership(
   userId: string,
   authRoles: string[],
-  uuid: string | null,
+  idValue: string | null,
   table: string,
   requireOwnership: boolean,
-  database: Kysely<Database>
+  database: Kysely<Database>,
+  idColumn: string = 'uuid'
 ): Promise<{ error: string } | null> {
   
   // For new records, just check create permission
-  if (!uuid) {
+  if (!idValue) {
     const createPermission = `create:${table}` as Permission;
     
     if (!hasPermission(authRoles, createPermission)) {
@@ -101,7 +128,7 @@ export async function checkAuthorizationWithOwnership(
   // For existing records, check ownership if required
   if (requireOwnership) {
     // Check if user owns the record or has admin permission
-    const isOwner = await checkOwnership(userId, uuid, table as keyof Database, database);
+    const isOwner = await checkOwnership(userId, idValue, table as keyof Database, database, idColumn);
     if (!isOwner && !hasPermission(authRoles, `update:any:${table}` as Permission)) {
       return { error: 'Not authorized to modify this record' };
     }

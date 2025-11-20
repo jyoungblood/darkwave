@@ -7,10 +7,16 @@ interface CompressionConfig {
   quality?: number;
 }
 
+interface ParametersColumnConfig {
+  name: string;
+  default?: string;
+}
+
 interface Props {
-  related_id: string;
+  related_id: string | Record<string, string>;
   related_table: string;
   related_column: string;
+  parameters_column?: ParametersColumnConfig;
   url?: string;
   url_parameters?: string;
   upload_path?: string;
@@ -26,6 +32,7 @@ const {
   related_id,
   related_table,
   related_column,
+  parameters_column,
   url = "",
   url_parameters = "",
   upload_path = "",
@@ -36,6 +43,20 @@ const {
   preserveFileName = false,
   compression,
 } = Astro.props;
+
+// Serialize related_id: if object, stringify it; if string, use as-is
+const serializedRelatedId =
+  typeof related_id === "object" ? JSON.stringify(related_id) : related_id;
+
+// Extract parameters_column values
+const parametersColumnName = parameters_column?.name || "";
+const parametersColumnDefault =
+  parameters_column?.default || "aspect_ratio=4:3";
+
+// Serialize parameters_column config
+const serializedParametersColumn = parameters_column
+  ? JSON.stringify(parameters_column)
+  : "";
 
 // Normalize the upload path by removing optional leading/trailing slashes
 const normalizedUploadPath = upload_path.replace(/^\/+|\/+$/g, "");
@@ -52,7 +73,7 @@ import PhotoCropper from "./PhotoCropper.astro";
   <input
     type="hidden"
     name="component_photo_upload_related_id"
-    value={related_id}
+    value={serializedRelatedId}
   />
   <input
     type="hidden"
@@ -63,6 +84,16 @@ import PhotoCropper from "./PhotoCropper.astro";
     type="hidden"
     name="component_photo_upload_related_column"
     value={related_column}
+  />
+  <input
+    type="hidden"
+    name="component_photo_upload_parameters_column"
+    value={serializedParametersColumn}
+  />
+  <input
+    type="hidden"
+    name="component_photo_upload_parameters_column_default"
+    value={parametersColumnDefault}
   />
   <input
     type="hidden"
@@ -284,6 +315,12 @@ import PhotoCropper from "./PhotoCropper.astro";
           compression: container.querySelector(
             'input[name="component_photo_upload_compression"]'
           ) as HTMLInputElement,
+          parametersColumn: container.querySelector(
+            'input[name="component_photo_upload_parameters_column"]'
+          ) as HTMLInputElement | null,
+          parametersColumnDefault: container.querySelector(
+            'input[name="component_photo_upload_parameters_column_default"]'
+          ) as HTMLInputElement | null,
         };
 
         const previewsContainer = container.querySelector(
@@ -380,6 +417,10 @@ import PhotoCropper from "./PhotoCropper.astro";
               preserveFileName:
                 uploadConfigElements.preserveFileName.value || "false",
               compression: uploadConfigElements.compression.value || "",
+              parameters_column:
+                uploadConfigElements.parametersColumn?.value || "",
+              parameters_column_default:
+                uploadConfigElements.parametersColumnDefault?.value || "",
             };
           },
           autoQueue: true,
@@ -496,6 +537,8 @@ import PhotoCropper from "./PhotoCropper.astro";
                   related_id: relatedId,
                   related_table: relatedTable,
                   related_column: relatedColumn,
+                  parameters_column:
+                    uploadConfigElements.parametersColumn?.value || "",
                 }),
               });
 
@@ -885,11 +928,18 @@ import PhotoCropper from "./PhotoCropper.astro";
           relatedId: string,
           relatedTable: string,
           relatedColumn: string,
-          originalUrl: string | undefined
+          originalUrl: string | undefined,
+          parametersColumnRaw: string
         ) => {
           try {
             if (!originalUrl) {
               throw new Error("Original URL is missing");
+            }
+
+            if (!parametersColumnRaw) {
+              throw new Error(
+                "Parameters column is not configured for this photo"
+              );
             }
 
             // Update the preview image URL in the container IMMEDIATELY (before API call)
@@ -927,6 +977,7 @@ import PhotoCropper from "./PhotoCropper.astro";
                 related_id: relatedId,
                 related_table: relatedTable,
                 related_column: relatedColumn,
+                parameters_column: parametersColumnRaw,
                 parameters: cropParams,
               }),
             });
@@ -1033,14 +1084,21 @@ import PhotoCropper from "./PhotoCropper.astro";
               'input[name="component_photo_upload_related_column"]'
             ) as HTMLInputElement
           )?.value;
+          const parametersColumnRaw =
+            (
+              container.querySelector(
+                'input[name="component_photo_upload_parameters_column"]'
+              ) as HTMLInputElement
+            )?.value || "";
 
-          // Use debounced save function
+          // Use debounced save function - pass the raw JSON string to the API
           debouncedSave(
             cropParams,
             relatedId,
             relatedTable,
             relatedColumn,
-            originalUrl
+            originalUrl,
+            parametersColumnRaw
           );
 
           // Add a small delay before closing the modal to show the loading state

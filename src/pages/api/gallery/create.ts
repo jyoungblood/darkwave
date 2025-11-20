@@ -4,7 +4,7 @@ import type { APIRoute } from 'astro';
 import { db } from '@/lib/db';
 import { dwStorage } from '@/lib/dw/storage';
 import { v4 as uuidv4 } from 'uuid';
-import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
+import { checkAuthorizationWithOwnership, parseRelatedId } from '@/lib/auth/permissions';
 import { compressImage, isImageFile } from '@/lib/dw/images';
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -40,11 +40,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const path = (formData.get('path') as string) || '';
-    const related_id = (formData.get('related_id') as string) || '';
+    const related_id_raw = (formData.get('related_id') as string) || '';
     const related_table = (formData.get('related_table') as string) || '';
     const gallery_type = (formData.get('gallery_type') as string) || '';
+    const parameters_column_raw = (formData.get('parameters_column') as string) || '';
+    const parameters_column_default = (formData.get('parameters_column_default') as string) || 'aspect_ratio=4:3';
     const preserveFileName = (formData.get('preserveFileName') as string) || 'false';
     const compressionConfigStr = formData.get('compression') as string;
+    
+    // Parse related_id to get column and value
+    const { column: idColumn, value: related_id } = parseRelatedId(related_id_raw);
+    
+    // Parse parameters_column JSON object to extract name
+    let parameters_column = '';
+    if (parameters_column_raw) {
+      try {
+        const parsed = JSON.parse(parameters_column_raw);
+        if (typeof parsed === 'object' && parsed !== null && parsed.name) {
+          parameters_column = parsed.name;
+        }
+      } catch {
+        // Invalid JSON, leave empty
+      }
+    }
     
     // Parse compression config with defaults
     let compressionConfig: { format?: string; size?: number; quality?: number } | null = null;
@@ -85,7 +103,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       related_id,
       related_table,
       true, // Require ownership for gallery creation
-      db
+      db,
+      idColumn
     );
 
     if (authError) {
@@ -163,20 +182,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
           : 0;
 
         // Insert into database
+        const insertData: Record<string, any> = {
+          uuid: uuidv4(),
+          photo_url: url,
+          gallery_type,
+          display_order: nextDisplayOrder,
+          related_id,
+          related_table,
+          // title: file.name.split('.')[0], // Use filename without extension as title
+          // description: null,
+          user_id: locals.userId
+        };
+        
+        // Add parameters column - use configured column or default to 'photo_url_parameters'
+        const finalParametersColumn = parameters_column || 'photo_url_parameters';
+        insertData[finalParametersColumn] = parameters_column_default;
+        
         await db
           .insertInto('gallery_content')
-          .values({
-            uuid: uuidv4(),
-            photo_url: url,
-            photo_url_parameters: 'aspect_ratio=4:3',
-            gallery_type,
-            display_order: nextDisplayOrder,
-            related_id,
-            related_table,
-            // title: file.name.split('.')[0], // Use filename without extension as title
-            // description: null,
-            user_id: locals.userId
-          } as any)
+          .values(insertData as any)
           .execute();
 
         // Fetch the inserted record

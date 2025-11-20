@@ -3,8 +3,7 @@
 import type { APIRoute } from 'astro';
 import { dwStorage } from '@/lib/dw/storage';
 import { db } from '@/lib/db';
-import { formatMySQLDateTime } from '@/lib/dw/helpers';
-import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
+import { checkAuthorizationWithOwnership, parseRelatedId } from '@/lib/auth/permissions';
 import { compressImage, isImageFile } from '@/lib/dw/images';
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -25,11 +24,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Get parameters from the request
     const file = formData.get('file') as File;
     const path = (formData.get('path') as string) || '';
-    const related_id = formData.get('related_id') as string;
+    const related_id_raw = formData.get('related_id') as string;
     const related_table = formData.get('related_table') as string;
     const related_column = formData.get('related_column') as string;
+    const parameters_column_raw = (formData.get('parameters_column') as string) || '';
+    const parameters_column_default = (formData.get('parameters_column_default') as string) || 'aspect_ratio=4:3';
     const preserveFileName = formData.get('preserveFileName') as string;
     const compressionConfigStr = formData.get('compression') as string;
+    
+    // Parse related_id to get column and value
+    const { column: idColumn, value: related_id } = parseRelatedId(related_id_raw);
+    
+    // Parse parameters_column JSON object to extract name
+    let parameters_column = '';
+    if (parameters_column_raw) {
+      try {
+        const parsed = JSON.parse(parameters_column_raw);
+        if (typeof parsed === 'object' && parsed !== null && parsed.name) {
+          parameters_column = parsed.name;
+        }
+      } catch {
+        // Invalid JSON, leave empty
+      }
+    }
     
     // Parse compression config with defaults
     let compressionConfig: { format?: string; size?: number; quality?: number } | null = null;
@@ -64,7 +81,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       related_id,
       related_table,
       true, // Require ownership for photo updates
-      db
+      db,
+      idColumn
     );
 
     if (authError) {
@@ -125,16 +143,18 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Update the database record
     const updateData: Record<string, string | null> = {
-      [related_column]: url,
-      [`${related_column}_parameters`]: 'aspect_ratio=4:3',
-      updated_at: formatMySQLDateTime()
+      [related_column]: url
     };
+
+    if (parameters_column) {
+      updateData[parameters_column] = parameters_column_default;
+    }
   
     // Check if record exists
     const existingRecord = await db
       .selectFrom(related_table as any)
       .selectAll()
-      .where('uuid', '=', related_id)
+      .where(idColumn as any, '=', related_id)
       .executeTakeFirst();
   
     if (!existingRecord) {
@@ -145,14 +165,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     await db
       .updateTable(related_table as any)
       .set(updateData)
-      .where('uuid', '=', related_id)
+      .where(idColumn as any, '=', related_id)
       .execute();
   
     // Fetch the updated record
     const record = await db
       .selectFrom(related_table as any)
       .selectAll()
-      .where('uuid', '=', related_id)
+      .where(idColumn as any, '=', related_id)
       .executeTakeFirst();
   
     if (!record) {

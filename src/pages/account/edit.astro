@@ -2,6 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import { db } from "@/lib/db";
 import InputText from "@/components/ui/form/InputText.astro";
+import Label from "@/components/ui/form/Label.astro";
+import PhotoUploadSingle from "@/components/ui/form/PhotoUploadSingle.astro";
 import ButtonSubmit from "@/components/ui/form/ButtonSubmit.astro";
 
 if (!Astro.locals.userId) {
@@ -148,6 +150,19 @@ let oauthGoogle = account?.providerId === "google" ? true : false;
               ""
             )
           }
+        </div>
+        <div>
+          <div class="mb-4">
+            <Label text="Avatar" />
+            <PhotoUploadSingle
+              related_id={{ id: user?.id }}
+              related_table="user"
+              related_column="image"
+              url={user?.image || ""}
+              upload_path="/avatars"
+              compression={{ format: "webp", size: 600, quality: 80 }}
+            />
+          </div>
         </div>
       </div>
 

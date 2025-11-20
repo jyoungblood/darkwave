@@ -3,8 +3,7 @@
 import type { APIRoute } from 'astro';
 import { dwStorage } from '@/lib/dw/storage';
 import { db } from '@/lib/db';
-import { formatMySQLDateTime } from '@/lib/dw/helpers';
-import { checkAuthorizationWithOwnership } from '@/lib/auth/permissions';
+import { checkAuthorizationWithOwnership, parseRelatedId } from '@/lib/auth/permissions';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -20,15 +19,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Get parameters from the request
-    const { photo_url, related_id, related_table, related_column } = await request.json();
+    const { photo_url, related_id: related_id_raw, related_table, related_column, parameters_column: parameters_column_raw } = await request.json();
     
-    if (!related_id || !related_table || !related_column) {
+    if (!related_id_raw || !related_table || !related_column) {
       return new Response(JSON.stringify({ 
         error: 'Missing required parameters: related_id, related_table, or related_column'
       }), { 
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
+    }
+
+    // Parse related_id to get column and value
+    const { column: idColumn, value: related_id } = parseRelatedId(related_id_raw);
+    
+    // Parse parameters_column JSON object to extract name
+    let parameters_column = '';
+    if (parameters_column_raw) {
+      try {
+        const parsed = JSON.parse(parameters_column_raw);
+        if (typeof parsed === 'object' && parsed !== null && parsed.name) {
+          parameters_column = parsed.name;
+        }
+      } catch {
+        // Invalid JSON, leave empty
+      }
     }
 
     // Check authorization with ownership
@@ -38,7 +53,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       related_id,
       related_table,
       true, // Require ownership for photo deletion
-      db
+      db,
+      idColumn
     );
 
     if (authError) {
@@ -81,16 +97,18 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Update the database record
     const updateData: Record<string, string | null> = {
-      [related_column]: null,
-      [`${related_column}_parameters`]: null,
-      updated_at: formatMySQLDateTime()
+      [related_column]: null
     };
+
+    if (parameters_column) {
+      updateData[parameters_column] = null;
+    }
   
     // Check if record exists
     const existingRecord = await db
       .selectFrom(related_table as any)
       .selectAll()
-      .where('uuid', '=', related_id)
+      .where(idColumn as any, '=', related_id)
       .executeTakeFirst();
   
     if (!existingRecord) {
@@ -104,14 +122,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     await db
       .updateTable(related_table as any)
       .set(updateData)
-      .where('uuid', '=', related_id)
+      .where(idColumn as any, '=', related_id)
       .execute();
   
     // Fetch the updated record
     const record = await db
       .selectFrom(related_table as any)
       .selectAll()
-      .where('uuid', '=', related_id)
+      .where(idColumn as any, '=', related_id)
       .executeTakeFirst();
   
     if (!record) {
