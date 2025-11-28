@@ -33,7 +33,7 @@ export interface OwnershipConfig<T extends keyof Database = keyof Database> {
   relationshipTable?: keyof Database;
   relationshipField?: string;
   relationshipOwnerField?: string;
-  relationshipRole?: string; // Optional role check for relationship ownership
+  relationshipRole?: string | string[]; // Optional role check for relationship ownership (single role or array of roles)
 }
 
 // Ownership configurations for different tables

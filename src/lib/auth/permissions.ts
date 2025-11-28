@@ -91,9 +91,13 @@ export async function checkOwnership(
       .where(config.relationshipField as any, '=', idValue)
       .where(config.relationshipOwnerField as any, '=', userId);
     
-    // If a role is specified, also check for that role
+    // If a role is specified, also check for that role (supports single role or array of roles)
     if (config.relationshipRole) {
-      query = query.where('role' as any, '=', config.relationshipRole) as any;
+      if (Array.isArray(config.relationshipRole)) {
+        query = query.where('role' as any, 'in', config.relationshipRole) as any;
+      } else {
+        query = query.where('role' as any, '=', config.relationshipRole) as any;
+      }
     }
     
     const record = await query.executeTakeFirst();
