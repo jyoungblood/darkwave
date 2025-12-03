@@ -34,7 +34,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       // Send password reset email via Better Auth
       // This will trigger the sendResetPassword function in auth.ts
       // console.log("Sending password reset email to:", email);
-      await auth.api.forgetPassword({
+      await auth.api.requestPasswordReset({
         body: {
           email,
           // This is where Better Auth will redirect after reset

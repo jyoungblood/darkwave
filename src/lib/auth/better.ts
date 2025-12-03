@@ -61,7 +61,7 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
     minPasswordLength: 8,
-    sendResetPassword: async ({ user, url, token }, request) => {
+    sendResetPassword: async ({ user, url, token }, ctx) => {
       try {
         const siteName = import.meta.env.SITE_TITLE;
         await sendEmail({
@@ -96,7 +96,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,  // Keep email verification enabled
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url, token }, request) => {
+    sendVerificationEmail: async ({ user, url, token }, ctx) => {
       // Check if this is an admin-created user
       // Look for any flags for this email in the last 5 seconds
       const now = Date.now();
