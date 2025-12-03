@@ -54,7 +54,7 @@ if (import.meta.hot) {
 }
 
 export const auth = betterAuth({
-  baseURL: import.meta.env.BETTER_AUTH_URL,
+  baseURL: import.meta.env.SITE_BASE_URL,
   secret: import.meta.env.BETTER_AUTH_SECRET,
   basePath: '/api/auth/better',
   emailAndPassword: {

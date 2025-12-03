@@ -186,7 +186,7 @@ function runCommand(command: string, args: string[], options: { cwd?: string; en
 
 // Validate required environment variables
 const requiredEnvVars = {
-  'BETTER_AUTH_URL': process.env.BETTER_AUTH_URL,
+  'SITE_BASE_URL': process.env.SITE_BASE_URL,
   'BETTER_AUTH_SECRET': process.env.BETTER_AUTH_SECRET
 };
 
@@ -202,7 +202,7 @@ if (missingVars.length > 0) {
 
 // Create a minimal auth instance just for admin creation
 const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.SITE_BASE_URL,
   secret: process.env.BETTER_AUTH_SECRET,
   basePath: '/api/auth/better',
   emailAndPassword: {
@@ -239,7 +239,7 @@ async function createAdminUser(email: string, password: string, name: string) {
     } as any);
 
     // console.log('User created, got user ID:', authResult.user.id);
-    const userId = authResult.user.id;
+    const userId = (authResult as any).user.id;
 
     // console.log('Marking email as verified...');
     try {
