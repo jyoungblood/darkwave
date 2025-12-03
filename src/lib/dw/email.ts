@@ -4,8 +4,88 @@ import nodemailer from 'nodemailer';
 // import mjml2html from 'mjml';
 import { emailConfig } from '@/config/app';
 import { htmlToPlainText } from '@/lib/dw/helpers';
+
+// Dynamically import all email templates - Vite will bundle them all at build time
+const templateModules = import.meta.glob('@/email-templates/**/*.tsx', { eager: true });
+
+// Debug: Log available templates in development
+if (import.meta.env.DEV && Object.keys(templateModules).length === 0) {
+  console.warn('Warning: No email templates found via glob. Available keys:', Object.keys(templateModules));
+}
+
 // Singleton transport instance
 let mailTransporter: nodemailer.Transporter | null = null;
+
+/**
+ * Get email template module by path
+ * Supports multiple path formats: @/email-templates/..., ./src/email-templates/..., src/email-templates/...
+ */
+function getEmailTemplate(templatePath: string): any {
+  // Normalize the path to match the glob pattern format (@/email-templates/...)
+  let normalizedPath = templatePath.trim();
+  
+  // Handle different path formats and convert to @/email-templates/... format
+  if (normalizedPath.startsWith('./src/email-templates/')) {
+    normalizedPath = normalizedPath.replace('./src/email-templates/', '@/email-templates/');
+  } else if (normalizedPath.startsWith('src/email-templates/')) {
+    normalizedPath = normalizedPath.replace('src/email-templates/', '@/email-templates/');
+  } else if (normalizedPath.startsWith('@/email-templates/')) {
+    // Already in correct format
+  } else if (normalizedPath.startsWith('@/')) {
+    // Handle @/something format - assume it's email-templates if it doesn't specify
+    if (!normalizedPath.startsWith('@/email-templates/')) {
+      normalizedPath = normalizedPath.replace('@/', '@/email-templates/');
+    }
+  } else {
+    // Assume it's a relative path from email-templates
+    normalizedPath = `@/email-templates/${normalizedPath.replace(/^\//, '')}`;
+  }
+  
+  // Extract the template name (e.g., 'ticket-update' from '@/email-templates/ticket-update')
+  const templateName = normalizedPath.replace(/^@\/email-templates\//, '').replace(/\.tsx$/, '');
+  
+  // Find matching template in the bundled modules
+  // Try multiple matching strategies
+  const availableKeys = Object.keys(templateModules);
+  let templateKey = availableKeys.find(key => {
+    // Match by template name (filename without extension)
+    const keyName = key.replace(/^.*\//, '').replace(/\.tsx$/, '');
+    return keyName === templateName;
+  });
+  
+  // If not found, try full path matching
+  if (!templateKey) {
+    const normalizedWithExt = normalizedPath.endsWith('.tsx') ? normalizedPath : `${normalizedPath}.tsx`;
+    templateKey = availableKeys.find(key => {
+      const keyWithoutExt = key.replace(/\.tsx$/, '');
+      return keyWithoutExt === normalizedPath || key === normalizedPath || key === normalizedWithExt;
+    });
+  }
+  
+  // If still not found, try partial matching (e.g., match 'ticket-update' anywhere in the path)
+  if (!templateKey) {
+    templateKey = availableKeys.find(key => {
+      return key.includes(templateName) || key.includes('/' + templateName + '.');
+    });
+  }
+  
+  if (!templateKey || !templateModules[templateKey]) {
+    const availableTemplates = availableKeys.length > 0 
+      ? availableKeys.map(k => k.replace(/^.*\//, '').replace(/\.tsx$/, '')).join(', ')
+      : 'none found (glob may not be working)';
+    const allKeys = availableKeys.length > 0 ? availableKeys.join(', ') : 'no keys found';
+    throw new Error(
+      `Email template not found: ${templatePath}\n` +
+      `Normalized path: ${normalizedPath}\n` +
+      `Template name: ${templateName}\n` +
+      `Available template names: ${availableTemplates}\n` +
+      `All keys in templateModules: ${allKeys}\n` +
+      `Total templates found: ${availableKeys.length}`
+    );
+  }
+  
+  return templateModules[templateKey];
+}
 
 // Mailgun API function
 async function sendViaMailgun(data: EmailData) {
@@ -20,26 +100,8 @@ async function sendViaMailgun(data: EmailData) {
   
   // Process HTML from either template or direct input (same logic as SMTP version)
   if (data.message.template) {
-    // Dynamically import the template with vite-ignore comment
-    let templatePath = data.message.template;
-    
-    // Handle @/ alias
-    if (templatePath.startsWith('@/')) {
-      // just use '@' to mean 'src' and reference two levels up from this file
-      templatePath = templatePath.replace('@/', '../../');
-    }
-    // Handle paths starting with ./src/ or src/
-    else if (templatePath.startsWith('./src/') || templatePath.startsWith('src/')) {
-      templatePath = templatePath.replace(/^\.?\/?src\//, '../');
-    }
-
-    // Add .tsx extension if no extension is provided
-    if (!templatePath.match(/\.[^.]+$/)) {
-      templatePath += '.tsx';
-    }
-    
-    const templateModule = await import(/* @vite-ignore */ templatePath);
-    html = await templateModule.render(data.message.data || {});
+    const templateModule = getEmailTemplate(data.message.template);
+    html = templateModule.render(data.message.data || {});
   } else if (data.message.html) {
     html = data.message.html;
   }
@@ -142,26 +204,8 @@ export async function sendEmail(data: EmailData) {
     
     // Process HTML from either template or direct input
     if (data.message.template) {
-      // Dynamically import the template with vite-ignore comment
-      let templatePath = data.message.template;
-      
-      // Handle @/ alias
-      if (templatePath.startsWith('@/')) {
-        // just use '@' to mean 'src' and reference two levels up from this file
-        templatePath = templatePath.replace('@/', '../../');
-      }
-      // Handle paths starting with ./src/ or src/
-      else if (templatePath.startsWith('./src/') || templatePath.startsWith('src/')) {
-        templatePath = templatePath.replace(/^\.?\/?src\//, '../');
-      }
-
-      // Add .tsx extension if no extension is provided
-      if (!templatePath.match(/\.[^.]+$/)) {
-        templatePath += '.tsx';
-      }
-      
-      const templateModule = await import(/* @vite-ignore */ templatePath);
-      html = await templateModule.render(data.message.data || {});
+      const templateModule = getEmailTemplate(data.message.template);
+      html = templateModule.render(data.message.data || {});
 
       // // If MJML is enabled, compile the template output
       // if (data.message.mjml && html) {

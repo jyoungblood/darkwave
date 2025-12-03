@@ -11,9 +11,10 @@ interface Props {
   value?: string;
   placeholder?: string;
   class?: string;
+  rows?: number;
 }
 
-const defaultClass = "textarea max-w-full";
+const defaultClass = "textarea max-w-full bg-white";
 // const defaultClass = 'p-2 border border-neutral-400 rounded-md';
 const {
   label,
@@ -23,6 +24,7 @@ const {
   value = "",
   placeholder = "",
   class: customClass = "",
+  rows = 3,
 } = Astro.props;
 const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 ---
@@ -34,5 +36,31 @@ const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
   name={name}
   required={required}
   class={className}
-  placeholder={placeholder}>{value}</textarea
+  placeholder={placeholder}
+  rows={rows}
+  style="field-sizing: content;">{value}</textarea
 >
+
+<script define:vars={{ textareaId: `textarea-${name}` }}>
+  function initAutoResize() {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+    
+    function autoResize() {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+    }
+    
+    textarea.addEventListener('input', autoResize);
+    // Resize on initial load if there's a value
+    if (textarea.value) {
+      autoResize();
+    }
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAutoResize);
+  } else {
+    initAutoResize();
+  }
+</script>

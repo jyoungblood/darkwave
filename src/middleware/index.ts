@@ -91,6 +91,13 @@ export const onRequest = defineMiddleware(
       if (!userData) {
         return redirect("/login");
       }
+    } 
+
+    // Handle protected routes
+    if (matchesAny(url.pathname, managedRoutes.protectedRedirect)) {
+      if (!userData) {
+        return redirect("/login?redirect=" + encodeURIComponent(url.pathname));
+      }
     }
 
     // Handle redirect routes

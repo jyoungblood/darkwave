@@ -203,6 +203,28 @@ function validateRule(value, rule) {
   }
 
   // Handle object rules (detailed syntax)
+  // Special cases that don't have entries in VALIDATION_RULES
+  if (rule.type === "length") {
+    const isValid =
+      (rule.min === undefined || value.length >= rule.min) &&
+      (rule.max === undefined || value.length <= rule.max);
+    return {
+      isValid,
+      message: isValid ? "" : rule.errorMessage || `Length must be between ${rule.min || 0} and ${rule.max || "∞"} characters`,
+    };
+  }
+
+  if (rule.type === "pattern") {
+    const isValid =
+      rule.pattern && SAFE_PATTERNS[rule.pattern]
+        ? SAFE_PATTERNS[rule.pattern].test(value)
+        : true;
+    return {
+      isValid,
+      message: isValid ? "" : rule.errorMessage || "Please enter a valid value",
+    };
+  }
+
   const ruleDef = VALIDATION_RULES[rule.type];
   if (!ruleDef) return { isValid: true, message: "" };
 
@@ -223,17 +245,6 @@ function validateRule(value, rule) {
       } else {
         isValid = true;
       }
-      break;
-    case "length":
-      isValid =
-        (rule.min === undefined || value.length >= rule.min) &&
-        (rule.max === undefined || value.length <= rule.max);
-      break;
-    case "pattern":
-      isValid =
-        rule.pattern && SAFE_PATTERNS[rule.pattern]
-          ? SAFE_PATTERNS[rule.pattern].test(value)
-          : true;
       break;
     default:
       isValid = ruleDef.validator(
@@ -293,7 +304,7 @@ function hasValidationError(inputId) {
   return window.validationErrors.includes(inputId);
 }
 
-async function validateInput(input) {
+export async function validateInput(input) {
   const value = input.value;
   // debugLog('Validating input:', input.name, 'with value:', value);
   const validationConfig = JSON.parse(input.dataset.validationConfig || "{}");

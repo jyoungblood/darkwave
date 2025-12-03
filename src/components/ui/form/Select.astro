@@ -10,11 +10,11 @@ interface Props {
   required?: boolean;
   value?: string;
   class?: string;
-  options: { label: string; value: string }[];
+  options: { label: string; value: string }[] | { label: string; options: { label: string; value: string }[] }[];
 }
 
 // const defaultClass = "p-2 border border-neutral-400 rounded-md";
-const defaultClass = "select select-bordered";
+const defaultClass = "select select-bordered bg-white";
 const {
   label,
   sublabel,
@@ -31,10 +31,25 @@ const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 {label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
 <select id={`input-${name}`} name={name} required={required} class={className}>
   {
-    options.map((option) => (
-      <option value={option.value} selected={option.value === value}>
-        {option.label}
-      </option>
-    ))
+    // Check if options is an array of optgroups
+    options.length > 0 && 'options' in options[0] ? (
+      // Render optgroups
+      (options as { label: string; options: { label: string; value: string }[] }[]).map((group) => (
+        <optgroup label={group.label}>
+          {group.options.map((option) => (
+            <option value={option.value} selected={option.value === value}>
+              {option.label}
+            </option>
+          ))}
+        </optgroup>
+      ))
+    ) : options.length > 0 ? (
+      // Render flat options
+      (options as { label: string; value: string }[]).map((option) => (
+        <option value={option.value} selected={option.value === value}>
+          {option.label}
+        </option>
+      ))
+    ) : null
   }
 </select>

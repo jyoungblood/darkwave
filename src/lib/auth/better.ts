@@ -133,6 +133,11 @@ export const auth = betterAuth({
   database: pool,
   plugins: [],
 
+  session: {
+    expiresIn: 60 * 60 * 24 * 365, // 1 year in seconds
+    // Session expiration will refresh to 1 year from now on each use
+  },
+
   hooks: {
     before: async (ctx: any) => {
       // Check if this is a signup request by path
