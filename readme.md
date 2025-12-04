@@ -16,8 +16,7 @@ Read the full documentation and user guide at [darkwavejs.com](https://darkwavej
 
 ### Core Stack
 
-- [Astro](https://astro.build) (SSR w/ Node.js adapter)
-- [TypeScript](https://www.typescriptlang.org/)
+- [Astro](https://astro.build) (SSR w/ Node.js adapter and [TypeScript](https://www.typescriptlang.org/))
 - [Tailwind CSS](https://tailwindcss.com/) with [typography](https://github.com/tailwindlabs/tailwindcss-typography) and [forms](https://github.com/tailwindlabs/tailwindcss-forms) plugins configured
 - [FlyonUI](https://flyonui.com/) UI components
 - [Better-Auth](https://www.better-auth.com/) for authentication
