@@ -3,6 +3,7 @@
 import { validateCsrf } from "@/lib/csrf";
 import { auth } from "@/lib/auth/better";
 import type { APIRoute } from "astro";
+import { db } from "@/lib/db";
 
 // API endpoint for email/password registration with Better Auth
 export const POST: APIRoute = async ({ request, cookies }) => {
@@ -19,6 +20,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     // Extract registration details from form data
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
+    const firstName = formData.get("first_name")?.toString()?.trim();
+    const lastName = formData.get("last_name")?.toString()?.trim();
 
     // Validate required fields
     if (!email || !password) {
@@ -40,6 +43,21 @@ export const POST: APIRoute = async ({ request, cookies }) => {
           name: "" // Empty name, but satisfies the API requirement
         }
       });
+
+            const userId = result?.user?.id;
+
+      if (!userId) {
+        throw new Error("User ID missing from registration result");
+      }
+
+      await db
+        .updateTable("user")
+        .set({
+          first_name: firstName,
+          last_name: lastName,
+        })
+        .where("id", "=", userId)
+        .execute();
 
       // Success - Better Auth does not directly return an error property
       // Always require email verification

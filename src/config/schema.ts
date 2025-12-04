@@ -82,7 +82,9 @@ export interface Database {
 
   user: {
     id: string;
-    name: string;
+    name: string | null;
+    first_name: string | null;
+    last_name: string | null;
     email: string;
     emailVerified: boolean;
     image: string | null;

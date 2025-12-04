@@ -111,7 +111,7 @@ export const auth = betterAuth({
       }
       try {
         // Create our custom verification URL with the correct path
-        const customVerificationUrl = `${import.meta.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}`;        
+        const customVerificationUrl = `${import.meta.env.SITE_BASE_URL}/api/auth/verify-email?token=${token}`;        
         const siteName = import.meta.env.SITE_TITLE;
         await sendEmail({
           to: user.email,

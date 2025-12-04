@@ -88,6 +88,11 @@ export async function up(db: Kysely<any>): Promise<void> {
 
 
 
+  await db.schema
+    .alterTable('user')
+    .addColumn('first_name', 'varchar(255)')
+    .addColumn('last_name', 'varchar(255)')
+    .execute();
 
     
 }

@@ -8,11 +8,23 @@ import { auth } from "@/lib/auth/better";
 ensureCsrfToken(Astro.cookies);
 
 // Check for available social providers
-const hasSocialProviders = Object.keys(auth.options.socialProviders || {}).length > 0;
+const hasSocialProviders =
+  Object.keys(auth.options.socialProviders || {}).length > 0;
 const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
 ---
 
 <Layout title="Register">
+  <script>
+    import {
+      validateOnBlur,
+      validateInput,
+    } from "@/components/ui/scripts/validate-input.js";
+    // @ts-ignore
+    window.validateOnBlur = validateOnBlur;
+    // @ts-ignore
+    window.validateInput = validateInput;
+  </script>
+
   <div class="flex flex-col items-center justify-center flex-1 p-4">
     <div
       data-register-container
@@ -29,7 +41,7 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
         >
       </p>
       <form
-        class="border border-neutral-200 p-8 rounded-md"
+        class="bg-white border border-gray-200 p-8 rounded-md shadow-md"
         data-register-form
         aria-label="Email registration form"
       >
@@ -38,6 +50,35 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
           name="csrf"
           value={Astro.cookies.get("csrf")?.value}
         />
+
+        <div class="flex flex-col mb-4">
+          <label for="first_name" class="mb-2 text-sm font-semibold"
+            >First name</label
+          >
+          <input
+            type="text"
+            name="first_name"
+            id="first_name"
+            required
+            class="p-2 border border-gray-400 rounded-md mb-4"
+            aria-required="true"
+          />
+        </div>
+
+        <div class="flex flex-col mb-4">
+          <label for="last_name" class="mb-2 text-sm font-semibold"
+            >Last name</label
+          >
+          <input
+            type="text"
+            name="last_name"
+            id="last_name"
+            required
+            class="p-2 border border-gray-400 rounded-md mb-4"
+            aria-required="true"
+          />
+        </div>
+
         <div class="flex flex-col mb-4">
           <label for="email" class="mb-2 text-sm font-semibold">Email</label>
           <input
@@ -45,9 +86,13 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
             name="email"
             id="email"
             required
-            class="p-2 border border-neutral-400 rounded-md mb-4"
+            class="p-2 border border-gray-400 rounded-md mb-4"
             aria-required="true"
+            onblur="validateOnBlur(event)"
+            data-validation-types='["email"]'
+            data-validation-config='{"types":["email"]}'
           />
+          <span class="validation-feedback text-sm mt-1 hidden"></span>
         </div>
         <div class="flex flex-col mb-4">
           <label for="password" class="mb-2 text-sm font-semibold"
@@ -58,15 +103,20 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
             name="password"
             id="password"
             required
-            class="p-2 border border-neutral-400 rounded-md mb-4"
+            class="p-2 border border-gray-400 rounded-md mb-4"
             aria-required="true"
+            onblur="validateOnBlur(event)"
+            data-validation-rules='[{"type":"length","min":8,"errorMessage":"Password must be at least 8 characters"}]'
+            data-validation-config='{"rules":[{"type":"length","min":8,"errorMessage":"Password must be at least 8 characters"}]}'
           />
+          <span class="validation-feedback text-sm mt-1 hidden"></span>
         </div>
+
         <input type="hidden" name="provider" value="email" />
         <button
           type="submit"
           data-register-submit
-          class="bg-black text-white p-3 text-sm font-semibold rounded-md hover:bg-neutral-800 cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          class="bg-black text-white p-3 text-sm font-semibold rounded-md hover:bg-gray-800 cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           aria-busy="false"
         >
           <svg
@@ -94,67 +144,69 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
         </button>
       </form>
 
-      {hasSocialProviders && (
-        <>
-          <hr
-            class="h-0 border-t mt-8 border-neutral-300"
-            role="separator"
-            aria-label="or continue with"
-          />
-          <p class="-mt-2 text-xs text-center text-neutral-500">
-            <span class="bg-white px-2">OR</span>
-          </p>
-
-          <form
-            action="/api/auth/register-oauth"
-            method="post"
-            class="w-full max-w-md mt-4 flex flex-col gap-2"
-            aria-label="Social login options"
-          >
-            <input
-              type="hidden"
-              name="csrf"
-              value={Astro.cookies.get("csrf")?.value}
+      {
+        hasSocialProviders && (
+          <>
+            <hr
+              class="h-0 border-t mt-8 border-gray-300"
+              role="separator"
+              aria-label="or continue with"
             />
-            {hasGoogleProvider && (
-              <button
-                value="google"
-                name="provider"
-                class="w-full p-3 border border-neutral-300 hover:bg-neutral-50 flex justify-center items-center gap-2 rounded-md mt-2 text-neutral-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                type="submit"
-                aria-label="Continue with Google"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-auto"
-                  preserveAspectRatio="xMidYMid"
-                  viewBox="0 0 256 262"
-                  aria-hidden="true"
-                  role="presentation"
+            <p class="-mt-2 text-xs text-center text-gray-500">
+              <span class="bg-white px-2">OR</span>
+            </p>
+
+            <form
+              action="/api/auth/register-oauth"
+              method="post"
+              class="w-full max-w-md mt-4 flex flex-col gap-2"
+              aria-label="Social login options"
+            >
+              <input
+                type="hidden"
+                name="csrf"
+                value={Astro.cookies.get("csrf")?.value}
+              />
+              {hasGoogleProvider && (
+                <button
+                  value="google"
+                  name="provider"
+                  class="w-full p-3 border border-gray-300 hover:bg-gray-50 flex justify-center items-center gap-2 rounded-md mt-2 text-gray-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="submit"
+                  aria-label="Continue with Google"
                 >
-                  <path
-                    fill="#4285F4"
-                    d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
-                  ></path>
-                  <path
-                    fill="#34A853"
-                    d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
-                  ></path>
-                  <path
-                    fill="#FBBC05"
-                    d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
-                  ></path>
-                  <path
-                    fill="#EB4335"
-                    d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
-                  ></path>
-                </svg>
-                Continue with Google
-              </button>
-            )}
-          </form>
-        </>
-      )}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-auto"
+                    preserveAspectRatio="xMidYMid"
+                    viewBox="0 0 256 262"
+                    aria-hidden="true"
+                    role="presentation"
+                  >
+                    <path
+                      fill="#4285F4"
+                      d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                    />
+                    <path
+                      fill="#EB4335"
+                      d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                    />
+                  </svg>
+                  Continue with Google
+                </button>
+              )}
+            </form>
+          </>
+        )
+      }
     </div>
 
     <div
@@ -163,7 +215,7 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
       role="status"
       aria-live="polite"
     >
-      <div class="mb-6 p-4 border border-neutral-200 rounded-md text-center">
+      <div class="mb-6 p-4 border border-gray-200 rounded-md text-center">
         <h2 class="text-xl font-bold mb-2">Verify your email</h2>
         <p class="text-sm">
           We've sent a verification email to your inbox. Please check your email
@@ -175,6 +227,9 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
 </Layout>
 
 <script>
+  import { validateForm } from "@/components/ui/scripts/validate-form.js";
+  import { validateInput } from "@/components/ui/scripts/validate-input.js";
+
   const form = document.querySelector(
     "[data-register-form]"
   ) as HTMLFormElement;
@@ -196,6 +251,24 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
 
   form.addEventListener("submit", async (event: SubmitEvent) => {
     event.preventDefault();
+
+    // Validate all fields with validation config before form validation
+    const fieldsWithValidation = form.querySelectorAll(
+      "input[data-validation-config], textarea[data-validation-config], select[data-validation-config]"
+    );
+    for (const field of Array.from(fieldsWithValidation)) {
+      await validateInput(field as HTMLInputElement);
+    }
+
+    // Run form validation (checks required fields and validation errors)
+    if (!validateForm(form)) {
+      // Reset loading state if validation failed
+      submitButton.disabled = false;
+      submitButton.setAttribute("aria-busy", "false");
+      buttonText.textContent = "Register";
+      loadingSpinner.classList.add("hidden");
+      return;
+    }
 
     // Set loading state
     submitButton.disabled = true;
@@ -220,18 +293,19 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
     } catch (error: any) {
       console.error("Error:", error);
       // Show error message on the page instead of redirecting
-      const errorDiv = document.createElement('div');
-      errorDiv.className = 'mt-6 text-sm p-2 bg-red-100 border border-red-300 text-red-700 rounded-md text-center w-full max-w-sm';
-      errorDiv.setAttribute('role', 'alert');
-      errorDiv.setAttribute('aria-live', 'assertive');
+      const errorDiv = document.createElement("div");
+      errorDiv.className =
+        "mt-6 text-sm p-2 bg-red-100 border border-red-300 text-red-700 rounded-md text-center w-full max-w-sm";
+      errorDiv.setAttribute("role", "alert");
+      errorDiv.setAttribute("aria-live", "assertive");
       errorDiv.innerHTML = `<p class="font-semibold">${error.message}</p>`;
-      
+
       // Insert error message after the form
-      const form = document.querySelector('[data-register-form]');
+      const form = document.querySelector("[data-register-form]");
       if (form) {
         form.parentNode?.insertBefore(errorDiv, form.nextSibling);
       }
-      
+
       // Reset loading state
       submitButton.disabled = false;
       submitButton.setAttribute("aria-busy", "false");
