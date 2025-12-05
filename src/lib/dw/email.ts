@@ -14,11 +14,14 @@ function getEnv(key: string): string | undefined {
 }
 
 // Dynamically import all email templates - Vite will bundle them all at build time
-// Only use glob if available (Vite context), otherwise use empty object (Node.js context like CLI)
-// Note: In production builds, Vite transforms this at build time, so templateModules will be populated
-const templateModules = typeof import.meta !== 'undefined' && typeof import.meta.glob === 'function' 
+// Vite transforms import.meta.glob at build time, replacing the call with actual imports
+// We check for Vite context using import.meta.env.MODE (injected by Vite, doesn't exist in CLI)
+// In production: isViteBuild=true, Vite transforms glob→templates, result is templates
+// In CLI: isViteBuild=false, glob not called, result is {}
+const isViteBuild = typeof import.meta !== 'undefined' && import.meta.env && 'MODE' in import.meta.env;
+const templateModules = isViteBuild
   ? import.meta.glob('@/email-templates/**/*.tsx', { eager: true })
-  : {};
+  : ({} as Record<string, any>);
 
 // Debug: Log available templates in development
 // In production, Vite transforms the glob above, so templates should always be available
