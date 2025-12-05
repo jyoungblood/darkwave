@@ -5,11 +5,24 @@ import nodemailer from 'nodemailer';
 import { emailConfig } from '@/config/app';
 import { htmlToPlainText } from '@/lib/dw/helpers';
 
+// Helper to get env vars that works in both Vite and Node.js contexts
+function getEnv(key: string): string | undefined {
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+    return import.meta.env[key];
+  }
+  return process.env[key];
+}
+
 // Dynamically import all email templates - Vite will bundle them all at build time
-const templateModules = import.meta.glob('@/email-templates/**/*.tsx', { eager: true });
+// Only use glob if available (Vite context), otherwise use empty object (Node.js context like CLI)
+// Note: In production builds, Vite transforms this at build time, so templateModules will be populated
+const templateModules = typeof import.meta !== 'undefined' && typeof import.meta.glob === 'function' 
+  ? import.meta.glob('@/email-templates/**/*.tsx', { eager: true })
+  : {};
 
 // Debug: Log available templates in development
-if (import.meta.env.DEV && Object.keys(templateModules).length === 0) {
+// In production, Vite transforms the glob above, so templates should always be available
+if (typeof import.meta !== 'undefined' && import.meta.env?.DEV && Object.keys(templateModules).length === 0) {
   console.warn('Warning: No email templates found via glob. Available keys:', Object.keys(templateModules));
 }
 
@@ -89,8 +102,8 @@ function getEmailTemplate(templatePath: string): any {
 
 // Mailgun API function
 async function sendViaMailgun(data: EmailData) {
-  const mailgunApiKey = import.meta.env.MAILGUN_API_KEY;
-  const mailgunDomain = import.meta.env.MAILGUN_DOMAIN;
+  const mailgunApiKey = getEnv('MAILGUN_API_KEY');
+  const mailgunDomain = getEnv('MAILGUN_DOMAIN');
   
   if (!mailgunApiKey || !mailgunDomain) {
     throw new Error('Mailgun credentials not configured');
@@ -183,8 +196,8 @@ interface EmailData {
  */
 export async function sendEmail(data: EmailData) {
   // Check if we should use Mailgun API
-  const mailgunApiKey = import.meta.env.MAILGUN_API_KEY;
-  const mailgunDomain = import.meta.env.MAILGUN_DOMAIN;
+  const mailgunApiKey = getEnv('MAILGUN_API_KEY');
+  const mailgunDomain = getEnv('MAILGUN_DOMAIN');
   const isUsingMailgun = mailgunApiKey && mailgunDomain;
   
   if (isUsingMailgun) {
