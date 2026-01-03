@@ -1,8 +1,12 @@
 ---
 // DW - Photo upload component - gallery
 
+// updated to dw 0.7.7 version (w/ compression, related_id, and parameters_column support)
+  // api routes included
+
 import { db } from "@/lib/db";
 import PhotoCropper from "./PhotoCropper.astro";
+import LinkButton from "@/components/ui/LinkButton.astro";
 
 interface CompressionConfig {
   format?: 'webp' | 'jpeg' | 'jpg' | 'png' | 'avif' | 'tiff' | 'gif';
@@ -127,12 +131,12 @@ try {
     >
       <div class="flex min-h-full items-center justify-center p-4">
         <div
-          class="modal-content w-full max-w-2xl bg-base-100 rounded-lg shadow-xl max-h-[90vh] flex flex-col"
+          class="w-full max-w-2xl bg-background rounded-lg shadow-lg max-h-[90vh] flex flex-col border"
         >
           <div class="modal-header flex-none">
             <button
               type="button"
-              class="btn btn-text btn-circle btn-sm absolute end-3 top-3"
+              class="inline-flex items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground aspect-square h-8 w-8 absolute end-3 top-3"
               aria-label="Close"
               data-close-modal
             >
@@ -176,7 +180,7 @@ try {
               <div class="flex gap-2">
                 <button
                   type="button"
-                  class="save-photo-btn btn btn-primary flex items-center justify-center"
+                  class="save-photo-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                   aria-busy="false"
                 >
                   <svg
@@ -207,33 +211,25 @@ try {
               <!-- Right side buttons -->
               <div class="flex gap-2">
                 <!-- Delete button -->
-                <div class="tooltip">
-                  <button
-                    type="button"
-                    class="tooltip-toggle btn btn-sm btn-secondary btn-square"
-                    data-delete-photo
-                  >
-                    <span class="icon-[tabler--trash] size-4"></span>
-                  </button>
-                  <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
-                    <span class="tooltip-body tooltip-secondary rounded-md">Remove</span>
-                  </span>
-                </div>
+                <LinkButton
+                  variant="outline"
+                  data-delete-photo
+                >
+                  <span class="icon-[tabler--trash] size-4"></span>
+                  <span>Remove</span>
+                </LinkButton>
 
                 <!-- Full size button -->
-                <div class="tooltip [--placement:top-end]">
-                  <a
-                    href="#"
-                    class="tooltip-toggle btn btn-sm btn-secondary btn-square full-size-photo-btn"
-                    title="View full size"
-                    target="_blank"
-                  >
-                    <span class="icon-[tabler--link] size-4"></span>
-                  </a>
-                  <span class="tooltip-content tooltip-shown:opacity-100 tooltip-shown:visible" role="tooltip">
-                    <span class="tooltip-body tooltip-secondary rounded-md -mr-2">Full size</span>
-                  </span>
-                </div>
+                <LinkButton
+                  variant="outline"
+                  href="#"
+                  class="full-size-photo-btn"
+                  title="View full size"
+                  target="_blank"
+                >
+                  <span class="icon-[tabler--link] size-4"></span>
+                  <span>Full size</span>
+                </LinkButton>
               </div>
             </div>
           </div>
@@ -249,23 +245,11 @@ try {
         prototype: {},
       };
     }
-
-    // Add HSOverlay type declaration for TypeScript
-    if (typeof window.HSOverlay === "undefined") {
-      window.HSOverlay = {
-        open: function (selector) {
-          const element = document.querySelector(selector);
-          if (element) {
-            element.classList.remove("hidden");
-          }
-        },
-      };
-    }
   </script>
 
   <script>
     import "dropzone/dist/dropzone-min.js";
-    import "@/components/ui/scripts/alert.js";
+    import "@/components/ui/scripts/alert";
     import Sortable from "sortablejs";
     import type { SortableEvent } from "sortablejs";
 
@@ -318,16 +302,14 @@ try {
     }
 
     // Extend Window interface
+    // Note: showAlert, hideAlert, and hideAllAlerts types are defined in alert.ts
+    // No need to redeclare them here to avoid type conflicts
     declare global {
       interface Window {
         Dropzone: {
           new (element: HTMLElement, options: any): DropzoneInstance;
         };
         Sortable: typeof Sortable;
-        HSOverlay: {
-          open: (selector: string) => void;
-        };
-        showAlert: (options: Record<string, any>) => void;
       }
     }
 
@@ -782,7 +764,7 @@ try {
                           // Create the upload trigger HTML exactly as it appears in the initial template
                           const uploadTriggerHTML = `
                             <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
-                              <span class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden" data-file-upload-pseudo-trigger="">
+                              <span class="aspect-[4/3] border-border/30 text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-muted/60 group-has-[div]:hidden" data-file-upload-pseudo-trigger="">
                                 <span class="icon-[${(container.querySelector('input[name="component_gallery_upload_dz_icon"]') as HTMLInputElement)?.value || 'tabler--plus'}] w-20 h-20"></span>
                               </span>
                             </div>
@@ -1686,7 +1668,7 @@ try {
   <template data-file-upload-trigger="">
     <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
       <span
-        class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden"
+        class="aspect-[4/3] border-border/30 text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-muted/60 group-has-[div]:hidden"
         data-file-upload-pseudo-trigger=""
       >
         <span class={`icon-[${dz_icon}] w-20 h-20`} />
@@ -1731,7 +1713,7 @@ try {
         <!-- IMPORTANT: This template must match the one in updateUploadTriggerVisibility() -->
         <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
           <span
-            class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden"
+            class="aspect-[4/3] border-border/30 text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-muted/60 group-has-[div]:hidden"
             data-file-upload-pseudo-trigger=""
           >
             <span class={`icon-[${dz_icon}] w-20 h-20`} />

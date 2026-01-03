@@ -2,6 +2,7 @@
 // DW - Form delete button
 
 import FullscreenSpinner from "@/components/ui/FullscreenSpinner.astro";
+import { Button } from "@/components/ui/shadcn/button";
 
 interface Props {
   text: string;
@@ -24,16 +25,15 @@ const {
 } = Astro.props;
 ---
 
-<!-- class="bg-black text-white p-3 text-sm font-semibold rounded-md
-hover:bg-neutral-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
-flex items-center justify-center" -->
 <FullscreenSpinner id="button-delete-spinner" />
 
 <div class="relative">
-  <button
+  <Button
+    client:load
     type="button"
     data-delete-trigger
-    class="btn btn-text btn-error flex items-center justify-center"
+    variant="ghost"
+    className="text-destructive hover:text-destructive hover:bg-destructive/10 flex items-center justify-center"
     aria-busy="false"
   >
     <svg
@@ -56,7 +56,7 @@ flex items-center justify-center" -->
       ></path>
     </svg>
     <span data-delete-text>{buttonText}</span>
-  </button>
+  </Button>
 </div>
 
 <script

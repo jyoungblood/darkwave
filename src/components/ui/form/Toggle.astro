@@ -1,7 +1,8 @@
 ---
-// DW - Form toggle component using FlyonUI switch styling
+// DW - Form toggle component using shadcn/ui Switch
 
 import Label from "@/components/ui/form/Label.astro";
+import { Switch } from "@/components/ui/shadcn/switch";
 
 interface Props {
   label?: string;
@@ -42,48 +43,53 @@ const {
 
 const defaultClass = "flex items-center gap-1";
 const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
-
-// Build switch classes
-const switchClasses = [
-  "switch",
-  size && `switch-${size}`,
-  color && `switch-${color}`,
-  outline && "switch-outline",
-  disabled && "opacity-50 cursor-not-allowed",
-]
-  .filter(Boolean)
-  .join(" ");
 ---
 
 <div class={className}>
   <input
-    type="checkbox"
-    class={switchClasses}
-    id={name}
+    type="hidden"
     name={name}
+    value={checked ? "on" : "off"}
+    id={`${name}-hidden`}
+  />
+  <Switch
+    client:load
+    id={name}
     required={required}
-    checked={checked}
+    defaultChecked={checked}
     disabled={disabled}
+    data-toggle-name={name}
   />
   {label && <Label text={label} for={name} subtext={sublabel} popover={true} subtextInline={true} popoverIcon={popoverIcon} />}
 </div>
 
-<!-- alt version (looks more like toggle) -->
+<script define:vars={{ name, checked }}>
+  // Sync Switch state with hidden input for form submission
+  function syncToggleInput() {
+    const switchElement = document.querySelector(`[data-toggle-name="${name}"]`);
+    const hiddenInput = document.getElementById(`${name}-hidden`);
+    if (!switchElement || !hiddenInput) return;
 
-<!-- <label class="relative inline-flex items-center cursor-pointer">
-  <input
-    type="checkbox"
-    name={name}
-    class="sr-only peer"
-    required={required}
-    checked={checked}
-    disabled={disabled}
-  />
-  <div
-    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-  >
-  </div>
-  <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-    >{label}</span
-  ></label
-> -->
+    // Watch for state changes using MutationObserver
+    const observer = new MutationObserver(() => {
+      const isChecked = switchElement.getAttribute('data-state') === 'checked';
+      hiddenInput.value = isChecked ? 'on' : 'off';
+    });
+
+    observer.observe(switchElement, {
+      attributes: true,
+      attributeFilter: ['data-state']
+    });
+
+    // Set initial value
+    const isChecked = switchElement.getAttribute('data-state') === 'checked';
+    hiddenInput.value = isChecked ? 'on' : 'off';
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncToggleInput);
+  } else {
+    syncToggleInput();
+  }
+</script>
+

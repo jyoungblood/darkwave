@@ -1,0 +1,49 @@
+---
+interface BreadcrumbItem {
+  type: "organization" | "project" | "ticket";
+  href: string;
+  label: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <nav class="mb-4" aria-label="Breadcrumb">
+    <div class="flex items-center gap-2 text-sm">
+      {items.map((item, index) => {
+        const isLast = index === items.length - 1;
+        const isEmptyHref = !item.href || item.href === "";
+        const shouldRenderAsLink = !isLast && !isEmptyHref;
+        
+        return (
+          <>
+            {shouldRenderAsLink ? (
+              <>
+                <a
+                  href={item.href}
+                  class="text-neutral-600 hover:text-neutral-900 hover:underline"
+                >
+                  {item.label}
+                </a>
+                <span class="text-neutral-400">></span>
+              </>
+            ) : (
+              <>
+                <span class="text-neutral-400">
+                  {item.label}
+                </span>
+                {!isLast && <span class="text-neutral-400">></span>}
+              </>
+            )}
+          </>
+        );
+      })}
+    </div>
+  </nav>
+)}
+

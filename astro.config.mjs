@@ -6,10 +6,12 @@ import node from "@astrojs/node";
 import tailwindcss from "@tailwindcss/vite";
 import favicons from "astro-favicons";
 
+import react from "@astrojs/react";
+
 export default defineConfig({
   prefetch: true,
   output: "server",
-  integrations: [favicons()],
+  integrations: [favicons(), react()],
   //   favicons({
   //     masterPicture: "./src/assets/favicon.svg",
   //     emitAssets: true,

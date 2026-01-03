@@ -1,8 +1,8 @@
 ---
-// DW - Form input text component
+// DW - Form input text component using shadcn/ui Input
 
-import validator from "validator";
 import Label from "@/components/ui/form/Label.astro";
+import { Input } from "@/components/ui/shadcn/input";
 
 interface Props {
   label?: string;
@@ -51,8 +51,10 @@ const {
   htmlAttributes = {},
 } = Astro.props;
 
-const defaultClass = "input";
-const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
+// Determine input type
+const inputType = validation?.rules?.find((rule) => rule.type === "number")
+  ? "number"
+  : "text";
 
 // Only include validation attributes if validation is configured
 const validationAttributes = validation
@@ -78,18 +80,22 @@ const validationAttributes = validation
 
 <div class="flex flex-col" id={`input-container-${name}`}>
   {label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
-  <input
-    type={validation?.rules?.find((rule) => rule.type === "number")
-      ? "number"
-      : "text"}
+  <Input
+    client:load
+    type={inputType}
     id={`input-${name}`}
     name={name}
     required={required}
-    class={className}
-    value={value}
+    className={customClass}
+    defaultValue={value}
     placeholder={placeholder}
-    autocomplete="off"
-    onblur={validation ? "validateOnBlur(event)" : undefined}
+    autoComplete="off"
+    onBlur={validation ? (e) => {
+      // Pass React synthetic event - validation function uses event.target which React provides
+      if ((window as any).validateOnBlur) {
+        (window as any).validateOnBlur(e);
+      }
+    } : undefined}
     {...validationAttributes}
     {...htmlAttributes}
   />

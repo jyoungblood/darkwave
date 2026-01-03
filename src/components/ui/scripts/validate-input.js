@@ -210,7 +210,12 @@ function validateRule(value, rule) {
       (rule.max === undefined || value.length <= rule.max);
     return {
       isValid,
-      message: isValid ? "" : rule.errorMessage || `Length must be between ${rule.min || 0} and ${rule.max || "∞"} characters`,
+      message: isValid
+        ? ""
+        : rule.errorMessage ||
+          `Length must be between ${rule.min || 0} and ${
+            rule.max || "∞"
+          } characters`,
     };
   }
 
@@ -354,15 +359,24 @@ export async function validateInput(input) {
   // Check uniqueness if configured
   if (validationConfig.unique) {
     try {
+      const requestBody = {
+        collection: validationConfig.unique.collection,
+        field: validationConfig.unique.field,
+        value: value,
+      };
+
+      // Only include exempt if it's defined and not empty
+      if (
+        validationConfig.unique.exempt &&
+        Object.keys(validationConfig.unique.exempt).length > 0
+      ) {
+        requestBody.exempt = validationConfig.unique.exempt;
+      }
+
       const response = await fetch("/api/dw/validate-unique", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          collection: validationConfig.unique.collection,
-          field: validationConfig.unique.field,
-          value: value,
-          exempt: validationConfig.unique.exempt,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const { isUnique } = await response.json();

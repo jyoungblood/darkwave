@@ -1,7 +1,8 @@
 ---
-// DW - Form checkbox group component
+// DW - Form checkbox group component using Base-UI Checkbox
 
 import Label from "@/components/ui/form/Label.astro";
+import { Checkbox } from "@/components/ui/shadcn/checkbox";
 
 interface Props {
   label?: string;
@@ -14,7 +15,6 @@ interface Props {
   columns?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 }
 
-const defaultClass = "flex items-center gap-1";
 const {
   label,
   sublabel,
@@ -25,6 +25,8 @@ const {
   selected = [],
   columns,
 } = Astro.props;
+
+const defaultClass = "flex items-center gap-1";
 const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 
 // Determine the container class based on columns prop
@@ -33,26 +35,92 @@ const containerClass = columns
   : "flex flex-wrap gap-4";
 ---
 
-<div class="form-control">
-  {label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
+<div>
+  {label && <Label text={label} for={`input-${name}`} subtext={sublabel} class="mb-2" />}
   <div class={containerClass}>
-    {
-      options.map((option) => (
-        <div class={className}>
-          <input
-            type="checkbox"
-            name={name}
-            value={option.value}
-            class="checkbox checkbox-primary"
-            required={required}
-            checked={selected.includes(option.value)}
-            id={`${name}-${option.value}`}
-          />
-          <label class="label-text text-base" for={`${name}-${option.value}`}>
-            {option.label}
-          </label>
-        </div>
-      ))
-    }
+    {options.map((option) => (
+      <div class={className}>
+        <input
+          type="hidden"
+          name={name}
+          value={selected.includes(option.value) ? option.value : ""}
+          id={`${name}-${option.value}-hidden`}
+          disabled={!selected.includes(option.value)}
+        />
+        <Checkbox
+          client:load
+          id={`${name}-${option.value}`}
+          defaultChecked={selected.includes(option.value)}
+          onCheckedChange={(checked) => {
+            const hiddenInput = document.getElementById(`${name}-${option.value}-hidden`);
+            if (hiddenInput) {
+              const input = hiddenInput as HTMLInputElement;
+              if (checked) {
+                input.value = option.value;
+                input.removeAttribute('disabled');
+              } else {
+                input.value = '';
+                input.setAttribute('disabled', 'disabled');
+              }
+            }
+          }}
+          data-checkbox-name={name}
+          data-checkbox-value={option.value}
+        />
+        <label
+          class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          for={`${name}-${option.value}`}
+        >
+          {option.label}
+        </label>
+      </div>
+    ))}
   </div>
 </div>
+
+<script define:vars={{ name }}>
+  // Sync Checkbox state with hidden inputs for form submission
+  function syncCheckboxInputs() {
+    const checkboxes = document.querySelectorAll(`[data-checkbox-name="${name}"]`);
+    checkboxes.forEach((checkbox) => {
+      const checkboxElement = checkbox;
+      const value = checkboxElement.getAttribute('data-checkbox-value');
+      const hiddenInput = document.getElementById(`${name}-${value}-hidden`);
+      if (!checkboxElement || !hiddenInput) return;
+
+      // Watch for state changes using MutationObserver
+      const observer = new MutationObserver(() => {
+        const isChecked = checkboxElement.getAttribute('data-state') === 'checked';
+        if (isChecked) {
+          hiddenInput.value = value || '';
+          hiddenInput.removeAttribute('disabled');
+        } else {
+          hiddenInput.value = '';
+          hiddenInput.setAttribute('disabled', 'disabled');
+        }
+      });
+
+      observer.observe(checkboxElement, {
+        attributes: true,
+        attributeFilter: ['data-state']
+      });
+
+      // Set initial value
+      const isChecked = checkboxElement.getAttribute('data-state') === 'checked';
+      if (isChecked) {
+        hiddenInput.value = value || '';
+        hiddenInput.removeAttribute('disabled');
+      } else {
+        hiddenInput.value = '';
+        hiddenInput.setAttribute('disabled', 'disabled');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncCheckboxInputs);
+  } else {
+    // Wait for React to hydrate
+    setTimeout(syncCheckboxInputs, 100);
+  }
+</script>

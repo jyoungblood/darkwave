@@ -1,7 +1,8 @@
 ---
-// DW - Form textarea component
+// DW - Form textarea component using shadcn/ui Textarea
 
 import Label from "@/components/ui/form/Label.astro";
+import { Textarea as TextareaBase } from "@/components/ui/shadcn/textarea";
 
 interface Props {
   label?: string;
@@ -14,8 +15,6 @@ interface Props {
   rows?: number;
 }
 
-const defaultClass = "textarea max-w-full bg-white";
-// const defaultClass = 'p-2 border border-neutral-400 rounded-md';
 const {
   label,
   sublabel,
@@ -26,41 +25,18 @@ const {
   class: customClass = "",
   rows = 3,
 } = Astro.props;
-const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 ---
 
-<!-- mb-2 text-sm font-semibold -->
-{label && <Label text={label} for={`textarea-${name}`} subtext={sublabel} />}
-<textarea
-  id={`textarea-${name}`}
-  name={name}
-  required={required}
-  class={className}
-  placeholder={placeholder}
-  rows={rows}
-  style="field-sizing: content;">{value}</textarea
->
-
-<script define:vars={{ textareaId: `textarea-${name}` }}>
-  function initAutoResize() {
-    const textarea = document.getElementById(textareaId);
-    if (!textarea) return;
-    
-    function autoResize() {
-      textarea.style.height = 'auto';
-      textarea.style.height = textarea.scrollHeight + 'px';
-    }
-    
-    textarea.addEventListener('input', autoResize);
-    // Resize on initial load if there's a value
-    if (textarea.value) {
-      autoResize();
-    }
-  }
-  
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAutoResize);
-  } else {
-    initAutoResize();
-  }
-</script>
+<div class="flex flex-col">
+  {label && <Label text={label} for={`textarea-${name}`} subtext={sublabel} />}
+  <TextareaBase
+    client:load
+    id={`textarea-${name}`}
+    name={name}
+    required={required}
+    className={`resize-none ${customClass}`}
+    defaultValue={value}
+    placeholder={placeholder}
+    rows={rows}
+  />
+</div>

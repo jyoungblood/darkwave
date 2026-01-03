@@ -1,7 +1,8 @@
 ---
-// DW - Form select dropdown component
+// DW - Form select dropdown component using shadcn/ui Select
 
 import Label from "@/components/ui/form/Label.astro";
+import { SelectWrapper } from "@/components/ui/shadcn/SelectWrapper";
 
 interface Props {
   label?: string;
@@ -10,11 +11,10 @@ interface Props {
   required?: boolean;
   value?: string;
   class?: string;
+  placeholder?: string;
   options: { label: string; value: string }[] | { label: string; options: { label: string; value: string }[] }[];
 }
 
-// const defaultClass = "p-2 border border-neutral-400 rounded-md";
-const defaultClass = "select select-bordered bg-white";
 const {
   label,
   sublabel,
@@ -23,33 +23,20 @@ const {
   value = "",
   options,
   class: customClass = "",
+  placeholder = "",
 } = Astro.props;
-const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 ---
 
-<!-- mb-2 text-sm font-semibold -->
-{label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
-<select id={`input-${name}`} name={name} required={required} class={className}>
-  {
-    // Check if options is an array of optgroups
-    options.length > 0 && 'options' in options[0] ? (
-      // Render optgroups
-      (options as { label: string; options: { label: string; value: string }[] }[]).map((group) => (
-        <optgroup label={group.label}>
-          {group.options.map((option) => (
-            <option value={option.value} selected={option.value === value}>
-              {option.label}
-            </option>
-          ))}
-        </optgroup>
-      ))
-    ) : options.length > 0 ? (
-      // Render flat options
-      (options as { label: string; value: string }[]).map((option) => (
-        <option value={option.value} selected={option.value === value}>
-          {option.label}
-        </option>
-      ))
-    ) : null
-  }
-</select>
+<div class="flex flex-col">
+  {label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
+  <SelectWrapper
+    client:load
+    name={name}
+    required={required}
+    value={value}
+    className={customClass}
+    options={options}
+    placeholder={placeholder}
+    id={`input-${name}`}
+  />
+</div>

@@ -1,8 +1,8 @@
 ---
 // DW - Form submit button
-// updated for LWOA
 
 import FullscreenSpinner from "@/components/ui/FullscreenSpinner.astro";
+import { Button } from "@/components/ui/shadcn/button";
 
 interface Props {
   text: string;
@@ -13,9 +13,6 @@ interface Props {
   workingText?: string;
   successMessage?: string;
   showFullscreenSpinner?: boolean;
-  showSuccessAlert?: boolean;
-  successButtonText?: string;
-  successButtonResetDelayMs?: number;
 }
 
 const {
@@ -27,22 +24,18 @@ const {
   workingText = "Saving...",
   successMessage = "Changes saved successfully.",
   showFullscreenSpinner = false,
-  showSuccessAlert = true,
-  successButtonText,
-  successButtonResetDelayMs = 2500,
-} = Astro.props as Props;
+} = Astro.props;
 ---
 
 <FullscreenSpinner id="button-submit-spinner" />
 
-<!-- class="bg-black text-white p-3 text-sm font-semibold rounded-md
-hover:bg-neutral-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
-flex items-center justify-center" -->
 <span class="flex items-center justify-center">
-  <button
+  <Button
+    client:load
     type="submit"
     data-button-submit
-    class="btn btn-primary flex items-center justify-center"
+    variant="default"
+    className="flex items-center justify-center"
     aria-busy="false"
   >
     <svg
@@ -65,13 +58,13 @@ flex items-center justify-center" -->
       ></path>
     </svg>
     <span data-button-text>{buttonText}</span>
-  </button>
-  <span data-button-submit-error class="text-red-500 text-sm ml-4 hidden"
+  </Button>
+  <span data-button-submit-error class="text-destructive text-sm ml-4 hidden"
   ></span>
 </span>
 
 <script>
-  import "@/components/ui/scripts/alert.js";
+  import "@/components/ui/scripts/alert";
   import { validateForm } from "@/components/ui/scripts/validate-form.js";
 </script>
 
@@ -84,9 +77,6 @@ flex items-center justify-center" -->
     buttonText,
     successMessage,
     showFullscreenSpinner,
-    showSuccessAlert,
-    successButtonText,
-    successButtonResetDelayMs,
   }}
 >
   const formElement = document.querySelector(form);
@@ -94,13 +84,6 @@ flex items-center justify-center" -->
   const buttonTextValue = document.querySelector("[data-button-text]");
   const loadingSpinner = document.querySelector("[data-button-spinner]");
   const fullscreenSpinner = document.querySelector("#button-submit-spinner");
-  let successResetTimeoutId = null;
-  const resetFormInteraction = () => {
-    if (!showFullscreenSpinner) {
-      formElement.classList.remove("opacity-50");
-      formElement.classList.remove("cursor-not-allowed");
-    }
-  };
 
   if (
     !formElement ||
@@ -157,7 +140,6 @@ flex items-center justify-center" -->
         submitButton.setAttribute("aria-busy", "false");
         buttonTextValue.textContent = buttonText;
         loadingSpinner.classList.add("hidden");
-        resetFormInteraction();
         if (showFullscreenSpinner) {
           fullscreenSpinner.classList.add("hidden");
         }
@@ -202,52 +184,35 @@ flex items-center justify-center" -->
           // Reset button state
           submitButton.disabled = false;
           submitButton.setAttribute("aria-busy", "false");
+          buttonTextValue.textContent = buttonText;
           loadingSpinner.classList.add("hidden");
-          resetFormInteraction();
           if (showFullscreenSpinner) {
             fullscreenSpinner.classList.add("hidden");
           }
 
-          if (successResetTimeoutId !== null) {
-            window.clearTimeout(successResetTimeoutId);
-            successResetTimeoutId = null;
-          }
-
-          if (successButtonText) {
-            buttonTextValue.textContent = successButtonText;
-            successResetTimeoutId = window.setTimeout(() => {
-              buttonTextValue.textContent = buttonText;
-              successResetTimeoutId = null;
-            }, successButtonResetDelayMs);
-          } else {
-            buttonTextValue.textContent = buttonText;
-          }
-
           // Show success alert
-          if (showSuccessAlert) {
-            window.showAlert({
-              type: "success",
-              variant: "soft",
-              title: "Success",
-              text: successMessage,
-              icon: true,
-              overlay: true,
-              position: {
-                vertical: "middle-third",
-                horizontal: "center",
+          window.showAlert({
+            type: "success",
+            variant: "soft",
+            title: "Success",
+            text: successMessage,
+            icon: true,
+            overlay: true,
+            position: {
+              vertical: "middle-third",
+              horizontal: "center",
+            },
+            buttonLayout: {
+              newLine: true,
+            },
+            buttons: [
+              {
+                type: "success",
+                text: "OK",
+                variant: "solid",
               },
-              buttonLayout: {
-                newLine: true,
-              },
-              buttons: [
-                {
-                  type: "success",
-                  text: "OK",
-                  variant: "solid",
-                },
-              ],
-            });
-          }
+            ],
+          });
         }
       }
     } catch (error) {
@@ -256,7 +221,6 @@ flex items-center justify-center" -->
       submitButton.setAttribute("aria-busy", "false");
       buttonTextValue.textContent = buttonText;
       loadingSpinner.classList.add("hidden");
-      resetFormInteraction();
       if (showFullscreenSpinner) {
         fullscreenSpinner.classList.add("hidden");
       }
