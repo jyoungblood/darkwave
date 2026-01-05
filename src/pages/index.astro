@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import LinkButton from "@/components/ui/LinkButton.astro";
 ---
 
 <Layout>
@@ -8,16 +9,20 @@ import Layout from "@/layouts/Layout.astro";
       <div>
         <div class="text-2xl font-bold mb-4">DARKWAVE 0.7.4</div>
         <div class="flex items-center justify-between gap-4">
-          <a
-            class="btn btn-sm btn-outline no-underline hover:underline font-semibold"
+          <LinkButton
+            size="sm"
             href="https://darkwave.ltd"
-            target="_blank"><span class="icon-[tabler--book]"></span>Docs</a
+            target="_blank"
           >
-          <a
-            class="btn btn-sm btn-outline no-underline hover:underline font-semibold"
+            <span class="icon-[tabler--book]"></span>Docs
+          </LinkButton>
+          <LinkButton
+            size="sm"
             href="https://github.com/jyoungblood/darkwave"
-            target="_blank"><span class="icon-[tabler--brand-github]"></span>Source</a
+            target="_blank"
           >
+            <span class="icon-[tabler--brand-github]"></span>Source
+          </LinkButton>
         </div>
       </div>
     </div>

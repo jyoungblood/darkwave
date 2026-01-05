@@ -7,6 +7,8 @@
 import { db } from "@/lib/db";
 import PhotoCropper from "./PhotoCropper.astro";
 import LinkButton from "@/components/ui/LinkButton.astro";
+import InputText from "@/components/ui/form/InputText.astro";
+import Textarea from "@/components/ui/form/Textarea.astro";
 
 interface CompressionConfig {
   format?: 'webp' | 'jpeg' | 'jpg' | 'png' | 'avif' | 'tiff' | 'gif';
@@ -146,36 +148,25 @@ try {
 
           <div class="photo-editor-form overflow-y-auto">
             <input type="hidden" class="photo-uuid" name="photo-uuid" />
-            <div class="modal-body pt-0">
+            <div class="modal-body p-3">
               <!-- rounded-md overflow-hidden -->
               <div data-cropper-container class="mb-4">
                 <PhotoCropper photo_url="" url_parameters="" />
               </div>
+              <div class="">
+                <!-- Title Field -->
+                <div class="mb-4">
+                  <InputText label="Title" name="photo-title" class="photo-title" placeholder="Enter photo title" />
+                </div>
 
-              <!-- Title Field -->
-              <div class="mb-4">
-                <label class="label label-text" for="photo-title">Title</label>
-                <input
-                  type="text"
-                  class="photo-title input w-full"
-                  name="photo-title"
-                  placeholder="Enter photo title"
-                />
-              </div>
-
-              <!-- Description Field -->
-              <div class="mb-4">
-                <label class="label label-text" for="photo-description"
-                  >Description</label
-                >
-                <textarea
-                  class="photo-description textarea w-full h-24"
-                  name="photo-description"
-                  placeholder="Enter photo description"></textarea>
+                <!-- Description Field -->
+                <div class="mb-4">
+                  <Textarea label="Description" name="photo-description" class="photo-description" placeholder="Enter photo description" />
+                </div>
               </div>
             </div>
 
-            <div class="modal-footer flex justify-between">
+            <div class="modal-footer flex justify-between p-3 pt-0">
               <!-- Left side buttons -->
               <div class="flex gap-2">
                 <button
