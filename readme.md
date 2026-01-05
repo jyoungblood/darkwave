@@ -17,8 +17,8 @@ Read the full documentation and user guide at [darkwavejs.com](https://darkwavej
 ### Core Stack
 
 - [Astro](https://astro.build) (SSR w/ Node.js adapter and [TypeScript](https://www.typescriptlang.org/))
-- [Tailwind CSS](https://tailwindcss.com/) with [typography](https://github.com/tailwindlabs/tailwindcss-typography) and [forms](https://github.com/tailwindlabs/tailwindcss-forms) plugins configured
-- [FlyonUI](https://flyonui.com/) UI components
+- [Tailwind CSS](https://tailwindcss.com/) with [typography](https://github.com/tailwindlabs/tailwindcss-typography) and [forms](https://github.com/tailwindlabs/tailwindcss-forms) plugins available
+- [shadcn/ui](https://ui.shadcn.com/) UI components
 - [Better-Auth](https://www.better-auth.com/) for authentication
 - [MySQL](https://www.mysql.com/) (8.0) with [Kysely](https://kysely.dev/) query builder & cli
 
