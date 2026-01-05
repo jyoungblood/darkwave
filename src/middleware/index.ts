@@ -108,6 +108,12 @@ export const onRequest = defineMiddleware(
     // Get the response from next()
     const response = await next();
     
+    // Check if this is a redirect response - if so, pass it through unchanged
+    const status = response.status;
+    if (status >= 300 && status < 400) {
+      return response;
+    }
+    
     // Only add version check if we have a version number and it's not a feed response
     if (locals.rolesVersion) {
       const html = await response.text();

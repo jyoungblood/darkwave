@@ -9,7 +9,7 @@ const requestSchema = z.object({
   collection: z.string(),
   field: z.string(),
   value: z.string(),
-  exempt: z.record(z.string()).optional()
+  exempt: z.record(z.string(), z.union([z.string(), z.number()])).optional()
 });
 
 export const POST: APIRoute = async ({ request }) => {

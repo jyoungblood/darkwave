@@ -22,7 +22,7 @@ export type Permission =
   ;
 
 // Define ownership types
-export type OwnershipType = 'direct' | 'relationship';
+export type OwnershipType = 'direct' | 'relationship' | 'custom';
 
 // Define ownership configuration for different tables
 export interface OwnershipConfig<T extends keyof Database = keyof Database> {
@@ -34,6 +34,13 @@ export interface OwnershipConfig<T extends keyof Database = keyof Database> {
   relationshipField?: string;
   relationshipOwnerField?: string;
   relationshipRole?: string | string[]; // Optional role check for relationship ownership (single role or array of roles)
+  groupRoles?: string | string[]; // Roles that grant ownership access (e.g., admin, medications_moderator) - if user has one of these roles, they are considered an owner
+  customCheck?: (params: { // For custom ownership checks (e.g., projects with organization fallback)
+    userId: string;
+    idValue: string;
+    idColumn: string;
+    database: import('kysely').Kysely<Database>;
+  }) => Promise<boolean>;
 }
 
 // Ownership configurations for different tables
@@ -44,8 +51,10 @@ export const OWNERSHIP_CONFIGS: {
   links: {
     type: 'direct',
     directField: 'user_id'
+    // group EX:
+    // groupRoles: ['admin', 'medications_moderator']
   },
-  
+
   user: {
     type: 'direct',
     directField: 'id'

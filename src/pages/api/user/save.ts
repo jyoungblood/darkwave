@@ -20,7 +20,8 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
     await validateCsrf({ formData, cookies });
     const id = formData.get("id")?.toString();
     const email = formData.get("email")?.toString();
-    const name = formData.get("name")?.toString();
+    const first_name = formData.get("first_name")?.toString();
+    const last_name = formData.get("last_name")?.toString();
     const password = formData.get("password")?.toString();
 
 
@@ -57,7 +58,8 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
           body: {
             email,
             password,
-            name,
+            first_name,
+            last_name,
             metadata: {
               isAdminCreation: true
             }
@@ -65,19 +67,24 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
         } as any);
 
         // Get the user ID from the result
-        userId = authResult.user.id;
+        userId = (authResult as any).user.id;
 
-        // Mark as verified immediately
+        // Mark as verified immediately and save first_name/last_name
         await db
           .updateTable('user')
-          .set({ emailVerified: true })
-          .where('id', '=', userId)
+          .set({ 
+            emailVerified: true,
+            first_name,
+            last_name,
+          })
+          .where('id', '=', userId as string)
           .execute();
 
         result = {
           id: userId,
           email,
-          name
+          first_name,
+          last_name,
         };
       } catch (authError: any) {
         console.error('Failed to create user:', authError?.message || authError);
@@ -90,7 +97,8 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
       // Handle user update
       const dataToSave = {
         email,
-        name,
+        first_name,
+        last_name,
         updatedAt: new Date(),
       };
 
@@ -104,7 +112,7 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
       // Fetch the updated record
       result = await db
         .selectFrom('user')
-        .select(['id', 'email', 'name'])
+        .select(['id', 'email', 'first_name', 'last_name'])
         .where('id', '=', id)
         .executeTakeFirst();
 

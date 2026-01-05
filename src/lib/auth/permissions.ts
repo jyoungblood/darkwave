@@ -67,11 +67,30 @@ export async function checkOwnership(
   idValue: string,
   table: keyof Database,
   database: Kysely<Database>,
-  idColumn: string = 'uuid'
+  idColumn: string = 'uuid',
+  authRoles?: string[]
 ): Promise<boolean> {
   const config = OWNERSHIP_CONFIGS[table];
   if (!config) {
     throw new Error(`No ownership configuration found for table: ${table}`);
+  }
+
+  // Handle custom ownership checks
+  if (config.type === 'custom' && config.customCheck) {
+    return await config.customCheck({
+      userId,
+      idValue,
+      idColumn,
+      database
+    });
+  }
+
+  // Check if user has a group role that grants ownership access
+  if (config.groupRoles && authRoles) {
+    const groupRoles = Array.isArray(config.groupRoles) ? config.groupRoles : [config.groupRoles];
+    if (authRoles.some(role => groupRoles.includes(role))) {
+      return true;
+    }
   }
 
   if (config.type === 'direct' && config.directField) {
@@ -132,7 +151,7 @@ export async function checkAuthorizationWithOwnership(
   // For existing records, check ownership if required
   if (requireOwnership) {
     // Check if user owns the record or has admin permission
-    const isOwner = await checkOwnership(userId, idValue, table as keyof Database, database, idColumn);
+    const isOwner = await checkOwnership(userId, idValue, table as keyof Database, database, idColumn, authRoles);
     if (!isOwner && !hasPermission(authRoles, `update:any:${table}` as Permission)) {
       return { error: 'Not authorized to modify this record' };
     }

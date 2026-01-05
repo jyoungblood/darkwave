@@ -54,11 +54,14 @@ try {
   <input type="hidden" name="csrf" value={Astro.cookies.get("csrf")?.value} />
   <div class="grid grid-cols-2 gap-4 mb-4">
     <div class="flex flex-col">
-      <div class="mb-4">
-        <InputText label="Email" name="email" value={user?.email} required />
+      <div class="mb-6">
+        <InputText label="First Name" name="first_name" value={user?.first_name} required />
       </div>
-      <div class="mb-4">
-        <InputText label="Name" name="name" value={user?.name} required />
+      <div class="mb-6">
+        <InputText label="Last Name" name="last_name" value={user?.last_name} required />
+      </div>
+      <div class="mb-6">
+        <InputText label="Email" name="email" value={user?.email} required />
       </div>
 
       {!user && (

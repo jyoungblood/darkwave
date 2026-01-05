@@ -1,6 +1,9 @@
 @import "tailwindcss";
+
+/* not using the forms and typography plugins, just here if you need them */
 /* @plugin "@tailwindcss/forms"; */
 /* @plugin "@tailwindcss/typography"; */
+
 @plugin "@iconify/tailwind4";
 
 /* Tailwind v4 Theme Configuration for shadcn/ui - Neutral Theme */

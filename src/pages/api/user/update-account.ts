@@ -20,7 +20,8 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
     const email = formData.get("email")?.toString();
     const newPassword = formData.get("newPassword")?.toString();
     const currentPassword = formData.get("currentPassword")?.toString();
-    const name = formData.get("name")?.toString();
+    const first_name = formData.get("first_name")?.toString();
+    const last_name = formData.get("last_name")?.toString();
 
     if (!id) {
       return new Response(
@@ -53,7 +54,8 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
 
     const dataToSave = {
       email,
-      name,
+      first_name,
+      last_name,
       updatedAt: new Date(),
     };
 
