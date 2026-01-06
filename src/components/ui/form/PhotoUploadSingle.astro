@@ -65,7 +65,7 @@ const serializedParametersColumn = parameters_column
 const normalizedUploadPath = upload_path.replace(/^\/+|\/+$/g, "");
 
 import PhotoCropper from "./PhotoCropper.astro";
-import LinkButton from "@/components/ui/LinkButton.astro";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 ---
 
 <div
@@ -1159,7 +1159,7 @@ import LinkButton from "@/components/ui/LinkButton.astro";
       <!-- hide buttons and reveal on parent hover -->
       <!-- opacity-0 transition-opacity duration-200 group-hover:opacity-100 -->
       <div class="absolute bottom-2 right-2 flex gap-2">
-        <LinkButton
+        <ButtonLink
           variant="outline"
           onclick={`(function(e){ 
             e.preventDefault();
@@ -1204,11 +1204,11 @@ import LinkButton from "@/components/ui/LinkButton.astro";
         >
           <span class="icon-[tabler--trash] size-4"></span>
           <span>Remove</span>
-        </LinkButton>
+        </ButtonLink>
 
         {
           cropper && (
-            <LinkButton
+            <ButtonLink
               variant="outline"
               onclick={`(function(e){ 
                 e.stopPropagation(); 
@@ -1221,12 +1221,12 @@ import LinkButton from "@/components/ui/LinkButton.astro";
             >
               <span class="icon-[tabler--crop] size-4"></span>
               <span>Crop</span>
-            </LinkButton>
+            </ButtonLink>
           )
         }
 
 
-          <LinkButton
+          <ButtonLink
             variant="outline"
             onclick={`(function(e){ 
               e.stopPropagation(); 
@@ -1239,7 +1239,7 @@ import LinkButton from "@/components/ui/LinkButton.astro";
           >
             <span class="icon-[tabler--link] size-4"></span>
             <span>Full size</span>
-          </LinkButton>
+          </ButtonLink>
 
       <!-- Hidden elements that Dropzone expects -->
       <div class="dz-details" hidden>

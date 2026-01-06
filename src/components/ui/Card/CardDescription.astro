@@ -1,0 +1,18 @@
+---
+// DW - CardDescription component using shadcn Card styling
+
+import { cn } from "@/lib/dw/helpers";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  class={cn("text-muted-foreground", className)}
+  style="font-size: var(--card-description-size);"
+>
+  <slot />
+</div>

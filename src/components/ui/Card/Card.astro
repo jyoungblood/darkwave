@@ -1,0 +1,18 @@
+---
+// DW - Simplified Card component using shadcn Card styling
+
+import { cn } from "@/lib/dw/helpers";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  class={cn("border bg-card text-card-foreground", className)}
+  style="border-radius: var(--radius-lg); box-shadow: var(--card-shadow);"
+>
+  <slot />
+</div>

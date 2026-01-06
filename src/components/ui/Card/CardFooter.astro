@@ -1,0 +1,20 @@
+---
+// DW - CardFooter component using shadcn Card styling
+
+import { cn } from "@/lib/dw/helpers";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  class={cn("flex items-center", className)}
+  style={{
+    "padding": "0 var(--card-padding) var(--card-padding) var(--card-padding)",
+  }}
+>
+  <slot />
+</div>

@@ -6,7 +6,7 @@
 
 import { db } from "@/lib/db";
 import PhotoCropper from "./PhotoCropper.astro";
-import LinkButton from "@/components/ui/LinkButton.astro";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 import InputText from "@/components/ui/form/InputText.astro";
 import Textarea from "@/components/ui/form/Textarea.astro";
 
@@ -202,16 +202,16 @@ try {
               <!-- Right side buttons -->
               <div class="flex gap-2">
                 <!-- Delete button -->
-                <LinkButton
+                <ButtonLink
                   variant="outline"
                   data-delete-photo
                 >
                   <span class="icon-[tabler--trash] size-4"></span>
                   <span>Remove</span>
-                </LinkButton>
+                </ButtonLink>
 
                 <!-- Full size button -->
-                <LinkButton
+                <ButtonLink
                   variant="outline"
                   href="#"
                   class="full-size-photo-btn"
@@ -220,7 +220,7 @@ try {
                 >
                   <span class="icon-[tabler--link] size-4"></span>
                   <span>Full size</span>
-                </LinkButton>
+                </ButtonLink>
               </div>
             </div>
           </div>

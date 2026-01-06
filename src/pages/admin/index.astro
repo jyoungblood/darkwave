@@ -2,6 +2,12 @@
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import { formatDate } from "@/lib/dw/helpers";
 import { db } from "@/lib/db";
+import Card from "@/components/ui/Card/Card.astro";
+import CardHeader from "@/components/ui/Card/CardHeader.astro";
+import CardTitle from "@/components/ui/Card/CardTitle.astro";
+import CardContent from "@/components/ui/Card/CardContent.astro";
+import CardFooter from "@/components/ui/Card/CardFooter.astro";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 
 let links;
 let users;
@@ -10,11 +16,15 @@ try {
   // Fetch all data in parallel
   const [linksResult, usersResult] = await Promise.all([
     (async () => {
-      return await db.selectFrom('links').selectAll().where('deleted_at', 'is', null).execute();
+      return await db
+        .selectFrom("links")
+        .selectAll()
+        .where("deleted_at", "is", null)
+        .execute();
     })(),
     (async () => {
-      return await db.selectFrom('user').selectAll().execute();
-    })()
+      return await db.selectFrom("user").selectAll().execute();
+    })(),
   ]);
 
   // Assign the results
@@ -29,30 +39,49 @@ try {
   <div class="w-full">
     <h2 class="text-2xl font-bold mb-6">Admin Dashboard</h2>
 
+
     <div class="grid grid-cols-2 gap-6">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title">Links</h3>
-            <div class="card-text flex items-center justify-between gap-2 mb-2">
-              <div>Total Links: {links ? links.length : 0}</div>
-              <div>Last updated: {links?.[0]?.updated_at ? formatDate(links[0].updated_at.toString()) : 'N/A'}</div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Links</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <div>Total Links: {links ? links.length : 0}</div>
+            <div class="text-sm text-muted-foreground">
+              Last updated: {
+                links?.[0]?.updated_at
+                  ? formatDate(links[0].updated_at.toString())
+                  : "N/A"
+              }
             </div>
-            <a href="/admin/links" class="btn btn-primary">Manage Links</a>
           </div>
-        </div>
+        </CardContent>
+        <CardFooter>
+          <ButtonLink href="/admin/links" text="Manage Links" />
+        </CardFooter>
+      </Card>
 
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title">Users</h3>
-            <div class="card-text flex items-center justify-between gap-2 mb-2">
-              <div>Total Users: {users ? users.length : 0}</div>
-              <div>Last updated: {users?.[0]?.updatedAt ? formatDate(users[0].updatedAt.toString()) : 'N/A'}</div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Users</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <div>Total Users: {users ? users.length : 0}</div>
+            <div class="text-sm text-muted-foreground">
+              Last updated: {
+                users?.[0]?.updatedAt
+                  ? formatDate(users[0].updatedAt.toString())
+                  : "N/A"
+              }
             </div>
-            <a href="/admin/users" class="btn btn-primary">Manage Users</a>
           </div>
-        </div>
-
-      </div>
-
+        </CardContent>
+        <CardFooter>
+          <ButtonLink href="/admin/users" text="Manage Users" />
+        </CardFooter>
+      </Card>
+    </div>
   </div>
 </AdminLayout>

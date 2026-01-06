@@ -1,0 +1,18 @@
+---
+// DW - CardHeader component using shadcn Card styling
+
+import { cn } from "@/lib/dw/helpers";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  class={cn("flex flex-col", className)}
+  style="padding: var(--card-padding); gap: var(--card-header-gap);"
+>
+  <slot />
+</div>

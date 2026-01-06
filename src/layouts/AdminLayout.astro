@@ -1,34 +1,151 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import "../styles/admin.css";
 const { title } = Astro.props;
 const currentPath = Astro.url.pathname;
-const pageTitle = title ? `${title} | Admin` : `Admin`;
+const siteTitle = "DW Admin";
+const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
 ---
 
-<Layout title={pageTitle}>
-  <div class="flex flex-col w-full mb-8">
-    <div class="subnav bg-neutral-800 p-4 rounded-md">
-      <div class="flex justify-between items-center max-w-7xl mx-auto">
-        <div class="flex items-center gap-4">
-          <a
-            class={`rounded-md px-2 py-1 text-xs font-semibold ${currentPath === "/admin" ? "bg-white text-neutral-800" : "text-white hover:bg-neutral-500/30"}`}
-            href="/admin">Admin</a
-          >
+<!doctype html>
+<html lang="en" class="bg-neutral-200">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <script is:inline src="/js/lib/alpine.min.js" defer></script>
+    <script is:inline src="/js/lib/htmx.min.js" defer></script>
+  </head>
+  <body>
+    <div class="parent h-screen flex flex-col max-w-7xl mx-auto">
+      <header>
+        <nav class="flex justify-between items-center p-4 h-16">
+          <div class="flex items-center">
+            <a class="text-3xl font-semibold mr-4" href="/admin" data-astro-prefetch>
+              <svg
+                class="h-10 w-10"
+                viewBox="0 0 412 412"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <g
+                  id="Artboard"
+                  stroke="none"
+                  stroke-width="1"
+                  fill="none"
+                  fill-rule="evenodd"
+                  stroke-linejoin="round"
+                >
+                  <g
+                    id="Group"
+                    transform="translate(27.000000, 119.000000)"
+                    fill="#111111"
+                    stroke="#111111"
+                    stroke-width="35"
+                  >
+                    <polygon id="Triangle" points="87 0 174 174 0 174"
+                    ></polygon>
+                    <polygon
+                      id="Triangle-Copy"
+                      transform="translate(272.000000, 87.000000) rotate(-180.000000) translate(-272.000000, -87.000000) "
+                      points="272 0 359 174 185 174"></polygon>
+                  </g>
+                </g>
+              </svg>
+            </a>
 
+            <a
+              class={`text-xs font-semibold mr-4 hover:underline ${Astro.url.pathname.startsWith("/links") ? "underline" : "no-underline"}`}
+              href="/admin/links"
+              data-astro-prefetch
+            >
+              Links
+            </a>
+            <a
+              class={`text-xs font-semibold mr-4 hover:underline ${Astro.url.pathname.startsWith("/admin/users") ? "underline" : "no-underline"}`}
+              href="/admin/users"
+              data-astro-prefetch
+            >
+              Users
+            </a>
+          </div>
+          <div class="text-xs">
+            {
+              Astro.locals.isAuthenticated ? (
+                <>
+                  <span class="">
+                    <a
+                      class={`text-xs hover:underline ${currentPath === "/account/edit" ? "underline" : "no-underline"}`}
+                      href="/account/edit"
+                    >
+                      {Astro.locals.email}
+                    </a>
+                    {Astro.locals.authRoles?.includes("admin") ? (
+                      <a
+                        href="/admin"
+                        class="text-xs opacity-50 ml-1 no-underline hover:underline"
+                      >
+                        (Admin)
+                      </a>
+                    ) : null}
+                  </span>
+                  <span class="opacity-50 mx-2">|</span>
+                  <a
+                    class="text-xs no-underline hover:underline"
+                    href="/api/auth/logout"
+                  >
+                    Log out
+                  </a>
+                </>
+              ) : (
+                <>
+                  <a
+                    class={`text-xs hover:underline ${currentPath === "/login" ? "underline" : "no-underline"}`}
+                    href="/login"
+                  >
+                    Log In
+                  </a>
+                  <span class="opacity-50 mx-2">|</span>
+                  <a
+                    class={`text-xs hover:underline ${currentPath === "/register" ? "underline" : "no-underline"}`}
+                    href="/register"
+                  >
+                    Register
+                  </a>
+                </>
+              )
+            }
+          </div>
+        </nav>
+      </header>
+      <main class="flex-1 flex flex-col p-3">
+        <slot />
+      </main>
+      <footer class="flex justify-between text-xs text-right p-3">
+        <div class="">
+          &copy; {new Date().getFullYear()}
+          {siteTitle}. All rights reserved.
+        </div>
+        <div class="">
+          <a class="no-underline hover:underline" href="/contact">Contact</a> &nbsp;
+          | &nbsp;
           <a
-            class={`rounded-md px-2 py-1 text-xs font-semibold ${Astro.url.pathname.includes("/admin/links") ? "bg-white text-neutral-800" : "text-white hover:bg-neutral-500/30"}`}
-            href="/admin/links">Links</a
-          >
-          <a
-            class={`rounded-md px-2 py-1 text-xs font-semibold ${Astro.url.pathname.includes("/admin/users") ? "bg-white text-neutral-800" : "text-white hover:bg-neutral-500/30"}`}
-            href="/admin/users">Users</a
+            class="no-underline hover:underline"
+            href="https://jyoungblood.github.io"
+            target="_blank">♥ JY</a
           >
         </div>
-      </div>
+      </footer>
     </div>
+  </body>
+</html>
 
-    <div class="w-full max-w-7xl mx-auto py-8">
-      <slot />
-    </div>
-  </div>
-</Layout>
+<style>
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>

@@ -2,7 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import GenericCard from "@/components/ui/GenericCard.astro";
 import { db } from "@/lib/db";
-import LinkButton from "@/components/ui/LinkButton.astro";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 
 let links;
 
@@ -26,12 +26,12 @@ try {
           <h2 class="text-lg font-semibold">Links</h2>
         </div>
         <div>
-          <LinkButton href="/links/new">
+          <ButtonLink href="/links/new">
             <span
               class="icon-[tabler--link]"
             ></span>
             New Link
-          </LinkButton>
+          </ButtonLink>
         </div>
       </div>
     </div>

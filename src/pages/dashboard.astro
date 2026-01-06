@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { db } from "@/lib/db";
-import LinkButton from "@/components/ui/LinkButton.astro";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 
 let user;
 
@@ -31,15 +31,15 @@ try {
             something cool 😎
           </p>
           <div class="mt-6">
-            <LinkButton href="/account/edit">
+            <ButtonLink href="/account/edit">
               <span class="icon-[tabler--user-circle]"></span>
               Edit Account
-            </LinkButton>
+            </ButtonLink>
 
-            <LinkButton href="/links/new">
+            <ButtonLink href="/links/new">
                 <span class="icon-[tabler--link]"></span>
                 New Link
-              </LinkButton>
+              </ButtonLink>
           </div>
         </div>
       </div>

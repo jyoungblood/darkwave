@@ -1,0 +1,18 @@
+---
+// DW - CardTitle component using shadcn Card styling
+
+import { cn } from "@/lib/dw/helpers";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  class={cn("leading-none", className)}
+  style="font-size: var(--card-title-size); font-weight: var(--card-title-weight); letter-spacing: var(--card-title-tracking);"
+>
+  <slot />
+</div>
