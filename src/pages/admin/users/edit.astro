@@ -3,6 +3,7 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
 import UserForm from "@/components/forms/UserForm.astro";
 import { db } from "@/lib/db";
 import { canEdit } from "@/lib/auth/permissions";
+import { Card } from "@/components/ui/shadcn/card";
 const id = Astro.url.searchParams.get("id");
 
 if (!id) {
@@ -42,6 +43,12 @@ if (!can_edit) {
 
 <AdminLayout title={`${user?.email} | Edit User`}>
   <div class="w-full">
-    <UserForm user={user} redirect="/admin/users" />
+    <Card className="p-6">
+      <!-- p-6 bg-neutral-300/60 border-neutral-400/20 -->
+      <UserForm
+      user={user}
+      redirect="/admin/users"
+    />
+    </Card>
   </div>
 </AdminLayout>

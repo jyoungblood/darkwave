@@ -30,6 +30,8 @@ if (!can_edit) {
       columns={[
         {
           header: "Email",
+          sortable: true,
+          accessorKey: "email",
           cell: {
             content: (user: any) =>
               `<a href="/admin/users/edit?id=${user.id}">${user.email}</a>`,
@@ -37,20 +39,26 @@ if (!can_edit) {
         },
         {
           header: "Name",
+          sortable: true,
+          accessorKey: "first_name",
           cell: {
-            content: (user: any) => user.first_name + " " + user.last_name || "",
+            content: (user: any) => (user.first_name && user.last_name) ? user.first_name + " " + user.last_name : user.first_name || user.last_name || "",
           },
         },
         {
           header: "Created At",
+          sortable: true,
           align: "center",
+          accessorKey: "createdAt",
           cell: {
             content: (user: any) => formatDate(user.createdAt),
           },
         },
         {
           header: "Updated At",
+          sortable: true,
           align: "center",
+          accessorKey: "updatedAt",
           cell: {
             content: (user: any) =>
               user.updatedAt ? formatDate(user.updatedAt) : "",
@@ -62,10 +70,10 @@ if (!can_edit) {
           cell: {
             content: (user: any) => `
             <a href="/admin/users/edit?id=${user.id}" 
-              class="btn btn-sm border-0 bg-lwoa-blue lwoa-black" 
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 size-8 border border-input bg-background hover:bg-accent hover:text-accent-foreground" 
               aria-label="Edit" 
               data-astro-prefetch>
-              <span class="icon-[tabler--pencil] size-5"></span>
+              <span class="icon-[tabler--pencil] size-4"></span>
             </a>
             `,
           },

@@ -4,8 +4,10 @@ import * as React from "react"
 import {
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
   type ColumnDef,
+  type SortingState,
 } from "@tanstack/react-table"
 import {
   Table,
@@ -15,12 +17,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/shadcn/table"
-import { buttonVariants } from "@/components/ui/shadcn/button"
+import { Button } from "@/components/ui/shadcn/button"
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { cn } from "@/lib/dw/helpers"
+
+// Extend TanStack Table meta type to include align
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData, TValue> {
+    align?: "left" | "right" | "center"
+  }
+}
 
 interface Column {
   align?: "left" | "right" | "center"
   header: string
+  sortable?: boolean
+  accessorKey?: string
   cell: {
     class?: string
     content: (item: any) => string | Promise<string>
@@ -30,14 +42,12 @@ interface Column {
 interface DataTableProps {
   data: any[] | { error: string }
   columns: Column[]
-  title?: string
-  buttonLinks?: {
-    href: string
-    text: string
-  }[]
+  className?: string
 }
 
-export function DataTable({ data, columns, title, buttonLinks }: DataTableProps) {
+export function DataTable({ data, columns, className }: DataTableProps) {
+  const [sorting, setSorting] = React.useState<SortingState>([])
+
   // Convert columns to TanStack Table format
   const tableColumns = React.useMemo<ColumnDef<any>[]>(() => {
     return columns.map((col, index) => {
@@ -45,21 +55,58 @@ export function DataTable({ data, columns, title, buttonLinks }: DataTableProps)
       const headerStr = String(col.header || '').replace(/\s+/g, '-').toLowerCase() || 'empty'
       const columnId = `col-${index}-${headerStr}`
       
-      return {
-      id: columnId,
-      header: () => (
-        <div
-          className={cn(
-            "font-bold text-xs text-muted-foreground",
-            col.align === "right" && "text-right",
-            col.align === "center" && "text-center",
-            col.align === "left" && "text-left"
-          )}
-        >
-          {col.header}
-        </div>
-      ),
-      cell: ({ row }: { row: any }) => {
+      const columnDef: ColumnDef<any> = {
+        id: columnId,
+        enableSorting: col.sortable ?? false,
+        ...(col.sortable && col.accessorKey ? { accessorKey: col.accessorKey } : {}),
+        meta: {
+          align: col.align,
+        },
+      }
+
+      // Header with sorting support
+      columnDef.header = ({ column }) => {
+        if (col.sortable) {
+          const isSorted = column.getIsSorted()
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(isSorted === "asc")}
+              className={cn(
+                "font-bold text-xs text-muted-foreground -ml-3 h-8 hover:bg-transparent",
+                col.align === "right" && "text-right justify-end",
+                col.align === "center" && "text-center justify-center",
+                col.align === "left" && "text-left justify-start"
+              )}
+            >
+              {col.header}
+              {isSorted === "asc" ? (
+                <ArrowUp className="ml-2 h-4 w-4" />
+              ) : isSorted === "desc" ? (
+                <ArrowDown className="ml-2 h-4 w-4" />
+              ) : (
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          )
+        }
+        
+        return (
+          <div
+            className={cn(
+              "font-bold text-xs text-muted-foreground",
+              col.align === "right" && "text-right",
+              col.align === "center" && "text-center",
+              col.align === "left" && "text-left"
+            )}
+          >
+            {col.header}
+          </div>
+        )
+      }
+
+      // Cell renderer
+      columnDef.cell = ({ row }) => {
         // Check if content was pre-processed in Astro
         const preProcessedKey = `_cell_${col.header}`
         let htmlContent = ""
@@ -85,8 +132,9 @@ export function DataTable({ data, columns, title, buttonLinks }: DataTableProps)
             dangerouslySetInnerHTML={{ __html: htmlContent }}
           />
         )
-      },
-    }
+      }
+
+      return columnDef
     })
   }, [columns])
 
@@ -94,32 +142,17 @@ export function DataTable({ data, columns, title, buttonLinks }: DataTableProps)
     data: Array.isArray(data) ? data : [],
     columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
   })
 
   // Handle error state
   if (data && "error" in data) {
     return (
       <div>
-        {title && (
-          <div className="flex gap-8 w-full items-center justify-between mb-8">
-            <div>
-              <h2 className="text-xl font-semibold">{title}</h2>
-            </div>
-            {buttonLinks && buttonLinks.length > 0 && (
-              <div className="flex gap-4">
-                {buttonLinks.map((buttonLink, idx) => (
-                  <a
-                    key={idx}
-                    href={buttonLink.href}
-                    className={cn(buttonVariants())}
-                  >
-                    {buttonLink.text}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
         <p className="text-red-500">Error loading data</p>
       </div>
     )
@@ -128,64 +161,29 @@ export function DataTable({ data, columns, title, buttonLinks }: DataTableProps)
   // Handle empty state
   if (!data || (Array.isArray(data) && data.length === 0)) {
     return (
-      <div>
-        {title && (
-          <div className="flex gap-8 w-full items-center justify-between mb-8">
-            <div>
-              <h2 className="text-xl font-semibold">{title}</h2>
-            </div>
-            {buttonLinks && buttonLinks.length > 0 && (
-              <div className="flex gap-4">
-                {buttonLinks.map((buttonLink, idx) => (
-                  <a
-                    key={idx}
-                    href={buttonLink.href}
-                    className={cn(buttonVariants())}
-                  >
-                    {buttonLink.text}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+      <div className="p-6">
         <p className="text-neutral-500">No items found</p>
       </div>
     )
   }
 
   return (
-    <div>
-      {(title || (buttonLinks && buttonLinks.length > 0)) && (
-        <div className="flex gap-8 w-full items-center justify-between mb-8">
-          {title && (
-            <div>
-              <h2 className="text-xl font-semibold">{title}</h2>
-            </div>
-          )}
-          {buttonLinks && buttonLinks.length > 0 && (
-            <div className="flex gap-4">
-              {buttonLinks.map((buttonLink, idx) => (
-                <a
-                  key={idx}
-                  href={buttonLink.href}
-                  className={cn(buttonVariants())}
-                >
-                  {buttonLink.text}
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      <div className="w-full overflow-x-auto border rounded-md">
+    <div className={cn("w-full overflow-x-auto", className)}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const align = header.column.columnDef.meta?.align
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead 
+                      key={header.id}
+                      className={cn(
+                        align === "right" && "text-right",
+                        align === "center" && "text-center",
+                        align === "left" && "text-left"
+                      )}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -224,7 +222,6 @@ export function DataTable({ data, columns, title, buttonLinks }: DataTableProps)
             )}
           </TableBody>
         </Table>
-      </div>
     </div>
   )
 }

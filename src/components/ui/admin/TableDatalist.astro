@@ -1,7 +1,10 @@
 ---
+import { Card } from "@/components/ui/shadcn/card";
 interface Column {
   align?: "left" | "right" | "center";
   header: string;
+  sortable?: boolean;
+  accessorKey?: string;
   cell: {
     class?: string;
     content: (item: any) => string | Promise<string>;
@@ -19,19 +22,21 @@ interface Props {
 }
 
 import { DataTable } from "@/components/ui/admin/DataTable.tsx";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 
 const { data, columns, title, buttonLinks } = Astro.props;
 
 // Process async content if needed - pre-process all cell content
 let processedData = data;
-if (data && !('error' in data) && Array.isArray(data)) {
+if (data && !("error" in data) && Array.isArray(data)) {
   processedData = await Promise.all(
     data.map(async (item) => {
       const processedItem = { ...item };
       // Pre-process any async cell content and store it
       for (const column of columns) {
         const content = column.cell.content(item);
-        const processedContent = content instanceof Promise ? await content : content;
+        const processedContent =
+          content instanceof Promise ? await content : content;
         processedItem[`_cell_${column.header}`] = processedContent;
       }
       return processedItem;
@@ -40,10 +45,31 @@ if (data && !('error' in data) && Array.isArray(data)) {
 }
 ---
 
-<DataTable 
-  client:load
-  data={processedData}
-  columns={columns}
-  title={title}
-  buttonLinks={buttonLinks}
-/>
+<div>
+  {
+    (title || (buttonLinks && buttonLinks.length > 0)) && (
+      <div class="flex gap-8 w-full items-center justify-between mb-8">
+        {title && (
+          <div>
+            <h2 class="text-xl font-semibold">{title}</h2>
+          </div>
+        )}
+        {buttonLinks && buttonLinks.length > 0 && (
+          <div class="flex gap-4">
+            {buttonLinks.map((buttonLink) => (
+              <ButtonLink href={buttonLink.href} text={buttonLink.text} />
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+<Card>
+  <DataTable
+    client:load
+    data={processedData}
+    columns={columns}
+  />
+</Card>
+</div>

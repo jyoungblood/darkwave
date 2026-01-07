@@ -241,6 +241,11 @@ async function createAdminUser(email: string, password: string, name: string) {
     // console.log('User created, got user ID:', authResult.user.id);
     const userId = (authResult as any).user.id;
 
+    // Split name on first space to get first_name and last_name
+    const nameParts = name.split(' ', 2);
+    const firstName = nameParts[0] || null;
+    const lastName = nameParts[1] || null;
+
     // console.log('Marking email as verified...');
     try {
       // Update email verification status
@@ -248,6 +253,8 @@ async function createAdminUser(email: string, password: string, name: string) {
         .updateTable('user')
         .set({ 
           emailVerified: true,
+          first_name: firstName,
+          last_name: lastName,
           updatedAt: new Date()
         } as UpdateObject<Database, 'user'>)
         .where('id', '=', userId)
