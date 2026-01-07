@@ -18,56 +18,32 @@ interface Props {
   }[];
 }
 
-import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { DataTable } from "@/components/ui/admin/DataTable.tsx";
 
 const { data, columns, title, buttonLinks } = Astro.props;
+
+// Process async content if needed - pre-process all cell content
+let processedData = data;
+if (data && !('error' in data) && Array.isArray(data)) {
+  processedData = await Promise.all(
+    data.map(async (item) => {
+      const processedItem = { ...item };
+      // Pre-process any async cell content and store it
+      for (const column of columns) {
+        const content = column.cell.content(item);
+        const processedContent = content instanceof Promise ? await content : content;
+        processedItem[`_cell_${column.header}`] = processedContent;
+      }
+      return processedItem;
+    })
+  );
+}
 ---
 
-<div class="flex gap-8 w-full items-center justify-between mb-8">
-  <div class="">
-    <h2 class="text-xl font-semibold">{title}</h2>
-  </div>
-  <div class="flex gap-4">
-    {buttonLinks?.map((buttonLink) => (
-      <ButtonLink href={buttonLink.href} text={buttonLink.text} />
-    ))}
-  </div>
-</div>
-
-{
-  data && (
-    <div>
-      {'error' in data ? (
-        <p class="text-red-500">Error loading data</p>
-      ) : data.length === 0 ? (
-        <p class="text-neutral-500">No items found</p>
-      ) : (
-        <div class="border-base-content/25 w-full overflow-x-auto border">
-          <table class="table table-md">
-            <thead>
-              <tr class="bg-neutral-100">
-                {columns.map((column) => (
-                  <th class={`font-bold text-xs text-neutral-500 ${column.align === "right" ? "text-right" : column.align === "center" ? "text-center" : "text-left"}`}>
-                    {column.header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <tr class="row-hover">
-                  {columns.map((column) => (
-                    <td
-                      class={`text-nowrap ${column.cell.class} ${column.align === "right" ? "text-right" : column.align === "center" ? "text-center" : "text-left"}`}
-                      set:html={column.cell.content(item)}
-                    />
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  )
-}
+<DataTable 
+  client:load
+  data={processedData}
+  columns={columns}
+  title={title}
+  buttonLinks={buttonLinks}
+/>

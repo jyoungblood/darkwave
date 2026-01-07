@@ -20,8 +20,8 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
     await validateCsrf({ formData, cookies });
     const id = formData.get("id")?.toString();
     const email = formData.get("email")?.toString();
-    const first_name = formData.get("first_name")?.toString();
-    const last_name = formData.get("last_name")?.toString();
+    const first_name = formData.get("first_name")?.toString() || null;
+    const last_name = formData.get("last_name")?.toString() || null;
     const password = formData.get("password")?.toString();
 
 
