@@ -53,11 +53,18 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
       }
 
       try {
+        // Construct name from first_name and last_name, or use empty string
+        let name = "";
+        if (first_name || last_name) {
+          name = [first_name, last_name].filter(Boolean).join(" ").trim();
+        }
+
         const authResult = await auth.api.signUpEmail({
           headers: request.headers,
           body: {
             email,
             password,
+            name,
             first_name,
             last_name,
             metadata: {

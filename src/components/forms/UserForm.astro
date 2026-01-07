@@ -8,6 +8,7 @@ const { user, redirect = "" } = Astro.props;
 
 import InputText from "@/components/ui/form/InputText.astro";
 import ButtonSubmit from "@/components/ui/form/ButtonSubmit.astro";
+import ButtonDelete from "@/components/ui/form/ButtonDelete.astro";
 import { ensureCsrfToken } from "@/lib/csrf";
 import { db } from "@/lib/db";
 import CheckboxGroup from "@/components/ui/form/CheckboxGroup.astro";
@@ -66,7 +67,7 @@ try {
 
       {!user && (
         <div class="mb-4">
-          <InputText label="Password" name="password" required />
+          <InputText label="Password" name="password" type="password" required />
         </div>
       )}
       
@@ -92,5 +93,15 @@ try {
       endpoint="/api/user/save"
       redirect={redirect}
     />
+
+    {user && (
+      <ButtonDelete
+        text="Delete"
+        type="user"
+        uuid={user.id}
+        endpoint="/api/user/delete"
+        redirect={redirect}
+      />
+    )}
   </div>
 </form>

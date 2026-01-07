@@ -38,7 +38,7 @@ if (!can_edit) {
         {
           header: "Name",
           cell: {
-            content: (user: any) => user.name,
+            content: (user: any) => user.first_name + " " + user.last_name || "",
           },
         },
         {

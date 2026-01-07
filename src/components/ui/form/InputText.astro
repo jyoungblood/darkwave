@@ -12,6 +12,7 @@ interface Props {
   value?: string;
   placeholder?: string;
   class?: string;
+  type?: "text" | "password" | "email" | "number" | "tel" | "url" | "search";
   validation?: {
     types?: string[]; // Simple string-based validation types
     rules?: Array<{
@@ -47,12 +48,16 @@ const {
   value = "",
   placeholder = "",
   class: customClass = "",
+  type,
   validation,
   htmlAttributes = {},
 } = Astro.props;
 
 // Determine input type
-const inputType = validation?.rules?.find((rule) => rule.type === "number")
+// Use explicit type prop if provided, otherwise infer from validation rules
+const inputType = type
+  ? type
+  : validation?.rules?.find((rule) => rule.type === "number")
   ? "number"
   : "text";
 
