@@ -121,12 +121,21 @@ const {
             deleteSpinner.classList.remove("hidden");
 
             try {
+              // Get CSRF token from form
+              let csrfToken = "";
+              if (formElement) {
+                let csrfInput = formElement.querySelector('input[name="csrf"]');
+                if (csrfInput) {
+                  csrfToken = csrfInput.value;
+                }
+              }
+
               const response = await fetch(endpoint, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ uuid }),
+                body: JSON.stringify({ uuid, csrf: csrfToken }),
               });
 
               if (!response.ok) {

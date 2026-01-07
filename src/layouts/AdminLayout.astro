@@ -21,7 +21,11 @@ const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
       <header>
         <nav class="flex justify-between items-center p-4 h-16">
           <div class="flex items-center">
-            <a class="text-3xl font-semibold mr-4" href="/admin" data-astro-prefetch>
+            <a
+              class="text-3xl font-semibold mr-4"
+              href="/admin"
+              data-astro-prefetch
+            >
               <svg
                 class="h-10 w-10"
                 viewBox="0 0 412 412"
@@ -54,9 +58,16 @@ const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
                 </g>
               </svg>
             </a>
+            <a
+              class={`text-xs font-semibold mr-4 hover:underline ${Astro.url.pathname === "/admin" || Astro.url.pathname === "/admin/" ? "underline" : "no-underline"}`}
+              href="/admin"
+              data-astro-prefetch
+            >
+              Dashboard
+            </a>
 
             <a
-              class={`text-xs font-semibold mr-4 hover:underline ${Astro.url.pathname.startsWith("/links") ? "underline" : "no-underline"}`}
+              class={`text-xs font-semibold mr-4 hover:underline ${Astro.url.pathname.startsWith("/admin/links") ? "underline" : "no-underline"}`}
               href="/admin/links"
               data-astro-prefetch
             >
@@ -68,6 +79,13 @@ const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
               data-astro-prefetch
             >
               Users
+            </a>
+            <a
+              class={`text-xs font-semibold mr-4 hover:underline ${Astro.url.pathname.startsWith("/admin/roles") ? "underline" : "no-underline"}`}
+              href="/admin/roles"
+              data-astro-prefetch
+            >
+              Roles
             </a>
           </div>
           <div class="text-xs">
