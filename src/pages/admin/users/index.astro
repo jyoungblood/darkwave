@@ -15,12 +15,6 @@ try {
 } catch (error) {
   console.error("Error fetching users:", error);
 }
-
-// DW
-const can_edit = Astro.locals.authRoles?.includes("admin");
-if (!can_edit) {
-  return Astro.redirect(`/admin/users/`);
-}
 ---
 
 <AdminLayout title="All Users">
@@ -48,6 +42,7 @@ if (!can_edit) {
         {
           header: "Created At",
           sortable: true,
+          type: "date",
           align: "center",
           accessorKey: "createdAt",
           cell: {
@@ -57,6 +52,7 @@ if (!can_edit) {
         {
           header: "Updated At",
           sortable: true,
+          type: "date",
           align: "center",
           accessorKey: "updatedAt",
           cell: {

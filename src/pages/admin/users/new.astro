@@ -1,10 +1,6 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import UserForm from "@/components/forms/UserForm.astro";
-const can_edit = Astro.locals.authRoles?.includes("admin");
-if (!can_edit) {
-  return Astro.redirect(`/admin/users/`);
-}
 ---
 
 <AdminLayout title="New User">

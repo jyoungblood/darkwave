@@ -6,12 +6,6 @@ import { ensureCsrfToken } from "@/lib/csrf";
 import { db } from "@/lib/db";
 import type { Database } from "@/config/schema";
 
-// Check admin permission
-const can_edit = Astro.locals.authRoles?.includes("admin");
-if (!can_edit) {
-  return Astro.redirect("/admin");
-}
-
 ensureCsrfToken(Astro.cookies);
 
 // Default role IDs that cannot be deleted (admin, moderator, contributor, banned)

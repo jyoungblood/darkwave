@@ -2,7 +2,6 @@
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import UserForm from "@/components/forms/UserForm.astro";
 import { db } from "@/lib/db";
-import { canEdit } from "@/lib/auth/permissions";
 import { Card } from "@/components/ui/shadcn/card";
 const id = Astro.url.searchParams.get("id");
 
@@ -26,18 +25,6 @@ if (!user) {
   return new Response(null, {
     status: 404,
   });
-}
-
-// const can_edit = await canEdit({
-//   locals: Astro.locals,
-//   resourceType: "user",
-//   id,
-//   ownerId: user?.id,
-// });
-
-const can_edit = Astro.locals.authRoles?.includes("admin");
-if (!can_edit) {
-  return Astro.redirect(`/admin/users/`);
 }
 ---
 

@@ -2,7 +2,6 @@
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import LinkForm from "@/components/forms/LinkForm.astro";
 import { db } from "@/lib/db";
-import { canEdit } from "@/lib/auth/permissions";
 const uuid = Astro.url.searchParams.get("uuid");
 
 if (!uuid) {
@@ -28,16 +27,6 @@ if (!link) {
   });
 }
 
-const can_edit = await canEdit({
-  locals: Astro.locals,
-  resourceType: "links",
-  uuid,
-  ownerId: link?.user_id,
-});
-
-if (!can_edit) {
-  return Astro.redirect(`/links/${link.uuid}`);
-}
 ---
 
 <AdminLayout title={`${link?.title} | Edit Link`}>

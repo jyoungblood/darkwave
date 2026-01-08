@@ -16,12 +16,6 @@ try {
 } catch (error) {
   console.error("Error fetching link:", error);
 }
-
-// DW
-// Quick check using JWT claims stored in locals
-if (Astro.locals.authRoles?.includes("admin")) {
-  // Show admin UI elements
-}
 ---
 
 <AdminLayout title="All Links">
