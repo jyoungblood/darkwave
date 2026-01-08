@@ -1,14 +1,14 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import TableDatalist from "@/components/ui/admin/TableDatalist.astro";
-import { formatDate, getPaginationParams } from "@/lib/dw/helpers";
+import { formatDate, getPaginationParams, renderIconButtonLink } from "@/lib/dw/helpers";
 import { db } from "@/lib/db";
 
 let link;
 let totalLinks = 0;
 
 const keyword = Astro.url.searchParams.get("keyword");
-const { currentPage, perPage, offset } = getPaginationParams(Astro.url, 10);
+const { currentPage, perPage, offset } = getPaginationParams(Astro.url, 50);
 
 try {
 
@@ -55,12 +55,12 @@ try {
           sortable: true,
           cell: {
             content: (link: any) =>
-              `<a href="/links/${link.uuid}">${link.title}</a>`,
+              `<a href="/admin/links/edit?uuid=${link.uuid}">${link.title}</a>`,
           },
         },
         {
           header: "Created At",
-          align: "center",
+          // align: "center",
           sortable: true,
           accessorKey: "created_at",
           cell: {
@@ -69,7 +69,7 @@ try {
         },
         {
           header: "Updated At",
-          align: "center",
+          // align: "center",
           sortable: true,
           accessorKey: "updated_at",
           cell: {
@@ -81,20 +81,22 @@ try {
           header: "",
           align: "right",
           cell: {
-            content: (link: any) => `
-            <a href="/admin/links/edit?uuid=${link.uuid}" 
-              class="btn btn-circle btn-text btn-sm" 
-              aria-label="Edit" 
-              data-astro-prefetch>
-              <span class="icon-[tabler--pencil] size-5"></span>
-            </a>
-            <a href="/links/${link.uuid}" 
-              target="_blank" 
-              class="btn btn-circle btn-text btn-sm" 
-              aria-label="View" 
-              data-astro-prefetch>
-              <span class="icon-[tabler--external-link] size-5"></span>
-            </a>`,
+            content: (link: any) => 
+              `<span class="inline-flex gap-4">` +
+              renderIconButtonLink({
+                href: `/admin/links/edit?uuid=${link.uuid}`,
+                icon: "icon-[tabler--pencil]",
+                ariaLabel: "Edit",
+                dataPrefetch: true,
+              }) +
+              renderIconButtonLink({
+                href: `/links/${link.uuid}`,
+                icon: "icon-[tabler--external-link]",
+                ariaLabel: "View",
+                target: "_blank",
+                dataPrefetch: true,
+              }) +
+              `</span>`,
           },
         },
       ]}

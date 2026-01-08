@@ -1,7 +1,7 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import TableDatalist from "@/components/ui/admin/TableDatalist.astro";
-import { formatDate, getPaginationParams } from "@/lib/dw/helpers";
+import { formatDate, getPaginationParams, renderIconButtonLink } from "@/lib/dw/helpers";
 import { db } from "@/lib/db";
 
 let users;
@@ -68,7 +68,7 @@ try {
           header: "Created At",
           sortable: true,
           type: "date",
-          align: "center",
+          // align: "center",
           accessorKey: "createdAt",
           cell: {
             content: (user: any) => formatDate(user.createdAt),
@@ -78,7 +78,7 @@ try {
           header: "Updated At",
           sortable: true,
           type: "date",
-          align: "center",
+          // align: "center",
           accessorKey: "updatedAt",
           cell: {
             content: (user: any) =>
@@ -89,14 +89,13 @@ try {
           header: "",
           align: "right",
           cell: {
-            content: (user: any) => `
-            <a href="/admin/users/edit?id=${user.id}" 
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 size-8 border border-input bg-background hover:bg-accent hover:text-accent-foreground" 
-              aria-label="Edit" 
-              data-astro-prefetch>
-              <span class="icon-[tabler--pencil] size-4"></span>
-            </a>
-            `,
+            content: (user: any) => 
+              renderIconButtonLink({
+                href: `/admin/users/edit?id=${user.id}`,
+                icon: "icon-[tabler--pencil]",
+                ariaLabel: "Edit",
+                dataPrefetch: true,
+              }),
           },
         },
       ]}

@@ -2,6 +2,7 @@
 
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { buttonVariants } from "@/components/ui/shadcn/button"
 
 /**
  * Merges Tailwind CSS classes with proper conflict resolution
@@ -231,4 +232,51 @@ export function getPaginationParams(
   const offset = (currentPage - 1) * perPage;
 
   return { currentPage, perPage, offset };
+}
+
+/**
+ * Icon button link options interface
+ */
+export interface IconButtonLinkOptions {
+  href: string;
+  icon: string; // Icon class (e.g., "icon-[tabler--pencil]")
+  ariaLabel: string;
+  target?: string; // For _blank links
+  dataPrefetch?: boolean; // For data-astro-prefetch attribute
+  variant?: "outline" | "ghost" | "secondary"; // Button variant (defaults to "outline")
+  size?: "icon-sm" | "icon" | "icon-lg"; // Icon button size (defaults to "icon-sm")
+}
+
+/**
+ * Generates HTML string for an icon button link
+ * Uses the same button variants as shadcn button component for consistency
+ * @param options Icon button configuration
+ * @returns HTML string for the icon button link
+ */
+export function renderIconButtonLink(options: IconButtonLinkOptions): string {
+  const {
+    href,
+    icon,
+    ariaLabel,
+    target,
+    dataPrefetch = false,
+    variant = "outline",
+    size = "icon-sm"
+  } = options;
+
+  // Use buttonVariants to get consistent classes with shadcn button component
+  const buttonClasses = cn(buttonVariants({ variant, size }));
+  
+  // Icon size mapping
+  const iconSize = size === "icon-sm" ? "size-4" : size === "icon" ? "size-4" : "size-5";
+  
+  let attrs = `href="${escapeXml(href)}" class="${buttonClasses}" aria-label="${escapeXml(ariaLabel)}"`;
+  if (target) {
+    attrs += ` target="${escapeXml(target)}"`;
+  }
+  if (dataPrefetch) {
+    attrs += ` data-astro-prefetch`;
+  }
+
+  return `<a ${attrs}><span class="${escapeXml(icon)} ${iconSize}"></span></a>`;
 }

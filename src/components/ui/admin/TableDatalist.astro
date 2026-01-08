@@ -37,8 +37,8 @@ interface Props {
 import ButtonLink from "@/components/ui/ButtonLink.astro";
 import { Card } from "@/components/ui/shadcn/card";
 
-const { data, columns, title, buttonLinks, pagination, search } = Astro
-  .props as Props;
+const { data, columns, title, buttonLinks, pagination, search } =
+  Astro.props as Props;
 
 // Process async content if needed - pre-process all cell content
 let processedData = data;
@@ -74,7 +74,8 @@ const columnTypes = columns.map((col) => col.type || "text");
 
 // Pagination calculations (when pagination is provided)
 let currentPage = pagination?.currentPage ?? 1;
-let totalItems = pagination?.totalItems ?? (Array.isArray(data) ? data.length : 0);
+let totalItems =
+  pagination?.totalItems ?? (Array.isArray(data) ? data.length : 0);
 let perPage = pagination?.perPage ?? (totalItems || 1);
 let totalPages = Math.max(1, Math.ceil(totalItems / perPage));
 
@@ -300,19 +301,9 @@ const preservedSearchEntries = Array.from(preservedSearchParams.entries());
   {
     (title || (buttonLinks && buttonLinks.length > 0)) && (
       <div class="flex gap-8 w-full items-start justify-between mb-4">
-        {title && (
-          <div>
-            <h2 class="text-xl font-semibold">{title}</h2>
-          </div>
-        )}
-        <div class="flex flex-col gap-4 items-end w-full sm:w-auto">
-          {buttonLinks && buttonLinks.length > 0 && (
-            <div class="flex gap-4 self-end">
-              {buttonLinks.map((buttonLink) => (
-                <ButtonLink href={buttonLink.href} text={buttonLink.text} />
-              ))}
-            </div>
-          )}
+        <div>
+          {title && <h2 class="text-xl font-semibold mb-2">{title}</h2>}
+
           {search && (
             <form
               method="GET"
@@ -340,6 +331,16 @@ const preservedSearchEntries = Array.from(preservedSearchParams.entries());
             </form>
           )}
         </div>
+
+        <div class="flex flex-col gap-4 items-end w-full sm:w-auto">
+          {buttonLinks && buttonLinks.length > 0 && (
+            <div class="flex gap-4 self-end">
+              {buttonLinks.map((buttonLink) => (
+                <ButtonLink href={buttonLink.href} text={buttonLink.text} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     )
   }
@@ -347,88 +348,97 @@ const preservedSearchEntries = Array.from(preservedSearchParams.entries());
   {
     data && !("error" in data) && Array.isArray(processedData) ? (
       processedData.length === 0 ? (
-        <p class="text-muted-foreground">No data</p>
+        <Card>
+          <p class="text-muted-foreground p-6">No data found...</p>
+        </Card>
       ) : (
         <div class="relative w-full">
           <Card>
-          <table id={tableId} class="w-full caption-bottom text-sm">
-            <thead class="[&_tr]:border-b text-xs">
-              <tr>
-                {columns.map((column) => {
-                  const alignClass =
-                    column.align === "right"
-                      ? "text-right"
-                      : column.align === "center"
-                        ? "text-center"
-                        : "text-left";
+            <table id={tableId} class="w-full caption-bottom text-sm">
+              <thead class="[&_tr]:border-b text-xs">
+                <tr>
+                  {columns.map((column) => {
+                    const alignClass =
+                      column.align === "right"
+                        ? "text-right"
+                        : column.align === "center"
+                          ? "text-center"
+                          : "text-left";
+                    return (
+                      <th
+                        class={`h-12 px-6 py-4 ${alignClass} align-middle font-medium text-muted-foreground`}
+                      >
+                        <span class="header-content">
+                          {column.header}
+                          {"\u2060"}
+                          {column.sortable === true && (
+                            <span
+                              class="sort-indicator inactive"
+                              aria-hidden="true"
+                            >
+                              ▲
+                            </span>
+                          )}
+                        </span>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody class="[&_tr:last-child]:border-0">
+                {processedData.map((item) => {
                   return (
-                    <th
-                      class={`h-12 px-4 ${alignClass} align-middle font-medium text-muted-foreground`}
-                    >
-                      <span class="header-content">
-                        {column.header}
-                        {"\u2060"}
-                        {column.sortable === true && (
-                          <span
-                            class="sort-indicator inactive"
-                            aria-hidden="true"
-                          >
-                            ▲
-                          </span>
-                        )}
-                      </span>
-                    </th>
+                    <tr class="border-b transition-colors hover:bg-muted/50">
+                      {columns.map((column) => {
+                        const alignClass =
+                          column.align === "right"
+                            ? "text-right"
+                            : column.align === "center"
+                              ? "text-center"
+                              : "text-left";
+                        const cellContent =
+                          item[`_cell_${column.header}`] || "";
+                        const cellClass = column.cell.class || "";
+
+                        // Add data-order attribute for date/number columns
+                        let dataOrder: number | undefined = undefined;
+                        if (column.type === "date" && column.accessorKey) {
+                          const rawValue = item[column.accessorKey];
+                          if (rawValue) {
+                            const date = new Date(rawValue);
+                            if (!isNaN(date.getTime())) {
+                              dataOrder = date.getTime();
+                            }
+                          }
+                        } else if (
+                          column.type === "number" &&
+                          column.accessorKey
+                        ) {
+                          const rawValue = item[column.accessorKey];
+                          if (rawValue !== null && rawValue !== undefined) {
+                            const num =
+                              typeof rawValue === "number"
+                                ? rawValue
+                                : parseFloat(rawValue);
+                            if (!isNaN(num)) {
+                              dataOrder = num;
+                            }
+                          }
+                        }
+
+                        return (
+                          <td
+                            class={`py-4 px-6 ${alignClass} align-middle ${cellClass}`}
+                            data-order={dataOrder}
+                            set:html={cellContent}
+                          />
+                        );
+                      })}
+                    </tr>
                   );
                 })}
-              </tr>
-            </thead>
-            <tbody class="[&_tr:last-child]:border-0">
-              {processedData.map((item) => {
-                return (
-                  <tr class="border-b transition-colors hover:bg-muted/50">
-                    {columns.map((column) => {
-                      const alignClass =
-                        column.align === "right"
-                          ? "text-right"
-                          : column.align === "center"
-                            ? "text-center"
-                            : "text-left";
-                      const cellContent = item[`_cell_${column.header}`] || "";
-                      const cellClass = column.cell.class || "";
-                      
-                      // Add data-order attribute for date/number columns
-                      let dataOrder: number | undefined = undefined;
-                      if (column.type === "date" && column.accessorKey) {
-                        const rawValue = item[column.accessorKey];
-                        if (rawValue) {
-                          const date = new Date(rawValue);
-                          if (!isNaN(date.getTime())) {
-                            dataOrder = date.getTime();
-                          }
-                        }
-                      } else if (column.type === "number" && column.accessorKey) {
-                        const rawValue = item[column.accessorKey];
-                        if (rawValue !== null && rawValue !== undefined) {
-                          const num = typeof rawValue === "number" ? rawValue : parseFloat(rawValue);
-                          if (!isNaN(num)) {
-                            dataOrder = num;
-                          }
-                        }
-                      }
-                      
-                      return (
-                        <td
-                          class={`p-4 ${alignClass} align-middle ${cellClass}`}
-                          data-order={dataOrder}
-                          set:html={cellContent}
-                        />
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
           </Card>
 
           {pagination && totalPages > 1 && (
@@ -480,9 +490,11 @@ const preservedSearchEntries = Array.from(preservedSearchParams.entries());
         </div>
       )
     ) : (
-      <p class="text-muted-foreground">
-        {"error" in data ? data.error : "No data available"}
-      </p>
+      <Card>
+        <p class="text-muted-foreground p-6">
+          {"error" in data ? data.error : "No data available"}
+        </p>
+      </Card>
     )
   }
 </div>
