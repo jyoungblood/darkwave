@@ -143,6 +143,20 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
       .then(roles => roles.map(r => r.role_id))
       : [];
 
+    // Get banned role ID
+    const bannedRole = await db
+      .selectFrom('auth_roles')
+      .select('id')
+      .where('name', '=', 'banned')
+      .executeTakeFirst();
+
+    const bannedRoleId = bannedRole?.id;
+
+    // Check if user is being added to banned role (wasn't banned before, but is now)
+    const wasBanned = bannedRoleId && currentRoles.includes(bannedRoleId);
+    const willBeBanned = bannedRoleId && newRoles.includes(bannedRoleId);
+    const justBanned = !wasBanned && willBeBanned;
+
     // Check if roles have changed
     const rolesChanged = 
       currentRoles.length !== newRoles.length || 
@@ -166,6 +180,20 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
           created_at: new Date()
         })))
         .execute();
+    }
+
+    // If user was just banned, revoke all their sessions
+    if (justBanned && userId) {
+      try {
+        await db
+          .deleteFrom('session')
+          .where('userId', '=', userId)
+          .execute();
+        console.log(`Revoked all sessions for banned user: ${userId}`);
+      } catch (sessionError) {
+        console.error('Error revoking sessions for banned user:', sessionError);
+        // Don't fail the request if session revocation fails
+      }
     }
 
     // Clear role cache only if roles have changed and it's an update

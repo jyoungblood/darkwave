@@ -5,6 +5,7 @@ import { defineMiddleware } from "astro/middleware";
 import type { AstroCookies } from "astro";
 import { managedRoutes } from "@/config/app";
 import { verifyUserRoles } from "@/lib/dw/auth-roles";
+import { db } from "@/lib/db";
 
 // Helper function to check if path matches any pattern in the array
 function matchesAny(path: string, routes: readonly string[]): boolean {
@@ -78,6 +79,33 @@ export const onRequest = defineMiddleware(
     const userData = await validateSession(request, cookies);
     if (userData) {
       setUserData(locals, userData);
+      
+      // Check if user is banned - log them out immediately
+      if (userData.authRoles?.includes("banned")) {
+        const userId = (userData.user as any).id;
+        
+        // Revoke all their sessions from database
+        try {
+          await db
+            .deleteFrom('session')
+            .where('userId', '=', userId)
+            .execute();
+        } catch (dbError) {
+          console.error("Error deleting sessions for banned user:", dbError);
+        }
+        
+        // Also try to sign out via Better Auth (clears cookies)
+        try {
+          await auth.api.signOut({
+            headers: request.headers
+          });
+        } catch (signOutError) {
+          console.error("Error signing out banned user:", signOutError);
+        }
+        
+        // Redirect to login with banned message
+        return redirect("/login?error=" + encodeURIComponent("Account has been banned"));
+      }
     }
     // Handle Admin routes
     if (matchesAny(url.pathname, managedRoutes.admin)) {

@@ -2,6 +2,8 @@
 
 import { auth } from "@/lib/auth/better";
 import { validateCsrf } from "@/lib/csrf";
+import { verifyUserRoles } from "@/lib/dw/auth-roles";
+import { db } from "@/lib/db";
 import type { APIRoute } from "astro";
 
 // API endpoint for email/password login
@@ -27,6 +29,42 @@ export const POST: APIRoute = async ({ request, cookies }) => {
           headers: { "Content-Type": "application/json" }
         }
       );
+    }
+
+    // Check if user is banned BEFORE attempting login
+    try {
+      const user = await db
+        .selectFrom('user')
+        .select('id')
+        .where('email', '=', email)
+        .executeTakeFirst();
+      
+      if (user?.id) {
+        const { roles } = await verifyUserRoles(user.id, { forceFresh: true });
+        
+        if (roles.includes("banned")) {
+          // User is banned - ensure all sessions are deleted and reject login
+          try {
+            await db
+              .deleteFrom('session')
+              .where('userId', '=', user.id)
+              .execute();
+          } catch (sessionError) {
+            console.error("Error deleting sessions for banned user:", sessionError);
+          }
+          
+          return new Response(
+            JSON.stringify({ error: "Account has been banned" }), 
+            { 
+              status: 403,
+              headers: { "Content-Type": "application/json" }
+            }
+          );
+        }
+      }
+    } catch (banCheckError) {
+      console.error("Error checking banned status before login:", banCheckError);
+      // Continue with login if ban check fails (fail open for security)
     }
 
     try {
