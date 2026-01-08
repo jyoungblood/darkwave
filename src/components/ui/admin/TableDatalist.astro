@@ -35,6 +35,7 @@ interface Props {
 }
 
 import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { Card } from "@/components/ui/shadcn/card";
 
 const { data, columns, title, buttonLinks, pagination, search } = Astro
   .props as Props;
@@ -348,7 +349,8 @@ const preservedSearchEntries = Array.from(preservedSearchParams.entries());
       processedData.length === 0 ? (
         <p class="text-muted-foreground">No data</p>
       ) : (
-        <div class="relative w-full overflow-auto rounded-md border border-neutral-300 bg-white shadow-md">
+        <div class="relative w-full">
+          <Card>
           <table id={tableId} class="w-full caption-bottom text-sm">
             <thead class="[&_tr]:border-b text-xs">
               <tr>
@@ -427,14 +429,15 @@ const preservedSearchEntries = Array.from(preservedSearchParams.entries());
               })}
             </tbody>
           </table>
+          </Card>
 
           {pagination && totalPages > 1 && (
-            <div class="flex justify-end items-center gap-2 mt-4 px-4 py-3 border-t bg-neutral-50/60">
+            <div class="flex justify-end items-center gap-2 mt-4">
               {/* Previous button */}
               {currentPage > 1 && (
                 <a
                   href={buildPageUrl(currentPage - 1)}
-                  class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-2.5"
+                  class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 pl-1 pr-1.5"
                   aria-label="Previous page"
                 >
                   <span class="icon-[tabler--chevron-left] w-4 h-4" />
@@ -466,7 +469,7 @@ const preservedSearchEntries = Array.from(preservedSearchParams.entries());
               {currentPage < totalPages && (
                 <a
                   href={buildPageUrl(currentPage + 1)}
-                  class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-2.5"
+                  class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 pr-1 pl-1.5"
                   aria-label="Next page"
                 >
                   <span class="icon-[tabler--chevron-right] w-4 h-4" />

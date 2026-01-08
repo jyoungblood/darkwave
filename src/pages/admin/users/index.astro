@@ -52,7 +52,6 @@ try {
         {
           header: "Email",
           sortable: true,
-          accessorKey: "email",
           cell: {
             content: (user: any) =>
               `<a href="/admin/users/edit?id=${user.id}">${user.email}</a>`,
@@ -61,7 +60,6 @@ try {
         {
           header: "Name",
           sortable: true,
-          accessorKey: "first_name",
           cell: {
             content: (user: any) => (user.first_name && user.last_name) ? user.first_name + " " + user.last_name : user.first_name || user.last_name || "",
           },

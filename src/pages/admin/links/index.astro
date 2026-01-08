@@ -52,6 +52,7 @@ try {
       columns={[
         {
           header: "Title",
+          sortable: true,
           cell: {
             content: (link: any) =>
               `<a href="/links/${link.uuid}">${link.title}</a>`,
@@ -60,6 +61,8 @@ try {
         {
           header: "Created At",
           align: "center",
+          sortable: true,
+          accessorKey: "created_at",
           cell: {
             content: (link: any) => formatDate(link.created_at),
           },
@@ -67,6 +70,8 @@ try {
         {
           header: "Updated At",
           align: "center",
+          sortable: true,
+          accessorKey: "updated_at",
           cell: {
             content: (link: any) =>
               link.updated_at ? formatDate(link.updated_at) : "",
