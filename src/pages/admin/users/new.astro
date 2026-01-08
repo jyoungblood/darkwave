@@ -1,11 +1,30 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import UserForm from "@/components/forms/UserForm.astro";
+import { Card } from "@/components/ui/shadcn/card";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
 ---
 
 <AdminLayout title="New User">
   <div class="w-full">
-    <h2 class="text-xl font-semibold mb-4">New User</h2>
-    <UserForm redirect="/admin/users" />
+    <Breadcrumb
+      items={[
+        {
+          href: "/admin",
+          label: "Dashboard",
+        },
+        {
+          href: "/admin/users",
+          label: "Users",
+        },
+        {
+          href: "",
+          label: `New User`,
+        },
+      ]}
+    />
+    <Card className="p-6">
+      <UserForm redirect="/admin/users" />
+    </Card>
   </div>
 </AdminLayout>

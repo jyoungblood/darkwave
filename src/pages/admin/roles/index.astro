@@ -5,20 +5,18 @@ import { QAN } from "@/components/ui/form/QAN.tsx";
 import { ensureCsrfToken } from "@/lib/csrf";
 import { db } from "@/lib/db";
 import type { Database } from "@/config/schema";
+import { Card } from "@/components/ui/shadcn/card";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
 
 ensureCsrfToken(Astro.cookies);
 
 // Default role IDs that cannot be deleted (admin, moderator, contributor, banned)
 const DEFAULT_ROLE_IDS = [1, 2, 3, 4];
 
-let roles: Database['auth_roles'][] = [];
+let roles: Database["auth_roles"][] = [];
 
 try {
-  roles = await db
-    .selectFrom("auth_roles")
-    .selectAll()
-    .orderBy("id")
-    .execute();
+  roles = await db.selectFrom("auth_roles").selectAll().orderBy("id").execute();
 } catch (error) {
   console.error("Error fetching roles:", error);
 }
@@ -34,44 +32,61 @@ const rolesForQAN = roles.map((role) => ({
 
 <AdminLayout title="Manage Roles">
   <div class="w-full">
-    <h2 class="text-xl font-semibold mb-4">Manage Roles</h2>
-    
-    <form class="" data-form aria-label="Roles form">
-      <input type="hidden" name="csrf" value={Astro.cookies.get("csrf")?.value} />
-      
-      <div class="mb-6">
-        <QAN
-          client:load
-          name="roles"
-          fields={[
-            {
-              name: "name",
-              label: "Role Name",
-              type: "text",
-              width: "40%",
-            },
-            {
-              name: "description",
-              label: "Description",
-              type: "text",
-              width: "60%",
-            },
-          ]}
-          buttonLabel="Add Role"
-          value={JSON.stringify(rolesForQAN)}
-        />
-      </div>
+    <Breadcrumb
+      items={[
+        {
+          href: "/admin",
+          label: "Dashboard",
+        },
+        {
+          href: "",
+          label: "Manage User Roles",
+        }
+      ]}
+    />
 
-      <!-- Submit Button -->
-      <div class="flex gap-4">
-        <ButtonSubmit
-          text="Save All Changes"
-          workingText="Saving..."
-          form="[data-form]"
-          endpoint="/api/roles/save"
-          redirect="reload"
+    <Card className="p-6">
+      <form class="" data-form aria-label="Roles form">
+        <input
+          type="hidden"
+          name="csrf"
+          value={Astro.cookies.get("csrf")?.value}
         />
-      </div>
-    </form>
+
+        <div class="mb-5">
+          <QAN
+            client:load
+            name="roles"
+            fields={[
+              {
+                name: "name",
+                label: "Role Name",
+                type: "text",
+                width: "40%",
+              },
+              {
+                name: "description",
+                label: "Description",
+                type: "text",
+                width: "60%",
+              },
+            ]}
+            buttonLabel="Add Role"
+            value={JSON.stringify(rolesForQAN)}
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex gap-4">
+          <ButtonSubmit
+            text="Save Roles"
+            workingText="Saving..."
+            form="[data-form]"
+            endpoint="/api/roles/save"
+            redirect="reload"
+          />
+        </div>
+      </form>
+    </Card>
   </div>
 </AdminLayout>

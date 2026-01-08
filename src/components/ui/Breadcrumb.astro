@@ -1,20 +1,21 @@
 ---
 interface BreadcrumbItem {
-  type: "organization" | "project" | "ticket";
   href: string;
   label: string;
+  className?: string;
 }
 
 interface Props {
   items: BreadcrumbItem[];
+  className?: string;
 }
 
-const { items } = Astro.props;
+const { items, className = "mb-4 text-sm" } = Astro.props;
 ---
 
 {items.length > 0 && (
-  <nav class="mb-4" aria-label="Breadcrumb">
-    <div class="flex items-center gap-2 text-sm">
+  <nav class={`${className}`} aria-label="Breadcrumb">
+    <div class="flex items-center gap-2">
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
         const isEmptyHref = !item.href || item.href === "";
@@ -26,18 +27,18 @@ const { items } = Astro.props;
               <>
                 <a
                   href={item.href}
-                  class="text-neutral-600 hover:text-neutral-900 hover:underline"
+                  class="text-muted-foreground/90 hover:underline"
                 >
                   {item.label}
                 </a>
-                <span class="text-neutral-400">></span>
+                <span class="text-muted-foreground/90">></span>
               </>
             ) : (
               <>
-                <span class="text-neutral-400">
+                <span class="text-primary/90">
                   {item.label}
                 </span>
-                {!isLast && <span class="text-neutral-400">></span>}
+                {!isLast && <span class="text-muted-foreground/90">></span>}
               </>
             )}
           </>

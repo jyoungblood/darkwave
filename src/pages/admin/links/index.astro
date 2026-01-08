@@ -3,6 +3,7 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
 import TableDatalist from "@/components/ui/admin/TableDatalist.astro";
 import { formatDate, getPaginationParams, renderIconButtonLink } from "@/lib/dw/helpers";
 import { db } from "@/lib/db";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
 
 let link;
 let totalLinks = 0;
@@ -47,6 +48,18 @@ try {
 
 <AdminLayout title="All Links">
   <div class="w-full">
+    <Breadcrumb
+      items={[
+        {
+          href: "/admin",
+          label: "Dashboard",
+        },
+        {
+          href: "",
+          label: "Links",
+        }
+      ]}
+    />
     <TableDatalist
       data={link ?? []}
       columns={[
@@ -100,7 +113,6 @@ try {
           },
         },
       ]}
-      title="All Links"
       search={{
         placeholder: "Search links...",
       }}

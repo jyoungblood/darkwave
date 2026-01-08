@@ -2,6 +2,8 @@
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import LinkForm from "@/components/forms/LinkForm.astro";
 import { db } from "@/lib/db";
+import { Card } from "@/components/ui/shadcn/card";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
 const uuid = Astro.url.searchParams.get("uuid");
 
 if (!uuid) {
@@ -26,11 +28,28 @@ if (!link) {
     status: 404,
   });
 }
-
 ---
 
 <AdminLayout title={`${link?.title} | Edit Link`}>
   <div class="w-full">
-    <LinkForm link={link} redirect="/admin/links" />
+    <Breadcrumb
+      items={[
+        {
+          href: "/admin",
+          label: "Dashboard",
+        },
+        {
+          href: "/admin/links",
+          label: "Links",
+        },
+        {
+          href: "",
+          label: `Edit: ${link?.title || ""}`.trim()
+        },
+      ]}
+    />
+    <Card className="p-6">
+      <LinkForm link={link} redirect="/admin/links" />
+    </Card>
   </div>
 </AdminLayout>

@@ -1,10 +1,30 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import LinkForm from "@/components/forms/LinkForm.astro";
+import { Card } from "@/components/ui/shadcn/card";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
 ---
 
 <AdminLayout title="New Link">
   <div class="w-full">
-    <LinkForm redirect="/admin/links" />
+    <Breadcrumb
+      items={[
+        {
+          href: "/admin",
+          label: "Dashboard",
+        },
+        {
+          href: "/admin/links",
+          label: "Links",
+        },
+        {
+          href: "",
+          label: `New Link`,
+        },
+      ]}
+    />
+    <Card className="p-6">
+      <LinkForm redirect="/admin/links" />
+    </Card>
   </div>
 </AdminLayout>

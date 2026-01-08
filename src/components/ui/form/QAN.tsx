@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/shadcn/input";
 import { Label } from "@/components/ui/shadcn/label";
 import * as SortableJS from "sortablejs";
 import type { SortableEvent } from "sortablejs";
+import { cn } from "@/lib/dw/helpers";
 
 const Sortable = SortableJS.default || SortableJS;
 type SortableInstance = InstanceType<typeof Sortable>;
@@ -30,6 +31,7 @@ interface QANProps {
   buttonLabel?: string;
   sortable?: boolean;
   limit?: number;
+  className?: string;
 }
 
 export function QAN({
@@ -41,6 +43,7 @@ export function QAN({
   buttonLabel = "Add Item",
   sortable = false,
   limit,
+  className,
 }: QANProps) {
   // Parse initial data
   const initialData = React.useMemo(() => {
@@ -136,7 +139,7 @@ export function QAN({
   const showAddButton = limit ? items.length < limit : true;
 
   return (
-    <div className="qan-container" data-name={name} ref={containerRef}>
+    <div className={cn("qan-container", className)} data-name={name} ref={containerRef}>
       {fieldLabel && (
         <Label htmlFor={`input-${name}`} className="mb-2">
           {fieldLabel}
@@ -155,9 +158,9 @@ export function QAN({
         value={JSON.stringify(items)}
       />
 
-      <div className="space-y-3 transition-all duration-200 qan-items-container">
+      <div className="space-y-4 transition-all duration-200 qan-items-container">
         {items.map((item, index) => (
-          <div key={index} className="flex gap-2 items-end">
+          <div key={index} className="flex gap-4 items-end">
             {sortable && (
               <div className="flex items-center justify-center w-8 h-10 cursor-move text-gray-400 hover:text-gray-600">
                 <span className="icon-[tabler--grip-vertical] w-4 h-4"></span>
@@ -172,7 +175,7 @@ export function QAN({
                 {field.label && (
                   <Label
                     htmlFor={`input-${name}-${field.name}-${index}`}
-                    className="text-xs mb-1.5"
+                    className="text-xs mb-2"
                   >
                     {field.label}
                     {field.sublabel && (
@@ -212,9 +215,9 @@ export function QAN({
       {showAddButton && (
         <Button
           type="button"
-          variant="secondary"
-          size="sm"
-          className="mt-3"
+          variant="outline"
+          size="xs"
+          className="mt-5"
           onClick={handleAddItem}
         >
           {buttonLabel}
