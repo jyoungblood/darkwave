@@ -1,0 +1,580 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import InputText from "@/components/ui/form/InputText.astro";
+import Select from "@/components/ui/form/Select.astro";
+import Textarea from "@/components/ui/form/Textarea.astro";
+import CheckboxGroup from "@/components/ui/form/CheckboxGroup.astro";
+import Toggle from "@/components/ui/form/Toggle.astro";
+import DatePicker from "@/components/ui/form/DatePicker.astro";
+import ButtonSubmit from "@/components/ui/form/ButtonSubmit.astro";
+import ButtonDelete from "@/components/ui/form/ButtonDelete.astro";
+import { QAN } from "@/components/ui/form/QAN.tsx";
+import Breadcrumb from "@/components/ui/Breadcrumb.astro";
+import { Card } from "@/components/ui/shadcn/card";
+import { ensureCsrfToken } from "@/lib/csrf";
+
+ensureCsrfToken(Astro.cookies);
+---
+
+<AdminLayout title="Form Components Demo">
+  <div class="w-full">
+    <Breadcrumb
+      items={[
+        {
+          href: "/admin",
+          label: "Dashboard",
+        },
+        {
+          href: "",
+          label: "Form Components Demo",
+        },
+      ]}
+    />
+
+    <Card className="p-6 mb-6 text-center">
+      <h1 class="text-2xl font-bold mb-2">Form Components Demo</h1>
+      <p class="text-muted-foreground">
+        This page demonstrates all form components to verify they render
+        correctly, handle validation, and interact properly.
+      </p>
+    </Card>
+
+    <form data-form aria-label="Demo form">
+      <input
+        type="hidden"
+        name="csrf"
+        value={Astro.cookies.get("csrf")?.value}
+      />
+
+      <!-- Text Inputs Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Text Inputs</h2>
+
+        <div class="grid grid-cols-3 gap-6">
+          <div>
+            <InputText
+              label="Basic Text Input"
+              name="basic_text"
+              placeholder="Enter some text"
+              value=""
+            />
+          </div>
+
+          <div>
+            <InputText
+              label="Required Text Input"
+              name="required_text"
+              placeholder="This field is required"
+              required={true}
+            />
+          </div>
+
+          <div>
+            <InputText
+              label="Email Input"
+              name="email"
+              type="email"
+              placeholder="user@example.com"
+              validation={{
+                types: ["email"],
+                rules: [
+                  {
+                    type: "email",
+                    errorMessage: "Please enter a valid email address",
+                  },
+                ],
+              }}
+            />
+          </div>
+
+          <div>
+            <InputText
+              label="Password Input"
+              name="password"
+              type="password"
+              placeholder="Enter password"
+              validation={{
+                types: ["password"],
+                rules: [
+                  {
+                    type: "password",
+                    min: 8,
+                    errorMessage: "Password must be at least 8 characters",
+                  },
+                ],
+              }}
+            />
+          </div>
+
+          <div>
+            <InputText
+              label="Number Input"
+              name="number"
+              type="number"
+              placeholder="Enter a number"
+              validation={{
+                rules: [
+                  {
+                    type: "number",
+                    min: 1,
+                    max: 100,
+                    errorMessage: "Number must be between 1 and 100",
+                  },
+                ],
+              }}
+            />
+          </div>
+
+          <div>
+            <InputText
+              label="URL Input"
+              name="url"
+              type="url"
+              placeholder="https://example.com"
+              validation={{
+                types: ["url"],
+                rules: [
+                  { type: "url", errorMessage: "Please enter a valid URL" },
+                ],
+              }}
+            />
+          </div>
+
+          <div>
+            <InputText
+              label="Text with Success State"
+              name="success_text"
+              placeholder="This field shows success"
+              value="Valid input"
+              validation={{
+                success: { message: "This looks good!" },
+                showSuccessUI: true,
+              }}
+            />
+          </div>
+
+          <div>
+            <InputText
+              label="Text with Subtext"
+              name="text_with_subtext"
+              sublabel="This is helpful subtext for the input field"
+              placeholder="Input with subtext"
+            />
+          </div>
+
+          <div>
+            <InputText
+              label="Text with Tooltip Subtext"
+              name="text_with_tooltip"
+              sublabel={["Tooltip item 1", "Tooltip item 2", "Tooltip item 3"]}
+              placeholder="Hover over the info icon"
+            />
+          </div>
+        </div>
+      </Card>
+
+      <!-- Select Dropdowns Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Select Dropdowns</h2>
+
+        <div class="grid grid-cols-3 gap-6">
+          <div>
+            <Select
+              label="Basic Select"
+              name="basic_select"
+              placeholder="Choose an option"
+              options={[
+                { label: "Option 1", value: "1" },
+                { label: "Option 2", value: "2" },
+                { label: "Option 3", value: "3" },
+              ]}
+            />
+          </div>
+
+          <div>
+            <Select
+              label="Required Select"
+              name="required_select"
+              placeholder="Please select"
+              required={true}
+              options={[
+                { label: "Apple", value: "apple" },
+                { label: "Banana", value: "banana" },
+                { label: "Orange", value: "orange" },
+              ]}
+            />
+          </div>
+
+          <div>
+            <Select
+              label="Select with Default Value"
+              name="select_with_value"
+              value="2"
+              options={[
+                { label: "First", value: "1" },
+                { label: "Second (selected)", value: "2" },
+                { label: "Third", value: "3" },
+              ]}
+            />
+          </div>
+
+          <div>
+            <Select
+              label="Select with Subtext"
+              name="select_with_subtext"
+              sublabel="Choose your favorite option"
+              options={[
+                { label: "Red", value: "red" },
+                { label: "Green", value: "green" },
+                { label: "Blue", value: "blue" },
+              ]}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <!-- Textarea Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Textareas</h2>
+
+        <div class="grid grid-cols-3 gap-6">
+          <div>
+            <Textarea
+              label="Basic Textarea"
+              name="basic_textarea"
+              placeholder="Enter some text..."
+              rows={4}
+            />
+          </div>
+
+          <div>
+            <Textarea
+              label="Required Textarea"
+              name="required_textarea"
+              placeholder="This textarea is required"
+              required={true}
+              rows={4}
+            />
+          </div>
+
+          <div>
+            <Textarea
+              label="Textarea with Default Value"
+              name="textarea_with_value"
+              value="This is pre-filled text"
+              rows={5}
+            />
+          </div>
+
+          <div>
+            <Textarea
+              label="Textarea with Subtext"
+              name="textarea_with_subtext"
+              sublabel="Provide detailed information here"
+              placeholder="Details..."
+              rows={3}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <!-- Checkboxes Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Checkboxes</h2>
+
+        <div class="grid grid-cols-3 gap-6">
+          <div>
+            <CheckboxGroup
+              label="Basic Checkbox Group"
+              name="basic_checkboxes"
+              options={[
+                { label: "Option 1", value: "opt1" },
+                { label: "Option 2", value: "opt2" },
+                { label: "Option 3", value: "opt3" },
+              ]}
+            />
+          </div>
+
+          <div>
+            <CheckboxGroup
+              label="Checkboxes with Pre-selected Values"
+              name="preselected_checkboxes"
+              selected={["opt2", "opt4"]}
+              options={[
+                { label: "Option 1", value: "opt1" },
+                { label: "Option 2 (selected)", value: "opt2" },
+                { label: "Option 3", value: "opt3" },
+                { label: "Option 4 (selected)", value: "opt4" },
+              ]}
+            />
+          </div>
+
+          <div>
+            <CheckboxGroup
+              label="Required Checkbox Group"
+              name="required_checkboxes"
+              required={true}
+              options={[
+                { label: "Agree to terms", value: "terms" },
+                { label: "Receive newsletter", value: "newsletter" },
+              ]}
+            />
+          </div>
+
+          <div>
+            <CheckboxGroup
+              label="Checkboxes in Grid (3 columns)"
+              name="grid_checkboxes"
+              columns={3}
+              options={[
+                { label: "Item A", value: "a" },
+                { label: "Item B", value: "b" },
+                { label: "Item C", value: "c" },
+                { label: "Item D", value: "d" },
+                { label: "Item E", value: "e" },
+                { label: "Item F", value: "f" },
+              ]}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <!-- Toggles/Switches Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Toggles/Switches</h2>
+
+        <div class="grid grid-cols-3 gap-6">
+          <div>
+            <Toggle label="Basic Toggle" name="basic_toggle" />
+          </div>
+
+          <div>
+            <Toggle
+              label="Checked Toggle"
+              name="checked_toggle"
+              checked={true}
+            />
+          </div>
+
+          <div>
+            <Toggle
+              label="Required Toggle"
+              name="required_toggle"
+              required={true}
+            />
+          </div>
+
+          <div>
+            <Toggle
+              label="Disabled Toggle"
+              name="disabled_toggle"
+              disabled={true}
+            />
+          </div>
+
+          <div>
+            <Toggle
+              label="Toggle with Subtext"
+              name="toggle_with_subtext"
+              sublabel="Enable this feature"
+            />
+          </div>
+
+          <div>
+            <Toggle
+              label="Toggle with Tooltip"
+              name="toggle_with_tooltip"
+              popoverIcon="icon-[tabler--info-circle] size-4 text-neutral-400"
+              sublabel={["This tooltip explains", "what this toggle does"]}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <!-- Date Pickers Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Date Pickers</h2>
+
+        <div class="grid grid-cols-3 gap-6">
+          <div>
+            <DatePicker
+              label="Basic Date Picker"
+              name="basic_date"
+              placeholder="Select a date"
+            />
+          </div>
+
+          <div>
+            <DatePicker
+              label="Date with Time"
+              name="date_with_time"
+              enableTime={true}
+              dateFormat="Y-m-d H:i"
+              placeholder="Select date and time"
+            />
+          </div>
+
+          <div>
+            <DatePicker
+              label="Date with Default Value"
+              name="date_with_value"
+              value="2024-01-15"
+            />
+          </div>
+
+          <div>
+            <DatePicker
+              label="Date Range"
+              name="date_range"
+              mode="range"
+              placeholder="Select date range"
+            />
+          </div>
+
+          <div>
+            <DatePicker
+              label="Date with Min/Max"
+              name="date_limited"
+              minDate="2024-01-01"
+              maxDate="2024-12-31"
+              placeholder="Date in 2024"
+            />
+          </div>
+
+          <div>
+            <DatePicker
+              label="Required Date"
+              name="required_date"
+              required={true}
+              placeholder="Select a date (required)"
+            />
+          </div>
+        </div>
+      </Card>
+
+      <!-- QAN Component Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">
+          QAN (Add/Remove Items) Component
+        </h2>
+
+        <QAN
+          client:load
+          name="demo_items"
+          fields={[
+            {
+              name: "title",
+              label: "Title",
+              type: "text",
+              width: "40%",
+              placeholder: "Enter title",
+            },
+            {
+              name: "description",
+              label: "Description",
+              type: "text",
+              width: "60%",
+              placeholder: "Enter description",
+            },
+          ]}
+          buttonLabel="Add Item"
+          sortable={true}
+          value={JSON.stringify([
+            {
+              id: 1,
+              name: "Sample Item",
+              description: "This is a sample item",
+              protected: false,
+            },
+          ])}
+        />
+      </Card>
+
+      <!-- Buttons Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Buttons</h2>
+
+        <div class="space-y-4">
+          <div class="flex gap-4 items-center">
+            <ButtonSubmit
+              text="Submit Form"
+              workingText="Saving..."
+              form="[data-form]"
+              endpoint="/api/demo/test"
+              successMessage="Form submitted successfully!"
+            />
+
+            <ButtonDelete
+              text="Delete Item"
+              type="item"
+              endpoint="/api/demo/delete"
+              redirect="/admin/demo"
+              uuid="test-uuid-123"
+            />
+          </div>
+
+          <div class="mt-4">
+            <p class="text-sm text-muted-foreground mb-2">
+              Click the buttons above to test their functionality. The submit
+              button will show loading states and success/error alerts. The
+              delete button will show a confirmation alert dialog.
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      <!-- Alert Testing Section -->
+      <Card className="p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Alert Dialog Testing</h2>
+
+        <div class="grid grid-cols-4 gap-4">
+          <div>
+            <button
+              type="button"
+              class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+              onclick="window.showAlert({ type: 'success', title: 'Success!', text: 'This is a success alert.', overlay: true, icon: true, buttons: [{ text: 'OK', variant: 'solid', type: 'success' }] }); return false;"
+            >
+              Success Alert
+            </button>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              class="px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90"
+              onclick="window.showAlert({ type: 'error', title: 'Error!', text: 'This is an error alert.', overlay: true, icon: true, buttons: [{ text: 'OK', variant: 'solid', type: 'error' }] }); return false;"
+            >
+              Error Alert
+            </button>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              class="px-4 py-2 bg-warning text-warning-foreground rounded-md hover:bg-warning/90"
+              onclick="window.showAlert({ type: 'warning', title: 'Warning!', text: 'This is a warning alert.', overlay: true, icon: true, buttons: [{ text: 'OK', variant: 'solid', type: 'warning' }] }); return false;"
+            >
+              Warning Alert
+            </button>
+          </div>
+
+          <div>
+            <button
+              type="button"
+              class="px-4 py-2 bg-info text-info-foreground rounded-md hover:bg-info/90"
+              onclick="window.showAlert({ type: 'info', title: 'Info', text: 'This is an info alert.', overlay: true, icon: true, buttons: [{ text: 'OK', variant: 'solid', type: 'info' }] }); return false;"
+            >
+              Info Alert
+            </button>
+          </div>
+        </div>
+      </Card>
+    </form>
+  </div>
+</AdminLayout>
+
+<script>
+  import "@/components/ui/scripts/alert";
+
+  // window.showAlert is set up by the alert.ts script
+</script>
