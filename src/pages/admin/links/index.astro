@@ -1,18 +1,45 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import TableDatalist from "@/components/ui/admin/TableDatalist.astro";
-import { formatDate } from "@/lib/dw/helpers";
+import { formatDate, getPaginationParams } from "@/lib/dw/helpers";
 import { db } from "@/lib/db";
 
 let link;
+let totalLinks = 0;
+
+const keyword = Astro.url.searchParams.get("keyword");
+const { currentPage, perPage, offset } = getPaginationParams(Astro.url, 10);
 
 try {
-  link = await db
+
+  let baseQuery = db
     .selectFrom("links")
-    .selectAll()
-    .where("deleted_at", "is", null)
-    .orderBy("created_at")
-    .execute();
+    .where("deleted_at", "is", null);
+
+  if (keyword && keyword.trim()) {
+    const kw = `%${keyword.trim()}%`;
+    baseQuery = baseQuery.where((eb) =>
+      eb.or([
+        eb("title", "like", kw),
+        eb("uuid", "like", kw),
+      ])
+    );
+  }
+
+  const [linksResult, countResult] = await Promise.all([
+    baseQuery
+      .selectAll()
+      .orderBy("created_at")
+      .limit(perPage)
+      .offset(offset)
+      .execute(),
+    baseQuery
+      .select(({ fn }) => [fn.countAll<number>().as("total")])
+      .executeTakeFirst(),
+  ]);
+
+  link = linksResult;
+  totalLinks = Number(countResult?.total || 0);
 } catch (error) {
   console.error("Error fetching link:", error);
 }
@@ -67,6 +94,14 @@ try {
         },
       ]}
       title="All Links"
+      search={{
+        placeholder: "Search links...",
+      }}
+      pagination={{
+        currentPage,
+        totalItems: totalLinks,
+        perPage,
+      }}
       buttonLinks={[
         {
           href: "/admin/links/new",

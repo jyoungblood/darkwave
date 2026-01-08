@@ -205,3 +205,30 @@ export function escapeXml(unsafe: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
 }
+
+/**
+ * Pagination parameters interface
+ */
+export interface PaginationParams {
+  currentPage: number; // 1-based
+  perPage: number;
+  offset: number;
+}
+
+/**
+ * Extracts pagination parameters from a URL
+ * @param url URL object to extract pagination params from
+ * @param defaultPerPage Default items per page (defaults to 50)
+ * @returns Pagination parameters object with currentPage, perPage, and offset
+ */
+export function getPaginationParams(
+  url: URL,
+  defaultPerPage = 50
+): PaginationParams {
+  const pageParam = url.searchParams.get("page");
+  const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
+  const perPage = defaultPerPage;
+  const offset = (currentPage - 1) * perPage;
+
+  return { currentPage, perPage, offset };
+}

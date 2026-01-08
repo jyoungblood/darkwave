@@ -1,17 +1,44 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import TableDatalist from "@/components/ui/admin/TableDatalist.astro";
-import { formatDate } from "@/lib/dw/helpers";
+import { formatDate, getPaginationParams } from "@/lib/dw/helpers";
 import { db } from "@/lib/db";
 
 let users;
+let totalUsers = 0;
+
+const keyword = Astro.url.searchParams.get("keyword");
+const { currentPage, perPage, offset } = getPaginationParams(Astro.url, 50);
 
 try {
-  users = await db
-    .selectFrom("user")
-    .selectAll()
-    .orderBy("createdAt")
-    .execute();
+
+  let baseQuery = db.selectFrom("user");
+
+  if (keyword && keyword.trim()) {
+    const kw = `%${keyword.trim()}%`;
+    baseQuery = baseQuery.where((eb) =>
+      eb.or([
+        eb("email", "like", kw),
+        eb("first_name", "like", kw),
+        eb("last_name", "like", kw),
+      ])
+    );
+  }
+
+  const [usersResult, countResult] = await Promise.all([
+    baseQuery
+      .selectAll()
+      .orderBy("createdAt")
+      .limit(perPage)
+      .offset(offset)
+      .execute(),
+    baseQuery
+      .select(({ fn }) => [fn.countAll<number>().as("total")])
+      .executeTakeFirst(),
+  ]);
+
+  users = usersResult;
+  totalUsers = Number(countResult?.total || 0);
 } catch (error) {
   console.error("Error fetching users:", error);
 }
@@ -76,6 +103,14 @@ try {
         },
       ]}
       title="All Users"
+      search={{
+        placeholder: "Search users...",
+      }}
+      pagination={{
+        currentPage,
+        totalItems: totalUsers,
+        perPage,
+      }}
       buttonLinks={[
         {
           href: "/admin/users/new",
