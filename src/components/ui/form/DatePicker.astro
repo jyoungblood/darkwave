@@ -6,6 +6,8 @@ import Label from "@/components/ui/form/Label.astro";
 interface Props {
   label?: string;
   sublabel?: string | string[];
+  popover?: boolean;
+  popoverIcon?: string;
   name: string;
   required?: boolean;
   value?: string;
@@ -55,6 +57,8 @@ interface Props {
 const {
   label,
   sublabel,
+  popover,
+  popoverIcon,
   name,
   required = false,
   value = "",
@@ -105,7 +109,7 @@ const validationAttributes = validation
 ---
 
 <div class="flex flex-col" id={`input-container-${name}`}>
-  {label && <Label text={label} for={`input-${name}`} subtext={sublabel} />}
+  {label && <Label text={label} class="mb-2" for={`input-${name}`} subtext={sublabel} popover={popover} popoverIcon={popoverIcon} />}
   <input
     type="text"
     id={`input-${name}`}

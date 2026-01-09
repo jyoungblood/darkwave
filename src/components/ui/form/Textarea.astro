@@ -7,36 +7,85 @@ import { Textarea as TextareaBase } from "@/components/ui/shadcn/textarea";
 interface Props {
   label?: string;
   sublabel?: string | string[];
+  popover?: boolean;
+  popoverIcon?: string;
   name: string;
   required?: boolean;
   value?: string;
   placeholder?: string;
   class?: string;
   rows?: number;
+  autoResize?: boolean;
 }
 
 const {
   label,
   sublabel,
+  popover,
+  popoverIcon,
   name,
   required = false,
   value = "",
   placeholder = "",
   class: customClass = "",
   rows = 3,
+  autoResize = false,
 } = Astro.props;
+
+const textareaId = `textarea-${name}`;
 ---
 
 <div class="flex flex-col">
-  {label && <Label text={label} for={`textarea-${name}`} subtext={sublabel} />}
+  {label && <Label text={label} class="mb-2" for={textareaId} subtext={sublabel} popover={popover} popoverIcon={popoverIcon} />}
   <TextareaBase
     client:load
-    id={`textarea-${name}`}
+    id={textareaId}
     name={name}
     required={required}
     className={`resize-none ${customClass}`}
     defaultValue={value}
     placeholder={placeholder}
     rows={rows}
+    data-auto-resize={autoResize}
   />
 </div>
+
+{autoResize && (
+  <script define:vars={{ textareaId }}>
+    (function() {
+      function setupAutoResize() {
+        const textarea = document.getElementById(textareaId);
+        if (!textarea || !(textarea instanceof HTMLTextAreaElement)) {
+          // Retry if element not found yet (React component may not be hydrated)
+          setTimeout(setupAutoResize, 50);
+          return;
+        }
+
+        // Set field-sizing CSS property for modern browsers
+        textarea.style.setProperty("field-sizing", "content");
+
+        function autoResize() {
+          if (!textarea) return;
+          textarea.style.height = "auto";
+          textarea.style.height = textarea.scrollHeight + "px";
+        }
+
+        textarea.addEventListener("input", autoResize);
+        // Resize on initial load if there's a value
+        if (textarea.value) {
+          // Use requestAnimationFrame to ensure this runs after React has fully rendered
+          requestAnimationFrame(() => {
+            autoResize();
+          });
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupAutoResize);
+      } else {
+        // DOM already loaded, but React component might not be hydrated yet
+        setTimeout(setupAutoResize, 100);
+      }
+    })();
+  </script>
+)}

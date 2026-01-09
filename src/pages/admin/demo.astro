@@ -157,7 +157,7 @@ ensureCsrfToken(Astro.cookies);
             <InputText
               label="Text with Subtext"
               name="text_with_subtext"
-              sublabel="This is helpful subtext for the input field"
+              sublabel="Helpful subtext for the input field"
               placeholder="Input with subtext"
             />
           </div>
@@ -166,6 +166,7 @@ ensureCsrfToken(Astro.cookies);
             <InputText
               label="Text with Tooltip Subtext"
               name="text_with_tooltip"
+              popover={true}
               sublabel={["Tooltip item 1", "Tooltip item 2", "Tooltip item 3"]}
               placeholder="Hover over the info icon"
             />
@@ -230,6 +231,21 @@ ensureCsrfToken(Astro.cookies);
               ]}
             />
           </div>
+
+          <div>
+            <Select
+              label="Select with Tooltip"
+              name="select_with_tooltip"
+              popover={true}
+              sublabel={["Select the appropriate category", "This choice affects other options", "You can change this later"]}
+              placeholder="Choose an option"
+              options={[
+                { label: "Category A", value: "a" },
+                { label: "Category B", value: "b" },
+                { label: "Category C", value: "c" },
+              ]}
+            />
+          </div>
         </div>
       </Card>
 
@@ -270,9 +286,42 @@ ensureCsrfToken(Astro.cookies);
             <Textarea
               label="Textarea with Subtext"
               name="textarea_with_subtext"
-              sublabel="Provide detailed information here"
+              sublabel="Provide more info here"
               placeholder="Details..."
               rows={3}
+            />
+          </div>
+
+          <div>
+            <Textarea
+              label="Textarea with Tooltip"
+              name="textarea_with_tooltip"
+              popover={true}
+              sublabel={["Use this field for detailed descriptions", "Be specific and clear", "Include all relevant information"]}
+              placeholder="Hover over the info icon"
+              rows={4}
+            />
+          </div>
+
+          <div>
+            <Textarea
+              label="Auto-Resize Textarea"
+              name="auto_resize_textarea"
+              popover={true}
+              sublabel="This textarea automatically expands as you type.<br /> The resize handle is hidden."
+              placeholder="Start typing to see it expand..."
+              rows={3}
+              autoResize={true}
+            />
+          </div>
+
+          <div>
+            <Textarea
+              label="Auto-Resize with Default Value"
+              name="auto_resize_textarea_value"
+              value="This textarea has pre-filled content and will auto-resize. Try adding more lines to see it expand automatically. The resize icon in the bottom right corner is hidden when auto-resize is enabled."
+              rows={3}
+              autoResize={true}
             />
           </div>
         </div>
@@ -336,6 +385,20 @@ ensureCsrfToken(Astro.cookies);
               ]}
             />
           </div>
+
+          <div>
+            <CheckboxGroup
+              label="Checkboxes with Tooltip"
+              name="checkboxes_with_tooltip"
+              popover={true}
+              sublabel={["Select all that apply", "Multiple selections allowed", "These preferences can be updated anytime"]}
+              options={[
+                { label: "Email notifications", value: "email" },
+                { label: "SMS notifications", value: "sms" },
+                { label: "Push notifications", value: "push" },
+              ]}
+            />
+          </div>
         </div>
       </Card>
 
@@ -384,7 +447,7 @@ ensureCsrfToken(Astro.cookies);
             <Toggle
               label="Toggle with Tooltip"
               name="toggle_with_tooltip"
-              popoverIcon="icon-[tabler--info-circle] size-4 text-neutral-400"
+              popover={true}
               sublabel={["This tooltip explains", "what this toggle does"]}
             />
           </div>
@@ -447,6 +510,16 @@ ensureCsrfToken(Astro.cookies);
               name="required_date"
               required={true}
               placeholder="Select a date (required)"
+            />
+          </div>
+
+          <div>
+            <DatePicker
+              label="Date Picker with Tooltip"
+              name="date_with_tooltip"
+              popover={true}
+              sublabel={["Select your preferred date", "Dates must be in the future", "Weekends are available"]}
+              placeholder="Hover over the info icon"
             />
           </div>
         </div>
@@ -531,8 +604,8 @@ ensureCsrfToken(Astro.cookies);
           <div>
             <button
               type="button"
+              data-alert-type="success"
               class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-              onclick="window.showAlert({ type: 'success', title: 'Success!', text: 'This is a success alert.', overlay: true, icon: true, buttons: [{ text: 'OK', variant: 'solid', type: 'success' }] }); return false;"
             >
               Success Alert
             </button>
@@ -541,8 +614,8 @@ ensureCsrfToken(Astro.cookies);
           <div>
             <button
               type="button"
+              data-alert-type="error"
               class="px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90"
-              onclick="window.showAlert({ type: 'error', title: 'Error!', text: 'This is an error alert.', overlay: true, icon: true, buttons: [{ text: 'OK', variant: 'solid', type: 'error' }] }); return false;"
             >
               Error Alert
             </button>
@@ -551,8 +624,8 @@ ensureCsrfToken(Astro.cookies);
           <div>
             <button
               type="button"
-              class="px-4 py-2 bg-warning text-warning-foreground rounded-md hover:bg-warning/90"
-              onclick="window.showAlert({ type: 'warning', title: 'Warning!', text: 'This is a warning alert.', overlay: true, icon: true, buttons: [{ text: 'OK', variant: 'solid', type: 'warning' }] }); return false;"
+              data-alert-type="warning"
+              class="px-4 py-2 bg-warning text-warning-foreground rounded-md hover:bg-warning/90 border"
             >
               Warning Alert
             </button>
@@ -561,8 +634,8 @@ ensureCsrfToken(Astro.cookies);
           <div>
             <button
               type="button"
-              class="px-4 py-2 bg-info text-info-foreground rounded-md hover:bg-info/90"
-              onclick="window.showAlert({ type: 'info', title: 'Info', text: 'This is an info alert.', overlay: true, icon: true, buttons: [{ text: 'OK', variant: 'solid', type: 'info' }] }); return false;"
+              data-alert-type="info"
+              class="px-4 py-2 bg-info text-info-foreground rounded-md hover:bg-info/90 border"
             >
               Info Alert
             </button>
@@ -575,6 +648,127 @@ ensureCsrfToken(Astro.cookies);
 
 <script>
   import "@/components/ui/scripts/alert";
+  import type { AlertOptions } from "@/components/ui/shadcn/AlertDialogManager";
 
-  // window.showAlert is set up by the alert.ts script
+  // Setup alert buttons with event listeners
+  function setupAlertButtons() {
+    const alertButtons = document.querySelectorAll("[data-alert-type]");
+
+    alertButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const alertType = button.getAttribute("data-alert-type");
+        let alertOptions: AlertOptions | undefined;
+
+        switch (alertType) {
+          case "success":
+            alertOptions = {
+              type: "success",
+              variant: "soft",
+              title: "Success!",
+              text: "This is a success alert.",
+              overlay: true,
+              icon: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttons: [
+                {
+                  text: "OK",
+                  variant: "solid",
+                  type: "success",
+                },
+              ],
+            };
+            break;
+          case "error":
+            alertOptions = {
+              type: "error",
+              variant: "soft",
+              title: "Error!",
+              text: "This is an error alert.",
+              overlay: true,
+              icon: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttons: [
+                {
+                  text: "OK",
+                  variant: "solid",
+                  type: "error",
+                },
+              ],
+            };
+            break;
+          case "warning":
+            alertOptions = {
+              type: "warning",
+              variant: "soft",
+              title: "Warning!",
+              text: "This is a warning alert.",
+              overlay: true,
+              icon: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttons: [
+                {
+                  text: "OK",
+                  variant: "solid",
+                  type: "warning",
+                },
+              ],
+            };
+            break;
+          case "info":
+            alertOptions = {
+              type: "info",
+              variant: "soft",
+              title: "Info",
+              text: "This is an info alert.",
+              overlay: true,
+              icon: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttons: [
+                {
+                  text: "OK",
+                  variant: "solid",
+                  type: "info",
+                },
+              ],
+            };
+            break;
+          default:
+            return;
+        }
+
+        if (window.showAlert && alertOptions) {
+          window.showAlert(alertOptions);
+        }
+      });
+    });
+  }
+
+  // Wait for alert script to initialize, then setup buttons
+  function initializeAlerts() {
+    if (typeof window.showAlert === "function") {
+      setupAlertButtons();
+    } else {
+      // Retry after a short delay if showAlert isn't ready yet
+      setTimeout(initializeAlerts, 50);
+    }
+  }
+
+  // Start initialization when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeAlerts);
+  } else {
+    initializeAlerts();
+  }
 </script>

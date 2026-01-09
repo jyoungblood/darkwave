@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/shadcn/switch";
 interface Props {
   label?: string;
   sublabel?: string | string[];
+  popover?: boolean;
   popoverIcon?: string;
   name: string;
   required?: boolean;
@@ -29,6 +30,7 @@ interface Props {
 const {
   label,
   sublabel,
+  popover,
   popoverIcon,
   name,
   required = false,
@@ -41,7 +43,7 @@ const {
   outline = false,
 } = Astro.props;
 
-const defaultClass = "flex items-center gap-1";
+const defaultClass = "flex items-center gap-2.5";
 const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
 ---
 
@@ -60,7 +62,7 @@ const className = customClass ? `${defaultClass} ${customClass}` : defaultClass;
     disabled={disabled}
     data-toggle-name={name}
   />
-  {label && <Label text={label} for={name} subtext={sublabel} popover={true} subtextInline={true} popoverIcon={popoverIcon} />}
+  {label && <Label class="text-sm" text={label} for={name} subtext={sublabel} popover={popover !== undefined ? popover : !!sublabel} subtextInline={true} popoverIcon={popoverIcon} />}
 </div>
 
 <script define:vars={{ name, checked }}>

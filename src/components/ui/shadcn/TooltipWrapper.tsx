@@ -26,7 +26,7 @@ export function TooltipWrapper({
           <span className={triggerIconClass} />
         </TooltipTrigger>
         <TooltipContent sideOffset={sideOffset}>
-          <div className="max-w-xl px-4 py-3 text-start">
+          <div className="max-w-xl px-1 py-1.5 text-start">
             {Array.isArray(content) ? (
               <ul className={`text-sm ${subtextColor} list-disc list-inside`}>
                 {content.map((item, idx) => (

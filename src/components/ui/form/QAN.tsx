@@ -18,6 +18,7 @@ interface Field {
   type?: string;
   width?: string;
   placeholder?: string;
+  labelSize?: "xs" | "sm" | "base";
 }
 
 interface QANProps {
@@ -28,6 +29,7 @@ interface QANProps {
   value?: string | null;
   fieldLabel?: string;
   fieldSublabel?: string | string[];
+  fieldLabelSize?: "xs" | "sm" | "base";
   buttonLabel?: string;
   sortable?: boolean;
   limit?: number;
@@ -39,6 +41,7 @@ export function QAN({
   fields,
   value = null,
   fieldLabel,
+  fieldLabelSize = "sm",
   fieldSublabel,
   buttonLabel = "Add Item",
   sortable = false,
@@ -141,10 +144,19 @@ export function QAN({
   return (
     <div className={cn("qan-container", className)} data-name={name} ref={containerRef}>
       {fieldLabel && (
-        <Label htmlFor={`input-${name}`} className="mb-2">
+        <Label 
+          htmlFor={`input-${name}`} 
+          className={cn(
+            "mb-2",
+            fieldLabelSize === "xs" ? "text-xs" : fieldLabelSize === "sm" ? "text-sm" : "text-base"
+          )}
+        >
           {fieldLabel}
           {fieldSublabel && (
-            <span className="text-xs text-muted-foreground block mt-1">
+            <span className={cn(
+              fieldLabelSize === "xs" ? "text-xs" : fieldLabelSize === "sm" ? "text-sm" : "text-base",
+              "text-muted-foreground block mt-1"
+            )}>
               {Array.isArray(fieldSublabel) ? fieldSublabel.join(' ') : fieldSublabel}
             </span>
           )}
@@ -166,34 +178,42 @@ export function QAN({
                 <span className="icon-[tabler--grip-vertical] w-4 h-4"></span>
               </div>
             )}
-            {fields.map((field) => (
-              <div
-                key={field.name}
-                className="flex flex-col"
-                style={field.width ? { width: field.width } : { flex: 1 }}
-              >
-                {field.label && (
-                  <Label
-                    htmlFor={`input-${name}-${field.name}-${index}`}
-                    className="text-xs mb-2"
-                  >
-                    {field.label}
-                    {field.sublabel && (
-                      <span className="text-xs text-muted-foreground block mt-0.5">
-                        {Array.isArray(field.sublabel) ? field.sublabel.join(' ') : field.sublabel}
-                      </span>
-                    )}
-                  </Label>
-                )}
-                <Input
-                  type={field.type || 'text'}
-                  id={`input-${name}-${field.name}-${index}`}
-                  placeholder={field.placeholder}
-                  value={item[field.name] || ''}
-                  onChange={(e) => handleFieldChange(index, field.name, e.target.value)}
-                />
-              </div>
-            ))}
+            {fields.map((field) => {
+              const labelSize = field.labelSize || "sm";
+              const labelSizeClass = labelSize === "xs" ? "text-xs" : labelSize === "sm" ? "text-sm" : "text-base";
+              // Input text size: smaller when label is smaller, default when label is sm/base
+              const inputSizeClass = labelSize === "xs" ? "text-sm md:text-xs" : undefined;
+              
+              return (
+                <div
+                  key={field.name}
+                  className="flex flex-col"
+                  style={field.width ? { width: field.width } : { flex: 1 }}
+                >
+                  {field.label && (
+                    <Label
+                      htmlFor={`input-${name}-${field.name}-${index}`}
+                      className={cn(labelSizeClass, "mb-2")}
+                    >
+                      {field.label}
+                      {field.sublabel && (
+                        <span className={cn(labelSizeClass, "text-muted-foreground block mt-0.5")}>
+                          {Array.isArray(field.sublabel) ? field.sublabel.join(' ') : field.sublabel}
+                        </span>
+                      )}
+                    </Label>
+                  )}
+                  <Input
+                    type={field.type || 'text'}
+                    id={`input-${name}-${field.name}-${index}`}
+                    placeholder={field.placeholder}
+                    value={item[field.name] || ''}
+                    onChange={(e) => handleFieldChange(index, field.name, e.target.value)}
+                    className={inputSizeClass}
+                  />
+                </div>
+              );
+            })}
             {/* Delete button or placeholder for layout consistency */}
             {item.protected ? (
               <div className="h-10 w-10" aria-hidden="true" />
