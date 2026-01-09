@@ -555,31 +555,41 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
             console.error("Error deleting photo:", error);
             // Only show alert if this isn't during page unload
             if (document.visibilityState !== "hidden") {
-              (window.showAlert as (options: any) => string)({
-                type: "error",
-                variant: "soft",
-                title: "Delete Error",
-                text:
-                  error instanceof Error
-                    ? error.message
-                    : "Failed to delete photo",
-                icon: true,
-                overlay: true,
-                position: {
-                  vertical: "middle-third",
-                  horizontal: "center",
-                },
-                buttonLayout: {
-                  newLine: true,
-                },
-                buttons: [
-                  {
-                    type: "error",
-                    text: "OK",
-                    variant: "solid",
+              let errorMessage = "Failed to delete photo";
+              if (error instanceof Error) {
+                errorMessage = error.message;
+              } else if (typeof error === "object" && error !== null) {
+                errorMessage = (error as any).error || (error as any).message || errorMessage;
+              } else if (typeof error === "string") {
+                errorMessage = error;
+              }
+
+              if (typeof window.showAlert === "function") {
+                window.showAlert({
+                  type: "error",
+                  variant: "soft",
+                  title: "Delete Error",
+                  text: errorMessage,
+                  icon: true,
+                  overlay: true,
+                  position: {
+                    vertical: "middle-third",
+                    horizontal: "center",
                   },
-                ],
-              } as any);
+                  buttonLayout: {
+                    newLine: true,
+                  },
+                  buttons: [
+                    {
+                      type: "error",
+                      text: "OK",
+                      variant: "solid",
+                    },
+                  ],
+                } as any);
+              } else {
+                alert(`Delete Error: ${errorMessage}`);
+              }
             }
           }
         });
@@ -651,11 +661,45 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
           function (
             this: DropzoneInstance,
             file: DropzoneFile,
-            errorMessage: string
+            errorMessage: string | any,
+            xhr?: XMLHttpRequest
           ) {
-            let message = errorMessage;
+            // Extract error message from various formats
+            let message: string;
             let errorTitle = "Upload Error";
 
+            // Handle different error message formats
+            if (typeof errorMessage === "string") {
+              message = errorMessage;
+            } else if (typeof errorMessage === "object" && errorMessage !== null) {
+              // Handle object error responses (e.g., { error: "..." }, { message: "..." })
+              if (errorMessage.error) {
+                message = typeof errorMessage.error === "string" 
+                  ? errorMessage.error 
+                  : JSON.stringify(errorMessage.error);
+              } else if (errorMessage.message) {
+                message = typeof errorMessage.message === "string"
+                  ? errorMessage.message
+                  : JSON.stringify(errorMessage.message);
+              } else {
+                // Fallback: stringify the object (shouldn't happen, but safety net)
+                message = JSON.stringify(errorMessage);
+              }
+            } else {
+              message = "An unknown error occurred during upload";
+            }
+
+            // If we still don't have a good message and xhr is available, try to extract from response
+            if ((!message || message === "{}" || message === "null") && xhr && xhr.responseText) {
+              try {
+                const parsed = JSON.parse(xhr.responseText);
+                message = parsed.error || parsed.message || xhr.responseText;
+              } catch {
+                message = xhr.responseText || message || "Upload failed";
+              }
+            }
+
+            // Check for specific client-side validation errors
             if (file.size > uploadConfig.maxFilesize * 1024 * 1024) {
               message = `Maximum size is ${uploadConfig.maxFilesize}MB`;
               errorTitle = "File Size Error";
@@ -664,31 +708,45 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
             ) {
               message = `Please upload a ${acceptedFileTypes} image.`;
               errorTitle = "Invalid File Type";
+            } else if (message.includes("403") || message.includes("Forbidden") || message.includes("Not authorized")) {
+              errorTitle = "Permission Denied";
+            }
+
+            // Ensure message is always a string (safety check)
+            if (typeof message !== "string" || message.trim() === "") {
+              message = message ? String(message) : "An error occurred during upload";
             }
 
             // Show error alert with appropriate title based on error type
-            window.showAlert({
-              type: "error",
-              variant: "soft",
-              title: errorTitle,
-              text: message,
-              icon: true,
-              overlay: true,
-              position: {
-                vertical: "middle-third",
-                horizontal: "center",
-              },
-              buttonLayout: {
-                newLine: true,
-              },
-              buttons: [
-                {
-                  type: "error",
-                  text: "OK",
-                  variant: "solid",
+            // Ensure showAlert is available (should be, but safety check)
+            if (typeof window.showAlert === "function") {
+              window.showAlert({
+                type: "error",
+                variant: "soft",
+                title: errorTitle,
+                text: message,
+                icon: true,
+                overlay: true,
+                position: {
+                  vertical: "middle-third",
+                  horizontal: "center",
                 },
-              ],
-            } as any);
+                buttonLayout: {
+                  newLine: true,
+                },
+                buttons: [
+                  {
+                    type: "error",
+                    text: "OK",
+                    variant: "solid",
+                  },
+                ],
+              } as any);
+            } else {
+              // Fallback if showAlert is not available
+              console.error("showAlert not available. Error:", message);
+              alert(`${errorTitle}: ${message}`);
+            }
 
             console.error("Upload error:", message);
             const previewEl = file.previewElement;
@@ -992,19 +1050,21 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
             }
 
             // Show success message
-            window.showAlert({
-              type: "success",
-              variant: "soft",
-              title: "Success",
-              text: "Photo updated successfully",
-              icon: true,
-              overlay: true,
-              position: {
-                vertical: "middle-third",
-                horizontal: "center",
-              },
-              duration: 3000,
-            } as any);
+            if (typeof window.showAlert === "function") {
+              window.showAlert({
+                type: "success",
+                variant: "soft",
+                title: "Success",
+                text: "Photo updated successfully",
+                icon: true,
+                overlay: true,
+                position: {
+                  vertical: "middle-third",
+                  horizontal: "center",
+                },
+                duration: 3000,
+              } as any);
+            }
           } catch (error) {
             console.error("Error saving crop:", error);
 
@@ -1019,29 +1079,41 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
               }
             }
 
-            window.showAlert({
-              type: "error",
-              variant: "soft",
-              title: "Error",
-              text:
-                error instanceof Error ? error.message : "Failed to save crop",
-              icon: true,
-              overlay: true,
-              position: {
-                vertical: "middle-third",
-                horizontal: "center",
-              },
-              buttonLayout: {
-                newLine: true,
-              },
-              buttons: [
-                {
-                  type: "error",
-                  text: "OK",
-                  variant: "solid",
+            let errorMessage = "Failed to save crop";
+            if (error instanceof Error) {
+              errorMessage = error.message;
+            } else if (typeof error === "object" && error !== null) {
+              errorMessage = (error as any).error || (error as any).message || errorMessage;
+            } else if (typeof error === "string") {
+              errorMessage = error;
+            }
+
+            if (typeof window.showAlert === "function") {
+              window.showAlert({
+                type: "error",
+                variant: "soft",
+                title: "Error",
+                text: errorMessage,
+                icon: true,
+                overlay: true,
+                position: {
+                  vertical: "middle-third",
+                  horizontal: "center",
                 },
-              ],
-            } as any);
+                buttonLayout: {
+                  newLine: true,
+                },
+                buttons: [
+                  {
+                    type: "error",
+                    text: "OK",
+                    variant: "solid",
+                  },
+                ],
+              } as any);
+            } else {
+              alert(`Error: ${errorMessage}`);
+            }
           }
         },
         100
@@ -1161,6 +1233,7 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
       <div class="absolute bottom-2 right-2 flex gap-2">
         <ButtonLink
           variant="outline"
+          title="Remove"
           onclick={`(function(e){ 
             e.preventDefault();
             e.stopPropagation();
@@ -1203,13 +1276,14 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
           })(arguments[0])`}
         >
           <span class="icon-[tabler--trash] size-4"></span>
-          <span>Remove</span>
+          <!-- <span>Remove</span> -->
         </ButtonLink>
 
         {
           cropper && (
             <ButtonLink
               variant="outline"
+              title="Crop"
               onclick={`(function(e){ 
                 e.stopPropagation(); 
                 const container = e.target.closest('.photo-upload-container');
@@ -1220,7 +1294,7 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
               })(arguments[0])`}
             >
               <span class="icon-[tabler--crop] size-4"></span>
-              <span>Crop</span>
+              {/* <span>Crop</span> */}
             </ButtonLink>
           )
         }
@@ -1228,6 +1302,7 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
 
           <ButtonLink
             variant="outline"
+            title="Full size"
             onclick={`(function(e){ 
               e.stopPropagation(); 
               const container = e.target.closest('.photo-upload-container');
@@ -1238,7 +1313,7 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
             })(arguments[0])`}
           >
             <span class="icon-[tabler--link] size-4"></span>
-            <span>Full size</span>
+            <!-- <span>Full size</span> -->
           </ButtonLink>
 
       <!-- Hidden elements that Dropzone expects -->
@@ -1264,7 +1339,7 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
       data-file-upload-pseudo-trigger=""
     >
       <span
-        class="bg-white aspect-[4/3] border-border/30 text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-muted/60 group-has-[div]:hidden"
+        class="bg-white aspect-[4/3] text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border border-input hover:bg-muted/60 group-has-[div]:hidden"
       >
         <span class={`icon-[${dz_icon}] w-20 h-20`}></span>
       </span>

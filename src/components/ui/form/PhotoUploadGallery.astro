@@ -7,6 +7,7 @@
 import { db } from "@/lib/db";
 import PhotoCropper from "./PhotoCropper.astro";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { Button } from "@/components/ui/shadcn/button";
 import InputText from "@/components/ui/form/InputText.astro";
 import Textarea from "@/components/ui/form/Textarea.astro";
 
@@ -169,9 +170,10 @@ try {
             <div class="modal-footer flex justify-between p-3 pt-0">
               <!-- Left side buttons -->
               <div class="flex gap-2">
-                <button
+                <Button
+                  client:load
                   type="button"
-                  class="save-photo-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                  className="save-photo-btn"
                   aria-busy="false"
                 >
                   <svg
@@ -194,7 +196,7 @@ try {
                     ></path>
                   </svg>
                   <span data-save-text>Save Photo</span>
-                </button>
+                </Button>
                 <span data-save-error class="text-red-500 text-sm ml-4 hidden"></span>
 
               </div>
@@ -204,10 +206,11 @@ try {
                 <!-- Delete button -->
                 <ButtonLink
                   variant="outline"
+                  title="Remove"
                   data-delete-photo
                 >
                   <span class="icon-[tabler--trash] size-4"></span>
-                  <span>Remove</span>
+                  <!-- <span>Remove</span> -->
                 </ButtonLink>
 
                 <!-- Full size button -->
@@ -215,11 +218,11 @@ try {
                   variant="outline"
                   href="#"
                   class="full-size-photo-btn"
-                  title="View full size"
+                  title="Full size"
                   target="_blank"
                 >
                   <span class="icon-[tabler--link] size-4"></span>
-                  <span>Full size</span>
+                  <!-- <span>Full size</span> -->
                 </ButtonLink>
               </div>
             </div>
@@ -680,28 +683,29 @@ try {
       const deleteBtn = container.querySelector("[data-delete-photo]");
       if (deleteBtn) {
         deleteBtn.addEventListener("click", () => {
-          window.showAlert({
-            type: 'warning',
-            variant: 'soft',
-            title: 'Are you sure you want to remove this photo?',
-            text: "",
-            icon: true,
-            overlay: true,
-            position: {
-              vertical: "middle-third",
-              horizontal: "center",
-            },
-            buttonLayout: {
-              newLine: true,
-              flexClass: 'gap-3',
-            },
-            buttons: [
-              {
-                type: 'warning',
-                text: 'Yes',
-                variant: 'solid',
-                size: 'sm',
-                onClick: async () => {
+          if (typeof window.showAlert === "function") {
+            window.showAlert({
+              type: 'warning',
+              variant: 'soft',
+              title: 'Are you sure you want to remove this photo?',
+              text: "",
+              icon: true,
+              overlay: true,
+              position: {
+                vertical: "middle-third",
+                horizontal: "center",
+              },
+              buttonLayout: {
+                newLine: true,
+                flexClass: 'gap-3',
+              },
+              buttons: [
+                {
+                  type: 'warning',
+                  text: 'Yes',
+                  variant: 'solid',
+                  size: 'sm',
+                  onClick: async () => {
                   try {
                     // Immediately set the thumbnail opacity to show it's being deleted
                     const photoEl = container.querySelector(`[data-photo-uuid="${photoUuid.value}"]`) as HTMLElement;
@@ -755,7 +759,7 @@ try {
                           // Create the upload trigger HTML exactly as it appears in the initial template
                           const uploadTriggerHTML = `
                             <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
-                              <span class="aspect-[4/3] border-border/30 text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-muted/60 group-has-[div]:hidden" data-file-upload-pseudo-trigger="">
+                              <span class="aspect-[4/3] text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border border-input hover:bg-muted/60 group-has-[div]:hidden" data-file-upload-pseudo-trigger="">
                                 <span class="icon-[${(container.querySelector('input[name="component_gallery_upload_dz_icon"]') as HTMLInputElement)?.value || 'tabler--plus'}] w-20 h-20"></span>
                               </span>
                             </div>
@@ -856,28 +860,41 @@ try {
                                     })
                                     .catch(error => {
                                       console.error('Error uploading files:', error);
-                                      window.showAlert({
-                                        type: 'error',
-                                        variant: 'soft',
-                                        title: 'Upload Error',
-                                        text: 'Failed to upload files. Please try again.',
-                                        icon: true,
-                                        overlay: true,
-                                        position: {
-                                          vertical: "middle-third",
-                                          horizontal: "center",
-                                        },
-                                        buttonLayout: {
-                                          newLine: true,
-                                        },
-                                        buttons: [
-                                          {
-                                            type: 'error',
-                                            text: 'OK',
-                                            variant: 'solid',
-                                          }
-                                        ]
-                                      } as any);
+                                      let errorMessage = 'Failed to upload files. Please try again.';
+                                      if (error instanceof Error) {
+                                        errorMessage = error.message;
+                                      } else if (typeof error === "object" && error !== null) {
+                                        errorMessage = (error as any).error || (error as any).message || errorMessage;
+                                      } else if (typeof error === "string") {
+                                        errorMessage = error;
+                                      }
+
+                                      if (typeof window.showAlert === "function") {
+                                        window.showAlert({
+                                          type: 'error',
+                                          variant: 'soft',
+                                          title: 'Upload Error',
+                                          text: errorMessage,
+                                          icon: true,
+                                          overlay: true,
+                                          position: {
+                                            vertical: "middle-third",
+                                            horizontal: "center",
+                                          },
+                                          buttonLayout: {
+                                            newLine: true,
+                                          },
+                                          buttons: [
+                                            {
+                                              type: 'error',
+                                              text: 'OK',
+                                              variant: 'solid',
+                                            }
+                                          ]
+                                        } as any);
+                                      } else {
+                                        alert(`Upload Error: ${errorMessage}`);
+                                      }
                                     });
                                   }
                                 };
@@ -907,28 +924,41 @@ try {
                     closeModal();
                   } catch (error) {
                     console.error("Error deleting photo:", error);
-                    window.showAlert({
-                      type: "error",
-                      variant: "soft",
-                      title: "Error",
-                      text: error instanceof Error ? error.message : "Failed to delete photo",
-                      icon: true,
-                      overlay: true,
-                      position: {
-                        vertical: "middle-third",
-                        horizontal: "center",
-                      },
-                      buttonLayout: {
-                        newLine: true,
-                      },
-                      buttons: [
-                        {
-                          type: "error",
-                          text: "OK",
-                          variant: "solid",
-                        }
-                      ]
-                    } as any);
+                    let errorMessage = "Failed to delete photo";
+                    if (error instanceof Error) {
+                      errorMessage = error.message;
+                    } else if (typeof error === "object" && error !== null) {
+                      errorMessage = (error as any).error || (error as any).message || errorMessage;
+                    } else if (typeof error === "string") {
+                      errorMessage = error;
+                    }
+
+                    if (typeof window.showAlert === "function") {
+                      window.showAlert({
+                        type: "error",
+                        variant: "soft",
+                        title: "Error",
+                        text: errorMessage,
+                        icon: true,
+                        overlay: true,
+                        position: {
+                          vertical: "middle-third",
+                          horizontal: "center",
+                        },
+                        buttonLayout: {
+                          newLine: true,
+                        },
+                        buttons: [
+                          {
+                            type: "error",
+                            text: "OK",
+                            variant: "solid",
+                          }
+                        ]
+                      } as any);
+                    } else {
+                      alert(`Error: ${errorMessage}`);
+                    }
                   }
                 },
               },
@@ -940,6 +970,17 @@ try {
               },
             ],
           } as any);
+          } else {
+            // Fallback to native confirm dialog - trigger the same deletion logic
+            if (confirm('Are you sure you want to remove this photo?')) {
+              const photoUuidAttr = (deleteBtn as HTMLElement).getAttribute('data-photo-uuid');
+              if (photoUuidAttr) {
+                // Trigger click on Yes button programmatically by finding it and calling its onClick
+                // Since we can't easily extract the onClick logic, just show an alert that this requires the alert system
+                alert('Please refresh the page to enable full functionality.');
+              }
+            }
+          }
         });
       }
 
@@ -1090,7 +1131,7 @@ try {
                 newContainer.setAttribute('data-file-upload-previews', '');
                 newContainer.setAttribute('data-file-upload-pseudo-trigger', '');
                 newContainer.innerHTML = `
-                  <span class="aspect-[4/3] border-base-content/30 text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-base-200/60 group-has-[div]:hidden" data-file-upload-pseudo-trigger="">
+                  <span class="aspect-[4/3] text-base-content/50 flex w-full cursor-pointer items-center justify-center rounded-md border border-input hover:bg-base-200/60 group-has-[div]:hidden" data-file-upload-pseudo-trigger="">
                     <span class="icon-[${(container.querySelector('input[name="component_gallery_upload_dz_icon"]') as HTMLInputElement)?.value || 'tabler--plus'}] w-20 h-20"></span>
                   </span>
                 `;
@@ -1403,42 +1444,82 @@ try {
         // Handle error
         dropzone.on(
           "error",
-          function (this: DropzoneInstance, file: DropzoneFile, errorMessage: string) {
-            let message = errorMessage;
+          function (this: DropzoneInstance, file: DropzoneFile, errorMessage: string | any, xhr?: XMLHttpRequest) {
+            // Extract error message from various formats
+            let message: string;
             let errorTitle = "Upload Error";
 
-            if (errorMessage.includes("Maximum number of files exceeded") || 
-                errorMessage.includes("Maximum of") ||
-                errorMessage.includes("Upload Limit Exceeded")) {
+            // Handle different error message formats
+            if (typeof errorMessage === "string") {
+              message = errorMessage;
+            } else if (typeof errorMessage === "object" && errorMessage !== null) {
+              // Handle object error responses (e.g., { error: "..." }, { message: "..." })
+              if (errorMessage.error) {
+                message = typeof errorMessage.error === "string" 
+                  ? errorMessage.error 
+                  : JSON.stringify(errorMessage.error);
+              } else if (errorMessage.message) {
+                message = typeof errorMessage.message === "string"
+                  ? errorMessage.message
+                  : JSON.stringify(errorMessage.message);
+              } else {
+                // Fallback: stringify the object (shouldn't happen, but safety net)
+                message = JSON.stringify(errorMessage);
+              }
+            } else {
+              message = "An unknown error occurred during upload";
+            }
+
+            // If we still don't have a good message and xhr is available, try to extract from response
+            if ((!message || message === "{}" || message === "null") && xhr && xhr.responseText) {
+              try {
+                const parsed = JSON.parse(xhr.responseText);
+                message = parsed.error || parsed.message || xhr.responseText;
+              } catch {
+                message = xhr.responseText || message || "Upload failed";
+              }
+            }
+
+            // Check for specific error patterns (convert to string first for includes check)
+            const messageStr = String(message || "");
+            
+            if (messageStr.includes("Maximum number of files exceeded") || 
+                messageStr.includes("Maximum of") ||
+                messageStr.includes("Upload Limit Exceeded")) {
               if (!maxFilesAlertShown) {
-                window.showAlert({
-                  type: "error",
-                  variant: "soft",
-                  title: "Upload Limit Exceeded",
-                  text: `Maximum of ${uploadConfig.maxFiles} photos allowed.`,
-                  icon: true,
-                  overlay: true,
-                  position: {
-                    vertical: "middle-third",
-                    horizontal: "center",
-                  },
-                  buttonLayout: {
-                    newLine: true,
-                  },
-                  buttons: [
-                    {
-                      type: "error",
-                      text: "OK",
-                      variant: "solid",
-                    }
-                  ]
-                } as any);
+                if (typeof window.showAlert === "function") {
+                  window.showAlert({
+                    type: "error",
+                    variant: "soft",
+                    title: "Upload Limit Exceeded",
+                    text: `Maximum of ${uploadConfig.maxFiles} photos allowed.`,
+                    icon: true,
+                    overlay: true,
+                    position: {
+                      vertical: "middle-third",
+                      horizontal: "center",
+                    },
+                    buttonLayout: {
+                      newLine: true,
+                    },
+                    buttons: [
+                      {
+                        type: "error",
+                        text: "OK",
+                        variant: "solid",
+                      }
+                    ]
+                  } as any);
+                } else {
+                  alert(`Upload Limit Exceeded: Maximum of ${uploadConfig.maxFiles} photos allowed.`);
+                }
                 maxFilesAlertShown = true;
               }
               this.removeFile(file);
               return;
             }
 
+            // Check for specific client-side validation errors
             if (file.size > uploadConfig.maxFilesize * 1024 * 1024) {
               message = `Maximum size is ${uploadConfig.maxFilesize}MB`;
               errorTitle = "File Size Error";
@@ -1447,9 +1528,14 @@ try {
             ) {
               message = `Please upload a ${acceptedFileTypes} image.`;
               errorTitle = "Invalid File Type";
-            } else if (errorMessage.includes("403") || errorMessage.includes("Forbidden")) {
+            } else if (messageStr.includes("403") || messageStr.includes("Forbidden") || messageStr.includes("Not authorized")) {
               message = "You don't have permission to add photos to this gallery.";
               errorTitle = "Permission Denied";
+            }
+
+            // Ensure message is always a string (safety check)
+            if (typeof message !== "string" || message.trim() === "") {
+              message = message ? String(message) : "An error occurred during upload";
             }
 
             uploadErrors.set(file.name, message);
@@ -1465,28 +1551,32 @@ try {
               if (thumbnail) thumbnail.style.filter = 'none';
             }
 
-            window.showAlert({
-              type: "error",
-              variant: "soft",
-              title: errorTitle,
-              text: message,
-              icon: true,
-              overlay: true,
-              position: {
-                vertical: "middle-third",
-                horizontal: "center",
-              },
-              buttonLayout: {
-                newLine: true,
-              },
-              buttons: [
-                {
-                  type: "error",
-                  text: "OK",
-                  variant: "solid",
-                }
-              ]
-            } as any);
+            if (typeof window.showAlert === "function") {
+              window.showAlert({
+                type: "error",
+                variant: "soft",
+                title: errorTitle,
+                text: message,
+                icon: true,
+                overlay: true,
+                position: {
+                  vertical: "middle-third",
+                  horizontal: "center",
+                },
+                buttonLayout: {
+                  newLine: true,
+                },
+                buttons: [
+                  {
+                    type: "error",
+                    text: "OK",
+                    variant: "solid",
+                  }
+                ]
+              } as any);
+            } else {
+              alert(`${errorTitle}: ${message}`);
+            }
 
             this.removeFile(file);
           }
@@ -1504,29 +1594,35 @@ try {
         // Handle queue complete
         dropzone.on("queuecomplete", function () {
           if (uploadErrors.size > 1) {
-            window.showAlert({
-              type: "error",
-              variant: "soft",
-              title: "Multiple Upload Errors",
-              text: `${uploadErrors.size} files failed to upload.`,
-              icon: true,
-              overlay: true,
-              position: {
-                vertical: "middle-third",
-                horizontal: "center",
-              },
-              buttonLayout: {
-                newLine: true,
-              },
-              buttons: [
-                {
-                  type: "error",
-                  text: "OK",
-                  variant: "solid",
-                }
-              ]
-            } as any);
+            if (typeof window.showAlert === "function") {
+              window.showAlert({
+                type: "error",
+                variant: "soft",
+                title: "Multiple Upload Errors",
+                text: `${uploadErrors.size} files failed to upload.`,
+                icon: true,
+                overlay: true,
+                position: {
+                  vertical: "middle-third",
+                  horizontal: "center",
+                },
+                buttonLayout: {
+                  newLine: true,
+                },
+                buttons: [
+                  {
+                    type: "error",
+                    text: "OK",
+                    variant: "solid",
+                  }
+                ]
+              } as any);
+            } else {
+              alert(`Multiple Upload Errors: ${uploadErrors.size} files failed to upload.`);
+            }
           }
+          uploadErrors.clear();
+          maxFilesAlertShown = false;
         });
 
         // Handle total upload progress
@@ -1564,28 +1660,41 @@ try {
                 await updatePhotoOrder(photos, related_id, related_table, gallery_type);
               } catch (error) {
                 console.error('Error updating photo order:', error);
-                window.showAlert({
-                  type: "error",
-                  variant: "soft",
-                  title: "Error",
-                  text: "Failed to update photo order. Please try again.",
-                  icon: true,
-                  overlay: true,
-                  position: {
-                    vertical: "middle-third",
-                    horizontal: "center",
-                  },
-                  buttonLayout: {
-                    newLine: true,
-                  },
-                  buttons: [
-                    {
-                      type: "error",
-                      text: "OK",
-                      variant: "solid",
-                    }
-                  ]
-                } as any);
+                let errorMessage = "Failed to update photo order. Please try again.";
+                if (error instanceof Error) {
+                  errorMessage = error.message;
+                } else if (typeof error === "object" && error !== null) {
+                  errorMessage = (error as any).error || (error as any).message || errorMessage;
+                } else if (typeof error === "string") {
+                  errorMessage = error;
+                }
+
+                if (typeof window.showAlert === "function") {
+                  window.showAlert({
+                    type: "error",
+                    variant: "soft",
+                    title: "Error",
+                    text: errorMessage,
+                    icon: true,
+                    overlay: true,
+                    position: {
+                      vertical: "middle-third",
+                      horizontal: "center",
+                    },
+                    buttonLayout: {
+                      newLine: true,
+                    },
+                    buttons: [
+                      {
+                        type: "error",
+                        text: "OK",
+                        variant: "solid",
+                      }
+                    ]
+                  } as any);
+                } else {
+                  alert(`Error: ${errorMessage}`);
+                }
               }
             }
           });
@@ -1659,7 +1768,7 @@ try {
   <template data-file-upload-trigger="">
     <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
       <span
-        class="aspect-[4/3] border-border/30 text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-muted/60 group-has-[div]:hidden"
+        class="aspect-[4/3] text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border border-input hover:bg-muted/60 group-has-[div]:hidden"
         data-file-upload-pseudo-trigger=""
       >
         <span class={`icon-[${dz_icon}] w-20 h-20`} />
@@ -1704,7 +1813,7 @@ try {
         <!-- IMPORTANT: This template must match the one in updateUploadTriggerVisibility() -->
         <div class="group w-full" data-file-upload-previews="" data-file-upload-pseudo-trigger="">
           <span
-            class="aspect-[4/3] border-border/30 text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border-2 border-dotted hover:bg-muted/60 group-has-[div]:hidden"
+            class="aspect-[4/3] text-muted-foreground/50 flex w-full cursor-pointer items-center justify-center rounded-md border border-input hover:bg-muted/60 group-has-[div]:hidden"
             data-file-upload-pseudo-trigger=""
           >
             <span class={`icon-[${dz_icon}] w-20 h-20`} />

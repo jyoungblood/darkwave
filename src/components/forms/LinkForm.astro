@@ -72,7 +72,7 @@ ensureCsrfToken(Astro.cookies);
 
           <div class="flex flex-col">
             <div class="mb-4">
-              <Label text="Primary Photo" />
+              <Label class="mb-2" text="Primary Photo" />
               <PhotoUploadSingle
                 related_id={{ uuid: link?.uuid }}
                 related_table="links"
@@ -89,7 +89,7 @@ ensureCsrfToken(Astro.cookies);
             </div>
 
             <div class="mb-4">
-              <Label text="Gallery Photos" />
+              <Label class="mb-2" text="Gallery Photos" />
               <PhotoUploadGallery
                 related_id={{ uuid: link?.uuid }}
                 related_table="links"
@@ -104,7 +104,7 @@ ensureCsrfToken(Astro.cookies);
             </div>
 
             <div class="mb-4">
-              <Label text="Slideshow Photos" />
+              <Label class="mb-2" text="Slideshow Photos" />
               <PhotoUploadGallery
                 related_id={{ uuid: link?.uuid }}
                 related_table="links"

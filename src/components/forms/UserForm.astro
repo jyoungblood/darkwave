@@ -12,6 +12,8 @@ import ButtonDelete from "@/components/ui/form/ButtonDelete.astro";
 import { ensureCsrfToken } from "@/lib/csrf";
 import { db } from "@/lib/db";
 import CheckboxGroup from "@/components/ui/form/CheckboxGroup.astro";
+import Label from "@/components/ui/form/Label.astro";
+import PhotoUploadSingle from "@/components/ui/form/PhotoUploadSingle.astro";
 ensureCsrfToken(Astro.cookies);
 
 let allRoles: { label: string; value: string }[] = [];
@@ -56,21 +58,38 @@ try {
   <div class="grid grid-cols-2 gap-4 mb-4">
     <div class="flex flex-col">
       <div class="mb-6">
-        <InputText label="First Name" name="first_name" value={user?.first_name} required />
+        <InputText
+          label="First Name"
+          name="first_name"
+          value={user?.first_name}
+          required
+        />
       </div>
       <div class="mb-6">
-        <InputText label="Last Name" name="last_name" value={user?.last_name} required />
+        <InputText
+          label="Last Name"
+          name="last_name"
+          value={user?.last_name}
+          required
+        />
       </div>
       <div class="mb-6">
         <InputText label="Email" name="email" value={user?.email} required />
       </div>
 
-      {!user && (
-        <div class="mb-4">
-          <InputText label="Password" name="password" type="password" required />
-        </div>
-      )}
-      
+      {
+        !user && (
+          <div class="mb-4">
+            <InputText
+              label="Password"
+              name="password"
+              type="password"
+              required
+            />
+          </div>
+        )
+      }
+
       <div class="mb-4">
         <CheckboxGroup
           label="Roles"
@@ -81,6 +100,23 @@ try {
         />
       </div>
     </div>
+
+    <div>
+      {user && (
+      <div class="mb-4">
+        <Label class="mb-2" text="Avatar" />
+        <PhotoUploadSingle
+          related_id={{ id: user?.id }}
+          related_table="user"
+          related_column="image"
+          url={user?.image || ""}
+          upload_path="/avatars"
+          compression={{ format: "webp", size: 600, quality: 80 }}
+        />
+      </div>
+      )}
+    </div>
+
   </div>
 
   {user && <input name="id" value={user.id} type="hidden" />}
@@ -94,14 +130,16 @@ try {
       redirect={redirect}
     />
 
-    {user && (
-      <ButtonDelete
-        text="Delete"
-        type="user"
-        uuid={user.id}
-        endpoint="/api/user/delete"
-        redirect={redirect}
-      />
-    )}
+    {
+      user && (
+        <ButtonDelete
+          text="Delete"
+          type="user"
+          uuid={user.id}
+          endpoint="/api/user/delete"
+          redirect={redirect}
+        />
+      )
+    }
   </div>
 </form>

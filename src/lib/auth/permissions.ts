@@ -127,6 +127,17 @@ export async function checkOwnership(
   return false;
 }
 
+// Helper to normalize table name for permission checks
+// Maps database table names to permission names (handles singular/plural differences)
+function normalizeTableForPermission(table: string): string {
+  // Map singular table names to their plural permission names
+  const tableToPermissionMap: Record<string, string> = {
+    'user': 'users',
+  };
+  
+  return tableToPermissionMap[table] || table;
+}
+
 // Helper to check authorization with ownership
 export async function checkAuthorizationWithOwnership(
   userId: string,
@@ -140,7 +151,8 @@ export async function checkAuthorizationWithOwnership(
   
   // For new records, just check create permission
   if (!idValue) {
-    const createPermission = `create:${table}` as Permission;
+    const permissionTable = normalizeTableForPermission(table);
+    const createPermission = `create:${permissionTable}` as Permission;
     
     if (!hasPermission(authRoles, createPermission)) {
       return { error: 'Insufficient permissions to create' };
@@ -152,8 +164,12 @@ export async function checkAuthorizationWithOwnership(
   if (requireOwnership) {
     // Check if user owns the record or has admin permission
     const isOwner = await checkOwnership(userId, idValue, table as keyof Database, database, idColumn, authRoles);
-    if (!isOwner && !hasPermission(authRoles, `update:any:${table}` as Permission)) {
-      return { error: 'Not authorized to modify this record' };
+    if (!isOwner) {
+      // Normalize table name for permission check (e.g., "user" -> "users")
+      const permissionTable = normalizeTableForPermission(table);
+      if (!hasPermission(authRoles, `update:any:${permissionTable}` as Permission)) {
+        return { error: 'Not authorized to modify this record' };
+      }
     }
   }
 
@@ -200,20 +216,23 @@ export async function canEdit(options: CanEditOptions): Promise<boolean> {
     return false;
   }
 
+  // Normalize resource type for permission checks
+  const permissionResourceType = normalizeTableForPermission(resourceType);
+
   // For new records, check create permission
   if (!uuid) {
-    const createPermission = `create:${resourceType}` as Permission;
+    const createPermission = `create:${permissionResourceType}` as Permission;
     return hasPermission(locals.authRoles, createPermission);
   }
 
   // Check if user has admin permission to update any records of this type
-  const hasAdminPermission = hasPermission(locals.authRoles, `update:any:${resourceType}` as Permission);
+  const hasAdminPermission = hasPermission(locals.authRoles, `update:any:${permissionResourceType}` as Permission);
   if (hasAdminPermission) {
     return true;
   }
 
   // Check if user has permission to update their own records of this type
-  const hasOwnPermission = hasPermission(locals.authRoles, `update:own:${resourceType}` as Permission);
+  const hasOwnPermission = hasPermission(locals.authRoles, `update:own:${permissionResourceType}` as Permission);
   
   // If user doesn't have permission to edit their own content, they can't edit regardless of ownership
   if (!hasOwnPermission) {
