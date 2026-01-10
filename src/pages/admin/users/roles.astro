@@ -39,9 +39,13 @@ const rolesForQAN = roles.map((role) => ({
           label: "Dashboard",
         },
         {
+          href: "/admin/users",
+          label: "Users",
+        },
+        {
           href: "",
           label: "Manage User Roles",
-        }
+        },
       ]}
     />
 
@@ -83,7 +87,7 @@ const rolesForQAN = roles.map((role) => ({
             workingText="Saving..."
             form="[data-form]"
             endpoint="/api/roles/save"
-            redirect="reload"
+            redirect="/admin/users"
           />
         </div>
       </form>

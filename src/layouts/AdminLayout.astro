@@ -80,13 +80,6 @@ const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
             >
               Users
             </a>
-            <a
-              class={`text-xs font-semibold mr-4 hover:underline ${Astro.url.pathname.startsWith("/admin/roles") ? "underline" : "no-underline"}`}
-              href="/admin/roles"
-              data-astro-prefetch
-            >
-              Roles
-            </a>
           </div>
           <div class="text-xs">
             {

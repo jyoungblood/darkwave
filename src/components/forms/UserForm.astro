@@ -152,7 +152,7 @@ try {
     />
 
     {
-      user && (
+      user && user.id !== Astro.locals.userId && (
         <ButtonDelete
           text="Delete"
           type="user"
