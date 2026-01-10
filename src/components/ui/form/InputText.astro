@@ -116,6 +116,13 @@ if (validation) {
   // @ts-ignore
   window.validateOnBlur = validateOnBlur;
   
+  // Use WeakMap to track listeners without modifying DOM attributes (avoids hydration mismatch)
+  // @ts-ignore
+  if (!window._blurListenerMap) {
+    // @ts-ignore
+    window._blurListenerMap = new WeakMap();
+  }
+  
   // Attach blur listeners to all inputs with validation
   function attachBlurListeners() {
     const containers = document.querySelectorAll('[data-has-validation="true"]');
@@ -129,13 +136,15 @@ if (validation) {
         return;
       }
       
-      // Check if listener is already attached
-      if (input.dataset.blurListenerAttached === "true") {
+      // Check if listener is already attached using WeakMap (avoids hydration mismatch)
+      // @ts-ignore
+      if (window._blurListenerMap.has(input)) {
         return;
       }
       
-      // Mark as attached to avoid duplicates
-      input.dataset.blurListenerAttached = "true";
+      // Mark as attached using WeakMap instead of data attribute
+      // @ts-ignore
+      window._blurListenerMap.set(input, true);
       
       // Attach the blur event listener directly
       input.addEventListener("blur", async (e) => {

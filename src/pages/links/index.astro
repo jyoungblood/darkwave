@@ -1,8 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import GenericCard from "@/components/ui/GenericCard.astro";
+import PhotoCard from "@/components/ui/PhotoCard.astro";
 import { db } from "@/lib/db";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { formatDate } from "@/lib/dw/helpers";
 
 let links;
 
@@ -23,13 +24,11 @@ try {
     <div class="mt-8">
       <div class="flex justify-between items-center mb-4">
         <div>
-          <h2 class="text-lg font-semibold">Links</h2>
+          <h2 class="text-xl font-semibold">Links</h2>
         </div>
         <div>
           <ButtonLink href="/links/new">
-            <span
-              class="icon-[tabler--link]"
-            ></span>
+            <span class="icon-[tabler--plus]"></span>
             New Link
           </ButtonLink>
         </div>
@@ -44,19 +43,28 @@ try {
           ) : (
             <div class="grid grid-cols-4 gap-4">
               {links.map((link) => (
-                <GenericCard
+                <PhotoCard
                   link={`/links/${link.uuid}`}
                   image={link.photo_url}
                   title={link.title}
                 >
-                  [details]
-                </GenericCard>
+                  <h5 class="font-semibold leading-none mb-2">
+                    {link.title}
+                  </h5>
+                  <div class="text-xs text-neutral-500 leading-5">
+
+                    {link.url && <div><b>Url:</b> {link.url}</div>}
+                    {link.description && <div><b>Description:</b> {link.description}</div>}
+                    {link.type && <div><b>Type:</b> {link.type}</div>}
+                    {link.created_at && <div><b>Created At:</b> {formatDate(link.created_at.toISOString())}</div>}
+                    {link.updated_at && <div><b>Updated At:</b> {formatDate(link.updated_at.toISOString())}</div>}
+                  </div>
+                </PhotoCard>
               ))}
             </div>
           )}
         </div>
       )
     }
-
   </div>
 </Layout>

@@ -53,10 +53,10 @@ function AlertDialogInstance({ options, onClose }: AlertDialogInstanceProps) {
   const [open, setOpen] = React.useState(true);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  // Handle auto-dismiss - EXACTLY match original API behavior
-  // Only sets timeout if duration is a number AND autoDismiss !== false
+  // Handle auto-dismiss - requires explicit opt-in
+  // Only sets timeout if duration is a number AND autoDismiss is explicitly true
   React.useEffect(() => {
-    if (typeof options.duration === "number" && options.autoDismiss !== false) {
+    if (typeof options.duration === "number" && options.autoDismiss === true) {
       timeoutRef.current = setTimeout(() => {
         handleClose();
       }, options.duration);
@@ -156,7 +156,7 @@ function AlertDialogInstance({ options, onClose }: AlertDialogInstanceProps) {
 
   // If no buttons and no auto-dismiss, add a default "OK" button
   const hasButtons = primaryButton || cancelButton || otherButtons.length > 0;
-  const hasAutoDismiss = typeof options.duration === "number" && options.autoDismiss !== false;
+  const hasAutoDismiss = typeof options.duration === "number" && options.autoDismiss === true;
   const needsDefaultButton = !hasButtons && !hasAutoDismiss;
   
   const defaultButton = needsDefaultButton ? {

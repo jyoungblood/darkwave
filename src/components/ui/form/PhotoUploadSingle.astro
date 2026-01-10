@@ -1233,6 +1233,7 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
       <div class="absolute bottom-2 right-2 flex gap-2">
         <ButtonLink
           variant="outline"
+          class="bg-white hover:bg-white/90"
           title="Remove"
           onclick={`(function(e){ 
             e.preventDefault();
@@ -1283,6 +1284,7 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
           cropper && (
             <ButtonLink
               variant="outline"
+              class="bg-white hover:bg-white/90"
               title="Crop"
               onclick={`(function(e){ 
                 e.stopPropagation(); 
@@ -1302,6 +1304,7 @@ import ButtonLink from "@/components/ui/ButtonLink.astro";
 
           <ButtonLink
             variant="outline"
+            class="bg-white hover:bg-white/90"
             title="Full size"
             onclick={`(function(e){ 
               e.stopPropagation(); 

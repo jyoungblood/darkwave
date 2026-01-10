@@ -1,4 +1,6 @@
 ---
+import Card from './Card/Card.astro';
+
 interface Props {
   link: string;
   image: string | null | undefined;
@@ -16,7 +18,7 @@ const photoUrl = image
 const displayTitle = title ?? "";
 ---
 
-<div class="card sm:max-w-sm hover:opacity-90 transition-opacity duration-100">
+<Card>
   <a href={link} data-astro-prefetch>
     <figure class="aspect-[4/3] w-full">
       {
@@ -55,8 +57,7 @@ const displayTitle = title ?? "";
       }
     </figure>
   </a>
-  <div class="card-body">
-    <h5 class="card-title mb-2.5">{displayTitle}</h5>
-    <p class="mb-4"><slot /></p>
+  <div class="p-4">
+    <slot />
   </div>
-</div>
+</Card>

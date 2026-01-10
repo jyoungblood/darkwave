@@ -159,7 +159,7 @@ ensureCsrfToken(Astro.cookies);
                 workingText="Creating..."
                 form="[data-form]"
                 endpoint="/api/link/save"
-                redirect="/admin/links/edit?uuid=$uuid"
+                redirect={redirect}
               />
             </div>
           </div>

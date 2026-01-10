@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import LinkForm from "@/components/forms/LinkForm.astro";
 import { db } from "@/lib/db";
 import { canEdit } from "@/lib/auth/permissions";
+import { Card } from "@/components/ui/shadcn/card";
 
 const uuid = Astro.params.uuid as string;
 
@@ -48,6 +49,8 @@ if (!can_edit) {
 
 <Layout title={`${link.title} | Edit Link`}>
   <div class="w-full">
-    <LinkForm link={link} redirect="/links/$uuid" />
+    <Card className="p-6">
+      <LinkForm link={link} redirect="/links/$uuid" />
+    </Card>
   </div>
 </Layout>

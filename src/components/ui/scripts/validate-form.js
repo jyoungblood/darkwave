@@ -161,7 +161,7 @@ async function validateForm(formElement) {
         window.requiredErrors.length > 0
           ? "Required fields are missing."
           : "Please check the form for errors and try again.",
-      textAlign: "center",
+      // textAlign: "center",
       // icon: true,
       position: {
         vertical: "middle-third",

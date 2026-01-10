@@ -1,10 +1,23 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import LinkForm from "@/components/forms/LinkForm.astro";
+import { Card } from "@/components/ui/shadcn/card";
 ---
 
 <Layout title="New Link">
   <div class="w-full">
-    <LinkForm redirect="/links/$uuid" />
+    <div class="mt-8">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 class="text-xl font-semibold">New Link</h2>
+        </div>
+        <div>
+
+        </div>
+      </div>
+    </div>
+    <Card className="p-6">
+      <LinkForm redirect="/links/edit/$uuid" />
+    </Card>
   </div>
 </Layout>
