@@ -101,7 +101,7 @@ const {
 
     // ----------- FORM VALIDATION ------------
 
-    if (!validateForm(formElement)) {
+    if (!(await validateForm(formElement))) {
       return;
     }
 

@@ -8,7 +8,7 @@ if (typeof window.validationErrors === "undefined") {
 }
 
 // Enable debug logging
-window.DEBUG_VALIDATION = true;
+window.DEBUG_VALIDATION = false;
 
 function debugLog(...args) {
   if (window.DEBUG_VALIDATION) {
@@ -188,6 +188,10 @@ const VALIDATION_RULES = {
     validator: (value) => SAFE_PATTERNS.simpleAddress.test(value),
     defaultMessage: "Please enter a valid address",
   },
+  required: {
+    validator: (value) => value && value.trim().length > 0,
+    defaultMessage: "This field is required",
+  },
 };
 
 function validateRule(value, rule) {
@@ -227,6 +231,14 @@ function validateRule(value, rule) {
     return {
       isValid,
       message: isValid ? "" : rule.errorMessage || "Please enter a valid value",
+    };
+  }
+
+  if (rule.type === "required") {
+    const isValid = value && value.trim().length > 0;
+    return {
+      isValid,
+      message: isValid ? "" : (rule.errorMessage || "This field is required"),
     };
   }
 
@@ -311,35 +323,72 @@ function hasValidationError(inputId) {
 
 export async function validateInput(input) {
   const value = input.value;
-  // debugLog('Validating input:', input.name, 'with value:', value);
-  const validationConfig = JSON.parse(input.dataset.validationConfig || "{}");
-  const feedbackElement = input.parentElement?.querySelector(
-    ".validation-feedback"
-  );
+  const validationConfigStr = input.dataset.validationConfig || input.getAttribute("data-validation-config") || "{}";
+  let validationConfig = {};
+  try {
+    validationConfig = JSON.parse(validationConfigStr);
+  } catch (e) {
+    console.error('Failed to parse validation config:', e, validationConfigStr);
+  }
+  
+  // Find the container div - try multiple methods for reliability
+  let container = null;
+  if (input.id) {
+    // Try finding by ID pattern first
+    const containerId = input.id.replace(/^input-/, 'input-container-');
+    container = document.getElementById(containerId);
+  }
+  
+  // Fallback to parent element
+  if (!container) {
+    container = input.closest('[id^="input-container-"]') || input.parentElement;
+  }
+  
+  const feedbackElement = container?.querySelector(".validation-feedback");
 
-  // Clear previous feedback
-  feedbackElement.textContent = "";
-  feedbackElement.classList.add("hidden");
-  input.parentElement.classList.remove(
-    "validation-error",
-    "validation-success"
-  );
-
-  // Skip validation if the field is empty and not required
-  if (!value && !input.required) {
-    updateValidationUI(input, true, "", "", "");
+  // Only validate if validation config exists and has rules/types/unique
+  // Required validation is handled separately on form submission
+  if (!validationConfig || (!validationConfig.types?.length && !validationConfig.rules?.length && !validationConfig.unique)) {
+    // No validation configured, clear any previous errors and exit
+    if (feedbackElement) {
+      feedbackElement.textContent = "";
+      feedbackElement.classList.add("hidden");
+    }
+    if (container) {
+      container.classList.remove("validation-error", "validation-success");
+    }
     return true;
   }
 
-  // Handle required validation
-  if (input.required && !value) {
-    updateValidationUI(input, false, "This field is required", "", "");
-    return false;
+  // Clear previous feedback
+  if (feedbackElement) {
+    feedbackElement.textContent = "";
+    feedbackElement.classList.add("hidden");
+  }
+  if (container) {
+    container.classList.remove(
+      "validation-error",
+      "validation-success"
+    );
   }
 
   // Get validation rules from both types and rules arrays
   const validationTypes = JSON.parse(input.dataset.validationTypes || "[]");
   const validationRules = JSON.parse(input.dataset.validationRules || "[]");
+
+  // Check if "required" validation is explicitly configured
+  const hasRequiredValidation = 
+    (validationTypes && validationTypes.includes("required")) ||
+    (validationRules && validationRules.some(r => 
+      (typeof r === "string" && r === "required") || 
+      (typeof r === "object" && r.type === "required")
+    ));
+
+  // Skip validation if the field is empty UNLESS "required" is explicitly in the validation config
+  if ((!value || !value.trim()) && !hasRequiredValidation) {
+    updateValidationUI(input, true, "", "", "");
+    return true;
+  }
 
   // Combine both types of rules
   const allRules = [
@@ -347,12 +396,14 @@ export async function validateInput(input) {
     ...validationRules,
   ];
 
-  // Validate each rule
-  for (const rule of allRules) {
-    const result = validateRule(value, rule);
-    if (!result.isValid) {
-      updateValidationUI(input, false, result.message, "", "");
-      return false;
+  // Validate each rule (only if there are rules to validate)
+  if (allRules.length > 0) {
+    for (const rule of allRules) {
+      const result = validateRule(value, rule);
+      if (!result.isValid) {
+        updateValidationUI(input, false, result.message, "", "");
+        return false;
+      }
     }
   }
 
@@ -379,8 +430,21 @@ export async function validateInput(input) {
         body: JSON.stringify(requestBody),
       });
 
-      const { isUnique } = await response.json();
-      if (!isUnique) {
+      if (!response.ok) {
+        console.error("Uniqueness check API error:", response.status, response.statusText);
+        // On API error, fail validation to be safe
+        updateValidationUI(
+          input,
+          false,
+          "Unable to verify uniqueness. Please try again.",
+          "",
+          ""
+        );
+        return false;
+      }
+
+      const data = await response.json();
+      if (!data.isUnique) {
         updateValidationUI(
           input,
           false,
@@ -392,6 +456,15 @@ export async function validateInput(input) {
       }
     } catch (error) {
       console.error("Uniqueness check failed:", error);
+      // On network error, fail validation to be safe
+      updateValidationUI(
+        input,
+        false,
+        "Unable to verify uniqueness. Please check your connection and try again.",
+        "",
+        ""
+      );
+      return false;
     }
   }
 
@@ -427,15 +500,34 @@ export function updateValidationUI(
       ? JSON.parse(input.dataset.success)
       : input.dataset.success === "true"
     : false;
-  const feedbackElement = input.parentElement?.querySelector(
-    ".validation-feedback"
-  );
+  
+  // Find the container div - try multiple methods for reliability
+  let parentElement = null;
+  if (input.id) {
+    // Try finding by ID pattern first
+    const containerId = input.id.replace(/^input-/, 'input-container-');
+    parentElement = document.getElementById(containerId);
+  }
+  
+  // Fallback to closest or parentElement
+  if (!parentElement) {
+    parentElement = input.closest('[id^="input-container-"]') || input.parentElement;
+  }
+  
+  const feedbackElement = parentElement?.querySelector(".validation-feedback");
 
   if (!feedbackElement) {
     console.error(
       "Could not find validation feedback element for input:",
-      input.id
+      input.id,
+      "Container ID searched:",
+      containerId
     );
+    return;
+  }
+
+  if (!parentElement) {
+    console.error("Input element missing parent:", input);
     return;
   }
 
@@ -444,13 +536,6 @@ export function updateValidationUI(
     removeValidationError(input.id);
   } else {
     addValidationError(input.id);
-  }
-
-  // Update the UI
-  const parentElement = input.parentElement;
-  if (!parentElement) {
-    console.error("Input element missing parent:", input);
-    return;
   }
 
   if (isValid) {
@@ -476,7 +561,7 @@ export function updateValidationUI(
   }
 }
 
-export function validateOnBlur(event) {
+export async function validateOnBlur(event) {
   const input = event.target;
-  validateInput(input);
+  await validateInput(input);
 }

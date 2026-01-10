@@ -3,6 +3,9 @@
 
 import Layout from "@/layouts/Layout.astro";
 import { auth } from "@/lib/auth/better";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/shadcn/alert";
+import { AlertCircleIcon, CheckCircle2Icon } from "lucide-react";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 
 const { url } = Astro;
 
@@ -39,27 +42,40 @@ if (token) {
 
 <Layout title="Email Verification">
   <div class="flex flex-col items-center justify-center flex-1 p-4">
-    {
-      error ? (
-        <div 
-          class="mb-6 p-4 bg-red-100 border border-red-300 text-red-700 rounded-md text-center w-full max-w-sm"
-          role="alert"
-          aria-live="assertive"
-        >
-          <h2 class="text-xl font-bold mb-2">Verification Failed:</h2>
-          <p class="font-semibold">{error}</p>
-        </div>
-      ) : (
-        <div 
-          class="mb-6 p-4 bg-green-100 border border-green-300 text-green-700 rounded-md text-center w-full max-w-sm focus:outline-none"
-          role="status"
-          aria-live="polite"
-        >
-          <h2 class="text-xl font-bold mb-2">Email Confirmed</h2>
-          <p class="text-sm mb-1">Your email has been successfully verified.</p>
-          <p class="text-sm">You can now <a href="/login" class="underline hover:opacity-80">log in to your account</a>.</p>
-        </div>
-      )
-    }
+    <div class="w-full max-w-sm">
+      {
+        error ? (
+          <Alert variant="destructive" client:load>
+            <div class="flex items-start gap-3">
+              <AlertCircleIcon client:load className="size-5 flex-shrink-0" />
+              <div class="flex flex-col">
+                <AlertTitle client:load className="text-lg font-semibold leading-none mb-2">Verification Failed</AlertTitle>
+                <AlertDescription client:load>
+                  {error}
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
+        ) : (
+          <Alert client:load>
+            <div class="flex items-start gap-3">
+              <CheckCircle2Icon client:load className="size-5 text-green-600 flex-shrink-0" />
+              <div class="flex flex-col">
+                <AlertTitle client:load className="text-lg font-semibold leading-none mb-2">Email Confirmed</AlertTitle>
+                <AlertDescription client:load>
+                  <div class="mb-3">Your email has been successfully verified.</div>
+                  <ButtonLink
+                    href="/login"
+                    variant="outline"
+                    size="xs"
+                    text="Log in to your account"
+                  />
+                </AlertDescription>
+              </div>
+            </div>            
+          </Alert>
+        )
+      }
+    </div>
   </div>
 </Layout> 

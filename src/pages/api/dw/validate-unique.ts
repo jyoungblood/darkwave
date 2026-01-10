@@ -26,8 +26,8 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Add exempt conditions if provided
     if (exempt) {
-      Object.entries(exempt).forEach(([key, value]) => {
-        query = query.where(key as any, '!=', value);
+      Object.entries(exempt).forEach(([key, exemptValue]) => {
+        query = query.where(key as any, '!=', exemptValue);
       });
     }
 

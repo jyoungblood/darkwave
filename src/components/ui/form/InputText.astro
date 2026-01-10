@@ -66,28 +66,33 @@ const inputType = type
   : "text";
 
 // Only include validation attributes if validation is configured
-const validationAttributes = validation
-  ? {
-      "data-validation-types": validation.types
-        ? JSON.stringify(validation.types)
-        : "",
-      "data-validation-rules": validation.rules
-        ? JSON.stringify(validation.rules)
-        : "",
-      "data-unique-check": validation.unique
-        ? JSON.stringify(validation.unique)
-        : "",
-      "data-success":
-        typeof validation.success === "object"
-          ? JSON.stringify(validation.success)
-          : validation.success,
-      "data-validation-config": JSON.stringify(validation),
-      "data-input-name": name,
-    }
-  : {};
+// React doesn't set data attributes with empty strings, so we filter them out
+let validationAttributes: Record<string, string> = {};
+if (validation) {
+  validationAttributes["data-validation-config"] = JSON.stringify(validation);
+  validationAttributes["data-input-name"] = name;
+  
+  if (validation.types && validation.types.length > 0) {
+    validationAttributes["data-validation-types"] = JSON.stringify(validation.types);
+  }
+  
+  if (validation.rules && validation.rules.length > 0) {
+    validationAttributes["data-validation-rules"] = JSON.stringify(validation.rules);
+  }
+  
+  if (validation.unique) {
+    validationAttributes["data-unique-check"] = JSON.stringify(validation.unique);
+  }
+  
+  if (validation.success) {
+    validationAttributes["data-success"] = typeof validation.success === "object"
+      ? JSON.stringify(validation.success)
+      : String(validation.success);
+  }
+}
 ---
 
-<div class="flex flex-col" id={`input-container-${name}`}>
+<div class="flex flex-col" id={`input-container-${name}`} data-input-name={name} data-has-validation={validation ? "true" : "false"}>
   {label && <Label text={label} class="mb-2" for={`input-${name}`} subtext={sublabel} popover={popover} popoverIcon={popoverIcon} />}
   <Input
     client:load
@@ -99,12 +104,6 @@ const validationAttributes = validation
     defaultValue={value}
     placeholder={placeholder}
     autoComplete="off"
-    onBlur={validation ? (e) => {
-      // Pass React synthetic event - validation function uses event.target which React provides
-      if ((window as any).validateOnBlur) {
-        (window as any).validateOnBlur(e);
-      }
-    } : undefined}
     {...validationAttributes}
     {...htmlAttributes}
   />
@@ -113,6 +112,52 @@ const validationAttributes = validation
 
 <script>
   import { validateOnBlur } from "@/components/ui/scripts/validate-input.js";
+  // Ensure validateOnBlur is available globally
   // @ts-ignore
   window.validateOnBlur = validateOnBlur;
+  
+  // Attach blur listeners to all inputs with validation
+  function attachBlurListeners() {
+    const containers = document.querySelectorAll('[data-has-validation="true"]');
+    containers.forEach((container) => {
+      const inputName = container.getAttribute('data-input-name');
+      if (!inputName) return;
+      
+      const inputId = `input-${inputName}`;
+      const input = document.getElementById(inputId);
+      if (!input) {
+        return;
+      }
+      
+      // Check if listener is already attached
+      if (input.dataset.blurListenerAttached === "true") {
+        return;
+      }
+      
+      // Mark as attached to avoid duplicates
+      input.dataset.blurListenerAttached = "true";
+      
+      // Attach the blur event listener directly
+      input.addEventListener("blur", async (e) => {
+        if ((window as any).validateOnBlur) {
+          try {
+            await (window as any).validateOnBlur(e);
+          } catch (error) {
+            console.error("[InputText] Validation error:", error);
+          }
+        }
+      }, { capture: false, passive: false });
+    });
+  }
+  
+  // Try to attach immediately, and also after DOM ready and after a delay for React hydration
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", attachBlurListeners);
+  } else {
+    attachBlurListeners();
+  }
+  
+  // Also try after React hydration (usually happens after a short delay)
+  setTimeout(attachBlurListeners, 500);
+  setTimeout(attachBlurListeners, 1000);
 </script>

@@ -4,6 +4,12 @@
 import Layout from "@/layouts/Layout.astro";
 import { ensureCsrfToken } from "@/lib/csrf";
 import { auth } from "@/lib/auth/better";
+import InputText from "@/components/ui/form/InputText.astro";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/shadcn/card";
+import { Button } from "@/components/ui/shadcn/button";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/shadcn/alert";
+import { CheckCircle2Icon, AlertCircleIcon } from "lucide-react";
 
 ensureCsrfToken(Astro.cookies);
 
@@ -17,168 +23,196 @@ const redirectParam = url.searchParams.get("redirect");
 const hasSocialProviders =
   Object.keys(auth.options.socialProviders || {}).length > 0;
 const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
+
 ---
+
+<script>
+  import { validateOnBlur } from "@/components/ui/scripts/validate-input.js";
+  // @ts-ignore
+  window.validateOnBlur = validateOnBlur;
+</script>
 
 <Layout title="Log in">
   <div class="flex flex-col items-center justify-center flex-1 p-4">
     {
       success && (
-        <div
-          class="mb-6 p-4 bg-green-100 border border-green-300 text-green-700 rounded-md text-center w-full max-w-sm"
-          role="status"
-          aria-live="polite"
-        >
-          <p class="font-semibold mb-1">{decodeURIComponent(success)}</p>
-          <p class="text-sm">Please log in to continue</p>
-        </div>
+        <Alert variant="success" client:load className="mb-6 w-full max-w-sm">
+          <div class="flex items-start gap-3">
+            <CheckCircle2Icon client:load className="size-5" />
+            <div class="flex flex-col">
+              <AlertTitle client:load className="text-lg font-semibold leading-none mb-2">
+                {decodeURIComponent(success).charAt(0).toUpperCase() +
+                  decodeURIComponent(success).slice(1)}
+              </AlertTitle>
+              <AlertDescription client:load>
+                Please log in to continue
+              </AlertDescription>
+            </div>
+          </div>
+        </Alert>
       )
     }
 
-    <h1 class="text-2xl font-bold mb-2 text-center">Log In</h1>
-    <p class="mb-6 text-sm text-center" id="register-link">
-      Don't have an account? <a
-        href="/register"
-        class="underline hover:no-underline"
-        aria-describedby="register-link">Register</a
-      >
-    </p>
     <div class="w-full max-w-sm" role="region" aria-label="Login form">
-      <form
-        class="bg-white border border-gray-200 p-8 rounded-md mb-4 shadow-md"
-        data-login-form
-        aria-label="Email login form"
-      >
-        <input
-          type="hidden"
-          name="csrf"
-          value={Astro.cookies.get("csrf")?.value}
-        />
-        <div class="flex flex-col mb-4">
-          <label for="email" class="mb-2 text-sm font-semibold">Email</label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={emailParam || ""}
-            required
-            class="p-2 border border-gray-400 rounded-md mb-4"
-            aria-required="true"
-          />
-        </div>
-        <div class="flex flex-col mb-4">
-          <label for="password" class="mb-2 text-sm font-semibold"
-            >Password</label
-          >
-          <input
-            type="password"
-            name="password"
-            id="password"
-            required
-            class="p-2 border border-gray-400 rounded-md mb-4"
-          />
-        </div>
-        <input type="hidden" name="provider" value="email" />
-        <button
-          type="submit"
-          data-login-submit
-          class="bg-black text-white p-3 text-sm font-semibold rounded-md hover:bg-gray-800 cursor-pointer w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-          aria-busy="false"
+      <Card client:load className="mb-4">
+        <form
+          data-login-form
+          aria-label="Email login form"
         >
-          <svg
-            data-login-spinner
-            class="hidden w-5 h-5 mr-3 animate-spin"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-              fill="none"></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <span data-login-text>Log In</span>
-        </button>
-
-        {
-          error && (
-            <div
-              class="mt-6 text-sm p-2 bg-red-100 border border-red-300 text-red-700 rounded-md text-center w-full max-w-sm"
-              role="alert"
-              aria-live="assertive"
-            >
-              <p class="font-semibold">{decodeURIComponent(error)}</p>
-            </div>
-          )
-        }
-      </form>
-      <div class="text-center text-xs">
-        <a href="/auth/forgot-password" class="underline hover:no-underline"
-          >Forgot Password?</a
-        >
-      </div>
-
-      {
-        hasSocialProviders && (
-          <>
-            <hr class="h-0 border-t mt-8 border-gray-300" />
-            <p class="-mt-2 text-xs text-center text-gray-500">
-              <span class="bg-white px-2">OR</span>
-            </p>
-
-            <form
-              action="/api/auth/login-oauth"
-              method="post"
-              class="w-full max-w-md mt-4 flex flex-col gap-2"
-            >
-              <input
-                type="hidden"
-                name="csrf"
-                value={Astro.cookies.get("csrf")?.value}
+          <input
+            type="hidden"
+            name="csrf"
+            value={Astro.cookies.get("csrf")?.value}
+          />
+          
+          <CardHeader client:load>
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex flex-col space-y-1.5">
+                <CardTitle className="mb-2" client:load>Log in</CardTitle>
+                <CardDescription className="text-xs" client:load>
+                  Enter your email sign in to your account
+                </CardDescription>
+              </div>
+              <ButtonLink
+                href="/register"
+                variant="outline"
+                size="xs"
+                text="Register"
               />
-              {hasGoogleProvider && (
-                <button
-                  value="google"
-                  name="provider"
-                  class="w-full p-3 bg-white border border-gray-300 hover:bg-gray-50 flex justify-center items-center gap-2 rounded-md mt-2 text-gray-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  type="submit"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-auto"
-                    preserveAspectRatio="xMidYMid"
-                    viewBox="0 0 256 262"
+            </div>
+          </CardHeader>
+
+          <CardContent client:load>
+            <div class="flex flex-col gap-6">
+              <div class="grid gap-2">
+                <InputText
+                  label="Email"
+                  name="email"
+                  type="email"
+                  value={emailParam || ""}
+                  required
+                  placeholder="me@example.com"
+                />
+              </div>
+              <div class="grid gap-2">
+                <div class="flex items-center">
+                  <label for="input-password" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Password
+                  </label>
+                  <a
+                    href="/auth/forgot-password"
+                    class="ml-auto inline-block text-xs underline-offset-4 hover:underline"
                   >
-                    <path
-                      fill="#4285F4"
-                      d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
-                    />
-                    <path
-                      fill="#EB4335"
-                      d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
-                    />
-                  </svg>
-                  Continue with Google
-                </button>
-              )}
-            </form>
-          </>
-        )
-      }
+                    Forgot password?
+                  </a>
+                </div>
+                <InputText
+                  name="password"
+                  type="password"
+                  required
+                />
+              </div>
+            </div>
+          </CardContent>
+
+          <CardFooter client:load className="flex-col gap-2">
+            <Button
+              client:load
+              type="submit"
+              data-login-submit
+              className="w-full"
+              aria-busy="false"
+            >
+              <svg
+                data-login-spinner
+                class="hidden w-4 h-4 mr-2 animate-spin"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                  fill="none"></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span data-login-text>Login</span>
+            </Button>
+
+            {
+              hasGoogleProvider && (
+                <form
+                  action="/api/auth/login-oauth"
+                  method="post"
+                  class="w-full"
+                >
+                  <input
+                    type="hidden"
+                    name="csrf"
+                    value={Astro.cookies.get("csrf")?.value}
+                  />
+                  <Button
+                    client:load
+                    type="submit"
+                    value="google"
+                    name="provider"
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-auto"
+                      preserveAspectRatio="xMidYMid"
+                      viewBox="0 0 256 262"
+                    >
+                      <path
+                        fill="#4285F4"
+                        d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                      />
+                      <path
+                        fill="#EB4335"
+                        d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                      />
+                    </svg>
+                    Login with Google
+                  </Button>
+                </form>
+              )
+            }
+
+            {
+              error && (
+                <Alert className="mt-4 p-3" variant="destructive" client:load>
+                  <div class="flex items-start gap-3">
+                    <AlertCircleIcon client:load className="size-5 flex-shrink-0" />
+                    <div class="flex flex-col">
+                      <AlertDescription className="leading-tight" client:load>
+                        {decodeURIComponent(error)}
+                      </AlertDescription>
+                    </div>
+                  </div>
+                </Alert>
+              )
+            }
+          </CardFooter>
+
+          <input type="hidden" name="provider" value="email" />
+        </form>
+      </Card>
     </div>
   </div>
 </Layout>
@@ -229,7 +263,7 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
         // Reset loading state only for errors
         submitButton.disabled = false;
         submitButton.setAttribute("aria-busy", "false");
-        buttonText.textContent = "Log In";
+        buttonText.textContent = "Login";
         loadingSpinner.classList.add("hidden");
 
         window.location.href = `/login?error=${encodeURIComponent(data.error)}`;
@@ -242,7 +276,7 @@ const hasGoogleProvider = auth.options.socialProviders?.google !== undefined;
       // Reset loading state for unexpected errors
       submitButton.disabled = false;
       submitButton.setAttribute("aria-busy", "false");
-      buttonText.textContent = "Log In";
+      buttonText.textContent = "Login";
       loadingSpinner.classList.add("hidden");
 
       window.location.href = `/login?error=${encodeURIComponent("An unexpected error occurred")}`;

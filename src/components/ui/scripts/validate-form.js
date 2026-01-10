@@ -1,5 +1,7 @@
 // DW - Form validation utilities
 
+import { validateInput } from "./validate-input.js";
+
 // Initialize global required errors array if it doesn't exist
 if (typeof window.requiredErrors === "undefined") {
   window.requiredErrors = [];
@@ -88,7 +90,7 @@ function isFieldEmpty(field) {
 }
 
 // Main form validation function
-function validateForm(formElement) {
+async function validateForm(formElement) {
   // Reset validation arrays
   window.requiredErrors = [];
   window.validationErrors = [];
@@ -108,6 +110,20 @@ function validateForm(formElement) {
       addRequiredError(field.id);
     }
   });
+
+  // Second pass - validate all fields with validation configuration
+  // This includes uniqueness checks and other custom validations
+  const validationPromises = Array.from(allFormFields).map(async (field) => {
+    // Only validate fields that have validation configured
+    if (field.id && field.dataset.validationConfig) {
+      const isValid = await validateInput(field);
+      return { field, isValid };
+    }
+    return { field, isValid: true };
+  });
+
+  // Wait for all validations to complete
+  await Promise.all(validationPromises);
 
   // If there are any errors, handle them
   if (window.requiredErrors.length > 0 || window.validationErrors.length > 0) {
