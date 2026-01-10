@@ -1,7 +1,11 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import TableDatalist from "@/components/ui/admin/TableDatalist.astro";
-import { formatDate, getPaginationParams, renderIconButtonLink } from "@/lib/dw/helpers";
+import {
+  formatDate,
+  getPaginationParams,
+  renderIconButtonLink,
+} from "@/lib/dw/helpers";
 import { db } from "@/lib/db";
 import Breadcrumb from "@/components/ui/Breadcrumb.astro";
 
@@ -12,18 +16,12 @@ const keyword = Astro.url.searchParams.get("keyword");
 const { currentPage, perPage, offset } = getPaginationParams(Astro.url, 50);
 
 try {
-
-  let baseQuery = db
-    .selectFrom("links")
-    .where("deleted_at", "is", null);
+  let baseQuery = db.selectFrom("links").where("deleted_at", "is", null);
 
   if (keyword && keyword.trim()) {
     const kw = `%${keyword.trim()}%`;
     baseQuery = baseQuery.where((eb) =>
-      eb.or([
-        eb("title", "like", kw),
-        eb("uuid", "like", kw),
-      ])
+      eb.or([eb("title", "like", kw), eb("uuid", "like", kw)])
     );
   }
 
@@ -57,7 +55,7 @@ try {
         {
           href: "",
           label: "Links",
-        }
+        },
       ]}
     />
     <TableDatalist
@@ -94,7 +92,7 @@ try {
           header: "",
           align: "right",
           cell: {
-            content: (link: any) => 
+            content: (link: any) =>
               `<span class="inline-flex gap-4">` +
               renderIconButtonLink({
                 href: `/admin/links/edit?uuid=${link.uuid}`,
@@ -123,12 +121,12 @@ try {
       }}
       buttonLinks={[
         {
-          href: "/admin/links/new",
-          text: "New Link",
-        },
-        {
           href: "/links",
           text: "Public Links",
+        },
+        {
+          href: "/admin/links/new",
+          text: "New Link",
         },
       ]}
     />
