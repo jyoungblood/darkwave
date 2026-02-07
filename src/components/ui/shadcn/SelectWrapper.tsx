@@ -93,16 +93,16 @@ export function SelectWrapper({
             (filteredOptions as OptionGroup[]).map((group, groupIndex) => (
               <SelectGroup key={groupIndex}>
                 <SelectLabel>{group.label}</SelectLabel>
-                {group.options.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
+                {group.options.map((option, optionIndex) => (
+                  <SelectItem key={`${option.value}-${optionIndex}`} value={option.value}>
                     {option.label}
                   </SelectItem>
                 ))}
               </SelectGroup>
             ))
           ) : (
-            (filteredOptions as Option[]).map((option) => (
-              <SelectItem key={option.value} value={option.value}>
+            (filteredOptions as Option[]).map((option, optionIndex) => (
+              <SelectItem key={`${option.value}-${optionIndex}`} value={option.value}>
                 {option.label}
               </SelectItem>
             ))
