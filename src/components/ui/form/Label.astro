@@ -25,13 +25,11 @@ const {
   popover = false,
   subtextInline = false,
   subtextColor = "text-neutral-500",
-  popoverIcon,
+  popoverIcon = `icon-[tabler--info-circle] size-4 text-neutral-400`,
 } = Astro.props;
 
-// Use default icon if popover is true but no custom icon provided
-const iconClass = popoverIcon || (popover ? `icon-[tabler--info-circle] size-4 text-neutral-400` : undefined);
-
-const baseClassName = `block ${customClass}`;
+const marginBottomClass = subtextInline && popover ? "mb-[6px]" : "mb-2";
+const baseClassName = `block ${marginBottomClass} ${customClass}`;
 ---
 
 {subtext ? (
@@ -45,7 +43,7 @@ const baseClassName = `block ${customClass}`;
     {popover ? (
       <TooltipWrapper
         client:load
-        triggerIconClass={iconClass}
+        triggerIconClass={popoverIcon}
         content={Array.isArray(subtext) ? subtext : String(subtext)}
         subtextColor={subtextColor}
       />
