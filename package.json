@@ -11,8 +11,8 @@
     "init": "tsx cli/init.ts"
   },
   "dependencies": {
-    "@astrojs/node": "^9.3.0",
-    "@astrojs/react": "^4.4.2",
+    "@astrojs/node": "^10.0.2",
+    "@astrojs/react": "^5.0.0",
     "@aws-sdk/client-s3": "^3.863.0",
     "@aws-sdk/lib-storage": "^3.863.0",
     "@aws-sdk/s3-request-presigner": "^3.913.0",
@@ -33,7 +33,7 @@
     "@types/sortablejs": "^1.15.8",
     "@types/uuid": "^10.0.0",
     "@types/validator": "^13.12.3",
-    "astro": "^5.12.4",
+    "astro": "^6.0.5",
     "astro-favicons": "^3.1.5",
     "better-auth": "^1.4.5",
     "class-variance-authority": "^0.7.1",
