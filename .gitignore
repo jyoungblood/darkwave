@@ -33,3 +33,6 @@ public/uploads/*
 
 logs/*
 !logs/.gitkeep
+
+
+deploy.sh
