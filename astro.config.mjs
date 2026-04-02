@@ -33,7 +33,7 @@ export default defineConfig({
         default-src 'self' *.${import.meta.env.SITE_DOMAIN};
         script-src 'self' 'unsafe-inline' 'unsafe-eval' *.${
           import.meta.env.SITE_DOMAIN
-        } https://accounts.google.com;
+        } https://accounts.google.com https://challenges.cloudflare.com;
         style-src 'self' 'unsafe-inline' *.${import.meta.env.SITE_DOMAIN};
         img-src 'self' data: https: blob: *.${
           import.meta.env.SITE_DOMAIN
@@ -52,11 +52,11 @@ export default defineConfig({
         };
         connect-src 'self' *.${
           import.meta.env.SITE_DOMAIN
-        } https://accounts.google.com;
+        } https://accounts.google.com https://challenges.cloudflare.com;
         form-action 'self' *.${
           import.meta.env.SITE_DOMAIN
         } https://accounts.google.com;
-        frame-src 'self' https://accounts.google.com;
+        frame-src 'self' https://accounts.google.com https://challenges.cloudflare.com;
         frame-ancestors 'none';
       `
             .trim()

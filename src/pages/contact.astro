@@ -18,6 +18,8 @@ ensureCsrfToken(Astro.cookies);
 const { url } = Astro;
 
 const error = url.searchParams.get("error");
+
+const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY?.trim() ?? "";
 ---
 
 <script>
@@ -89,12 +91,22 @@ const error = url.searchParams.get("error");
           </CardContent>
 
           <CardFooter client:load className="flex-col gap-2">
+            {
+              turnstileSiteKey && (
+                <div
+                  class="cf-turnstile w-full"
+                  data-sitekey={turnstileSiteKey}
+                  data-callback="onTurnstileSuccess"
+                />
+              )
+            }
             <Button
               client:load
               type="submit"
               data-contact-submit
               className="w-full"
               aria-busy="false"
+              disabled={!!turnstileSiteKey}
             >
               <svg
                 data-contact-spinner
@@ -146,72 +158,89 @@ const error = url.searchParams.get("error");
               <CardDescription client:load className="leading-relaxed">
                 <p>Thanks for getting in touch.</p> <p>We'll get back to you as soon as we
                 can.</p>
-              </AlertDescription>
+              </CardDescription>
             </div>
           </div>
         </Card>
       </div>
     </div>
   </div>
-</Layout>
 
-<script>
-  const form = document.querySelector("[data-contact-form]") as HTMLFormElement;
-  const submitButton = document.querySelector(
-    "[data-contact-submit]"
-  ) as HTMLButtonElement;
-  const buttonText = document.querySelector(
-    "[data-contact-text]"
-  ) as HTMLSpanElement;
-  const loadingSpinner = document.querySelector(
-    "[data-contact-spinner]"
-  ) as HTMLElement;
-  const successContainer = document.querySelector(
-    "[data-contact-success]"
-  ) as HTMLElement;
+  {
+    turnstileSiteKey && (
+      <script
+        is:inline
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      />
+    )
+  }
 
-  form.addEventListener("submit", async (event: SubmitEvent) => {
-    // console.log("Form submit event triggered");
-    event.preventDefault();
+  <script define:vars={{ turnstileSiteKey }}>
+    let turnstileToken = null;
 
-    // Set loading state
-    submitButton.disabled = true;
-    submitButton.setAttribute("aria-busy", "true");
-    buttonText.textContent = "Sending...";
-    loadingSpinner.classList.remove("hidden");
+    window.onTurnstileSuccess = function (token) {
+      turnstileToken = token;
+      const btn = document.querySelector("[data-contact-submit]");
+      if (btn) btn.disabled = false;
+    };
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        body: new FormData(event.target as HTMLFormElement),
-      });
+    const form = document.querySelector("[data-contact-form]");
+    const submitButton = document.querySelector("[data-contact-submit]");
+    const buttonText = document.querySelector("[data-contact-text]");
+    const loadingSpinner = document.querySelector("[data-contact-spinner]");
+    const successContainer = document.querySelector("[data-contact-success]");
 
-      const data = await response.json();
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
 
-      if (!response.ok) {
-        // Reset loading state only for errors
+      if (turnstileSiteKey && !turnstileToken) {
+        window.location.href = `/contact?error=${encodeURIComponent("Please complete the verification.")}`;
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.setAttribute("aria-busy", "true");
+      buttonText.textContent = "Sending...";
+      loadingSpinner.classList.remove("hidden");
+
+      try {
+        const formData = new FormData(event.target);
+        if (turnstileToken) {
+          formData.set("cf_turnstile_response", turnstileToken);
+        }
+
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          submitButton.disabled = false;
+          submitButton.setAttribute("aria-busy", "false");
+          buttonText.textContent = "Send";
+          loadingSpinner.classList.add("hidden");
+
+          window.location.href = `/contact?error=${encodeURIComponent(data.error)}`;
+        } else {
+          document.querySelector("[data-contact-title]")?.classList.add("hidden");
+          form.classList.add("hidden");
+          successContainer.classList.remove("hidden");
+          successContainer.setAttribute("tabindex", "-1");
+          successContainer.focus();
+        }
+      } catch (error) {
+        console.error("Error during contact request:", error);
         submitButton.disabled = false;
         submitButton.setAttribute("aria-busy", "false");
         buttonText.textContent = "Send";
         loadingSpinner.classList.add("hidden");
 
-        window.location.href = `/contact?error=${encodeURIComponent(data.error)}`;
-      } else {
-        document.querySelector("[data-contact-title]")?.classList.add("hidden");
-        form.classList.add("hidden");
-        successContainer.classList.remove("hidden");
-        successContainer.setAttribute("tabindex", "-1");
-        successContainer.focus();
+        window.location.href = `/contact?error=${encodeURIComponent("An unexpected error occurred")}`;
       }
-    } catch (error: any) {
-      console.error("Error during contact request:", error);
-      // Reset loading state for unexpected errors
-      submitButton.disabled = false;
-      submitButton.setAttribute("aria-busy", "false");
-      buttonText.textContent = "Send";
-      loadingSpinner.classList.add("hidden");
-
-      window.location.href = `/contact?error=${encodeURIComponent("An unexpected error occurred")}`;
-    }
-  });
-</script>
+    });
+  </script>
+</Layout>
