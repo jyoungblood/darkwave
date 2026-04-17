@@ -24,7 +24,7 @@ pnpm-debug.log*
 .idea/
 
 
-# _ref/
+_ref/
 
 
 public/uploads/*
