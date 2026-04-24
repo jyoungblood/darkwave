@@ -34,5 +34,5 @@ public/uploads/*
 logs/*
 !logs/.gitkeep
 
-
+/wrangler
 deploy.sh
