@@ -96,6 +96,7 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY?.trim() ?? "";
                 <div
                   class="cf-turnstile w-full"
                   data-sitekey={turnstileSiteKey}
+                  data-appearance="interaction-only"
                   data-callback="onTurnstileSuccess"
                 />
               )
@@ -156,8 +157,8 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY?.trim() ?? "";
                 >Message Sent</CardTitle
               >
               <CardDescription client:load className="leading-relaxed">
-                <p>Thanks for getting in touch.</p> <p>We'll get back to you as soon as we
-                can.</p>
+                <p>Thanks for getting in touch.</p>
+                <p>We'll get back to you as soon as we can.</p>
               </CardDescription>
             </div>
           </div>
@@ -226,7 +227,9 @@ const turnstileSiteKey = import.meta.env.TURNSTILE_SITE_KEY?.trim() ?? "";
 
           window.location.href = `/contact?error=${encodeURIComponent(data.error)}`;
         } else {
-          document.querySelector("[data-contact-title]")?.classList.add("hidden");
+          document
+            .querySelector("[data-contact-title]")
+            ?.classList.add("hidden");
           form.classList.add("hidden");
           successContainer.classList.remove("hidden");
           successContainer.setAttribute("tabindex", "-1");
