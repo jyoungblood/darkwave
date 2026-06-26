@@ -74,161 +74,160 @@ const {
   const deleteSpinner = document.querySelector("[data-delete-spinner]");
   const fullscreenSpinner = document.querySelector("#button-delete-spinner");
 
-  if (!deleteTrigger || !deleteText || !deleteSpinner || !fullscreenSpinner)
-    return;
+  if (deleteTrigger && deleteText && deleteSpinner && fullscreenSpinner) {
+    deleteTrigger.addEventListener("click", () => {
+      window.showAlert({
+        type: "warning",
+        variant: "soft",
+        title: `Are you sure you want to delete this ${type}?`,
+        position: {
+          vertical: "middle-third",
+          horizontal: "center",
+        },
+        overlay: true,
+        text: "",
+        icon: true,
+        buttonLayout: {
+          newLine: true,
+          flexClass: "gap-3",
+        },
+        buttons: [
+          {
+            type: "warning",
+            text: "Yes",
+            variant: "solid",
+            size: "sm",
+            onClick: async () => {
+              // Find the closest form element to apply opacity changes
+              const formElement = deleteTrigger.closest("form");
 
-  deleteTrigger.addEventListener("click", () => {
-    window.showAlert({
-      type: "warning",
-      variant: "soft",
-      title: `Are you sure you want to delete this ${type}?`,
-      position: {
-        vertical: "middle-third",
-        horizontal: "center",
-      },
-      overlay: true,
-      text: "",
-      icon: true,
-      buttonLayout: {
-        newLine: true,
-        flexClass: "gap-3",
-      },
-      buttons: [
-        {
-          type: "warning",
-          text: "Yes",
-          variant: "solid",
-          size: "sm",
-          onClick: async () => {
-            // Find the closest form element to apply opacity changes
-            const formElement = deleteTrigger.closest("form");
-
-            // Show fullscreen spinner immediately if enabled
-            if (showFullscreenSpinner) {
-              fullscreenSpinner.classList.remove("hidden");
-            } else {
-              // Apply form opacity if form exists and not using fullscreen spinner
-              if (formElement) {
-                formElement.classList.add("opacity-50");
-                formElement.classList.add("cursor-not-allowed");
-              }
-            }
-
-            // Set working state
-            deleteTrigger.disabled = true;
-            deleteTrigger.setAttribute("aria-busy", "true");
-            deleteText.textContent = "Deleting...";
-            deleteSpinner.classList.remove("hidden");
-
-            try {
-              // Get CSRF token from form
-              let csrfToken = "";
-              if (formElement) {
-                let csrfInput = formElement.querySelector('input[name="csrf"]');
-                if (csrfInput) {
-                  csrfToken = csrfInput.value;
-                }
-              }
-
-              const response = await fetch(endpoint, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ uuid, csrf: csrfToken }),
-              });
-
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-
-              // Reset working state on success
-              deleteTrigger.disabled = false;
-              deleteTrigger.setAttribute("aria-busy", "false");
-              deleteText.textContent = buttonText;
-              deleteSpinner.classList.add("hidden");
-
-              // Hide fullscreen spinner or reset form opacity
+              // Show fullscreen spinner immediately if enabled
               if (showFullscreenSpinner) {
-                fullscreenSpinner.classList.add("hidden");
+                fullscreenSpinner.classList.remove("hidden");
               } else {
+                // Apply form opacity if form exists and not using fullscreen spinner
                 if (formElement) {
-                  formElement.classList.remove("opacity-50");
-                  formElement.classList.remove("cursor-not-allowed");
+                  formElement.classList.add("opacity-50");
+                  formElement.classList.add("cursor-not-allowed");
                 }
               }
 
-              // // Show success message
-              // window.showAlert({
-              //   type: "success",
-              //   variant: "soft",
-              //   title: "Success",
-              //   text: `${type} deleted successfully`,
-              //   icon: true,
-              //   duration: 3000,
-              //   overlay: true,
-              //   position: {
-              //     vertical: "middle-third",
-              //     horizontal: "center",
-              //   },
-              // });
+              // Set working state
+              deleteTrigger.disabled = true;
+              deleteTrigger.setAttribute("aria-busy", "true");
+              deleteText.textContent = "Deleting...";
+              deleteSpinner.classList.remove("hidden");
 
-              // // Redirect after a short delay to allow the success message to be seen
-              // setTimeout(() => {
-              //   window.location.href = redirect;
-              // }, 1000);
-              window.location.href = redirect;
-            } catch (error) {
-              // Reset working state on error
-              deleteTrigger.disabled = false;
-              deleteTrigger.setAttribute("aria-busy", "false");
-              deleteText.textContent = buttonText;
-              deleteSpinner.classList.add("hidden");
-
-              // Hide fullscreen spinner or reset form opacity
-              if (showFullscreenSpinner) {
-                fullscreenSpinner.classList.add("hidden");
-              } else {
+              try {
+                // Get CSRF token from form
+                let csrfToken = "";
                 if (formElement) {
-                  formElement.classList.remove("opacity-50");
-                  formElement.classList.remove("cursor-not-allowed");
+                  let csrfInput = formElement.querySelector('input[name="csrf"]');
+                  if (csrfInput) {
+                    csrfToken = csrfInput.value;
+                  }
                 }
-              }
 
-              console.error("Error:", error);
-              window.showAlert({
-                type: "error",
-                variant: "soft",
-                title: "Error",
-                text:
-                  error instanceof Error ? error.message : "Failed to delete",
-                icon: true,
-                overlay: true,
-                position: {
-                  vertical: "middle-third",
-                  horizontal: "center",
-                },
-                buttonLayout: {
-                  newLine: true,
-                },
-                buttons: [
-                  {
-                    type: "error",
-                    text: "OK",
-                    variant: "solid",
+                const response = await fetch(endpoint, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
                   },
-                ],
-              });
-            }
+                  body: JSON.stringify({ uuid, csrf: csrfToken }),
+                });
+
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Reset working state on success
+                deleteTrigger.disabled = false;
+                deleteTrigger.setAttribute("aria-busy", "false");
+                deleteText.textContent = buttonText;
+                deleteSpinner.classList.add("hidden");
+
+                // Hide fullscreen spinner or reset form opacity
+                if (showFullscreenSpinner) {
+                  fullscreenSpinner.classList.add("hidden");
+                } else {
+                  if (formElement) {
+                    formElement.classList.remove("opacity-50");
+                    formElement.classList.remove("cursor-not-allowed");
+                  }
+                }
+
+                // // Show success message
+                // window.showAlert({
+                //   type: "success",
+                //   variant: "soft",
+                //   title: "Success",
+                //   text: `${type} deleted successfully`,
+                //   icon: true,
+                //   duration: 3000,
+                //   overlay: true,
+                //   position: {
+                //     vertical: "middle-third",
+                //     horizontal: "center",
+                //   },
+                // });
+
+                // // Redirect after a short delay to allow the success message to be seen
+                // setTimeout(() => {
+                //   window.location.href = redirect;
+                // }, 1000);
+                window.location.href = redirect;
+              } catch (error) {
+                // Reset working state on error
+                deleteTrigger.disabled = false;
+                deleteTrigger.setAttribute("aria-busy", "false");
+                deleteText.textContent = buttonText;
+                deleteSpinner.classList.add("hidden");
+
+                // Hide fullscreen spinner or reset form opacity
+                if (showFullscreenSpinner) {
+                  fullscreenSpinner.classList.add("hidden");
+                } else {
+                  if (formElement) {
+                    formElement.classList.remove("opacity-50");
+                    formElement.classList.remove("cursor-not-allowed");
+                  }
+                }
+
+                console.error("Error:", error);
+                window.showAlert({
+                  type: "error",
+                  variant: "soft",
+                  title: "Error",
+                  text:
+                    error instanceof Error ? error.message : "Failed to delete",
+                  icon: true,
+                  overlay: true,
+                  position: {
+                    vertical: "middle-third",
+                    horizontal: "center",
+                  },
+                  buttonLayout: {
+                    newLine: true,
+                  },
+                  buttons: [
+                    {
+                      type: "error",
+                      text: "OK",
+                      variant: "solid",
+                    },
+                  ],
+                });
+              }
+            },
           },
-        },
-        {
-          text: "No",
-          variant: "outline",
-          size: "sm",
-          type: "warning",
-        },
-      ],
+          {
+            text: "No",
+            variant: "outline",
+            size: "sm",
+            type: "warning",
+          },
+        ],
+      });
     });
-  });
+  }
 </script>

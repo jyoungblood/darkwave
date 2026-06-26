@@ -86,15 +86,13 @@ const {
   const fullscreenSpinner = document.querySelector("#button-submit-spinner");
 
   if (
-    !formElement ||
-    !submitButton ||
-    !buttonTextValue ||
-    !loadingSpinner ||
-    !fullscreenSpinner
-  )
-    return;
-
-  formElement.addEventListener("submit", async (event) => {
+    formElement &&
+    submitButton &&
+    buttonTextValue &&
+    loadingSpinner &&
+    fullscreenSpinner
+  ) {
+    formElement.addEventListener("submit", async (event) => {
     // Always prevent default submission first
     event.preventDefault();
     event.stopPropagation();
@@ -252,5 +250,6 @@ const {
         ],
       });
     }
-  });
+    });
+  }
 </script>
